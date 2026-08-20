@@ -1,5 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import PixelAvatar from './PixelAvatar'
+import AvatarUploadModal from './AvatarUploadModal'
+import BannedScreen from './BannedScreen'
 import { AVATARS, getAvatar } from '../utils/avatars'
 import { loginUser, registerUser } from '../lib/auth'
 import { submitBanAppeal } from '../lib/admin'
@@ -134,6 +136,18 @@ export default function AuthLanding({
     } finally {
       setAppealSubmitting(false)
     }
+  }
+
+  if (bannedInfo) {
+    return (
+      <BannedScreen
+        banDetails={bannedInfo}
+        onLogout={() => {
+          setBannedInfo(null)
+          setError('')
+        }}
+      />
+    )
   }
 
   return (

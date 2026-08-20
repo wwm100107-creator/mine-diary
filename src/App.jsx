@@ -8,6 +8,7 @@ import AdminDashboard from './components/AdminDashboard'
 import ChatView from './components/ChatView'
 import EasterEgg from './components/EasterEgg'
 import AuthLanding from './components/AuthLanding'
+import BannedScreen from './components/BannedScreen'
 import PixelAvatar from './components/PixelAvatar'
 import AvatarWithFrame from './components/AvatarWithFrame'
 import AvatarUploadModal from './components/AvatarUploadModal'
@@ -264,6 +265,21 @@ export default function App() {
 
     return () => unsubscribe()
   }, [user?.id])
+
+  // ── Full-Screen Banned Screen Guard (Instant Force Ban) ───────────────────
+  if (banDetailsNotice) {
+    return (
+      <BannedScreen
+        banDetails={banDetailsNotice}
+        onLogout={() => {
+          setBanErrorNotice('')
+          setBanDetailsNotice(null)
+          logoutUser()
+          setUser(null)
+        }}
+      />
+    )
+  }
 
   // ── Unauthenticated / Landing Page ────────────────────────────────────────
   if (!user) {
