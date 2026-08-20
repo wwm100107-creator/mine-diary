@@ -27,8 +27,14 @@ const SYMPTOMS = {
     { id: 'dry', label: 'Khô ráo' },
     { id: 'sticky', label: 'Dính' },
     { id: 'creamy', label: 'Đục/Trắng' },
-    { id: 'eggwhite', label: 'Trong/Dai (Rụng trứng)' },
-  ]
+    { id: 'eggwhite', label: 'Trong/Dai (Lòng trắng trứng)' },
+  ],
+  lhTest: [
+    { id: '', label: '-- Que thử rụng trứng (LH) --' },
+    { id: 'negative', label: 'Âm tính (-)' },
+    { id: 'positive', label: 'Dương tính (+)' },
+    { id: 'peak', label: 'Đạt đỉnh siêu đậm (Peak LH) ⚡' },
+  ],
 }
 
 export default function SymptomCards({ userId, dateStr }) {
@@ -39,6 +45,7 @@ export default function SymptomCards({ userId, dateStr }) {
     physical: [],
     mood: '',
     discharge: '',
+    lhTest: '',
     weight: '',
     temperature: '',
   })
@@ -49,7 +56,7 @@ export default function SymptomCards({ userId, dateStr }) {
     if (saved) {
       setData(JSON.parse(saved))
     } else {
-      setData({ flow: '', physical: [], mood: '', discharge: '', weight: '', temperature: '' })
+      setData({ flow: '', physical: [], mood: '', discharge: '', lhTest: '', weight: '', temperature: '' })
     }
   }, [storageKey])
 
@@ -119,6 +126,18 @@ export default function SymptomCards({ userId, dateStr }) {
           onChange={(e) => updateField('discharge', e.target.value)}
         >
           {SYMPTOMS.discharge.map(opt => <option key={opt.id} value={opt.id}>{opt.label}</option>)}
+        </select>
+      </div>
+
+      {/* 5. Que thử rụng trứng LH */}
+      <div className={s.symptomBlock}>
+        <label className={s.blockLabel}>Que thử rụng trứng (LH)</label>
+        <select 
+          className={s.selectInput}
+          value={data.lhTest || ''}
+          onChange={(e) => updateField('lhTest', e.target.value)}
+        >
+          {SYMPTOMS.lhTest.map(opt => <option key={opt.id} value={opt.id}>{opt.label}</option>)}
         </select>
       </div>
 

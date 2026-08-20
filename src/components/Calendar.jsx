@@ -11,6 +11,7 @@ import {
   addCustomTrayIcon,
   removeCustomTrayIcon,
 } from '../utils/cycle'
+import { useCycleCalendar } from '../hooks/useCycleCalendar'
 import { syncUserCustomIcons } from '../lib/social'
 import IconPickerModal from './IconPickerModal'
 import s from './Calendar.module.css'
@@ -61,7 +62,7 @@ function buildGrid(year, month) {
   return days
 }
 
-export default function Calendar({ userId, onDateSelect, className, readOnly = false }) {
+export default function Calendar({ userId, mode = 'standard', onDateSelect, className, readOnly = false }) {
   const now = new Date()
   const [view, setView] = useState({ year: now.getFullYear(), month: now.getMonth() })
   const [tick, setTick] = useState(0)
@@ -102,9 +103,17 @@ export default function Calendar({ userId, onDateSelect, className, readOnly = f
   const todayStr = toDateStr(now)
   const grid = useMemo(() => buildGrid(view.year, view.month), [view])
 
-  // Load cycle prediction from user's icons history
-  const allMarks = useMemo(() => loadMarkedDates(userId), [userId, tick])
-  const prediction = useMemo(() => predictNextPeriod(allMarks, userId), [allMarks, userId, tick])
+  // ── Centralized Cycle & Fertility Prediction with Dynamic Engine (Standard vs Advanced AI) ──
+  const {
+    prediction,
+    predictedPeriodSet: predictedSet,
+    fertileSet,
+    ovulationDateStr,
+    confidence,
+    insights,
+    bbtShiftDetected,
+    lhPeakDetected,
+  } = useCycleCalendar({ userId, mode, tick })
 
   // Cleanup timers on unmount
   useEffect(() => {
@@ -113,31 +122,6 @@ export default function Calendar({ userId, onDateSelect, className, readOnly = f
       if (hoverCloseTimerRef.current) clearTimeout(hoverCloseTimerRef.current)
     }
   }, [])
-
-  // ── Build Predicted Period Set ──
-  const predictedSet = useMemo(() => {
-    if (!prediction) return new Set()
-    const set = new Set()
-    const duration = prediction.predictedDuration || 5
-    for (let i = 0; i < duration; i++) {
-      const d = new Date(prediction.predictedStart)
-      d.setDate(d.getDate() + i)
-      set.add(toDateStr(d))
-    }
-    return set
-  }, [prediction])
-
-  // ── Build Fertile Window Set (Ovulation - 5 to Ovulation + 1) ──
-  const fertileSet = useMemo(() => {
-    if (!prediction || !prediction.ovulationDate) return new Set()
-    const set = new Set()
-    for (let i = -5; i <= 1; i++) {
-      const d = new Date(prediction.ovulationDate)
-      d.setDate(d.getDate() + i)
-      set.add(toDateStr(d))
-    }
-    return set
-  }, [prediction])
 
   // ── Optimized Hover Handlers: Debounce + Hysteresis + Container Fallback ──
 

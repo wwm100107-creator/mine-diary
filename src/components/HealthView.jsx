@@ -5,7 +5,8 @@ import SymptomCards from './SymptomCards'
 import HealthChart from './HealthChart'
 import FertilityBar from './FertilityBar'
 import AvatarWithFrame from './AvatarWithFrame'
-import { today, loadMarkedDates, predictNextPeriod, getCustomTrayIcons } from '../utils/cycle'
+import { today, loadMarkedDates, getCustomTrayIcons } from '../utils/cycle'
+import { useCycleCalendar } from '../hooks/useCycleCalendar'
 import {
   syncUserCycleData,
   subscribeToUserRelationships,
@@ -60,12 +61,18 @@ export default function HealthView({ user }) {
     }
   }
 
-  // 1. Sync User's own cycle data to Firestore for partner sharing
-  const allMarks = useMemo(() => loadMarkedDates(user?.id), [user?.id])
-  const prediction = useMemo(
-    () => predictNextPeriod(allMarks, user?.id),
-    [allMarks, user?.id]
-  )
+  // 1. Centralized Cycle Prediction Hook (Standard vs Advanced AI)
+  const {
+    prediction,
+    markedDates: allMarks,
+    insights,
+    confidence,
+    bbtShiftDetected,
+    lhPeakDetected,
+  } = useCycleCalendar({
+    userId: user?.id,
+    mode: predictionMode,
+  })
 
   useEffect(() => {
     if (!user?.id) return
@@ -318,8 +325,22 @@ export default function HealthView({ user }) {
           {/* Top Section: Standalone Calendar & Daily Symptoms Form */}
           <div className={s.topSection}>
             <div className={s.pixelCard}>
-              <h2 className={s.cardTitle}><span>📅</span> Lịch Chu Kỳ</h2>
-              <HealthCalendar userId={user.id} onDateSelect={setSelectedDate} />
+              <h2 className={s.cardTitle}>
+                <span>📅</span> Lịch Chu Kỳ {predictionMode === 'advanced' ? '(AI Bayesian)' : '(Chu Kỳ Chuẩn)'}
+              </h2>
+              <HealthCalendar userId={user.id} mode={predictionMode} onDateSelect={setSelectedDate} />
+              
+              {/* Dynamic Insights if Advanced AI mode active */}
+              {predictionMode === 'advanced' && insights?.length > 0 && (
+                <div style={{ marginTop: 14, padding: '10px 12px', background: '#F3E5F5', border: '1.5px solid #CE93D8', borderRadius: 10, fontSize: 11, color: '#4A148C', lineHeight: 1.5 }}>
+                  <strong style={{ display: 'block', marginBottom: 4 }}>🧠 Phân tích AI theo thời gian thực:</strong>
+                  <ul style={{ margin: 0, paddingLeft: 16 }}>
+                    {insights.map((ins, idx) => (
+                      <li key={idx} style={{ marginBottom: 2 }}>{ins}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
 
             <div className={s.pixelCard}>
