@@ -19,7 +19,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 24px;
-  height: 62px;
+  height: 64px;
   flex-shrink: 0;
   background: linear-gradient(90deg,
     rgba(255, 208, 227, 0.85) 0%,
@@ -30,6 +30,23 @@
   position: relative;
   z-index: 10;
   box-sizing: border-box;
+}
+
+/* Top Row: Logo & User controls */
+.headerTopRow {
+  display: contents; /* On desktop, children participate directly in .header flex */
+}
+
+/* Navigation Row */
+.headerNavRow {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+  pointer-events: auto;
 }
 
 .logo {
@@ -52,9 +69,7 @@
 
 /* ── iOS Glassmorphism + Cute Pixel Navigation Bar ── */
 .navBar {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
+  position: relative;
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -65,7 +80,6 @@
   border-radius: 999px;
   border: 1.5px solid rgba(255, 255, 255, 0.8);
   box-shadow: 0 4px 20px rgba(255, 143, 171, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.95);
-  z-index: 5;
   user-select: none;
 }
 
@@ -604,51 +618,84 @@
 /* ── Mobile Devices & Small Screens (max-width: 768px) ── */
 @media (max-width: 768px) {
   .header {
-    padding: 0 12px;
-    height: 56px;
-    gap: 6px;
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    min-height: 104px;
+    padding: 8px 12px 8px;
+    gap: 8px;
+    position: relative;
   }
 
-  .logoTitle {
-    font-size: 15px;
+  .headerTopRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .headerNavRow {
+    position: static;
+    transform: none;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding: 2px 0;
+  }
+
+  .headerNavRow::-webkit-scrollbar {
+    display: none;
   }
 
   .navBar {
-    position: static;
+    position: relative;
+    left: auto;
     transform: none;
-    padding: 3px;
-    gap: 2px;
+    margin: 0 auto;
+    padding: 4px;
+    gap: 4px;
+    flex-shrink: 0;
+    white-space: nowrap;
   }
 
   .slidingIndicator {
-    top: 3px;
-    bottom: 3px;
+    top: 4px;
+    bottom: 4px;
   }
 
   .navBtn {
-    padding: 5px 9px;
-    font-size: 10px;
-    gap: 4px;
-  }
-
-  .userProfileBadge {
-    padding: 3px 6px;
+    padding: 6px 12px;
+    font-size: 11px;
     gap: 5px;
   }
 
+  .logoTitle {
+    font-size: 16px;
+  }
+
+  .userProfileBadge {
+    padding: 3px 8px;
+    gap: 6px;
+  }
+
   .userDisplayName {
-    font-size: 10px;
-    max-width: 80px;
+    font-size: 11px;
+    max-width: 90px;
   }
 
   .userUidText {
-    font-size: 8px;
-    max-width: 80px;
+    font-size: 9px;
+    max-width: 90px;
   }
 
   .logoutBtn {
-    padding: 4px 8px;
-    font-size: 9px;
+    padding: 5px 8px;
+    font-size: 10px;
   }
 
   /* Stack layout */
@@ -656,7 +703,7 @@
     flex-direction: column;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    height: 100%;
+    height: calc(100dvh - 104px);
   }
 
   .calendarPanel {

@@ -209,117 +209,122 @@ export default function App() {
 
       {/* Header */}
       <header className={s.header}>
-        <div className={s.logo}>
-          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-            <rect x="6" y="4" width="20" height="24" rx="2" fill="#FFD0E3"/>
-            <rect x="6" y="4" width="4" height="24" fill="#FFB7C5"/>
-            <rect x="12" y="9" width="10" height="2" fill="#FF8FAB"/>
-            <rect x="12" y="13" width="10" height="2" fill="#FF8FAB"/>
-            <rect x="12" y="17" width="7" height="2" fill="#FF8FAB"/>
-            <rect x="22" y="2" width="2" height="2" fill="#FFE99A"/>
-            <rect x="20" y="4" width="2" height="2" fill="#FFE99A"/>
-            <rect x="24" y="4" width="2" height="2" fill="#FFE99A"/>
-            <rect x="22" y="6" width="2" height="2" fill="#FFE99A"/>
-          </svg>
-          <span className={s.logoTitle}>Mine<span>Diary</span></span>
-        </div>
-
-        {/* Top Navigation Bar with iOS Glassmorphism & Sliding Indicator */}
-        <div ref={navRef} className={s.navBar} role="navigation" aria-label="Main Navigation">
-          {/* iOS Sliding Indicator Pill */}
-          <div
-            className={s.slidingIndicator}
-            style={{
-              left: `${indicatorStyle.left}px`,
-              width: `${indicatorStyle.width}px`,
-              opacity: indicatorStyle.opacity,
-            }}
-            aria-hidden="true"
-          />
-
-          <button
-            ref={(el) => { tabRefs.current['diary'] = el }}
-            className={`${s.navBtn} ${currentTab === 'diary' ? s.active : ''}`}
-            onClick={() => switchTab('diary')}
-            aria-current={currentTab === 'diary' ? 'page' : undefined}
-          >
-            <span className={s.navIcon}>📖</span> Nhật ký chung
-          </button>
-          <button
-            ref={(el) => { tabRefs.current['health'] = el }}
-            className={`${s.navBtn} ${currentTab === 'health' ? s.active : ''}`}
-            onClick={() => switchTab('health')}
-            aria-current={currentTab === 'health' ? 'page' : undefined}
-          >
-            <span className={s.navIcon}>🌸</span> Sức khỏe
-          </button>
-          <button
-            ref={(el) => { tabRefs.current['chat'] = el }}
-            className={`${s.navBtn} ${currentTab === 'chat' ? s.active : ''}`}
-            onClick={() => switchTab('chat')}
-            aria-current={currentTab === 'chat' ? 'page' : undefined}
-          >
-            <span className={s.navIcon}>💬</span> Tin nhắn
-          </button>
-
-          {/* Admin Navigation Button (Visible only to Admin accounts) */}
-          {isAdmin && (
-            <button
-              ref={(el) => { tabRefs.current['admin'] = el }}
-              className={`${s.navBtn} ${currentTab === 'admin' ? s.active : ''}`}
-              onClick={() => switchTab('admin')}
-              aria-current={currentTab === 'admin' ? 'page' : undefined}
-            >
-              <span className={s.navIcon}>🛡️</span> Quản trị
-            </button>
-          )}
-        </div>
-
-        {/* User Profile & Logout */}
-        <div className={s.headerActions}>
-          <div className={s.userProfileBadge}>
-            <div
-              className={s.avatarWrapper}
-              onClick={() => setIsAvatarModalOpen(true)}
-              title="Nhấn để đổi avatar cá nhân"
-            >
-              <AvatarWithFrame
-                avatarUrl={user.avatar || 'bunny'}
-                frameId={user.avatarFrame || user.frame || 'none'}
-                size={34}
-                border={false}
-              />
-              <button
-                type="button"
-                className={s.avatarEditBtn}
-                onClick={(e) => {
-                  e.stopPropagation()
-                  setIsAvatarModalOpen(true)
-                }}
-                title="Đổi avatar cá nhân"
-                aria-label="Đổi avatar cá nhân"
-              >
-                📷
-              </button>
-            </div>
-            <div className={s.userInfoColumn}>
-              <span className={s.userDisplayName} title={user.displayName || user.name || user.username || user.id}>
-                {user.displayName || user.name || user.username || user.id}
-              </span>
-              <span className={s.userUidText} title={`UID: ${user.id}`}>
-                {user.id ? (user.id.startsWith('#') ? user.id : `#${user.id}`) : '#Guest'}
-              </span>
-            </div>
+        {/* Top Row: Logo & User Actions (Full width on Mobile, Flex on Desktop) */}
+        <div className={s.headerTopRow}>
+          <div className={s.logo}>
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+              <rect x="6" y="4" width="20" height="24" rx="2" fill="#FFD0E3"/>
+              <rect x="6" y="4" width="4" height="24" fill="#FFB7C5"/>
+              <rect x="12" y="9" width="10" height="2" fill="#FF8FAB"/>
+              <rect x="12" y="13" width="10" height="2" fill="#FF8FAB"/>
+              <rect x="12" y="17" width="7" height="2" fill="#FF8FAB"/>
+              <rect x="22" y="2" width="2" height="2" fill="#FFE99A"/>
+              <rect x="20" y="4" width="2" height="2" fill="#FFE99A"/>
+              <rect x="24" y="4" width="2" height="2" fill="#FFE99A"/>
+              <rect x="22" y="6" width="2" height="2" fill="#FFE99A"/>
+            </svg>
+            <span className={s.logoTitle}>Mine<span>Diary</span></span>
           </div>
-          <button
-            className={s.logoutBtn}
-            onClick={() => {
-              logoutUser()
-              setUser(null)
-            }}
-          >
-            Đăng xuất
-          </button>
+
+          {/* User Profile & Logout */}
+          <div className={s.headerActions}>
+            <div className={s.userProfileBadge}>
+              <div
+                className={s.avatarWrapper}
+                onClick={() => setIsAvatarModalOpen(true)}
+                title="Nhấn để đổi avatar cá nhân"
+              >
+                <AvatarWithFrame
+                  avatarUrl={user.avatar || 'bunny'}
+                  frameId={user.avatarFrame || user.frame || 'none'}
+                  size={34}
+                  border={false}
+                />
+                <button
+                  type="button"
+                  className={s.avatarEditBtn}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setIsAvatarModalOpen(true)
+                  }}
+                  title="Đổi avatar cá nhân"
+                  aria-label="Đổi avatar cá nhân"
+                >
+                  📷
+                </button>
+              </div>
+              <div className={s.userInfoColumn}>
+                <span className={s.userDisplayName} title={user.displayName || user.name || user.username || user.id}>
+                  {user.displayName || user.name || user.username || user.id}
+                </span>
+                <span className={s.userUidText} title={`UID: ${user.id}`}>
+                  {user.id ? (user.id.startsWith('#') ? user.id : `#${user.id}`) : '#Guest'}
+                </span>
+              </div>
+            </div>
+            <button
+              className={s.logoutBtn}
+              onClick={() => {
+                logoutUser()
+                setUser(null)
+              }}
+            >
+              Đăng xuất
+            </button>
+          </div>
+        </div>
+
+        {/* Navigation Bar Row (Row 2 on Mobile, Centered on Desktop) */}
+        <div className={s.headerNavRow}>
+          <div ref={navRef} className={s.navBar} role="navigation" aria-label="Main Navigation">
+            {/* iOS Sliding Indicator Pill */}
+            <div
+              className={s.slidingIndicator}
+              style={{
+                left: `${indicatorStyle.left}px`,
+                width: `${indicatorStyle.width}px`,
+                opacity: indicatorStyle.opacity,
+              }}
+              aria-hidden="true"
+            />
+
+            <button
+              ref={(el) => { tabRefs.current['diary'] = el }}
+              className={`${s.navBtn} ${currentTab === 'diary' ? s.active : ''}`}
+              onClick={() => switchTab('diary')}
+              aria-current={currentTab === 'diary' ? 'page' : undefined}
+            >
+              <span className={s.navIcon}>📖</span> Nhật ký chung
+            </button>
+            <button
+              ref={(el) => { tabRefs.current['health'] = el }}
+              className={`${s.navBtn} ${currentTab === 'health' ? s.active : ''}`}
+              onClick={() => switchTab('health')}
+              aria-current={currentTab === 'health' ? 'page' : undefined}
+            >
+              <span className={s.navIcon}>🌸</span> Sức khỏe
+            </button>
+            <button
+              ref={(el) => { tabRefs.current['chat'] = el }}
+              className={`${s.navBtn} ${currentTab === 'chat' ? s.active : ''}`}
+              onClick={() => switchTab('chat')}
+              aria-current={currentTab === 'chat' ? 'page' : undefined}
+            >
+              <span className={s.navIcon}>💬</span> Tin nhắn
+            </button>
+
+            {/* Admin Navigation Button (Visible only to Admin accounts) */}
+            {isAdmin && (
+              <button
+                ref={(el) => { tabRefs.current['admin'] = el }}
+                className={`${s.navBtn} ${currentTab === 'admin' ? s.active : ''}`}
+                onClick={() => switchTab('admin')}
+                aria-current={currentTab === 'admin' ? 'page' : undefined}
+              >
+                <span className={s.navIcon}>🛡️</span> Quản trị
+              </button>
+            )}
+          </div>
         </div>
       </header>
 
