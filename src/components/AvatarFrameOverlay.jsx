@@ -6,7 +6,7 @@ export const AVATAR_FRAMES = [
   { id: 'god_cosmic', name: '🌌 GOD Sáng Thế', icon: '👑', desc: 'Cấp bậc Tối Thượng GOD Mode — Cực quang 6 cánh thiên thần & tinh vân vô cực' },
   { id: 'vip10_thunder', name: '⚡ VIP 10 Lôi Thần', icon: '⚡', desc: 'Hắc Long Lôi Thần — Sấm sét tím điện quang & ma lôi chớp giật' },
   { id: 'vip9_frost', name: '❄️ VIP 9 Băng Long', icon: '❄️', desc: 'Băng Long Băng Hà — Tinh thể băng tuyết & kim cương ngọc bích cực hàn' },
-  { id: 'vip8_fire', name: '🔥 VIP 8 Rồng Lửa', icon: '🔥', desc: 'Rồng vàng hoàng kim & hào quang lửa bùng cháy VIP' },
+  { id: 'vip8_fire', name: '🔥 SVIP Rồng Lửa', icon: '🔥', desc: 'SVIP Rồng vàng hoàng kim & hào quang lửa cháy bùng nổ' },
   { id: 'cyber_aura', name: '⚡ Hào Quang Lửa', icon: '✨', desc: 'Lửa vàng & điện quang chớp giật' },
   { id: 'rainbow', name: '🌈 Cầu Vồng Pixel', icon: '🌈', desc: 'Viền cầu vồng luân chuyển 8-bit' },
   { id: 'sparkle_stars', name: '✨ Ngôi Sao Lấp Lánh', icon: '⭐', desc: 'Sao pixel nhấp nháy 4 góc' },
@@ -301,7 +301,7 @@ function AvatarFrameOverlayComponent({ frameId = 'none', size = 36 }) {
       )}
 
       {/* ══════════════════════════════════════════════════════════════════════
-         FRAME: 🔥 VIP 8 — RỒNG LỬA HOÀNG KIM (SUPREME GOLD FIRE DRAGON)
+         FRAME: 🔥 SVIP — RỒNG LỬA HOÀNG KIM (SUPREME GOLD FIRE DRAGON SVIP)
          ══════════════════════════════════════════════════════════════════════ */}
       {frameId === 'vip8_fire' && (
         <div className={s.vip8Container}>
@@ -323,64 +323,110 @@ function AvatarFrameOverlayComponent({ frameId = 'none', size = 36 }) {
             <div className={s.vip8ShineSweep} />
           </div>
 
-          {/* Layer 4: Left & Right Flaming Dragon Wings */}
+          {/* Layer 4: Left & Right Dragon Heads with Ruby Eyes and Flame Flares */}
           <div className={`${s.vip8DragonWing} ${s.wingLeft}`}>
-            <svg viewBox="0 0 24 32" className={s.dragonSvg}>
-              <path d="M24,2 C16,0 8,8 2,16 C-1,20 0,26 6,30 C12,34 18,28 20,22 C22,18 24,10 24,2 Z" fill="url(#vip8GoldGrad)" />
-              <path d="M22,6 C16,6 10,12 6,18 C4,21 6,24 10,26 C14,28 18,22 20,18 Z" fill="url(#vip8FireGrad)" />
-              <circle cx="16" cy="12" r="2.5" fill="#FF1E00" />
-              <circle cx="16" cy="12" r="1.2" fill="#FFE600" />
+            <svg viewBox="0 0 28 36" className={s.dragonSvg}>
+              {/* Dragon Wing & Mane */}
+              <path d="M28,2 C18,0 8,8 2,18 C-2,24 0,30 8,34 C16,38 22,30 24,24 C26,20 28,10 28,2 Z" fill="url(#vip8GoldGrad)" />
+              <path d="M26,6 C18,6 12,12 6,20 C4,23 8,26 12,28 C16,30 22,24 24,20 Z" fill="url(#vip8FireGrad)" />
+              {/* Dragon Head Profile */}
+              <path d="M20,10 L14,12 L11,9 L15,8 L13,5 L18,7 L22,6 Z" fill="url(#vip8GoldGrad)" stroke="#684200" strokeWidth="0.8" />
+              {/* Glowing Ruby Eye */}
+              <circle cx="16" cy="9" r="1.8" fill="#FF0000" className={s.dragonEye} />
+              <circle cx="16" cy="9" r="0.8" fill="#FFE600" />
+              {/* Left Diamond Ruby Gem */}
+              <polygon points="26,20 28,24 26,28 24,24" fill="#FF1E00" stroke="#FFD700" strokeWidth="0.6" className={s.borderGem} />
+              {/* Flaming Fireball at base */}
+              <circle cx="10" cy="26" r="4.5" fill="url(#vip8FireGrad)" className={s.fireOrb} />
             </svg>
           </div>
           <div className={`${s.vip8DragonWing} ${s.wingRight}`}>
-            <svg viewBox="0 0 24 32" className={s.dragonSvg}>
-              <path d="M0,2 C8,0 16,8 22,16 C25,20 24,26 18,30 C12,34 6,28 4,22 C2,18 0,10 0,2 Z" fill="url(#vip8GoldGrad)" />
-              <path d="M2,6 C8,6 14,12 18,18 C20,21 18,24 14,26 C10,28 6,22 4,18 Z" fill="url(#vip8FireGrad)" />
-              <circle cx="8" cy="12" r="2.5" fill="#FF1E00" />
-              <circle cx="8" cy="12" r="1.2" fill="#FFE600" />
+            <svg viewBox="0 0 28 36" className={s.dragonSvg}>
+              {/* Dragon Wing & Mane */}
+              <path d="M0,2 C10,0 20,8 26,18 C30,24 28,30 20,34 C12,38 6,30 4,24 C2,20 0,10 0,2 Z" fill="url(#vip8GoldGrad)" />
+              <path d="M2,6 C10,6 16,12 22,20 C24,23 20,26 16,28 C12,30 6,24 4,20 Z" fill="url(#vip8FireGrad)" />
+              {/* Dragon Head Profile */}
+              <path d="M8,10 L14,12 L17,9 L13,8 L15,5 L10,7 L6,6 Z" fill="url(#vip8GoldGrad)" stroke="#684200" strokeWidth="0.8" />
+              {/* Glowing Ruby Eye */}
+              <circle cx="12" cy="9" r="1.8" fill="#FF0000" className={s.dragonEye} />
+              <circle cx="12" cy="9" r="0.8" fill="#FFE600" />
+              {/* Right Diamond Ruby Gem */}
+              <polygon points="2,20 4,24 2,28 0,24" fill="#FF1E00" stroke="#FFD700" strokeWidth="0.6" className={s.borderGem} />
+              {/* Flaming Fireball at base */}
+              <circle cx="18" cy="26" r="4.5" fill="url(#vip8FireGrad)" className={s.fireOrb} />
             </svg>
           </div>
 
-          {/* Layer 5: Top Royal Crown with Pulsing Gemstone */}
+          {/* Layer 5: Top Royal Imperial Crown with Purple Amethyst Gem & Wings */}
           <div className={s.vip8Crown}>
-            <svg viewBox="0 0 36 22" className={s.crownSvg}>
+            <svg viewBox="0 0 40 26" className={s.crownSvg}>
               <defs>
                 <linearGradient id="vip8GoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#FFF59D" />
-                  <stop offset="30%" stopColor="#FFD700" />
-                  <stop offset="70%" stopColor="#FF9800" />
-                  <stop offset="100%" stopColor="#B8860B" />
+                  <stop offset="0%" stopColor="#FFF9C4" />
+                  <stop offset="25%" stopColor="#FFD700" />
+                  <stop offset="60%" stopColor="#FF9800" />
+                  <stop offset="100%" stopColor="#8D6E63" />
                 </linearGradient>
                 <linearGradient id="vip8FireGrad" x1="0%" y1="0%" x2="0%" y2="100%">
                   <stop offset="0%" stopColor="#FFE600" />
-                  <stop offset="50%" stopColor="#FF3D00" />
+                  <stop offset="45%" stopColor="#FF3D00" />
                   <stop offset="100%" stopColor="#8B0000" />
                 </linearGradient>
+                <linearGradient id="vip8RubyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#FF5252" />
+                  <stop offset="50%" stopColor="#D50000" />
+                  <stop offset="100%" stopColor="#5D0000" />
+                </linearGradient>
                 <radialGradient id="vip8GemGrad" cx="50%" cy="50%" r="50%">
-                  <stop offset="0%" stopColor="#F368E0" />
+                  <stop offset="0%" stopColor="#E056FD" />
                   <stop offset="50%" stopColor="#9B59B6" />
-                  <stop offset="100%" stopColor="#481878" />
+                  <stop offset="100%" stopColor="#3C096C" />
                 </radialGradient>
               </defs>
-              <path d="M4,20 L32,20 L34,16 L30,10 L24,16 L18,4 L12,16 L6,10 L2,16 Z" fill="url(#vip8GoldGrad)" stroke="#684200" strokeWidth="1" />
-              <path d="M8,18 C8,12 28,12 28,18 Z" fill="url(#vip8FireGrad)" />
-              <polygon points="18,7 23,12 18,17 13,12" fill="url(#vip8GemGrad)" stroke="#FFE600" strokeWidth="0.8" className={s.vip8Gem} />
-              <circle cx="6" cy="10" r="1.6" fill="#FF1E00" stroke="#FFD700" strokeWidth="0.5" />
-              <circle cx="18" cy="4" r="2.2" fill="#FFD700" stroke="#FF1E00" strokeWidth="0.8" />
-              <circle cx="30" cy="10" r="1.6" fill="#FF1E00" stroke="#FFD700" strokeWidth="0.5" />
+              {/* Crown Top Spikes */}
+              <path d="M20,0 L23,7 L31,3 L27,10 L37,8 L30,16 L38,20 L8,20 L2,16 L11,10 L7,3 L15,7 Z" fill="url(#vip8GoldGrad)" opacity="0.9" />
+              {/* Velvet Red Interior Dome */}
+              <path d="M7,22 C7,12 33,12 33,22 Z" fill="url(#vip8RubyGrad)" />
+              {/* Crown Base & Gold Filigree */}
+              <path d="M5,24 L35,24 L37,18 L32,12 L26,18 L20,4 L14,18 L8,12 L3,18 Z" fill="url(#vip8GoldGrad)" stroke="#5D4037" strokeWidth="1" />
+              {/* Purple Wings Flanking Amethyst Gem */}
+              <path d="M12,14 C15,11 17,14 18,14 C17,17 14,16 12,14 Z" fill="#9B59B6" />
+              <path d="M28,14 C25,11 23,14 22,14 C23,17 26,16 28,14 Z" fill="#9B59B6" />
+              {/* Center Hexagonal Amethyst Gem */}
+              <polygon points="20,8 24,11 24,17 20,20 16,17 16,11" fill="url(#vip8GemGrad)" stroke="#FFF59D" strokeWidth="1" className={s.vip8Gem} />
+              {/* Top Rubies */}
+              <circle cx="8" cy="12" r="1.8" fill="#FF1E00" stroke="#FFD700" strokeWidth="0.6" />
+              <circle cx="20" cy="4" r="2.4" fill="#FFD700" stroke="#D50000" strokeWidth="0.8" />
+              <circle cx="32" cy="12" r="1.8" fill="#FF1E00" stroke="#FFD700" strokeWidth="0.6" />
             </svg>
           </div>
 
-          {/* Layer 6: Bottom VIP 8 Ribbon Banner with Dragon Claws */}
+          {/* Layer 6: Bottom SVIP Crest Banner with Dragon Claws & Center Ruby */}
           <div className={s.vip8BottomBadge}>
+            {/* Center Ruby Crest at top of banner */}
+            <div className={s.centerRubyCrest}>
+              <svg viewBox="0 0 16 14" className={s.rubyCrestSvg}>
+                <polygon points="8,0 16,5 12,14 4,14 0,5" fill="url(#vip8GoldGrad)" stroke="#5D4037" strokeWidth="0.8" />
+                <polygon points="8,3 12,6 10,11 6,11 4,6" fill="url(#vip8RubyGrad)" stroke="#FFD700" strokeWidth="0.6" className={s.crestRuby} />
+              </svg>
+            </div>
+
+            {/* Dragon Claws Left & Right */}
             <div className={s.clawLeft}>
-              <span>▲</span><span>▲</span>
+              <span>▲</span><span>▲</span><span>▲</span>
             </div>
             <div className={s.clawRight}>
-              <span>▲</span><span>▲</span>
+              <span>▲</span><span>▲</span><span>▲</span>
             </div>
+
+            {/* Red & Gold SVIP Ribbon */}
             <div className={s.vip8Ribbon}>
-              <span className={s.vip8Text}>VIP 8</span>
+              <span className={s.vip8Text}>SVIP</span>
+            </div>
+
+            {/* Bottom Gold Wings Spread */}
+            <div className={s.bottomGoldWings}>
+              <span>❮</span><span>✦</span><span>❯</span>
             </div>
           </div>
         </div>
