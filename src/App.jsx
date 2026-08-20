@@ -15,6 +15,7 @@ import PixelAvatar from './components/PixelAvatar'
 import AvatarWithFrame from './components/AvatarWithFrame'
 import AvatarUploadModal from './components/AvatarUploadModal'
 import AttendanceModal from './components/AttendanceModal'
+import NotificationPermissionModal from './components/NotificationPermissionModal'
 import { upsertUser, getUser, uploadUserAvatar, subscribeToUserRelationships, subscribeToUserChats } from './lib/social'
 import { isUserAdmin } from './lib/admin'
 import { getCurrentUser, saveSession, logoutUser, verifyBanStatus } from './lib/auth'
@@ -31,7 +32,21 @@ export default function App() {
   const [user, setUser] = useState(() => getCurrentUser())
   const isAdmin = isUserAdmin(user)
   const [isAttendanceModalOpen, setIsAttendanceModalOpen] = useState(false)
+  const [isNotifModalOpen, setIsNotifModalOpen] = useState(false)
   const hasAutoOpenedAttendanceRef = useRef(false)
+
+  // Cute Prompt for Push Notification Permission if not yet decided
+  useEffect(() => {
+    if (typeof window !== 'undefined' && user?.id && 'Notification' in window) {
+      const dismissed = sessionStorage.getItem('minediary:dismiss_notif_modal')
+      if (Notification.permission === 'default' && !dismissed) {
+        const timer = setTimeout(() => {
+          setIsNotifModalOpen(true)
+        }, 1500)
+        return () => clearTimeout(timer)
+      }
+    }
+  }, [user?.id])
 
   // Auto-prompt attendance modal on first boot/login if today is unclaimed (Regular Users only)
   useEffect(() => {
@@ -620,6 +635,17 @@ export default function App() {
             saveSession(updated)
           }}
           onClose={() => setIsAttendanceModalOpen(false)}
+        />
+      )}
+
+      {/* Cute Push Notification Permission Prompt Modal */}
+      {isNotifModalOpen && user && (
+        <NotificationPermissionModal
+          user={user}
+          onClose={() => setIsNotifModalOpen(false)}
+          onPermissionGranted={(token) => {
+            console.log('[App] Push token registered:', token)
+          }}
         />
       )}
     </div>

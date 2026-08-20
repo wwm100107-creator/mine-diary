@@ -1,0 +1,226 @@
+/* src/components/NotificationPermissionModal.module.css */
+/* Cute Pixel Glass Theme for Push Notification Prompt */
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(45, 27, 34, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-modal, 1000);
+  padding: 16px;
+  animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modalCard {
+  position: relative;
+  background: #FFFFFF;
+  border: 3px solid #FF8FAB;
+  border-radius: 24px;
+  box-shadow: 0 12px 36px rgba(255, 143, 171, 0.35),
+              0 4px 12px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  max-width: 400px;
+  padding: 32px 24px 24px;
+  text-align: center;
+  box-sizing: border-box;
+  animation: cardPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  overflow: hidden;
+}
+
+@keyframes cardPop {
+  from {
+    opacity: 0;
+    transform: scale(0.88) translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.topSparkleAura {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: linear-gradient(90deg, #FF8FAB 0%, #FFB7C5 50%, #FF8FAB 100%);
+}
+
+.iconWrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.iconBubble {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #FFF0F5 0%, #FFE4EC 100%);
+  border: 2.5px solid #FF8FAB;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 16px rgba(255, 143, 171, 0.3);
+  animation: floatBubble 2.5s ease-in-out infinite alternate;
+}
+
+@keyframes floatBubble {
+  0% { transform: translateY(0) rotate(-3deg); }
+  100% { transform: translateY(-6px) rotate(3deg); }
+}
+
+.mainIcon {
+  font-size: 32px;
+  animation: ringBell 2s infinite ease-in-out;
+  transform-origin: top center;
+}
+
+@keyframes ringBell {
+  0%, 65%, 100% { transform: rotate(0); }
+  70% { transform: rotate(14deg); }
+  75% { transform: rotate(-12deg); }
+  80% { transform: rotate(10deg); }
+  85% { transform: rotate(-6deg); }
+  90% { transform: rotate(3deg); }
+}
+
+.subIcon {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  font-size: 20px;
+  animation: pulseHeart 1.4s infinite alternate ease-in-out;
+}
+
+@keyframes pulseHeart {
+  0% { transform: scale(0.9); }
+  100% { transform: scale(1.2); }
+}
+
+.title {
+  font-family: var(--font-pixel, monospace);
+  font-size: 16px;
+  color: #FF5E7E;
+  margin: 0 0 10px;
+  letter-spacing: 0.02em;
+}
+
+.description {
+  font-family: var(--font-ui, sans-serif);
+  font-size: 13px;
+  line-height: 1.6;
+  color: #5C4B51;
+  margin: 0 0 18px;
+}
+
+.featureGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 22px;
+  background: #FFF8FA;
+  border: 1.5px dashed #FFCCD7;
+  border-radius: 14px;
+  padding: 12px 14px;
+}
+
+.featureTag {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #6E535C;
+  font-weight: 500;
+  text-align: left;
+}
+
+.featureTag span {
+  font-size: 14px;
+}
+
+.actionRow {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.dismissBtn {
+  flex: 1;
+  background: #F5EBEF;
+  border: 1.5px solid #E5D5DB;
+  border-radius: 12px;
+  color: #8C737C;
+  padding: 12px 16px;
+  font-family: var(--font-ui, sans-serif);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.dismissBtn:hover:not(:disabled) {
+  background: #EBDCE2;
+  color: #5C4B51;
+}
+
+.grantBtn {
+  flex: 1.4;
+  background: linear-gradient(135deg, #FF8FAB 0%, #FF5E7E 100%);
+  border: none;
+  border-radius: 12px;
+  color: #FFFFFF;
+  padding: 12px 18px;
+  font-family: var(--font-pixel, monospace);
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(255, 94, 126, 0.4);
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.grantBtn:hover:not(:disabled) {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 6px 18px rgba(255, 94, 126, 0.55);
+}
+
+.grantBtn:active:not(:disabled) {
+  transform: translateY(0) scale(0.98);
+}
+
+.successBtn {
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 480px) {
+  .modalCard {
+    padding: 26px 18px 20px;
+    border-radius: 20px;
+  }
+  .title {
+    font-size: 15px;
+  }
+  .description {
+    font-size: 12.5px;
+  }
+  .actionRow {
+    flex-direction: column-reverse;
+  }
+  .grantBtn, .dismissBtn {
+    width: 100%;
+  }
+}
