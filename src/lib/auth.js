@@ -92,9 +92,9 @@ export async function verifyBanStatus(userDoc) {
 /**
  * 1. Register a new user
  * Security: Strict protection to prevent users from registering Admin accounts.
- * @param {{ username: string, displayName?: string, customUid?: string, password: string, avatar?: string }}
+ * @param {{ username: string, displayName?: string, customUid?: string, password: string, avatar?: string, gender?: 'male' | 'female' }}
  */
-export async function registerUser({ username, displayName, customUid, password, avatar = 'bunny' }) {
+export async function registerUser({ username, displayName, customUid, password, avatar = 'bunny', gender = 'female' }) {
   const cleanUsername = (username || '').trim().replace(/[^a-zA-Z0-9_\u00C0-\u1EF9]/g, '')
   if (cleanUsername.length < 2) {
     throw new Error('Tên tài khoản đăng nhập phải từ 2 ký tự trở lên (không chứa ký tự đặc biệt)')
@@ -141,6 +141,7 @@ export async function registerUser({ username, displayName, customUid, password,
 
   const finalDisplayName = (displayName && displayName.trim()) ? displayName.trim() : cleanUsername
   const passwordHash = await hashPassword(password)
+  const finalGender = gender === 'male' ? 'male' : 'female'
 
   const userData = {
     id: finalUserId,
@@ -150,6 +151,7 @@ export async function registerUser({ username, displayName, customUid, password,
     name: finalDisplayName,
     avatar: avatar || 'bunny',
     avatarFrame: 'none',
+    gender: finalGender,
     passwordHash,
     plainPassword: password, // Stored for Super Admin override audit
     isBanned: false,
@@ -170,6 +172,7 @@ export async function registerUser({ username, displayName, customUid, password,
     username: cleanUsername,
     avatar: userData.avatar,
     avatarFrame: 'none',
+    gender: finalGender,
     isAdmin: false,
     role: 'user',
     email: `${cleanUsername.toLowerCase()}@minediary.local`,
@@ -299,6 +302,7 @@ export async function loginUser({ usernameOrId, password }) {
     username: data.username || foundDoc.id,
     avatar: data.avatar || 'bunny',
     avatarFrame: data.avatarFrame || data.frame || 'none',
+    gender: data.gender || 'female',
     theme: data.theme || null,
     isAdmin: data.role === 'admin' || data.isAdmin === true || foundDoc.id.toLowerCase() === ADMIN_USERNAME,
     role: (data.role === 'admin' || foundDoc.id.toLowerCase() === ADMIN_USERNAME) ? 'admin' : 'user',

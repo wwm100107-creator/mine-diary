@@ -208,10 +208,13 @@ export const getChatId = (a, b) => [a, b].sort().join('__')
  * Send a message in realtime.
  * If chat room does not exist yet, initializes with status: 'pending' and initiatorId: myId.
  */
-export async function sendChatMessage(myId, targetId, text) {
+export async function sendChatMessage(myId, targetId, text, options = {}) {
   const cId = getChatId(myId, targetId)
   const chatDocRef = doc(db, 'chats', cId)
   const snap = await getDoc(chatDocRef)
+
+  const isSystem = options.isSystemMessage || false
+  const msgType = options.type || (isSystem ? 'system' : 'text')
 
   if (!snap.exists()) {
     // 1. First message: Create room with status 'pending' & initiatorId
@@ -238,6 +241,9 @@ export async function sendChatMessage(myId, targetId, text) {
   await addDoc(collection(db, 'chats', cId, 'messages'), {
     senderId: myId,
     text: text.trim(),
+    isSystemMessage: isSystem,
+    type: msgType,
+    metadata: options.metadata || null,
     createdAt: serverTimestamp(),
   })
 }
@@ -343,6 +349,183 @@ export function subscribeToUserChats(myId, callback) {
   })
 }
 
+// ── Relationships System ───────────────────────────────────────────────────
+
+export const RELATIONSHIP_TYPES = [
+  { id: 'couple', label: 'Cặp đôi', icon: '💖', desc: 'Người yêu / Bạn đời' },
+  { id: 'bros',   label: 'Huynh đệ', icon: '🤝', desc: 'Anh em chí cốt' },
+  { id: 'sis',    label: 'Tỷ muội',  icon: '👭', desc: 'Chị em kết nghĩa' },
+  { id: 'master', label: 'Sư đồ',    icon: '👑', desc: 'Sư phụ & Đệ tử' },
+  { id: 'custom', label: 'Tùy chỉnh', icon: '🌸', desc: 'Tên & Icon tùy chọn' },
+]
+
+export const getRelationshipId = (a, b) => [a, b].sort().join('__')
+
+/**
+ * Send or update a relationship request
+ */
+export async function sendRelationshipRequest({ senderId, receiverId, type = 'couple', customName = '', customIcon = '' }) {
+  const relId = getRelationshipId(senderId, receiverId)
+  const relRef = doc(db, 'relationships', relId)
+  
+  const relTypeObj = RELATIONSHIP_TYPES.find(t => t.id === type) || RELATIONSHIP_TYPES[0]
+  const finalName = (customName && customName.trim()) ? customName.trim() : relTypeObj.label
+  const finalIcon = (customIcon && customIcon.trim()) ? customIcon.trim() : relTypeObj.icon
+
+  const data = {
+    id: relId,
+    participants: [senderId, receiverId],
+    senderId,
+    receiverId,
+    type,
+    customName: finalName,
+    customIcon: finalIcon,
+    status: 'pending',
+    shareCycleData: false,
+    cancelRequesterId: null,
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  }
+
+  await setDoc(relRef, data, { merge: true })
+  return data
+}
+
+/**
+ * Accept a relationship request.
+ * If couple type, shareCycleData can be set to true/false.
+ */
+export async function acceptRelationshipRequest(relId, shareCycleData = false) {
+  const relRef = doc(db, 'relationships', relId)
+  await setDoc(relRef, {
+    status: 'accepted',
+    shareCycleData: Boolean(shareCycleData),
+    cancelRequesterId: null,
+    updatedAt: serverTimestamp(),
+  }, { merge: true })
+}
+
+/**
+ * Decline a relationship request
+ */
+export async function declineRelationshipRequest(relId) {
+  const relRef = doc(db, 'relationships', relId)
+  await setDoc(relRef, {
+    status: 'declined',
+    cancelRequesterId: null,
+    updatedAt: serverTimestamp(),
+  }, { merge: true })
+}
+
+/**
+ * Request to cancel an existing relationship (sets status to 'cancel_pending')
+ */
+export async function requestCancelRelationship(relId, requesterId) {
+  const relRef = doc(db, 'relationships', relId)
+  await setDoc(relRef, {
+    status: 'cancel_pending',
+    cancelRequesterId: requesterId,
+    updatedAt: serverTimestamp(),
+  }, { merge: true })
+}
+
+/**
+ * Confirm cancellation of a relationship (dissolves the relationship)
+ */
+export async function confirmCancelRelationship(relId) {
+  const relRef = doc(db, 'relationships', relId)
+  await setDoc(relRef, {
+    status: 'cancelled',
+    shareCycleData: false,
+    cancelRequesterId: null,
+    updatedAt: serverTimestamp(),
+  }, { merge: true })
+}
+
+/**
+ * Cancel the cancellation request (keep relationship)
+ */
+export async function abortCancelRelationship(relId) {
+  const relRef = doc(db, 'relationships', relId)
+  await setDoc(relRef, {
+    status: 'accepted',
+    cancelRequesterId: null,
+    updatedAt: serverTimestamp(),
+  }, { merge: true })
+}
+
+/**
+ * Subscribe to active relationship between two users in realtime
+ */
+export function subscribeToRelationship(uidA, uidB, callback) {
+  if (!uidA || !uidB) return () => {}
+  const relId = getRelationshipId(uidA, uidB)
+  const relRef = doc(db, 'relationships', relId)
+  return onSnapshot(relRef, (snap) => {
+    if (snap.exists()) {
+      callback({ id: snap.id, ...snap.data() })
+    } else {
+      callback(null)
+    }
+  }, (err) => {
+    console.error('Relationship subscription error:', err)
+  })
+}
+
+/**
+ * Subscribe to all relationships of a user
+ */
+export function subscribeToUserRelationships(userId, callback) {
+  if (!userId) return () => {}
+  const q = query(
+    collection(db, 'relationships'),
+    where('participants', 'array-contains', userId)
+  )
+  return onSnapshot(q, (snapshot) => {
+    const rels = snapshot.docs.map(d => ({ id: d.id, ...d.data() }))
+    callback(rels)
+  }, (err) => {
+    console.error('User relationships subscription error:', err)
+  })
+}
+
+// ── Cycle Data Sync for Partner Sharing ─────────────────────────────────────
+
+/**
+ * Sync user's cycle marks and custom icons to Firestore so partner can view
+ */
+export async function syncUserCycleData(userId, { markedDates = [], customIcons = [], symptoms = {} }) {
+  if (!userId) return
+  try {
+    const cycleRef = doc(db, 'users', userId, 'health', 'cycleData')
+    await setDoc(cycleRef, {
+      markedDates,
+      customIcons,
+      symptoms,
+      updatedAt: serverTimestamp(),
+    }, { merge: true })
+  } catch (err) {
+    console.error('Error syncing cycle data to Firestore:', err)
+  }
+}
+
+/**
+ * Subscribe to partner's synced cycle data
+ */
+export function subscribeToPartnerCycleData(partnerId, callback) {
+  if (!partnerId) return () => {}
+  const cycleRef = doc(db, 'users', partnerId, 'health', 'cycleData')
+  return onSnapshot(cycleRef, (snap) => {
+    if (snap.exists()) {
+      callback(snap.data())
+    } else {
+      callback(null)
+    }
+  }, (err) => {
+    console.warn('Partner cycle data subscription:', err)
+  })
+}
+
 // ── Local recent chats cache (fast boot) ──────────────────────────────────────
 
 const recentKey = (userId) => `minediary:recent_chats:${userId}`
@@ -378,3 +561,4 @@ export function saveRecentChat(userId, partner, status = 'accepted') {
     console.error('Save recent chat error:', e)
   }
 }
+

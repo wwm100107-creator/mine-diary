@@ -777,6 +777,248 @@
 }
 
 /* ══════════════════════════════════════════════
+   RELATIONSHIP & SYSTEM MESSAGES STYLES
+   ══════════════════════════════════════════════ */
+.relationshipBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: linear-gradient(135deg, #FFF0F5, #FFE4EC);
+  border: 1.5px solid #FF8FAB;
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-family: var(--font-pixel);
+  font-size: 10px;
+  letter-spacing: 0.03em;
+  color: #D81B60;
+  cursor: pointer;
+  box-shadow: 1px 1px 0 #FFB7C5;
+  transition: all 0.15s ease;
+}
+
+.relationshipBadge:hover {
+  transform: translateY(-1px) scale(1.04);
+  background: #FFE0EB;
+}
+
+.setRelBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #FFF;
+  border: 1.5px dashed #FF8FAB;
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-family: var(--font-pixel);
+  font-size: 10px;
+  color: #FF5E7E;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.setRelBtn:hover {
+  background: #FFF0F5;
+  border-style: solid;
+  transform: translateY(-1px);
+}
+
+/* System Message Card in Message Stream */
+.systemMessageRow {
+  display: flex;
+  justify-content: center;
+  margin: 12px 0;
+  width: 100%;
+}
+
+.systemMessageCard {
+  max-width: 85%;
+  background: linear-gradient(135deg, #FFF5F8 0%, #FFF0F5 50%, #F5F0FF 100%);
+  border: 1.5px solid #FFB7C5;
+  border-radius: 12px;
+  padding: 8px 16px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(255, 143, 171, 0.2), 2px 2px 0 #FFD0E3;
+  animation: systemPop 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes systemPop {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.systemMessageContent {
+  font-size: 12px;
+  font-weight: 600;
+  color: #9C27B0;
+  line-height: 1.4;
+}
+
+.systemMessageTime {
+  display: block;
+  font-size: 9px;
+  color: var(--color-ink-light);
+  margin-top: 4px;
+}
+
+/* Relationship Pending / Cancellation Action Banner */
+.relationshipActionBanner {
+  background: linear-gradient(135deg, #FFF0F5 0%, #FFE0EB 100%);
+  border: 2px solid #FF8FAB;
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin: 10px 14px;
+  box-shadow: 0 4px 12px rgba(255, 143, 171, 0.25), 2px 2px 0 #FF8FAB;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  animation: viewFadeIn 0.3s ease;
+}
+
+.relationshipActionTitle {
+  font-family: var(--font-pixel);
+  font-size: 12px;
+  color: #D81B60;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.relationshipActionDesc {
+  font-size: 12px;
+  color: var(--color-ink);
+  line-height: 1.4;
+}
+
+.relationshipActionButtons {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.relAcceptBtn {
+  background: #FF5E7E;
+  color: #FFF;
+  border: 1.5px solid #D81B60;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-family: var(--font-pixel);
+  font-size: 10px;
+  cursor: pointer;
+  box-shadow: 1px 1px 0 #B71C1C;
+  transition: all 0.15s ease;
+}
+
+.relAcceptBtn:hover {
+  background: #E91E63;
+  transform: translateY(-1px);
+}
+
+.relDeclineBtn {
+  background: #FFF;
+  color: var(--color-ink-soft);
+  border: 1.5px solid var(--color-border-mid);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-family: var(--font-pixel);
+  font-size: 10px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.relDeclineBtn:hover {
+  background: #FFF0F2;
+  border-color: #FFAEB8;
+}
+
+/* Modals */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(45, 20, 35, 0.65);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+  animation: modalFadeIn 0.2s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modalContent {
+  width: 100%;
+  max-width: 440px;
+  background: #FFF;
+  border: 3px solid #FF8FAB;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 6px 6px 0 #FF8FAB, 0 16px 32px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.modalTitle {
+  font-family: var(--font-pixel);
+  font-size: 14px;
+  color: #D81B60;
+  text-transform: uppercase;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.relTypeGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 8px;
+}
+
+.relTypeCard {
+  border: 2px solid var(--color-border-mid);
+  border-radius: 10px;
+  padding: 10px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  background: #FFF;
+  transition: all 0.15s ease;
+  text-align: center;
+}
+
+.relTypeCardSelected {
+  border-color: #FF5E7E !important;
+  background: #FFF0F5 !important;
+  box-shadow: 2px 2px 0 #FF8FAB;
+  transform: translateY(-2px);
+}
+
+.relTypeIcon {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.relTypeLabel {
+  font-family: var(--font-pixel);
+  font-size: 11px;
+  font-weight: bold;
+  color: var(--color-ink);
+}
+
+.relTypeDesc {
+  font-size: 9px;
+  color: var(--color-ink-light);
+}
+
+/* ══════════════════════════════════════════════
    RESPONSIVE DESIGN (MOBILE & TABLET)
    ══════════════════════════════════════════════ */
 @media (max-width: 768px) {
@@ -812,3 +1054,4 @@
     align-items: center;
   }
 }
+

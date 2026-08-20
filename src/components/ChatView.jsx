@@ -10,8 +10,24 @@ import {
   saveRecentChat,
   acceptChatRequest,
   declineChatRequest,
+  RELATIONSHIP_TYPES,
+  sendRelationshipRequest,
+  acceptRelationshipRequest,
+  declineRelationshipRequest,
+  requestCancelRelationship,
+  confirmCancelRelationship,
+  abortCancelRelationship,
+  subscribeToRelationship,
 } from '../lib/social'
 import s from './ChatView.module.css'
+
+function normalizeText(text) {
+  return (text || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim()
+}
 
 export default function ChatView({ user }) {
   // ── State ──
@@ -24,6 +40,14 @@ export default function ChatView({ user }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [copied, setCopied] = useState(false)
+
+  // Relationship States
+  const [relationship, setRelationship] = useState(null)
+  const [isSetRelModalOpen, setIsSetRelModalOpen] = useState(false)
+  const [relType, setRelType] = useState('couple')
+  const [customRelName, setCustomRelName] = useState('')
+  const [customRelIcon, setCustomRelIcon] = useState('')
+  const [isShareConfirmModalOpen, setIsShareConfirmModalOpen] = useState(false)
 
   // Multi-result search state
   const [searchResults, setSearchResults] = useState([])
@@ -98,9 +122,14 @@ export default function ChatView({ user }) {
       setRoomData(room)
     })
 
+    const unsubRel = subscribeToRelationship(user.id, activePartner.id, (rel) => {
+      setRelationship(rel)
+    })
+
     return () => {
       unsubMessages?.()
       unsubRoom?.()
+      unsubRel?.()
     }
   }, [user?.id, activePartner?.id])
 
@@ -167,11 +196,33 @@ export default function ChatView({ user }) {
     setError('')
   }
 
-  // Send message
+  // Send message with Regex Bot Listener (Hủy Set)
   const handleSendMessage = useCallback(async (e) => {
     e?.preventDefault()
     const text = msgText.trim()
     if (!text || !user?.id || !activePartner?.id) return
+
+    // ── Bot Chat Listener: Regex check for "huy set" ──
+    const normalized = normalizeText(text)
+    const cancelSetRegex = /\b(huy\s+set(\s+quan\s+he)?|bo\s+set|xoa\s+set|cancel\s+set)\b/i
+
+    if (cancelSetRegex.test(normalized)) {
+      setMsgText('')
+      if (!relationship || relationship.status !== 'accepted') {
+        alert('Hiện tại 2 bạn chưa có mối quan hệ nào đang hoạt động để hủy set!')
+        return
+      }
+      try {
+        await requestCancelRelationship(relationship.id, user.id)
+        await sendChatMessage(user.id, activePartner.id, `🔔 ${user.displayName || user.name} đã yêu cầu HỦY SET mối quan hệ (${relationship.customIcon} ${relationship.customName}).`, {
+          isSystemMessage: true,
+          type: 'cancel_relationship_request',
+        })
+      } catch (err) {
+        console.error('Request cancel relationship error:', err)
+      }
+      return
+    }
 
     setMsgText('')
     try {
@@ -179,7 +230,7 @@ export default function ChatView({ user }) {
     } catch (err) {
       console.error('Send message error:', err)
     }
-  }, [msgText, user?.id, activePartner?.id])
+  }, [msgText, user?.id, user?.displayName, user?.name, activePartner?.id, relationship])
 
   // Accept Message Request
   const handleAcceptRequest = async () => {
@@ -197,6 +248,94 @@ export default function ChatView({ user }) {
     await declineChatRequest(user.id, activePartner.id)
     setActivePartner(null)
     setChatTab('requests')
+  }
+
+  // ── Relationship Actions ──
+  const handleSendRelRequest = async () => {
+    if (!user?.id || !activePartner?.id) return
+    try {
+      const relData = await sendRelationshipRequest({
+        senderId: user.id,
+        receiverId: activePartner.id,
+        type: relType,
+        customName: customRelName,
+        customIcon: customRelIcon,
+      })
+      await sendChatMessage(user.id, activePartner.id, `💌 Đã gửi lời mời Set Mối Quan Hệ "${relData.customIcon} ${relData.customName}".`, {
+        isSystemMessage: true,
+        type: 'relationship_request',
+      })
+      setIsSetRelModalOpen(false)
+      setCustomRelName('')
+      setCustomRelIcon('')
+    } catch (err) {
+      console.error('Send rel request error:', err)
+    }
+  }
+
+  const handleTriggerAcceptRel = () => {
+    if (!relationship) return
+    // If Couple type & current user is Female, ask for cycle sharing confirmation
+    const isFemale = user?.gender === 'female' || !user?.gender
+    if (relationship.type === 'couple' && isFemale) {
+      setIsShareConfirmModalOpen(true)
+    } else {
+      handleFinalAcceptRel(false)
+    }
+  }
+
+  const handleFinalAcceptRel = async (shareCycle = false) => {
+    if (!relationship) return
+    try {
+      await acceptRelationshipRequest(relationship.id, shareCycle)
+      const shareMsg = shareCycle ? ' (Đã bật chia sẻ thông tin chu kỳ 🌸)' : ''
+      await sendChatMessage(user.id, activePartner.id, `🎉 2 bạn đã chính thức thiết lập mối quan hệ "${relationship.customIcon} ${relationship.customName}"!${shareMsg}`, {
+        isSystemMessage: true,
+        type: 'relationship_accepted',
+      })
+      setIsShareConfirmModalOpen(false)
+    } catch (err) {
+      console.error('Accept rel error:', err)
+    }
+  }
+
+  const handleDeclineRel = async () => {
+    if (!relationship) return
+    try {
+      await declineRelationshipRequest(relationship.id)
+      await sendChatMessage(user.id, activePartner.id, `✕ Lời mời set mối quan hệ "${relationship.customIcon} ${relationship.customName}" đã bị từ chối.`, {
+        isSystemMessage: true,
+        type: 'relationship_declined',
+      })
+    } catch (err) {
+      console.error('Decline rel error:', err)
+    }
+  }
+
+  const handleConfirmCancelRel = async () => {
+    if (!relationship) return
+    try {
+      await confirmCancelRelationship(relationship.id)
+      await sendChatMessage(user.id, activePartner.id, `💔 Mối quan hệ giữa 2 bạn đã chính thức được hủy bỏ.`, {
+        isSystemMessage: true,
+        type: 'relationship_cancelled',
+      })
+    } catch (err) {
+      console.error('Confirm cancel rel error:', err)
+    }
+  }
+
+  const handleAbortCancelRel = async () => {
+    if (!relationship) return
+    try {
+      await abortCancelRelationship(relationship.id)
+      await sendChatMessage(user.id, activePartner.id, `✨ Yêu cầu hủy set đã được gỡ bỏ, mối quan hệ vẫn được giữ nguyên!`, {
+        isSystemMessage: true,
+        type: 'relationship_kept',
+      })
+    } catch (err) {
+      console.error('Abort cancel rel error:', err)
+    }
   }
 
   // Copy own ID
@@ -474,9 +613,98 @@ export default function ChatView({ user }) {
                 </div>
 
                 <div className={s.chatHeaderRight}>
-                  <span className={s.onlineBadge}>● Đang hoạt động</span>
+                  {/* Relationship Status Badge or Set Button */}
+                  {relationship?.status === 'accepted' ? (
+                    <div
+                      className={s.relationshipBadge}
+                      title={`Mối quan hệ: ${relationship.customName}`}
+                      onClick={() => setIsSetRelModalOpen(true)}
+                    >
+                      <span>{relationship.customIcon || '💖'}</span>
+                      <span>{relationship.customName}</span>
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      className={s.setRelBtn}
+                      onClick={() => {
+                        setRelType('couple')
+                        setCustomRelName('')
+                        setCustomRelIcon('')
+                        setIsSetRelModalOpen(true)
+                      }}
+                      title="Thiết lập mối quan hệ đặc biệt"
+                    >
+                      <span>💖</span> Set Quan Hệ
+                    </button>
+                  )}
+                  <span className={s.onlineBadge}>● Hoạt động</span>
                 </div>
               </div>
+
+              {/* Relationship Pending Request / Cancellation Request Action Banner */}
+              {relationship?.status === 'pending' && (
+                <div className={s.relationshipActionBanner}>
+                  <div className={s.relationshipActionTitle}>
+                    <span>💌</span> YÊU CẦU THIẾT LẬP MỐI QUAN HỆ
+                  </div>
+                  {relationship.receiverId === user.id ? (
+                    <>
+                      <div className={s.relationshipActionDesc}>
+                        <strong>{activePartner.displayName}</strong> muốn set mối quan hệ{' '}
+                        <strong>{relationship.customIcon} {relationship.customName}</strong> với bạn.
+                      </div>
+                      <div className={s.relationshipActionButtons}>
+                        <button type="button" className={s.relAcceptBtn} onClick={handleTriggerAcceptRel}>
+                          Đồng ý kết nối ✓
+                        </button>
+                        <button type="button" className={s.relDeclineBtn} onClick={handleDeclineRel}>
+                          Từ chối ✕
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <div className={s.relationshipActionDesc}>
+                      Bạn đã gửi lời mời set mối quan hệ <strong>{relationship.customIcon} {relationship.customName}</strong>. Đang chờ đối phương phản hồi...
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {relationship?.status === 'cancel_pending' && (
+                <div className={s.relationshipActionBanner} style={{ borderStyle: 'dashed', borderColor: '#D32F2F', background: '#FFF0F2' }}>
+                  <div className={s.relationshipActionTitle} style={{ color: '#D32F2F' }}>
+                    <span>⚠️</span> YÊU CẦU HỦY SET MỐI QUAN HỆ
+                  </div>
+                  {relationship.cancelRequesterId !== user.id ? (
+                    <>
+                      <div className={s.relationshipActionDesc}>
+                        <strong>{activePartner.displayName}</strong> đã gửi yêu cầu hủy set mối quan hệ{' '}
+                        <strong>{relationship.customIcon} {relationship.customName}</strong>. Bạn có đồng ý không?
+                      </div>
+                      <div className={s.relationshipActionButtons}>
+                        <button type="button" className={s.relAcceptBtn} style={{ background: '#D32F2F', borderColor: '#B71C1C' }} onClick={handleConfirmCancelRel}>
+                          Đồng ý hủy set 💔
+                        </button>
+                        <button type="button" className={s.relDeclineBtn} onClick={handleAbortCancelRel}>
+                          Giữ lại mối quan hệ ✨
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className={s.relationshipActionDesc}>
+                        Bạn đã gửi yêu cầu hủy set mối quan hệ. Đang chờ <strong>{activePartner.displayName}</strong> xác nhận...
+                      </div>
+                      <div className={s.relationshipActionButtons}>
+                        <button type="button" className={s.relDeclineBtn} onClick={handleAbortCancelRel}>
+                          Thu hồi yêu cầu hủy
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </div>
+              )}
 
               {/* Chat Message Scrollable Area */}
               <div className={s.messageArea} role="log" aria-label="Tin nhắn">
@@ -504,6 +732,19 @@ export default function ChatView({ user }) {
                 ) : (
                   messages.map((msg) => {
                     const isSent = msg.senderId === user.id
+                    const isSystem = msg.isSystemMessage || msg.type === 'system' || msg.type === 'care_reminder' || msg.type === 'cancel_relationship_request'
+
+                    if (isSystem) {
+                      return (
+                        <div key={msg.id} className={s.systemMessageRow}>
+                          <div className={s.systemMessageCard}>
+                            <div className={s.systemMessageContent}>{msg.text}</div>
+                            <span className={s.systemMessageTime}>{formatTime(msg.createdAt)}</span>
+                          </div>
+                        </div>
+                      )
+                    }
+
                     return (
                       <div
                         key={msg.id}
@@ -552,7 +793,7 @@ export default function ChatView({ user }) {
                     ref={inputRef}
                     type="text"
                     className={s.chatInput}
-                    placeholder="Gõ tin nhắn pixel..."
+                    placeholder="Gõ tin nhắn... (Gõ 'huy set' để hủy mối quan hệ)"
                     value={msgText}
                     onChange={(e) => setMsgText(e.target.value)}
                     autoFocus
@@ -581,6 +822,114 @@ export default function ChatView({ user }) {
         </section>
 
       </div>
+
+      {/* ── Modal: Set Quan Hệ ── */}
+      {isSetRelModalOpen && (
+        <div className={s.modalOverlay} onClick={() => setIsSetRelModalOpen(false)}>
+          <div className={s.modalContent} onClick={(e) => e.stopPropagation()}>
+            <h3 className={s.modalTitle}>
+              <span>💖</span> Thiết Lập Mối Quan Hệ Đặc Biệt
+            </h3>
+            <p style={{ fontSize: 12, color: 'var(--color-ink-soft)', margin: 0 }}>
+              Chọn loại mối quan hệ bạn muốn gắn kết cùng <strong>{activePartner?.displayName}</strong>:
+            </p>
+
+            <div className={s.relTypeGrid}>
+              {RELATIONSHIP_TYPES.map((t) => {
+                const isSelected = relType === t.id
+                return (
+                  <div
+                    key={t.id}
+                    className={`${s.relTypeCard} ${isSelected ? s.relTypeCardSelected : ''}`}
+                    onClick={() => setRelType(t.id)}
+                  >
+                    <span className={s.relTypeIcon}>{t.icon}</span>
+                    <span className={s.relTypeLabel}>{t.label}</span>
+                    <span className={s.relTypeDesc}>{t.desc}</span>
+                  </div>
+                )
+              })}
+            </div>
+
+            {/* Custom Name / Icon if custom or override */}
+            <div style={{ display: 'flex', gap: 8, flexDirection: 'column', marginTop: 4 }}>
+              <label style={{ fontSize: 11, fontWeight: 'bold', color: 'var(--color-ink)' }}>
+                Tên danh hiệu tùy chỉnh (Không bắt buộc):
+              </label>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <input
+                  type="text"
+                  placeholder="Icon (vd: 🌸)"
+                  value={customRelIcon}
+                  onChange={(e) => setCustomRelIcon(e.target.value)}
+                  style={{ width: 60, padding: '6px 8px', borderRadius: 6, border: '1.5px solid var(--color-border-mid)', textAlign: 'center', fontSize: 14 }}
+                />
+                <input
+                  type="text"
+                  placeholder="Tên danh hiệu (vd: Tri Kỷ, Đại Ca...)"
+                  value={customRelName}
+                  onChange={(e) => setCustomRelName(e.target.value)}
+                  style={{ flex: 1, padding: '6px 10px', borderRadius: 6, border: '1.5px solid var(--color-border-mid)', fontSize: 12 }}
+                />
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 10 }}>
+              <button
+                type="button"
+                className={s.relDeclineBtn}
+                onClick={() => setIsSetRelModalOpen(false)}
+              >
+                Hủy bỏ
+              </button>
+              <button
+                type="button"
+                className={s.relAcceptBtn}
+                onClick={handleSendRelRequest}
+              >
+                Gửi Lời Mời 💌
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Modal: Xác nhận chia sẻ chu kỳ (Dành cho bạn Nữ khi kết đôi) ── */}
+      {isShareConfirmModalOpen && (
+        <div className={s.modalOverlay} onClick={() => setIsShareConfirmModalOpen(false)}>
+          <div className={s.modalContent} onClick={(e) => e.stopPropagation()}>
+            <h3 className={s.modalTitle} style={{ color: '#E91E63' }}>
+              <span>🌸</span> Chia Sẻ Thông Tin Chu Kỳ?
+            </h3>
+            <p style={{ fontSize: 13, lineHeight: 1.5, color: 'var(--color-ink)', margin: 0 }}>
+              Bạn đang thiết lập quan hệ <strong>Cặp Đôi 💖</strong> với <strong>{activePartner?.displayName}</strong>.
+            </p>
+            <div style={{ background: '#FFF5F8', border: '1.5px solid #FF8FAB', borderRadius: 10, padding: 12, fontSize: 12, color: '#D81B60' }}>
+              ✨ <strong>Bạn có đồng ý chia sẻ thông tin chu kỳ & sức khỏe cho đối phương không?</strong><br />
+              Nếu đồng ý, người thương có thể theo dõi ngày dự kiến và gửi những lời nhắc quan tâm, chăm sóc bạn!
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 8 }}>
+              <button
+                type="button"
+                className={s.relAcceptBtn}
+                style={{ padding: '10px 14px', fontSize: 11 }}
+                onClick={() => handleFinalAcceptRel(true)}
+              >
+                💖 Đồng Ý Chia Sẻ Chu Kỳ Cho Người Thương
+              </button>
+              <button
+                type="button"
+                className={s.relDeclineBtn}
+                style={{ padding: '10px 14px', fontSize: 11 }}
+                onClick={() => handleFinalAcceptRel(false)}
+              >
+                🔒 Chỉ Kết Đôi, Không Chia Sẻ Dữ Liệu
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   )
 }

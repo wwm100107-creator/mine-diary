@@ -108,6 +108,7 @@ export default function AuthLanding({
         customUid: registerInput.customUid,
         password: registerInput.password,
         avatar: registerInput.avatar,
+        gender: registerInput.gender || 'female',
       })
       onAuthSuccess?.(user)
     } catch (err) {
@@ -339,7 +340,63 @@ export default function AuthLanding({
               </div>
             </div>
 
-            {/* 4. Avatar Selector Trigger */}
+            {/* 4. Giới Tính (Gender: Nữ / Nam) */}
+            <div className={s.inputGroup}>
+              <label className={s.inputLabel}>
+                <span>Giới Tính</span>
+                <span className={s.tagPreview}>Hỗ trợ theo dõi chu kỳ</span>
+              </label>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                <button
+                  type="button"
+                  onClick={() => setRegisterInput({ ...registerInput, gender: 'female' })}
+                  style={{
+                    padding: '8px 12px',
+                    borderRadius: '8px',
+                    fontFamily: 'var(--font-pixel)',
+                    fontSize: '12px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '6px',
+                    border: registerInput.gender === 'female' ? '2px solid #FF5E7E' : '1.5px solid var(--color-border-mid)',
+                    background: registerInput.gender === 'female' ? '#FFE3EC' : '#FFF',
+                    color: registerInput.gender === 'female' ? '#FF1E56' : 'var(--color-ink-soft)',
+                    boxShadow: registerInput.gender === 'female' ? '0 2px 8px rgba(255, 94, 126, 0.25)' : 'none',
+                    fontWeight: registerInput.gender === 'female' ? 'bold' : 'normal',
+                    transition: 'all 0.15s ease',
+                  }}
+                >
+                  <span>♀</span> Nữ (Mặc định)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setRegisterInput({ ...registerInput, gender: 'male' })}
+                  style={{
+                    padding: '8px 12px',
+                    borderRadius: '8px',
+                    fontFamily: 'var(--font-pixel)',
+                    fontSize: '12px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '6px',
+                    border: registerInput.gender === 'male' ? '2px solid #0284C7' : '1.5px solid var(--color-border-mid)',
+                    background: registerInput.gender === 'male' ? '#E0F2FE' : '#FFF',
+                    color: registerInput.gender === 'male' ? '#0369A1' : 'var(--color-ink-soft)',
+                    boxShadow: registerInput.gender === 'male' ? '0 2px 8px rgba(2, 132, 199, 0.25)' : 'none',
+                    fontWeight: registerInput.gender === 'male' ? 'bold' : 'normal',
+                    transition: 'all 0.15s ease',
+                  }}
+                >
+                  <span>♂</span> Nam
+                </button>
+              </div>
+            </div>
+
+            {/* 5. Avatar Selector Trigger */}
             <div className={s.inputGroup}>
               <label className={s.inputLabel}>Avatar Pixel Của Bạn</label>
               <div className={s.avatarPickerRow}>
@@ -359,7 +416,7 @@ export default function AuthLanding({
               </div>
             </div>
 
-            {/* 5. Mật Khẩu */}
+            {/* 6. Mật Khẩu */}
             <div className={s.inputGroup}>
               <label className={s.inputLabel}>Mật Khẩu</label>
               <div className={s.inputFieldWrap}>
