@@ -614,30 +614,30 @@
 }
 
 .frameOptionCard.frameLocked {
-  background: #F1F5F9 !important;
+  background: #FFFFFF !important;
   border-color: #CBD5E1 !important;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04) !important;
-  cursor: not-allowed !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05) !important;
+  cursor: pointer;
+  position: relative;
 }
 
 .frameOptionCard.frameLocked:hover {
-  transform: none !important;
+  transform: translateY(-2px) !important;
   border-color: #94A3B8 !important;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
 }
 
-.frameOptionCard.frameLocked .miniFramePreview,
-.frameOptionCard.frameLocked .miniFramePreview svg,
-.frameOptionCard.frameLocked .miniFramePreview img,
-.frameOptionCard.frameLocked .miniFramePreview canvas,
-.frameOptionCard.frameLocked .miniFramePreview div {
-  filter: grayscale(100%) brightness(0.85) contrast(80%) opacity(0.55) !important;
-  -webkit-filter: grayscale(100%) brightness(0.85) contrast(80%) opacity(0.55) !important;
+/* 100% Crisp Monochrome/Greyscale Filter: Full details, sharp contrast, full animations, but converted to Black & White */
+.frameOptionCard.frameLocked .miniFramePreview {
+  filter: grayscale(100%) contrast(105%) !important;
+  -webkit-filter: grayscale(100%) contrast(105%) !important;
+  opacity: 1 !important;
   transition: filter 0.2s ease;
 }
 
 .frameOptionCard.frameLocked .frameCardName {
-  color: #94A3B8 !important;
+  color: #475569 !important;
+  font-weight: 600;
 }
 
 .lockOverlayBadge {
