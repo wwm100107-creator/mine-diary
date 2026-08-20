@@ -49,6 +49,7 @@ export default function ChatView({ user }) {
   const [customRelIcon, setCustomRelIcon] = useState('')
   const [customRelImg, setCustomRelImg] = useState('')
   const [senderShareCycle, setSenderShareCycle] = useState(false)
+  const [receiverShareCycle, setReceiverShareCycle] = useState(false)
   const [isShareConfirmModalOpen, setIsShareConfirmModalOpen] = useState(false)
 
   // 1x1 Image upload handler for relationship icon
@@ -749,8 +750,30 @@ export default function ChatView({ user }) {
                         <strong>{activePartner.displayName}</strong> muốn set mối quan hệ{' '}
                         <strong>{relationship.customIcon} {relationship.customName}</strong> với bạn.
                       </div>
+
+                      {/* Female Receiver: Optional Cycle Sharing Switch */}
+                      {(user?.gender === 'female' || !user?.gender) && (
+                        <div className={s.pixelToggleRow}>
+                          <div className={s.pixelToggleLabel}>
+                            <span>🌸</span> Cho phép đối phương theo dõi dữ liệu chu kỳ của bạn
+                          </div>
+                          <button
+                            type="button"
+                            className={`${s.pixelToggleTrack} ${receiverShareCycle ? s.pixelToggleTrackActive : ''}`}
+                            onClick={() => setReceiverShareCycle((prev) => !prev)}
+                            aria-label="Bật tắt chia sẻ chu kỳ"
+                          >
+                            <div className={s.pixelToggleThumb} />
+                          </button>
+                        </div>
+                      )}
+
                       <div className={s.relationshipActionButtons}>
-                        <button type="button" className={s.relAcceptBtn} onClick={handleTriggerAcceptRel}>
+                        <button
+                          type="button"
+                          className={s.relAcceptBtn}
+                          onClick={() => handleFinalAcceptRel(receiverShareCycle)}
+                        >
                           Đồng ý kết nối ✓
                         </button>
                         <button type="button" className={s.relDeclineBtn} onClick={handleDeclineRel}>
@@ -1023,19 +1046,18 @@ export default function ChatView({ user }) {
 
               {/* Female Sender: Optional Cycle Sharing Switch */}
               {(user?.gender === 'female' || !user?.gender) && (
-                <div style={{ background: '#FFF5F8', border: '1.5px solid #FF8FAB', borderRadius: 8, padding: '8px 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 10 }}>
-                  <div style={{ fontSize: 11, color: '#D81B60', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 5 }}>
-                    <span>🌸</span> Chia sẻ thông tin chu kỳ
+                <div className={s.pixelToggleRow}>
+                  <div className={s.pixelToggleLabel}>
+                    <span>🌸</span> Cho phép người này xem dữ liệu chu kỳ của bạn
                   </div>
-                  <label style={{ display: 'inline-flex', alignItems: 'center', cursor: 'pointer', gap: 6, fontSize: 11, color: 'var(--color-ink)', fontWeight: 600 }}>
-                    <input
-                      type="checkbox"
-                      checked={senderShareCycle}
-                      onChange={(e) => setSenderShareCycle(e.target.checked)}
-                      style={{ accentColor: '#FF5E7E', cursor: 'pointer' }}
-                    />
-                    <span>{senderShareCycle ? 'Đồng ý chia sẻ' : 'Không chia sẻ'}</span>
-                  </label>
+                  <button
+                    type="button"
+                    className={`${s.pixelToggleTrack} ${senderShareCycle ? s.pixelToggleTrackActive : ''}`}
+                    onClick={() => setSenderShareCycle((prev) => !prev)}
+                    aria-label="Cho phép người này xem dữ liệu chu kỳ của bạn"
+                  >
+                    <div className={s.pixelToggleThumb} />
+                  </button>
                 </div>
               )}
             </div>
