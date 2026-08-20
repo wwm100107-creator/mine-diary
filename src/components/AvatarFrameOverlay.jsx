@@ -4,7 +4,7 @@ import s from './AvatarFrameOverlay.module.css'
 export const AVATAR_FRAMES = [
   { id: 'none', name: 'Mặc định', icon: '🚫', desc: 'Không khung viền' },
   { id: 'god_cosmic', name: '🌌 GOD Sáng Thế', icon: '👑', desc: 'Cấp bậc Tối Thượng GOD Mode — Cực quang 6 cánh thiên thần & tinh vân vô cực' },
-  { id: 'vip10_thunder', name: '⚡ VIP 10 Lôi Thần', icon: '⚡', desc: 'Hắc Long Lôi Thần — Sấm sét tím điện quang & ma lôi chớp giật' },
+  { id: 'vip10_thunder', name: '⚡ SSSVIP Song Long', icon: '⚡', desc: 'SSSVIP Song Long Lôi Thần — Đầu rồng phong lôi, sấm sét liên tục & điện quang chớp giật' },
   { id: 'vip9_frost', name: '❄️ SSVIP Cánh Băng', icon: '❄️', desc: 'SSVIP Thiên Thần Băng Tuyết — Cánh thiên thần bạch kim & sương băng huyền ảo' },
   { id: 'vip8_fire', name: '🔥 SVIP Rồng Lửa', icon: '🔥', desc: 'SVIP Rồng vàng hoàng kim & hào quang lửa cháy bùng nổ' },
   { id: 'cyber_aura', name: '⚡ Hào Quang Lửa', icon: '✨', desc: 'Lửa vàng & điện quang chớp giật' },
@@ -126,89 +126,109 @@ function AvatarFrameOverlayComponent({ frameId = 'none', size = 36 }) {
       )}
 
       {/* ══════════════════════════════════════════════════════════════════════
-         FRAME: ⚡ VIP 10 — LÔI THẦN MA LONG (THUNDER SHADOW DRAGON SUPREME)
+         FRAME: ⚡ SSSVIP — SONG LONG LÔI THẦN (TWIN STORM DRAGONS SSSVIP)
          ══════════════════════════════════════════════════════════════════════ */}
       {frameId === 'vip10_thunder' && (
         <div className={s.vip10Container}>
-          {/* Layer 1: Electric Plasma Lightning Aura */}
+          {/* Layer 1: Continuous Lightning Storm Aura Glow */}
+          <div className={s.vip10StormAura} />
           <div className={s.vip10ThunderAura} />
 
-          {/* Layer 2: Zigzag Lightning Bolts & Electric Sparks */}
+          {/* Layer 2: Zigzag Lightning Bolts & Electric Plasma Sparks */}
           <div className={s.vip10Sparks}>
             <span className={`${s.vip10Bolt} ${s.t1}`}>⚡</span>
             <span className={`${s.vip10Bolt} ${s.t2}`}>✦</span>
             <span className={`${s.vip10Bolt} ${s.t3}`}>⚡</span>
             <span className={`${s.vip10Bolt} ${s.t4}`}>■</span>
             <span className={`${s.vip10Bolt} ${s.t5}`}>⚡</span>
+            <span className={`${s.vip10Bolt} ${s.t6}`}>✦</span>
+            <span className={`${s.vip10Bolt} ${s.t7}`}>⚡</span>
           </div>
 
-          {/* Layer 3: Dark Violet Gold Border with Electric Surge */}
-          <div className={s.vip10Border}>
+          {/* Layer 3: Dark Obsidian Outer Rim & Glowing Blue Core */}
+          <div className={s.vip10ObsidianBorder}>
+            <div className={s.vip10NeonRing} />
             <div className={s.vip10ElectricSurge} />
           </div>
 
-          {/* Layer 4: Left & Right Thunder Dragon Wings */}
-          <div className={`${s.vip10DragonWing} ${s.wingLeft}`}>
-            <svg viewBox="0 0 26 34" className={s.dragonSvg}>
-              <path d="M26,2 C18,0 8,8 2,18 C-2,24 0,28 8,32 C14,36 20,28 22,22 C24,18 26,10 26,2 Z" fill="url(#vip10DarkGrad)" />
-              <path d="M24,6 C18,6 12,12 6,20 C4,23 8,26 12,28 C16,30 20,22 22,18 Z" fill="url(#vip10LightningGrad)" />
-              {/* Lightning Strike on Wing */}
-              <polygon points="18,8 14,16 19,16 13,26 15,19 11,19" fill="#00FFFF" />
+          {/* Layer 4: Left & Right Epic Storm Dragon Heads with Glowing Red Eyes */}
+          <div className={`${s.vip10DragonHead} ${s.headLeft}`}>
+            <svg viewBox="0 0 44 48" className={s.stormDragonSvg}>
+              {/* Back Mane Spikes (Silver & Electric Blue) */}
+              <path d="M44,4 C34,0 22,6 14,14 C6,22 2,34 0,44 C10,38 20,40 28,34 C36,28 42,18 44,4 Z" fill="url(#sssvipManeGrad)" />
+              <path d="M40,10 C30,8 20,16 12,24 C6,32 6,40 14,44 C22,42 30,34 36,26 Z" fill="url(#sssvipBodyGrad)" />
+              {/* Dragon Snout & Fierce Jaws */}
+              <path d="M38,22 L24,24 L16,28 L12,24 L16,22 L10,18 L18,18 L22,14 L30,16 Z" fill="url(#sssvipBodyGrad)" stroke="#00FFFF" strokeWidth="0.8" />
+              {/* Dragon Teeth & Tongue */}
+              <polygon points="18,24 20,27 22,24" fill="#FFFFFF" />
+              <path d="M16,25 C12,28 8,30 4,28 C8,26 12,26 14,24 Z" fill="#FF4500" />
+              {/* Fierce Glowing Red/Orange Dragon Eye */}
+              <circle cx="22" cy="18" r="2.4" fill="#FF1E00" className={s.dragonEyeStorm} />
+              <circle cx="22" cy="18" r="1.1" fill="#FFE600" />
+              {/* Lightning Crackle on Horns */}
+              <polygon points="34,8 30,16 36,15 28,26 32,18 26,18" fill="#00FFFF" className={s.hornLightning} />
             </svg>
           </div>
-          <div className={`${s.vip10DragonWing} ${s.wingRight}`}>
-            <svg viewBox="0 0 26 34" className={s.dragonSvg}>
-              <path d="M0,2 C8,0 18,8 24,18 C28,24 26,28 18,32 C12,36 6,28 4,22 C2,18 0,10 0,2 Z" fill="url(#vip10DarkGrad)" />
-              <path d="M2,6 C8,6 14,12 20,20 C22,23 18,26 14,28 C10,30 6,22 4,18 Z" fill="url(#vip10LightningGrad)" />
-              {/* Lightning Strike on Wing */}
-              <polygon points="8,8 12,16 7,16 13,26 11,19 15,19" fill="#00FFFF" />
-            </svg>
-          </div>
-
-          {/* Layer 5: Top Thunder King Crown with Blood Violet Gem */}
-          <div className={s.vip10Crown}>
-            <svg viewBox="0 0 38 24" className={s.crownSvg}>
-              <defs>
-                <linearGradient id="vip10DarkGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#D8B4FE" />
-                  <stop offset="35%" stopColor="#9333EA" />
-                  <stop offset="70%" stopColor="#4C1D95" />
-                  <stop offset="100%" stopColor="#1E1B4B" />
-                </linearGradient>
-                <linearGradient id="vip10LightningGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#00FFFF" />
-                  <stop offset="50%" stopColor="#818CF8" />
-                  <stop offset="100%" stopColor="#C026D3" />
-                </linearGradient>
-                <radialGradient id="vip10BloodGemGrad" cx="50%" cy="50%" r="50%">
-                  <stop offset="0%" stopColor="#F43F5E" />
-                  <stop offset="50%" stopColor="#BE123C" />
-                  <stop offset="100%" stopColor="#4C0519" />
-                </radialGradient>
-              </defs>
-              {/* Crown Base */}
-              <path d="M4,22 L34,22 L36,18 L31,11 L25,18 L19,4 L13,18 L7,11 L2,18 Z" fill="url(#vip10DarkGrad)" stroke="#A855F7" strokeWidth="1" />
-              {/* Velvet Violet Arch */}
-              <path d="M8,20 C8,13 30,13 30,20 Z" fill="url(#vip10LightningGrad)" />
-              {/* Center Blood Violet Hex Gem */}
-              <polygon points="19,7 24,12 19,17 14,12" fill="url(#vip10BloodGemGrad)" stroke="#00FFFF" strokeWidth="1" className={s.vip10GemFlash} />
-              {/* Electric Orbs */}
-              <circle cx="7" cy="11" r="1.8" fill="#00FFFF" stroke="#A855F7" strokeWidth="0.6" />
-              <circle cx="19" cy="4" r="2.2" fill="#E879F9" stroke="#FFF" strokeWidth="0.8" />
-              <circle cx="31" cy="11" r="1.8" fill="#00FFFF" stroke="#A855F7" strokeWidth="0.6" />
+          <div className={`${s.vip10DragonHead} ${s.headRight}`}>
+            <svg viewBox="0 0 44 48" className={s.stormDragonSvg}>
+              {/* Back Mane Spikes (Silver & Electric Blue) */}
+              <path d="M0,4 C10,0 22,6 30,14 C38,22 42,34 44,44 C34,38 24,40 16,34 C8,28 2,18 0,4 Z" fill="url(#sssvipManeGrad)" />
+              <path d="M4,10 C14,8 24,16 32,24 C38,32 38,40 30,44 C22,42 14,34 8,26 Z" fill="url(#sssvipBodyGrad)" />
+              {/* Dragon Snout & Fierce Jaws */}
+              <path d="M6,22 L20,24 L28,28 L32,24 L28,22 L34,18 L26,18 L22,14 L14,16 Z" fill="url(#sssvipBodyGrad)" stroke="#00FFFF" strokeWidth="0.8" />
+              {/* Dragon Teeth & Tongue */}
+              <polygon points="26,24 24,27 22,24" fill="#FFFFFF" />
+              <path d="M28,25 C32,28 36,30 40,28 C36,26 32,26 30,24 Z" fill="#FF4500" />
+              {/* Fierce Glowing Red/Orange Dragon Eye */}
+              <circle cx="22" cy="18" r="2.4" fill="#FF1E00" className={s.dragonEyeStorm} />
+              <circle cx="22" cy="18" r="1.1" fill="#FFE600" />
+              {/* Lightning Crackle on Horns */}
+              <polygon points="10,8 14,16 8,15 16,26 12,18 18,18" fill="#00FFFF" className={s.hornLightning} />
             </svg>
           </div>
 
-          {/* Layer 6: Bottom VIP 10 Electric Ribbon Banner */}
+          {/* Layer 5: Gradients Definition */}
+          <svg width="0" height="0" style={{ position: 'absolute' }}>
+            <defs>
+              <linearGradient id="sssvipManeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#FFFFFF" />
+                <stop offset="30%" stopColor="#E0F7FA" />
+                <stop offset="65%" stopColor="#00E5FF" />
+                <stop offset="100%" stopColor="#0D47A1" />
+              </linearGradient>
+              <linearGradient id="sssvipBodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#1E293B" />
+                <stop offset="40%" stopColor="#0F172A" />
+                <stop offset="80%" stopColor="#0284C7" />
+                <stop offset="100%" stopColor="#00FFFF" />
+              </linearGradient>
+              <linearGradient id="sssvipGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#FFF9C4" />
+                <stop offset="35%" stopColor="#FFD700" />
+                <stop offset="70%" stopColor="#B45309" />
+                <stop offset="100%" stopColor="#78350F" />
+              </linearGradient>
+            </defs>
+          </svg>
+
+          {/* Layer 6: Bottom Oriental Storm Clouds, Golden Chains & SSSVIP Banner */}
           <div className={s.vip10BottomBadge}>
-            <div className={s.clawLeft}>
-              <span>▲</span><span>▲</span>
+            {/* Swirling White/Cyan Storm Clouds */}
+            <div className={s.bottomClouds}>
+              <svg viewBox="0 0 48 14" className={s.cloudsSvg}>
+                <path d="M6,10 C2,10 0,8 2,5 C4,2 8,2 10,4 C12,1 18,1 20,4 C22,1 28,1 30,4 C32,2 36,2 38,5 C40,8 38,10 34,10 Z" fill="#FFFFFF" opacity="0.9" />
+                <path d="M12,12 C8,12 6,10 8,8 C10,6 14,6 16,8 C18,5 24,5 26,8 C28,5 34,5 36,8 C38,10 36,12 32,12 Z" fill="#BAE6FD" opacity="0.75" />
+              </svg>
             </div>
-            <div className={s.clawRight}>
-              <span>▲</span><span>▲</span>
+
+            {/* Golden Chains Swag */}
+            <div className={s.goldenChains}>
+              <span>⛓</span><span>✦</span><span>⛓</span>
             </div>
+
+            {/* SSSVIP Ornate Cyber Banner */}
             <div className={s.vip10Ribbon}>
-              <span className={s.vip10Text}>VIP 10</span>
+              <span className={s.vip10Text}>SSSVIP</span>
             </div>
           </div>
         </div>

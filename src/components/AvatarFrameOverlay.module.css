@@ -283,13 +283,13 @@
 }
 
 /* ============================================
-   FRAME: ⚡ VIP 10 — LÔI THẦN MA LONG (THUNDER SHADOW DRAGON)
+   FRAME: ⚡ SSSVIP — SONG LONG LÔI THẦN (STORM DRAGONS SSSVIP)
    ============================================ */
 .vip10Container {
   position: absolute;
-  inset: -24%;
-  width: 148%;
-  height: 148%;
+  inset: -30%;
+  width: 160%;
+  height: 160%;
   pointer-events: none;
   display: flex;
   align-items: center;
@@ -297,81 +297,139 @@
   z-index: 20;
 }
 
-.vip10ThunderAura {
+/* Layer 1: Continuous Lightning Storm Aura Glow */
+.vip10StormAura {
   position: absolute;
-  inset: 15%;
-  border-radius: inherit;
+  inset: 4%;
+  border-radius: 50%;
   box-shadow: 
-    0 0 8px #A855F7,
-    0 0 18px #06B6D4,
-    0 0 30px #EC4899,
-    inset 0 0 8px #9333EA;
-  animation: vip10ThunderPulse 0.4s steps(3) infinite;
+    0 0 16px #00FFFF,
+    0 0 32px #0284C7,
+    0 0 52px #0369A1,
+    0 0 72px #FF5500;
+  animation: sssvipStormFlash 0.35s steps(3) infinite;
+  pointer-events: none;
   will-change: box-shadow;
 }
 
-@keyframes vip10ThunderPulse {
+@keyframes sssvipStormFlash {
   0% {
     box-shadow: 
-      0 0 6px #A855F7,
-      0 0 14px #06B6D4,
-      0 0 24px #9333EA,
-      inset 0 0 6px #4C1D95;
+      0 0 12px #00FFFF,
+      0 0 24px #0284C7,
+      0 0 40px #0369A1,
+      0 0 60px #FF5500;
   }
-  50% {
+  33% {
     box-shadow: 
-      0 0 14px #00FFFF,
-      0 0 26px #EC4899,
-      0 0 40px #A855F7,
-      inset 0 0 12px #00FFFF;
+      0 0 22px #FFFFFF,
+      0 0 40px #00FFFF,
+      0 0 65px #0284C7,
+      0 0 90px #FF7700;
+  }
+  66% {
+    box-shadow: 
+      0 0 16px #38BDF8,
+      0 0 30px #00FFFF,
+      0 0 48px #0F172A,
+      0 0 70px #FF3300;
   }
   100% {
     box-shadow: 
-      0 0 10px #A855F7,
-      0 0 20px #06B6D4,
-      0 0 32px #EC4899,
-      inset 0 0 8px #C026D3;
+      0 0 12px #00FFFF,
+      0 0 24px #0284C7,
+      0 0 40px #0369A1,
+      0 0 60px #FF5500;
   }
 }
 
+.vip10ThunderAura {
+  position: absolute;
+  inset: 16%;
+  border-radius: inherit;
+  box-shadow: 
+    0 0 10px #00FFFF,
+    0 0 20px #38BDF8,
+    0 0 35px #0284C7,
+    inset 0 0 10px #00FFFF;
+  animation: sssvipCoreLightning 0.25s infinite alternate ease-in-out;
+  will-change: box-shadow;
+}
+
+@keyframes sssvipCoreLightning {
+  0% {
+    box-shadow: 
+      0 0 8px #00FFFF,
+      0 0 16px #38BDF8,
+      0 0 28px #0284C7,
+      inset 0 0 8px #00FFFF;
+  }
+  100% {
+    box-shadow: 
+      0 0 18px #FFFFFF,
+      0 0 32px #00FFFF,
+      0 0 48px #38BDF8,
+      inset 0 0 14px #FFFFFF;
+  }
+}
+
+/* Layer 2: Zigzag Lightning Bolts & Electric Plasma Sparks */
 .vip10Sparks {
   position: absolute;
-  inset: 4%;
+  inset: 2%;
   pointer-events: none;
 }
 
 .vip10Bolt {
   position: absolute;
-  font-size: 9px;
+  font-size: 10px;
   line-height: 1;
   color: #00FFFF;
-  text-shadow: 0 0 6px #A855F7;
-  animation: vip10LightningBolt 0.35s steps(2) infinite;
+  text-shadow: 0 0 6px #FFFFFF, 0 0 12px #0284C7;
+  animation: sssvipLightningFlash 0.25s steps(2) infinite;
+  will-change: transform, opacity;
 }
 
-.t1 { top: 12%; left: 8%; color: #00FFFF; font-size: 10px; animation-delay: 0s; }
-.t2 { top: 8%; right: 10%; color: #E879F9; font-size: 8px; animation-delay: 0.15s; }
-.t3 { bottom: 22%; left: 4%; color: #00FFFF; font-size: 9px; animation-delay: 0.25s; }
-.t4 { bottom: 18%; right: 4%; color: #F43F5E; font-size: 6px; animation-delay: 0.08s; }
-.t5 { top: 45%; right: -2%; color: #00FFFF; font-size: 10px; animation-delay: 0.18s; }
+.t1 { top: 8%; left: 8%; color: #00FFFF; font-size: 11px; animation-delay: 0s; }
+.t2 { top: 4%; right: 10%; color: #FFFFFF; font-size: 9px; animation-delay: 0.1s; }
+.t3 { bottom: 24%; left: -2%; color: #00FFFF; font-size: 10px; animation-delay: 0.18s; }
+.t4 { bottom: 20%; right: 0%; color: #FF7700; font-size: 8px; animation-delay: 0.06s; }
+.t5 { top: 40%; left: -6%; color: #00FFFF; font-size: 11px; animation-delay: 0.14s; }
+.t6 { top: 36%; right: -6%; color: #38BDF8; font-size: 9px; animation-delay: 0.22s; }
+.t7 { top: 18%; left: 20%; color: #FF5500; font-size: 8px; animation-delay: 0.08s; }
 
-@keyframes vip10LightningBolt {
-  0% { opacity: 0; transform: scale(0.4) rotate(0deg); }
-  50% { opacity: 1; transform: scale(1.4) rotate(15deg); }
-  100% { opacity: 0.1; transform: scale(0.6) rotate(-10deg); }
+@keyframes sssvipLightningFlash {
+  0% { opacity: 0.2; transform: scale(0.5) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1.4) rotate(15deg); filter: drop-shadow(0 0 8px #FFF); }
+  100% { opacity: 0.1; transform: scale(0.6) rotate(-15deg); }
 }
 
-.vip10Border {
+/* Layer 3: Dark Obsidian Outer Rim & Glowing Blue Core */
+.vip10ObsidianBorder {
   position: absolute;
-  inset: 15%;
+  inset: 16%;
   border-radius: inherit;
-  border: 2.5px solid #00FFFF;
+  border: 3.5px solid #0F172A;
   box-shadow: 
-    0 0 0 1.5px #A855F7,
-    0 0 0 3px #1E1B4B,
-    inset 0 0 0 1.5px #E879F9;
+    0 0 0 1.5px #0284C7,
+    0 0 0 3px #00FFFF,
+    inset 0 0 0 2px #00D2FF;
   overflow: hidden;
   z-index: 10;
+}
+
+.vip10NeonRing {
+  position: absolute;
+  inset: 2px;
+  border-radius: inherit;
+  border: 2px solid #00FFFF;
+  box-shadow: 0 0 8px #00FFFF, inset 0 0 8px #00E5FF;
+  animation: sssvipNeonPulse 0.8s infinite alternate ease-in-out;
+}
+
+@keyframes sssvipNeonPulse {
+  0% { opacity: 0.7; filter: brightness(1); }
+  100% { opacity: 1; filter: brightness(1.4); }
 }
 
 .vip10ElectricSurge {
@@ -380,93 +438,147 @@
   background: linear-gradient(
     135deg,
     transparent 35%,
-    rgba(0, 255, 255, 0.95) 50%,
-    rgba(232, 121, 249, 0.9) 55%,
+    rgba(255, 255, 255, 0.95) 48%,
+    rgba(0, 255, 255, 0.95) 52%,
     transparent 65%
   );
-  animation: vip10Surge 1.6s infinite cubic-bezier(0.4, 0, 0.2, 1);
+  animation: vip10Surge 1.4s infinite cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-@keyframes vip10Surge {
-  0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-  40%, 100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
-}
-
-.vip10DragonWing {
+/* Layer 4: Epic Storm Dragon Heads */
+.vip10DragonHead {
   position: absolute;
-  top: 14%;
-  width: 38%;
-  height: 54%;
-  z-index: 11;
-  filter: drop-shadow(0 0 6px #A855F7) drop-shadow(0 0 10px #00FFFF);
+  top: -6%;
+  width: 52%;
+  height: 68%;
+  z-index: 14;
+  filter: drop-shadow(0 0 8px #00FFFF) drop-shadow(0 0 14px #0284C7);
+  animation: sssvipHeadHover 2s infinite alternate ease-in-out;
+  will-change: transform;
 }
 
-.vip10Crown {
-  position: absolute;
-  top: -13%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 72%;
-  height: 40%;
-  z-index: 15;
-  filter: drop-shadow(0 0 8px #A855F7) drop-shadow(0 0 14px #00FFFF);
-  animation: vip8CrownBounce 1.6s infinite ease-in-out;
+.headLeft {
+  left: -20%;
+  transform-origin: right center;
 }
 
-.vip10GemFlash {
-  animation: vip10GemGlow 0.8s infinite alternate ease-in-out;
-  transform-origin: 19px 12px;
+.headRight {
+  right: -20%;
+  transform-origin: left center;
 }
 
-@keyframes vip10GemGlow {
-  0% { filter: drop-shadow(0 0 3px #00FFFF); transform: scale(0.95); }
-  100% { filter: drop-shadow(0 0 10px #F43F5E) drop-shadow(0 0 14px #00FFFF); transform: scale(1.12); }
+.stormDragonSvg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
 }
 
+@keyframes sssvipHeadHover {
+  0% { transform: rotate(0deg) scale(1); }
+  100% { transform: rotate(-3deg) scale(1.05); }
+}
+
+.dragonEyeStorm {
+  animation: sssvipEyeFlash 0.5s infinite alternate ease-in-out;
+  transform-origin: center;
+}
+
+@keyframes sssvipEyeFlash {
+  0% { filter: drop-shadow(0 0 2px #FF1E00); opacity: 0.8; }
+  100% { filter: drop-shadow(0 0 8px #FF0000) drop-shadow(0 0 12px #FFE600); opacity: 1; transform: scale(1.2); }
+}
+
+.hornLightning {
+  animation: sssvipHornSpark 0.2s steps(2) infinite;
+}
+
+@keyframes sssvipHornSpark {
+  0% { opacity: 0.2; transform: scale(0.8); }
+  100% { opacity: 1; transform: scale(1.2); filter: drop-shadow(0 0 6px #FFF); }
+}
+
+/* Layer 6: Bottom Clouds, Chains & SSSVIP Banner */
 .vip10BottomBadge {
   position: absolute;
-  bottom: -10%;
+  bottom: -11%;
   left: 50%;
   transform: translateX(-50%);
   z-index: 18;
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 80%;
+  width: 82%;
+}
+
+.bottomClouds {
+  width: 100%;
+  height: 16px;
+  margin-bottom: -6px;
+  z-index: 18;
+  filter: drop-shadow(0 0 6px rgba(0, 255, 255, 0.85));
+}
+
+.cloudsSvg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.goldenChains {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-size: 7px;
+  color: #FFD700;
+  text-shadow: 0 0 4px #FF9800;
+  margin-bottom: -3px;
+  z-index: 17;
+  animation: sssvipChainsSway 2s infinite ease-in-out;
+}
+
+@keyframes sssvipChainsSway {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-1.5px); }
 }
 
 .vip10Ribbon {
-  background: linear-gradient(135deg, #1E1B4B 0%, #312E81 40%, #581C87 70%, #831843 100%);
-  border: 1.5px solid #00FFFF;
+  background: linear-gradient(135deg, #0F172A 0%, #1E293B 40%, #0F172A 100%);
+  border: 1.5px solid #FFD700;
   border-radius: 3px;
   box-shadow: 
-    0 0 8px #A855F7,
-    0 0 14px #00FFFF,
-    inset 0 1px 0 #E879F9;
-  padding: 1px 6px;
+    0 0 10px #00FFFF,
+    0 2px 6px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 #FDE047;
+  padding: 1.5px 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
   box-sizing: border-box;
+  z-index: 19;
 }
 
 .vip10Text {
   font-family: var(--font-pixel);
-  font-size: 8px;
+  font-size: 8.5px;
   font-weight: 900;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  background: linear-gradient(180deg, #FFFFFF 0%, #00FFFF 50%, #E879F9 100%);
+  background: linear-gradient(180deg, #FFFFFF 0%, #E0F7FA 30%, #00FFFF 70%, #0284C7 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: vip10TextPulse 0.6s infinite alternate ease-in-out;
+  animation: sssvipTextShock 0.3s steps(2) infinite alternate;
   white-space: nowrap;
 }
 
-@keyframes vip10TextPulse {
-  0% { filter: drop-shadow(0 0 2px #00FFFF) brightness(1); }
-  100% { filter: drop-shadow(0 0 8px #E879F9) drop-shadow(0 0 12px #00FFFF) brightness(1.3); }
+@keyframes sssvipTextShock {
+  0% {
+    filter: drop-shadow(0 0 2px #00FFFF) brightness(1);
+  }
+  100% {
+    filter: drop-shadow(0 0 8px #FFFFFF) drop-shadow(0 0 14px #00FFFF) brightness(1.4);
+  }
 }
 
 /* ============================================
