@@ -3,11 +3,14 @@ import s from './AvatarFrameOverlay.module.css'
 
 export const AVATAR_FRAMES = [
   { id: 'none', name: 'Mặc định', icon: '🚫', desc: 'Không khung viền' },
-  { id: 'vip8_fire', name: '👑 VIP 8 Rồng Lửa', icon: '🔥', desc: 'Rồng vàng hoàng kim & hào quang lửa bùng cháy VIP' },
-  { id: 'cyber_aura', name: 'Hào Quang Lửa', icon: '⚡', desc: 'Lửa vàng & điện quang chớp giật' },
-  { id: 'rainbow', name: 'Cầu Vồng Pixel', icon: '🌈', desc: 'Viền cầu vồng luân chuyển 8-bit' },
-  { id: 'sparkle_stars', name: 'Ngôi Sao Lấp Lánh', icon: '✨', desc: 'Sao pixel nhấp nháy 4 góc' },
-  { id: 'sakura_hearts', name: 'Trái Tim & Sakura', icon: '🌸', desc: 'Hoa anh đào & tim hồng nhịp đập' },
+  { id: 'god_cosmic', name: '🌌 GOD Sáng Thế', icon: '👑', desc: 'Cấp bậc Tối Thượng GOD Mode — Cực quang 6 cánh thiên thần & tinh vân vô cực' },
+  { id: 'vip10_thunder', name: '⚡ VIP 10 Lôi Thần', icon: '⚡', desc: 'Hắc Long Lôi Thần — Sấm sét tím điện quang & ma lôi chớp giật' },
+  { id: 'vip9_frost', name: '❄️ VIP 9 Băng Long', icon: '❄️', desc: 'Băng Long Băng Hà — Tinh thể băng tuyết & kim cương ngọc bích cực hàn' },
+  { id: 'vip8_fire', name: '🔥 VIP 8 Rồng Lửa', icon: '🔥', desc: 'Rồng vàng hoàng kim & hào quang lửa bùng cháy VIP' },
+  { id: 'cyber_aura', name: '⚡ Hào Quang Lửa', icon: '✨', desc: 'Lửa vàng & điện quang chớp giật' },
+  { id: 'rainbow', name: '🌈 Cầu Vồng Pixel', icon: '🌈', desc: 'Viền cầu vồng luân chuyển 8-bit' },
+  { id: 'sparkle_stars', name: '✨ Ngôi Sao Lấp Lánh', icon: '⭐', desc: 'Sao pixel nhấp nháy 4 góc' },
+  { id: 'sakura_hearts', name: '🌸 Trái Tim & Sakura', icon: '🌸', desc: 'Hoa anh đào & tim hồng nhịp đập' },
 ]
 
 function AvatarFrameOverlayComponent({ frameId = 'none', size = 36 }) {
@@ -19,7 +22,287 @@ function AvatarFrameOverlayComponent({ frameId = 'none', size = 36 }) {
 
   return (
     <div className={`${s.frameOverlay} ${s[frameId] || ''}`} aria-hidden="true">
-      {/* ── Frame 0: 👑 VIP 8 Fire Frame (Supreme Dragon Gold & Flame Masterpiece) ── */}
+      
+      {/* ══════════════════════════════════════════════════════════════════════
+         FRAME: 🌌 GOD MODE — SÁNG THẾ THẦN LINH VÔ CỰC (SUPREME COSMIC CREATOR)
+         ══════════════════════════════════════════════════════════════════════ */}
+      {frameId === 'god_cosmic' && (
+        <div className={s.godContainer}>
+          {/* Rotating Cosmic God Halo (360 Deg Celestial Wheel) */}
+          <div className={s.godHaloWheel}>
+            <div className={s.godHaloRay1} />
+            <div className={s.godHaloRay2} />
+            <div className={s.godHaloRing} />
+          </div>
+
+          {/* Multi-Dimensional Prismatic Aura */}
+          <div className={s.godAuraGlow} />
+
+          {/* Stardust Celestial Particles */}
+          <div className={s.godParticles}>
+            <span className={`${s.godStar} ${s.g1}`}>★</span>
+            <span className={`${s.godStar} ${s.g2}`}>✦</span>
+            <span className={`${s.godStar} ${s.g3}`}>✧</span>
+            <span className={`${s.godStar} ${s.g4}`}>✨</span>
+            <span className={`${s.godStar} ${s.g5}`}>✦</span>
+            <span className={`${s.godStar} ${s.g6}`}>⭐</span>
+          </div>
+
+          {/* Six Angelic Celestial Wings (3 Left, 3 Right) */}
+          <div className={`${s.godWingsWrap} ${s.godWingsLeft}`}>
+            <svg viewBox="0 0 32 40" className={s.godWingsSvg}>
+              <path d="M32,4 C22,0 12,6 4,14 C-2,20 0,28 8,34 C16,40 24,32 28,24 C30,20 32,12 32,4 Z" fill="url(#godWingsGrad)" />
+              <path d="M30,10 C22,8 14,14 8,22 C5,26 8,30 14,32 C20,34 26,26 28,20 Z" fill="url(#godInnerGrad)" />
+              <path d="M32,18 C26,16 20,20 16,26 C14,29 16,32 20,34 C24,36 28,30 30,26 Z" fill="url(#godLightGrad)" />
+            </svg>
+          </div>
+          <div className={`${s.godWingsWrap} ${s.godWingsRight}`}>
+            <svg viewBox="0 0 32 40" className={s.godWingsSvg}>
+              <path d="M0,4 C10,0 20,6 28,14 C34,20 32,28 24,34 C16,40 8,32 4,24 C2,20 0,12 0,4 Z" fill="url(#godWingsGrad)" />
+              <path d="M2,10 C10,8 18,14 24,22 C27,26 24,30 18,32 C12,34 6,26 4,20 Z" fill="url(#godInnerGrad)" />
+              <path d="M0,18 C6,16 12,20 16,26 C18,29 16,32 12,34 C8,36 4,30 2,26 Z" fill="url(#godLightGrad)" />
+            </svg>
+          </div>
+
+          {/* Base Diamond Prismatic Border with Infinite Shimmer */}
+          <div className={s.godGoldBorder}>
+            <div className={s.godPrismSweep} />
+          </div>
+
+          {/* Supreme God Crown with 7-Color Rainbow Infinity Gem */}
+          <div className={s.godCrown}>
+            <svg viewBox="0 0 40 26" className={s.crownSvg}>
+              <defs>
+                <linearGradient id="godWingsGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#FFFFFF" />
+                  <stop offset="25%" stopColor="#FFF275" />
+                  <stop offset="50%" stopColor="#FF77E9" />
+                  <stop offset="75%" stopColor="#70A6FF" />
+                  <stop offset="100%" stopColor="#00F2FE" />
+                </linearGradient>
+                <linearGradient id="godInnerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#FFE600" />
+                  <stop offset="50%" stopColor="#FF007F" />
+                  <stop offset="100%" stopColor="#7928CA" />
+                </linearGradient>
+                <linearGradient id="godLightGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#FFFFFF" />
+                  <stop offset="100%" stopColor="#00DFD8" />
+                </linearGradient>
+                <linearGradient id="godCrownGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#FFFDE7" />
+                  <stop offset="30%" stopColor="#FFD700" />
+                  <stop offset="60%" stopColor="#FFA000" />
+                  <stop offset="100%" stopColor="#FF6F00" />
+                </linearGradient>
+                <radialGradient id="godGemGrad" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stopColor="#FFFFFF" />
+                  <stop offset="30%" stopColor="#00F2FE" />
+                  <stop offset="65%" stopColor="#E056FD" />
+                  <stop offset="100%" stopColor="#FF007F" />
+                </radialGradient>
+              </defs>
+              {/* Solar Halo Spikes behind crown */}
+              <path d="M20,0 L23,8 L32,3 L29,11 L38,9 L32,16 L40,18 L32,22 L8,22 L0,18 L8,16 L2,9 L11,11 L8,3 L17,8 Z" fill="url(#godWingsGrad)" opacity="0.85" />
+              {/* Main Golden Sovereign Crown */}
+              <path d="M6,22 L34,22 L36,17 L31,10 L25,17 L20,4 L15,17 L9,10 L4,17 Z" fill="url(#godCrownGrad)" stroke="#B8860B" strokeWidth="1" />
+              {/* Infinity Center Diamond Gem */}
+              <polygon points="20,6 26,13 20,20 14,13" fill="url(#godGemGrad)" stroke="#FFF" strokeWidth="1" className={s.godGemFlash} />
+              {/* Flanking Cosmic Orbs */}
+              <circle cx="9" cy="10" r="2" fill="#00F2FE" stroke="#FFF" strokeWidth="0.6" />
+              <circle cx="20" cy="4" r="2.5" fill="#FFE600" stroke="#FF007F" strokeWidth="0.8" />
+              <circle cx="31" cy="10" r="2" fill="#00F2FE" stroke="#FFF" strokeWidth="0.6" />
+            </svg>
+          </div>
+
+          {/* Bottom GOD Diamond Ribbon Badge */}
+          <div className={s.godBottomBadge}>
+            <div className={s.godHaloArch} />
+            <div className={s.godRibbon}>
+              <span className={s.godText}>👑 GOD 👑</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ══════════════════════════════════════════════════════════════════════
+         FRAME: ⚡ VIP 10 — LÔI THẦN MA LONG (THUNDER SHADOW DRAGON SUPREME)
+         ══════════════════════════════════════════════════════════════════════ */}
+      {frameId === 'vip10_thunder' && (
+        <div className={s.vip10Container}>
+          {/* Layer 1: Electric Plasma Lightning Aura */}
+          <div className={s.vip10ThunderAura} />
+
+          {/* Layer 2: Zigzag Lightning Bolts & Electric Sparks */}
+          <div className={s.vip10Sparks}>
+            <span className={`${s.vip10Bolt} ${s.t1}`}>⚡</span>
+            <span className={`${s.vip10Bolt} ${s.t2}`}>✦</span>
+            <span className={`${s.vip10Bolt} ${s.t3}`}>⚡</span>
+            <span className={`${s.vip10Bolt} ${s.t4}`}>■</span>
+            <span className={`${s.vip10Bolt} ${s.t5}`}>⚡</span>
+          </div>
+
+          {/* Layer 3: Dark Violet Gold Border with Electric Surge */}
+          <div className={s.vip10Border}>
+            <div className={s.vip10ElectricSurge} />
+          </div>
+
+          {/* Layer 4: Left & Right Thunder Dragon Wings */}
+          <div className={`${s.vip10DragonWing} ${s.wingLeft}`}>
+            <svg viewBox="0 0 26 34" className={s.dragonSvg}>
+              <path d="M26,2 C18,0 8,8 2,18 C-2,24 0,28 8,32 C14,36 20,28 22,22 C24,18 26,10 26,2 Z" fill="url(#vip10DarkGrad)" />
+              <path d="M24,6 C18,6 12,12 6,20 C4,23 8,26 12,28 C16,30 20,22 22,18 Z" fill="url(#vip10LightningGrad)" />
+              {/* Lightning Strike on Wing */}
+              <polygon points="18,8 14,16 19,16 13,26 15,19 11,19" fill="#00FFFF" />
+            </svg>
+          </div>
+          <div className={`${s.vip10DragonWing} ${s.wingRight}`}>
+            <svg viewBox="0 0 26 34" className={s.dragonSvg}>
+              <path d="M0,2 C8,0 18,8 24,18 C28,24 26,28 18,32 C12,36 6,28 4,22 C2,18 0,10 0,2 Z" fill="url(#vip10DarkGrad)" />
+              <path d="M2,6 C8,6 14,12 20,20 C22,23 18,26 14,28 C10,30 6,22 4,18 Z" fill="url(#vip10LightningGrad)" />
+              {/* Lightning Strike on Wing */}
+              <polygon points="8,8 12,16 7,16 13,26 11,19 15,19" fill="#00FFFF" />
+            </svg>
+          </div>
+
+          {/* Layer 5: Top Thunder King Crown with Blood Violet Gem */}
+          <div className={s.vip10Crown}>
+            <svg viewBox="0 0 38 24" className={s.crownSvg}>
+              <defs>
+                <linearGradient id="vip10DarkGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#D8B4FE" />
+                  <stop offset="35%" stopColor="#9333EA" />
+                  <stop offset="70%" stopColor="#4C1D95" />
+                  <stop offset="100%" stopColor="#1E1B4B" />
+                </linearGradient>
+                <linearGradient id="vip10LightningGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#00FFFF" />
+                  <stop offset="50%" stopColor="#818CF8" />
+                  <stop offset="100%" stopColor="#C026D3" />
+                </linearGradient>
+                <radialGradient id="vip10BloodGemGrad" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stopColor="#F43F5E" />
+                  <stop offset="50%" stopColor="#BE123C" />
+                  <stop offset="100%" stopColor="#4C0519" />
+                </radialGradient>
+              </defs>
+              {/* Crown Base */}
+              <path d="M4,22 L34,22 L36,18 L31,11 L25,18 L19,4 L13,18 L7,11 L2,18 Z" fill="url(#vip10DarkGrad)" stroke="#A855F7" strokeWidth="1" />
+              {/* Velvet Violet Arch */}
+              <path d="M8,20 C8,13 30,13 30,20 Z" fill="url(#vip10LightningGrad)" />
+              {/* Center Blood Violet Hex Gem */}
+              <polygon points="19,7 24,12 19,17 14,12" fill="url(#vip10BloodGemGrad)" stroke="#00FFFF" strokeWidth="1" className={s.vip10GemFlash} />
+              {/* Electric Orbs */}
+              <circle cx="7" cy="11" r="1.8" fill="#00FFFF" stroke="#A855F7" strokeWidth="0.6" />
+              <circle cx="19" cy="4" r="2.2" fill="#E879F9" stroke="#FFF" strokeWidth="0.8" />
+              <circle cx="31" cy="11" r="1.8" fill="#00FFFF" stroke="#A855F7" strokeWidth="0.6" />
+            </svg>
+          </div>
+
+          {/* Layer 6: Bottom VIP 10 Electric Ribbon Banner */}
+          <div className={s.vip10BottomBadge}>
+            <div className={s.clawLeft}>
+              <span>▲</span><span>▲</span>
+            </div>
+            <div className={s.clawRight}>
+              <span>▲</span><span>▲</span>
+            </div>
+            <div className={s.vip10Ribbon}>
+              <span className={s.vip10Text}>VIP 10</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ══════════════════════════════════════════════════════════════════════
+         FRAME: ❄️ VIP 9 — BĂNG LONG THẦN KHÍ (FROST DRAGON CRYO MASTERPIECE)
+         ══════════════════════════════════════════════════════════════════════ */}
+      {frameId === 'vip9_frost' && (
+        <div className={s.vip9Container}>
+          {/* Layer 1: Sub-Zero Cryo Frost Aura */}
+          <div className={s.vip9IceAura} />
+
+          {/* Layer 2: Floating Ice Crystals & Snowflakes */}
+          <div className={s.vip9Sparks}>
+            <span className={`${s.vip9Crystal} ${s.c1}`}>❄</span>
+            <span className={`${s.vip9Crystal} ${s.c2}`}>✧</span>
+            <span className={`${s.vip9Crystal} ${s.c3}`}>✦</span>
+            <span className={`${s.vip9Crystal} ${s.c4}`}>❄</span>
+            <span className={`${s.vip9Crystal} ${s.c5}`}>✧</span>
+          </div>
+
+          {/* Layer 3: Crystalline Platinum Border with Frost Sweep */}
+          <div className={s.vip9Border}>
+            <div className={s.vip9FrostSweep} />
+          </div>
+
+          {/* Layer 4: Left & Right Frost Dragon Wings */}
+          <div className={`${s.vip9DragonWing} ${s.wingLeft}`}>
+            <svg viewBox="0 0 24 32" className={s.dragonSvg}>
+              <path d="M24,2 C16,0 8,8 2,16 C-1,20 0,26 6,30 C12,34 18,28 20,22 C22,18 24,10 24,2 Z" fill="url(#vip9PlatGrad)" />
+              <path d="M22,6 C16,6 10,12 6,18 C4,21 6,24 10,26 C14,28 18,22 20,18 Z" fill="url(#vip9FrostGrad)" />
+              <circle cx="16" cy="12" r="2.5" fill="#E0F7FA" />
+              <circle cx="16" cy="12" r="1.2" fill="#00E5FF" />
+            </svg>
+          </div>
+          <div className={`${s.vip9DragonWing} ${s.wingRight}`}>
+            <svg viewBox="0 0 24 32" className={s.dragonSvg}>
+              <path d="M0,2 C8,0 16,8 22,16 C25,20 24,26 18,30 C12,34 6,28 4,22 C2,18 0,10 0,2 Z" fill="url(#vip9PlatGrad)" />
+              <path d="M2,6 C8,6 14,12 18,18 C20,21 18,24 14,26 C10,28 6,22 4,18 Z" fill="url(#vip9FrostGrad)" />
+              <circle cx="8" cy="12" r="2.5" fill="#E0F7FA" />
+              <circle cx="8" cy="12" r="1.2" fill="#00E5FF" />
+            </svg>
+          </div>
+
+          {/* Layer 5: Top Frost Crown with Ice Diamond */}
+          <div className={s.vip9Crown}>
+            <svg viewBox="0 0 36 22" className={s.crownSvg}>
+              <defs>
+                <linearGradient id="vip9PlatGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#FFFFFF" />
+                  <stop offset="35%" stopColor="#E0F7FA" />
+                  <stop offset="70%" stopColor="#80DEEA" />
+                  <stop offset="100%" stopColor="#0097A7" />
+                </linearGradient>
+                <linearGradient id="vip9FrostGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#E0F7FA" />
+                  <stop offset="50%" stopColor="#00E5FF" />
+                  <stop offset="100%" stopColor="#005792" />
+                </linearGradient>
+                <radialGradient id="vip9DiamondGrad" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stopColor="#FFFFFF" />
+                  <stop offset="40%" stopColor="#B3E5FC" />
+                  <stop offset="80%" stopColor="#0288D1" />
+                  <stop offset="100%" stopColor="#01579B" />
+                </radialGradient>
+              </defs>
+              <path d="M4,20 L32,20 L34,16 L30,10 L24,16 L18,4 L12,16 L6,10 L2,16 Z" fill="url(#vip9PlatGrad)" stroke="#00838F" strokeWidth="1" />
+              <path d="M8,18 C8,12 28,12 28,18 Z" fill="url(#vip9FrostGrad)" />
+              <polygon points="18,7 23,12 18,17 13,12" fill="url(#vip9DiamondGrad)" stroke="#FFFFFF" strokeWidth="1" className={s.vip9IceGem} />
+              <circle cx="6" cy="10" r="1.6" fill="#00E5FF" stroke="#FFF" strokeWidth="0.5" />
+              <circle cx="18" cy="4" r="2.2" fill="#FFFFFF" stroke="#00E5FF" strokeWidth="0.8" />
+              <circle cx="30" cy="10" r="1.6" fill="#00E5FF" stroke="#FFF" strokeWidth="0.5" />
+            </svg>
+          </div>
+
+          {/* Layer 6: Bottom VIP 9 Frost Ribbon Banner */}
+          <div className={s.vip9BottomBadge}>
+            <div className={s.clawLeft}>
+              <span>▲</span><span>▲</span>
+            </div>
+            <div className={s.clawRight}>
+              <span>▲</span><span>▲</span>
+            </div>
+            <div className={s.vip9Ribbon}>
+              <span className={s.vip9Text}>VIP 9</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ══════════════════════════════════════════════════════════════════════
+         FRAME: 🔥 VIP 8 — RỒNG LỬA HOÀNG KIM (SUPREME GOLD FIRE DRAGON)
+         ══════════════════════════════════════════════════════════════════════ */}
       {frameId === 'vip8_fire' && (
         <div className={s.vip8Container}>
           {/* Layer 1: Blazing Multi-Tier Fire Aura Glow */}
@@ -79,13 +362,9 @@ function AvatarFrameOverlayComponent({ frameId = 'none', size = 36 }) {
                   <stop offset="100%" stopColor="#481878" />
                 </radialGradient>
               </defs>
-              {/* Crown Base & Arches */}
               <path d="M4,20 L32,20 L34,16 L30,10 L24,16 L18,4 L12,16 L6,10 L2,16 Z" fill="url(#vip8GoldGrad)" stroke="#684200" strokeWidth="1" />
-              {/* Velvet Red Arch */}
               <path d="M8,18 C8,12 28,12 28,18 Z" fill="url(#vip8FireGrad)" />
-              {/* Center Sparkling Gem */}
               <polygon points="18,7 23,12 18,17 13,12" fill="url(#vip8GemGrad)" stroke="#FFE600" strokeWidth="0.8" className={s.vip8Gem} />
-              {/* Top Rubies */}
               <circle cx="6" cy="10" r="1.6" fill="#FF1E00" stroke="#FFD700" strokeWidth="0.5" />
               <circle cx="18" cy="4" r="2.2" fill="#FFD700" stroke="#FF1E00" strokeWidth="0.8" />
               <circle cx="30" cy="10" r="1.6" fill="#FF1E00" stroke="#FFD700" strokeWidth="0.5" />
@@ -107,47 +386,19 @@ function AvatarFrameOverlayComponent({ frameId = 'none', size = 36 }) {
         </div>
       )}
 
-      {/* ── Frame 1: Rainbow Pixel Cycling Border ── */}
-      {frameId === 'rainbow' && (
-        <div className={s.rainbowBorder} />
-      )}
+      {/* ── Standard Frames ── */}
+      {frameId === 'rainbow' && <div className={s.rainbowBorder} />}
 
-      {/* ── Frame 2: Sparkle Stars in 4 Corners ── */}
       {frameId === 'sparkle_stars' && (
         <>
           <div className={s.sparkleBorder} />
-          {/* Top-Left Star */}
-          <span
-            className={`${s.pixelStar} ${s.starTL}`}
-            style={{ width: starSize, height: starSize, top: cornerOffset, left: cornerOffset }}
-          >
-            ✦
-          </span>
-          {/* Top-Right Star */}
-          <span
-            className={`${s.pixelStar} ${s.starTR}`}
-            style={{ width: starSize, height: starSize, top: cornerOffset, right: cornerOffset }}
-          >
-            ✦
-          </span>
-          {/* Bottom-Left Star */}
-          <span
-            className={`${s.pixelStar} ${s.starBL}`}
-            style={{ width: starSize, height: starSize, bottom: cornerOffset, left: cornerOffset }}
-          >
-            ✦
-          </span>
-          {/* Bottom-Right Star */}
-          <span
-            className={`${s.pixelStar} ${s.starBR}`}
-            style={{ width: starSize, height: starSize, bottom: cornerOffset, right: cornerOffset }}
-          >
-            ✦
-          </span>
+          <span className={`${s.pixelStar} ${s.starTL}`} style={{ width: starSize, height: starSize, top: cornerOffset, left: cornerOffset }}>✦</span>
+          <span className={`${s.pixelStar} ${s.starTR}`} style={{ width: starSize, height: starSize, top: cornerOffset, right: cornerOffset }}>✦</span>
+          <span className={`${s.pixelStar} ${s.starBL}`} style={{ width: starSize, height: starSize, bottom: cornerOffset, left: cornerOffset }}>✦</span>
+          <span className={`${s.pixelStar} ${s.starBR}`} style={{ width: starSize, height: starSize, bottom: cornerOffset, right: cornerOffset }}>✦</span>
         </>
       )}
 
-      {/* ── Frame 3: Cyber Aura / Electric Flame ── */}
       {frameId === 'cyber_aura' && (
         <>
           <div className={s.flameAura} />
@@ -160,22 +411,11 @@ function AvatarFrameOverlayComponent({ frameId = 'none', size = 36 }) {
         </>
       )}
 
-      {/* ── Frame 4: Sakura Hearts ── */}
       {frameId === 'sakura_hearts' && (
         <>
           <div className={s.sakuraBorder} />
-          <span
-            className={`${s.pixelHeart} ${s.heartTop}`}
-            style={{ width: starSize, height: starSize, top: cornerOffset, right: cornerOffset }}
-          >
-            ♥
-          </span>
-          <span
-            className={`${s.pixelHeart} ${s.heartBottom}`}
-            style={{ width: starSize, height: starSize, bottom: cornerOffset, left: cornerOffset }}
-          >
-            🌸
-          </span>
+          <span className={`${s.pixelHeart} ${s.heartTop}`} style={{ width: starSize, height: starSize, top: cornerOffset, right: cornerOffset }}>♥</span>
+          <span className={`${s.pixelHeart} ${s.heartBottom}`} style={{ width: starSize, height: starSize, bottom: cornerOffset, left: cornerOffset }}>🌸</span>
         </>
       )}
     </div>

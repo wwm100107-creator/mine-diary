@@ -16,7 +16,636 @@
 }
 
 /* ============================================
-   FRAME 0: 👑 VIP 8 FIRE FRAME (Supreme Masterpiece)
+   FRAME: 🌌 GOD MODE — SÁNG THẾ THẦN LINH VÔ CỰC
+   ============================================ */
+.godContainer {
+  position: absolute;
+  inset: -32%;
+  width: 164%;
+  height: 164%;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 25;
+}
+
+/* Rotating Celestial God Halo Wheel (360 Deg Continuous) */
+.godHaloWheel {
+  position: absolute;
+  inset: -8%;
+  border-radius: 50%;
+  animation: godSpin 14s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes godSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.godHaloRay1, .godHaloRay2 {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    rgba(255, 215, 0, 0.45) 45deg,
+    transparent 90deg,
+    rgba(0, 242, 254, 0.45) 135deg,
+    transparent 180deg,
+    rgba(255, 0, 127, 0.45) 225deg,
+    transparent 270deg,
+    rgba(121, 40, 202, 0.45) 315deg,
+    transparent 360deg
+  );
+}
+
+.godHaloRay2 {
+  transform: rotate(45deg);
+}
+
+.godHaloRing {
+  position: absolute;
+  inset: 6%;
+  border-radius: 50%;
+  border: 1.5px dashed rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 12px rgba(255, 215, 0, 0.6), inset 0 0 12px rgba(0, 242, 254, 0.6);
+}
+
+/* Multi-Dimensional Prismatic Aura */
+.godAuraGlow {
+  position: absolute;
+  inset: 18%;
+  border-radius: inherit;
+  box-shadow: 
+    0 0 10px #FFD700,
+    0 0 20px #FF007F,
+    0 0 35px #7928CA,
+    0 0 50px #00F2FE,
+    inset 0 0 12px #FFFFFF;
+  animation: godAuraPulse 1.8s infinite alternate ease-in-out;
+  will-change: box-shadow;
+}
+
+@keyframes godAuraPulse {
+  0% {
+    box-shadow: 
+      0 0 8px #FFD700,
+      0 0 16px #FF007F,
+      0 0 28px #7928CA,
+      0 0 42px #00F2FE,
+      inset 0 0 8px #FFFFFF;
+  }
+  100% {
+    box-shadow: 
+      0 0 16px #FFFFFF,
+      0 0 28px #FFD700,
+      0 0 45px #FF007F,
+      0 0 65px #00F2FE,
+      inset 0 0 16px #FFE600;
+  }
+}
+
+/* Celestial Stardust Particles */
+.godParticles {
+  position: absolute;
+  inset: 0%;
+  pointer-events: none;
+}
+
+.godStar {
+  position: absolute;
+  font-size: 8px;
+  line-height: 1;
+  color: #FFFFFF;
+  text-shadow: 0 0 6px #00F2FE, 0 0 10px #FF007F;
+  animation: godStarFloat 1.8s infinite ease-in-out;
+  will-change: transform, opacity;
+}
+
+.g1 { top: 8%; left: 12%; color: #FFD700; font-size: 9px; animation-delay: 0s; }
+.g2 { top: 6%; right: 14%; color: #00F2FE; font-size: 7px; animation-delay: 0.35s; }
+.g3 { bottom: 20%; left: 4%; color: #FF77E9; font-size: 8px; animation-delay: 0.7s; }
+.g4 { bottom: 18%; right: 6%; color: #FFFFFF; font-size: 9px; animation-delay: 1.05s; }
+.g5 { top: 45%; left: -2%; color: #FFE600; font-size: 7px; animation-delay: 1.4s; }
+.g6 { top: 40%; right: -2%; color: #70A6FF; font-size: 8px; animation-delay: 0.5s; }
+
+@keyframes godStarFloat {
+  0% { opacity: 0; transform: scale(0.3) translateY(4px) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1.3) translateY(-4px) rotate(90deg); }
+  100% { opacity: 0; transform: scale(0.3) translateY(-12px) rotate(180deg); }
+}
+
+/* 6 Celestial Angelic Wings */
+.godWingsWrap {
+  position: absolute;
+  top: 10%;
+  width: 44%;
+  height: 60%;
+  z-index: 18;
+  filter: drop-shadow(0 0 8px #FF007F) drop-shadow(0 0 14px #00F2FE);
+  animation: godWingsHover 2.2s infinite alternate ease-in-out;
+  will-change: transform;
+}
+
+.godWingsLeft {
+  left: -14%;
+  transform-origin: right center;
+}
+
+.godWingsRight {
+  right: -14%;
+  transform-origin: left center;
+}
+
+.godWingsSvg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+@keyframes godWingsHover {
+  0% { transform: rotate(0deg) scale(1); }
+  100% { transform: rotate(-5deg) scale(1.08); }
+}
+
+/* Base Prismatic Border with Infinite Shimmer */
+.godGoldBorder {
+  position: absolute;
+  inset: 18%;
+  border-radius: inherit;
+  border: 3px solid #FFF;
+  box-shadow: 
+    0 0 0 1.5px #FFD700,
+    0 0 0 3px #FF007F,
+    inset 0 0 0 1.5px #00F2FE;
+  overflow: hidden;
+  z-index: 20;
+}
+
+.godPrismSweep {
+  position: absolute;
+  inset: -60%;
+  background: linear-gradient(
+    135deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.95) 45%,
+    rgba(0, 242, 254, 0.9) 50%,
+    rgba(255, 0, 127, 0.9) 55%,
+    transparent 70%
+  );
+  animation: godPrismShine 2s infinite cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+}
+
+@keyframes godPrismShine {
+  0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+  45%, 100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+}
+
+/* Supreme God Crown */
+.godCrown {
+  position: absolute;
+  top: -16%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 76%;
+  height: 44%;
+  z-index: 22;
+  filter: drop-shadow(0 0 10px #FFD700) drop-shadow(0 0 16px #FF007F);
+  animation: godCrownBounce 1.8s infinite ease-in-out;
+  will-change: transform;
+}
+
+.godGemFlash {
+  animation: godGemColorShift 2s infinite linear;
+  transform-origin: 20px 13px;
+}
+
+@keyframes godCrownBounce {
+  0%, 100% { transform: translateX(-50%) translateY(0) scale(1); }
+  50% { transform: translateX(-50%) translateY(-3px) scale(1.06); }
+}
+
+@keyframes godGemColorShift {
+  0% { filter: hue-rotate(0deg) drop-shadow(0 0 4px #FFF); transform: scale(1); }
+  50% { filter: hue-rotate(180deg) drop-shadow(0 0 10px #00F2FE); transform: scale(1.15); }
+  100% { filter: hue-rotate(360deg) drop-shadow(0 0 4px #FFF); transform: scale(1); }
+}
+
+/* Bottom GOD Ribbon Banner */
+.godBottomBadge {
+  position: absolute;
+  bottom: -12%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 24;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 82%;
+}
+
+.godRibbon {
+  background: linear-gradient(135deg, #1E1B4B 0%, #4C1D95 30%, #7928CA 60%, #FF007F 100%);
+  border: 1.5px solid #FFE600;
+  border-radius: 4px;
+  box-shadow: 
+    0 0 10px #FF007F,
+    0 0 16px #00F2FE,
+    inset 0 1px 0 #FFF;
+  padding: 1.5px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.godText {
+  font-family: var(--font-pixel);
+  font-size: 8.5px;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: linear-gradient(180deg, #FFFFFF 0%, #FFF275 40%, #FF77E9 80%, #00F2FE 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: godTextShine 1.2s infinite alternate ease-in-out;
+  white-space: nowrap;
+}
+
+@keyframes godTextShine {
+  0% { filter: drop-shadow(0 0 2px #FFD700) brightness(1); }
+  100% { filter: drop-shadow(0 0 8px #FFF) drop-shadow(0 0 14px #FF007F) brightness(1.35); }
+}
+
+/* ============================================
+   FRAME: ⚡ VIP 10 — LÔI THẦN MA LONG (THUNDER SHADOW DRAGON)
+   ============================================ */
+.vip10Container {
+  position: absolute;
+  inset: -24%;
+  width: 148%;
+  height: 148%;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+}
+
+.vip10ThunderAura {
+  position: absolute;
+  inset: 15%;
+  border-radius: inherit;
+  box-shadow: 
+    0 0 8px #A855F7,
+    0 0 18px #06B6D4,
+    0 0 30px #EC4899,
+    inset 0 0 8px #9333EA;
+  animation: vip10ThunderPulse 0.4s steps(3) infinite;
+  will-change: box-shadow;
+}
+
+@keyframes vip10ThunderPulse {
+  0% {
+    box-shadow: 
+      0 0 6px #A855F7,
+      0 0 14px #06B6D4,
+      0 0 24px #9333EA,
+      inset 0 0 6px #4C1D95;
+  }
+  50% {
+    box-shadow: 
+      0 0 14px #00FFFF,
+      0 0 26px #EC4899,
+      0 0 40px #A855F7,
+      inset 0 0 12px #00FFFF;
+  }
+  100% {
+    box-shadow: 
+      0 0 10px #A855F7,
+      0 0 20px #06B6D4,
+      0 0 32px #EC4899,
+      inset 0 0 8px #C026D3;
+  }
+}
+
+.vip10Sparks {
+  position: absolute;
+  inset: 4%;
+  pointer-events: none;
+}
+
+.vip10Bolt {
+  position: absolute;
+  font-size: 9px;
+  line-height: 1;
+  color: #00FFFF;
+  text-shadow: 0 0 6px #A855F7;
+  animation: vip10LightningBolt 0.35s steps(2) infinite;
+}
+
+.t1 { top: 12%; left: 8%; color: #00FFFF; font-size: 10px; animation-delay: 0s; }
+.t2 { top: 8%; right: 10%; color: #E879F9; font-size: 8px; animation-delay: 0.15s; }
+.t3 { bottom: 22%; left: 4%; color: #00FFFF; font-size: 9px; animation-delay: 0.25s; }
+.t4 { bottom: 18%; right: 4%; color: #F43F5E; font-size: 6px; animation-delay: 0.08s; }
+.t5 { top: 45%; right: -2%; color: #00FFFF; font-size: 10px; animation-delay: 0.18s; }
+
+@keyframes vip10LightningBolt {
+  0% { opacity: 0; transform: scale(0.4) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1.4) rotate(15deg); }
+  100% { opacity: 0.1; transform: scale(0.6) rotate(-10deg); }
+}
+
+.vip10Border {
+  position: absolute;
+  inset: 15%;
+  border-radius: inherit;
+  border: 2.5px solid #00FFFF;
+  box-shadow: 
+    0 0 0 1.5px #A855F7,
+    0 0 0 3px #1E1B4B,
+    inset 0 0 0 1.5px #E879F9;
+  overflow: hidden;
+  z-index: 10;
+}
+
+.vip10ElectricSurge {
+  position: absolute;
+  inset: -60%;
+  background: linear-gradient(
+    135deg,
+    transparent 35%,
+    rgba(0, 255, 255, 0.95) 50%,
+    rgba(232, 121, 249, 0.9) 55%,
+    transparent 65%
+  );
+  animation: vip10Surge 1.6s infinite cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes vip10Surge {
+  0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+  40%, 100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+}
+
+.vip10DragonWing {
+  position: absolute;
+  top: 14%;
+  width: 38%;
+  height: 54%;
+  z-index: 11;
+  filter: drop-shadow(0 0 6px #A855F7) drop-shadow(0 0 10px #00FFFF);
+}
+
+.vip10Crown {
+  position: absolute;
+  top: -13%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 72%;
+  height: 40%;
+  z-index: 15;
+  filter: drop-shadow(0 0 8px #A855F7) drop-shadow(0 0 14px #00FFFF);
+  animation: vip8CrownBounce 1.6s infinite ease-in-out;
+}
+
+.vip10GemFlash {
+  animation: vip10GemGlow 0.8s infinite alternate ease-in-out;
+  transform-origin: 19px 12px;
+}
+
+@keyframes vip10GemGlow {
+  0% { filter: drop-shadow(0 0 3px #00FFFF); transform: scale(0.95); }
+  100% { filter: drop-shadow(0 0 10px #F43F5E) drop-shadow(0 0 14px #00FFFF); transform: scale(1.12); }
+}
+
+.vip10BottomBadge {
+  position: absolute;
+  bottom: -10%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 18;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 80%;
+}
+
+.vip10Ribbon {
+  background: linear-gradient(135deg, #1E1B4B 0%, #312E81 40%, #581C87 70%, #831843 100%);
+  border: 1.5px solid #00FFFF;
+  border-radius: 3px;
+  box-shadow: 
+    0 0 8px #A855F7,
+    0 0 14px #00FFFF,
+    inset 0 1px 0 #E879F9;
+  padding: 1px 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.vip10Text {
+  font-family: var(--font-pixel);
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: linear-gradient(180deg, #FFFFFF 0%, #00FFFF 50%, #E879F9 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: vip10TextPulse 0.6s infinite alternate ease-in-out;
+  white-space: nowrap;
+}
+
+@keyframes vip10TextPulse {
+  0% { filter: drop-shadow(0 0 2px #00FFFF) brightness(1); }
+  100% { filter: drop-shadow(0 0 8px #E879F9) drop-shadow(0 0 12px #00FFFF) brightness(1.3); }
+}
+
+/* ============================================
+   FRAME: ❄️ VIP 9 — BĂNG LONG THẦN KHÍ (FROST DRAGON CRYO)
+   ============================================ */
+.vip9Container {
+  position: absolute;
+  inset: -22%;
+  width: 144%;
+  height: 144%;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+}
+
+.vip9IceAura {
+  position: absolute;
+  inset: 15%;
+  border-radius: inherit;
+  box-shadow: 
+    0 0 8px #00F2FE,
+    0 0 16px #4FACFE,
+    0 0 28px #00C6FF,
+    inset 0 0 8px #E0F7FA;
+  animation: vip9IcePulse 1.4s infinite alternate ease-in-out;
+  will-change: box-shadow;
+}
+
+@keyframes vip9IcePulse {
+  0% {
+    box-shadow: 
+      0 0 6px #00F2FE,
+      0 0 14px #4FACFE,
+      0 0 22px #00C6FF,
+      inset 0 0 6px #B2EBF2;
+  }
+  100% {
+    box-shadow: 
+      0 0 12px #FFFFFF,
+      0 0 22px #00E5FF,
+      0 0 36px #00F2FE,
+      inset 0 0 10px #80DEEA;
+  }
+}
+
+.vip9Sparks {
+  position: absolute;
+  inset: 4%;
+  pointer-events: none;
+}
+
+.vip9Crystal {
+  position: absolute;
+  font-size: 8px;
+  line-height: 1;
+  color: #E0F7FA;
+  text-shadow: 0 0 5px #00E5FF;
+  animation: vip9SnowRise 1.8s infinite ease-in-out;
+}
+
+.c1 { top: 12%; left: 8%; font-size: 9px; animation-delay: 0s; }
+.c2 { top: 10%; right: 12%; font-size: 7px; color: #80DEEA; animation-delay: 0.4s; }
+.c3 { bottom: 24%; left: 4%; font-size: 8px; color: #00E5FF; animation-delay: 0.8s; }
+.c4 { bottom: 20%; right: 6%; font-size: 9px; animation-delay: 1.2s; }
+.c5 { top: 45%; left: 2%; font-size: 7px; color: #FFFFFF; animation-delay: 0.6s; }
+
+@keyframes vip9SnowRise {
+  0% { opacity: 0; transform: scale(0.4) translateY(4px) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1.2) translateY(-4px) rotate(45deg); }
+  100% { opacity: 0; transform: scale(0.3) translateY(-12px) rotate(90deg); }
+}
+
+.vip9Border {
+  position: absolute;
+  inset: 15%;
+  border-radius: inherit;
+  border: 2.5px solid #FFFFFF;
+  box-shadow: 
+    0 0 0 1.5px #00E5FF,
+    0 0 0 2.5px #006064,
+    inset 0 0 0 1.5px #E0F7FA;
+  overflow: hidden;
+  z-index: 10;
+}
+
+.vip9FrostSweep {
+  position: absolute;
+  inset: -60%;
+  background: linear-gradient(
+    135deg,
+    transparent 35%,
+    rgba(255, 255, 255, 0.95) 50%,
+    rgba(0, 229, 255, 0.85) 55%,
+    transparent 65%
+  );
+  animation: vip8Shine 2.2s infinite cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.vip9DragonWing {
+  position: absolute;
+  top: 14%;
+  width: 36%;
+  height: 52%;
+  z-index: 11;
+  filter: drop-shadow(0 0 6px #00E5FF);
+}
+
+.vip9Crown {
+  position: absolute;
+  top: -12%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 68%;
+  height: 38%;
+  z-index: 15;
+  filter: drop-shadow(0 0 8px #00E5FF) drop-shadow(0 0 12px #FFFFFF);
+  animation: vip8CrownBounce 1.8s infinite ease-in-out;
+}
+
+.vip9IceGem {
+  animation: vip9GemShimmer 1.2s infinite alternate ease-in-out;
+  transform-origin: 18px 12px;
+}
+
+@keyframes vip9GemShimmer {
+  0% { filter: drop-shadow(0 0 2px #00E5FF); transform: scale(0.95); }
+  100% { filter: drop-shadow(0 0 8px #FFFFFF) drop-shadow(0 0 12px #00F2FE); transform: scale(1.1); }
+}
+
+.vip9BottomBadge {
+  position: absolute;
+  bottom: -10%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 18;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 78%;
+}
+
+.vip9Ribbon {
+  background: linear-gradient(135deg, #003666 0%, #006699 40%, #0099CC 70%, #004C80 100%);
+  border: 1.5px solid #00E5FF;
+  border-radius: 3px;
+  box-shadow: 
+    0 0 8px #00F2FE,
+    0 2px 4px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 #E0F7FA;
+  padding: 1px 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.vip9Text {
+  font-family: var(--font-pixel);
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: linear-gradient(180deg, #FFFFFF 0%, #E0F7FA 50%, #00E5FF 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: vip9TextGlitter 1.2s infinite alternate ease-in-out;
+  white-space: nowrap;
+}
+
+@keyframes vip9TextGlitter {
+  0% { filter: drop-shadow(0 0 2px #00E5FF) brightness(1); }
+  100% { filter: drop-shadow(0 0 6px #FFFFFF) drop-shadow(0 0 10px #00F2FE) brightness(1.3); }
+}
+
+/* ============================================
+   FRAME: 🔥 VIP 8 — RỒNG LỬA HOÀNG KIM
    ============================================ */
 .vip8Container {
   position: absolute;
@@ -30,7 +659,6 @@
   z-index: 20;
 }
 
-/* Layer 1: Blazing Fire Aura Glow (Hardware Accelerated) */
 .vip8FireAura {
   position: absolute;
   inset: 15%;
@@ -69,7 +697,6 @@
   }
 }
 
-/* Layer 2: Floating Fire Particle Sparks */
 .vip8Sparks {
   position: absolute;
   inset: 5%;
@@ -94,25 +721,12 @@
 .s6 { top: 40%; right: 2%; color: #FF6348; font-size: 5px; animation-delay: 0.45s; }
 
 @keyframes vip8SparkRise {
-  0% {
-    opacity: 0;
-    transform: scale(0.4) translateY(4px);
-  }
-  40% {
-    opacity: 1;
-    transform: scale(1.3) translateY(-3px);
-  }
-  80% {
-    opacity: 0.8;
-    transform: scale(0.9) translateY(-8px);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(0.2) translateY(-14px);
-  }
+  0% { opacity: 0; transform: scale(0.4) translateY(4px); }
+  40% { opacity: 1; transform: scale(1.3) translateY(-3px); }
+  80% { opacity: 0.8; transform: scale(0.9) translateY(-8px); }
+  100% { opacity: 0; transform: scale(0.2) translateY(-14px); }
 }
 
-/* Layer 3: Base Gold Border with Light Sweep */
 .vip8GoldBorder {
   position: absolute;
   inset: 15%;
@@ -140,15 +754,10 @@
 }
 
 @keyframes vip8Shine {
-  0% {
-    transform: translateX(-100%) translateY(-100%) rotate(45deg);
-  }
-  40%, 100% {
-    transform: translateX(100%) translateY(100%) rotate(45deg);
-  }
+  0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+  40%, 100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
 }
 
-/* Layer 4: Dragon Wings / Flame Flares */
 .vip8DragonWing {
   position: absolute;
   top: 14%;
@@ -186,7 +795,6 @@
   50% { transform: rotate(4deg) scale(1.05); }
 }
 
-/* Layer 5: Top Royal Crown with Pulsing Gem */
 .vip8Crown {
   position: absolute;
   top: -12%;
@@ -212,26 +820,15 @@
 }
 
 @keyframes vip8CrownBounce {
-  0%, 100% {
-    transform: translateX(-50%) translateY(0) scale(1);
-  }
-  50% {
-    transform: translateX(-50%) translateY(-2px) scale(1.04);
-  }
+  0%, 100% { transform: translateX(-50%) translateY(0) scale(1); }
+  50% { transform: translateX(-50%) translateY(-2px) scale(1.04); }
 }
 
 @keyframes vip8GemSparkle {
-  0% {
-    filter: drop-shadow(0 0 2px #E056FD);
-    transform: scale(0.95);
-  }
-  100% {
-    filter: drop-shadow(0 0 8px #FF9FF3) drop-shadow(0 0 12px #9B59B6);
-    transform: scale(1.08);
-  }
+  0% { filter: drop-shadow(0 0 2px #E056FD); transform: scale(0.95); }
+  100% { filter: drop-shadow(0 0 8px #FF9FF3) drop-shadow(0 0 12px #9B59B6); transform: scale(1.08); }
 }
 
-/* Layer 6: Bottom VIP 8 Ribbon Banner */
 .vip8BottomBadge {
   position: absolute;
   bottom: -10%;
@@ -291,23 +888,12 @@
 }
 
 @keyframes vip8TextGlow {
-  0% {
-    text-shadow: 
-      0 0 2px #FFD700,
-      0 0 5px #FF4500;
-    filter: brightness(1);
-  }
-  100% {
-    text-shadow: 
-      0 0 5px #FFE600,
-      0 0 10px #FF3D00,
-      0 0 16px #FF1E00;
-    filter: brightness(1.25);
-  }
+  0% { text-shadow: 0 0 2px #FFD700, 0 0 5px #FF4500; filter: brightness(1); }
+  100% { text-shadow: 0 0 5px #FFE600, 0 0 10px #FF3D00, 0 0 16px #FF1E00; filter: brightness(1.25); }
 }
 
 /* ============================================
-   FRAME 1: 🌈 Cầu Vồng Pixel (Rainbow Stepping)
+   STANDARD FRAMES
    ============================================ */
 .rainbowBorder {
   position: absolute;
@@ -319,47 +905,17 @@
 }
 
 @keyframes rainbowBorderCycle {
-  0% {
-    border-color: #FF5E7E;
-    box-shadow: 0 0 4px #FF5E7E, inset 0 0 2px #FF8FAB;
-  }
-  12.5% {
-    border-color: #FF9F43;
-    box-shadow: 0 0 4px #FF9F43, inset 0 0 2px #FECA57;
-  }
-  25% {
-    border-color: #FECA57;
-    box-shadow: 0 0 4px #FECA57, inset 0 0 2px #FF9FF3;
-  }
-  37.5% {
-    border-color: #1DD1A1;
-    box-shadow: 0 0 4px #1DD1A1, inset 0 0 2px #10AC84;
-  }
-  50% {
-    border-color: #48DBFB;
-    box-shadow: 0 0 4px #48DBFB, inset 0 0 2px #0ABDE3;
-  }
-  62.5% {
-    border-color: #54A0FF;
-    box-shadow: 0 0 4px #54A0FF, inset 0 0 2px #2E86DE;
-  }
-  75% {
-    border-color: #9B59B6;
-    box-shadow: 0 0 4px #9B59B6, inset 0 0 2px #8E44AD;
-  }
-  87.5% {
-    border-color: #FF9FF3;
-    box-shadow: 0 0 4px #FF9FF3, inset 0 0 2px #F368E0;
-  }
-  100% {
-    border-color: #FF5E7E;
-    box-shadow: 0 0 4px #FF5E7E, inset 0 0 2px #FF8FAB;
-  }
+  0% { border-color: #FF5E7E; box-shadow: 0 0 4px #FF5E7E, inset 0 0 2px #FF8FAB; }
+  12.5% { border-color: #FF9F43; box-shadow: 0 0 4px #FF9F43, inset 0 0 2px #FECA57; }
+  25% { border-color: #FECA57; box-shadow: 0 0 4px #FECA57, inset 0 0 2px #FF9FF3; }
+  37.5% { border-color: #1DD1A1; box-shadow: 0 0 4px #1DD1A1, inset 0 0 2px #10AC84; }
+  50% { border-color: #48DBFB; box-shadow: 0 0 4px #48DBFB, inset 0 0 2px #0ABDE3; }
+  62.5% { border-color: #54A0FF; box-shadow: 0 0 4px #54A0FF, inset 0 0 2px #2E86DE; }
+  75% { border-color: #9B59B6; box-shadow: 0 0 4px #9B59B6, inset 0 0 2px #8E44AD; }
+  87.5% { border-color: #FF9FF3; box-shadow: 0 0 4px #FF9FF3, inset 0 0 2px #F368E0; }
+  100% { border-color: #FF5E7E; box-shadow: 0 0 4px #FF5E7E, inset 0 0 2px #FF8FAB; }
 }
 
-/* ============================================
-   FRAME 2: ✨ Ngôi Sao Lấp Lánh (Sparkle Stars)
-   ============================================ */
 .sparkleBorder {
   position: absolute;
   inset: 0;
@@ -381,39 +937,16 @@
   animation: starBlinkStepped 0.8s steps(2) infinite;
 }
 
-.starTL {
-  animation-delay: 0s;
-}
-
-.starTR {
-  animation-delay: 0.4s;
-  color: #5EB5A0;
-}
-
-.starBL {
-  animation-delay: 0.4s;
-  color: #FF8FAB;
-}
-
-.starBR {
-  animation-delay: 0s;
-  color: #FFE99A;
-}
+.starTL { animation-delay: 0s; }
+.starTR { animation-delay: 0.4s; color: #5EB5A0; }
+.starBL { animation-delay: 0.4s; color: #FF8FAB; }
+.starBR { animation-delay: 0s; color: #FFE99A; }
 
 @keyframes starBlinkStepped {
-  0%, 100% {
-    opacity: 1;
-    transform: scale(1.15) rotate(0deg);
-  }
-  50% {
-    opacity: 0.2;
-    transform: scale(0.65) rotate(45deg);
-  }
+  0%, 100% { opacity: 1; transform: scale(1.15) rotate(0deg); }
+  50% { opacity: 0.2; transform: scale(0.65) rotate(45deg); }
 }
 
-/* ============================================
-   FRAME 3: ⚡ Hào Quang Lửa / Cyber Aura
-   ============================================ */
 .flameAura {
   position: absolute;
   inset: 0;
@@ -423,22 +956,10 @@
 }
 
 @keyframes flamePulseStepped {
-  0% {
-    border-color: #FF4500;
-    box-shadow: 0 0 0 1.5px #FFD700, 0 0 6px #FF4500, inset 0 0 3px #FFA500;
-  }
-  33% {
-    border-color: #FF8C00;
-    box-shadow: 0 0 0 2.5px #FF4500, 0 0 10px #FFD700, inset 0 0 5px #FF4500;
-  }
-  66% {
-    border-color: #FFD700;
-    box-shadow: 0 0 0 2px #FF8C00, 0 0 8px #FF6348, inset 0 0 4px #FFD700;
-  }
-  100% {
-    border-color: #FF4500;
-    box-shadow: 0 0 0 1.5px #FFD700, 0 0 6px #FF4500, inset 0 0 3px #FFA500;
-  }
+  0% { border-color: #FF4500; box-shadow: 0 0 0 1.5px #FFD700, 0 0 6px #FF4500, inset 0 0 3px #FFA500; }
+  33% { border-color: #FF8C00; box-shadow: 0 0 0 2.5px #FF4500, 0 0 10px #FFD700, inset 0 0 5px #FF4500; }
+  66% { border-color: #FFD700; box-shadow: 0 0 0 2px #FF8C00, 0 0 8px #FF6348, inset 0 0 4px #FFD700; }
+  100% { border-color: #FF4500; box-shadow: 0 0 0 1.5px #FFD700, 0 0 6px #FF4500, inset 0 0 3px #FFA500; }
 }
 
 .flameSparks {
@@ -465,9 +986,6 @@
   100% { opacity: 0.1; transform: scale(0.4) translateY(-4px); }
 }
 
-/* ============================================
-   FRAME 4: 🌸 Hoa Anh Đào & Trái Tim (Sakura Hearts)
-   ============================================ */
 .sakuraBorder {
   position: absolute;
   inset: 0;
@@ -479,14 +997,8 @@
 }
 
 @keyframes sakuraBorderSteps {
-  0%, 100% {
-    border-color: #FF8FAB;
-    box-shadow: 0 0 0 1px #FFD0E3;
-  }
-  50% {
-    border-color: #FF5E7E;
-    box-shadow: 0 0 0 2px #FFAEB8, 0 0 6px rgba(255, 94, 126, 0.4);
-  }
+  0%, 100% { border-color: #FF8FAB; box-shadow: 0 0 0 1px #FFD0E3; }
+  50% { border-color: #FF5E7E; box-shadow: 0 0 0 2px #FFAEB8, 0 0 6px rgba(255, 94, 126, 0.4); }
 }
 
 .pixelHeart {
@@ -499,21 +1011,10 @@
   animation: heartHopStepped 0.9s steps(3) infinite;
 }
 
-.heartTop {
-  color: #FF4D6D;
-  filter: drop-shadow(1px 1px 0 #FFF);
-}
-
-.heartBottom {
-  color: #FF8FAB;
-  animation-delay: 0.45s;
-}
+.heartTop { color: #FF4D6D; filter: drop-shadow(1px 1px 0 #FFF); }
+.heartBottom { color: #FF8FAB; animation-delay: 0.45s; }
 
 @keyframes heartHopStepped {
-  0%, 100% {
-    transform: scale(1) translateY(0);
-  }
-  50% {
-    transform: scale(1.35) translateY(-2px);
-  }
+  0%, 100% { transform: scale(1) translateY(0); }
+  50% { transform: scale(1.35) translateY(-2px); }
 }
