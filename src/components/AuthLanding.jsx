@@ -275,8 +275,9 @@ export default function AuthLanding({
                   className={s.togglePassBtn}
                   onClick={() => setShowPassword(!showPassword)}
                   aria-label={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
+                  title={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
                 >
-                  {showPassword ? '👁️' : '🔒'}
+                  {showPassword ? '🙈' : '👁️'}
                 </button>
               </div>
             </div>
@@ -305,7 +306,7 @@ export default function AuthLanding({
                 <input
                   type="text"
                   className={s.pixelInput}
-                  placeholder="Ví dụ: bonghoa99, sakura..."
+                  placeholder="Vui lòng nhập tên đăng nhập ..."
                   value={registerInput.username}
                   onChange={(e) => setRegisterInput({ ...registerInput, username: e.target.value })}
                   required
@@ -325,7 +326,7 @@ export default function AuthLanding({
                 <input
                   type="text"
                   className={s.pixelInput}
-                  placeholder="Ví dụ: Bông Hoa Nhỏ 🌸, Bé Miu..."
+                  placeholder="Vui lòng nhập tên hiển thị ..."
                   value={registerInput.displayName}
                   onChange={(e) => setRegisterInput({ ...registerInput, displayName: e.target.value })}
                 />
