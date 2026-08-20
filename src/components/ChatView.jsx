@@ -354,8 +354,9 @@ export default function ChatView({ user }) {
   const handleFinalAcceptRel = async (shareCycle = false) => {
     if (!relationship) return
     try {
-      await acceptRelationshipRequest(relationship.id, shareCycle)
-      const shareMsg = shareCycle ? ' (Đã bật chia sẻ thông tin chu kỳ 🌸)' : ''
+      const finalShare = Boolean(relationship.isCycleShared || relationship.shareCycleData || shareCycle)
+      await acceptRelationshipRequest(relationship.id, finalShare)
+      const shareMsg = finalShare ? ' (Đã bật chia sẻ thông tin chu kỳ 🌸)' : ''
       await sendChatMessage(user.id, activePartner.id, `🎉 2 bạn đã chính thức thiết lập mối quan hệ "${relationship.customIcon} ${relationship.customName}"!${shareMsg}`, {
         isSystemMessage: true,
         type: 'relationship_accepted',

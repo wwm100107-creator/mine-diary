@@ -423,15 +423,31 @@ export async function sendRelationshipRequest({ senderId, receiverId, type = 'co
 
 /**
  * Accept a relationship request.
- * isCycleShared flag decides if cycle data is visible to the other party.
+ * Preserves isCycleShared if sender already enabled it, or if receiver enables it now.
  */
 export async function acceptRelationshipRequest(relId, isCycleShared = false) {
   const relRef = doc(db, 'relationships', relId)
+  const snap = await getDoc(relRef)
+  const existing = snap.exists() ? snap.data() : {}
+  const finalShare = Boolean(existing.isCycleShared || existing.shareCycleData || isCycleShared)
+
   await setDoc(relRef, {
     status: 'accepted',
+    isCycleShared: finalShare,
+    shareCycleData: finalShare,
+    cancelRequesterId: null,
+    updatedAt: serverTimestamp(),
+  }, { merge: true })
+}
+
+/**
+ * Update cycle sharing toggle for an active relationship
+ */
+export async function updateRelationshipCycleSharing(relId, isCycleShared) {
+  const relRef = doc(db, 'relationships', relId)
+  await setDoc(relRef, {
     isCycleShared: Boolean(isCycleShared),
     shareCycleData: Boolean(isCycleShared),
-    cancelRequesterId: null,
     updatedAt: serverTimestamp(),
   }, { merge: true })
 }

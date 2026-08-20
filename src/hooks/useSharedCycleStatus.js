@@ -1,11 +1,11 @@
 /**
  * src/hooks/useSharedCycleStatus.js
  * Global Real-time Hook for Navbar & Partner Cycle Synchronization
- * Ponytail style: minimal reactive listener, memoized state, instant re-render.
+ * Ponytail style: minimal reactive listener, auto-healing, memoized state, instant re-render.
  */
 
 import { useState, useEffect } from 'react'
-import { subscribeToUserRelationships, getUser } from '../lib/social'
+import { subscribeToUserRelationships, getUser, updateRelationshipCycleSharing } from '../lib/social'
 
 export function useSharedCycleStatus(user) {
   const [hasSharedCycleAccess, setHasSharedCycleAccess] = useState(false)
@@ -25,12 +25,9 @@ export function useSharedCycleStatus(user) {
     // Subscribe to all relationships of current user in real time
     const unsubscribe = subscribeToUserRelationships(user.id, async (relationships) => {
       try {
-        // Find all accepted relationships where cycle data sharing is enabled
-        const activeSharedRels = relationships.filter(
-          (r) => r.status === 'accepted' && Boolean(r.isCycleShared || r.shareCycleData)
-        )
+        const acceptedRels = relationships.filter((r) => r.status === 'accepted')
 
-        if (activeSharedRels.length === 0) {
+        if (acceptedRels.length === 0) {
           setHasSharedCycleAccess(false)
           setPartnerUser(null)
           setSharedRelationship(null)
@@ -38,19 +35,31 @@ export function useSharedCycleStatus(user) {
           return
         }
 
-        // Check if any partner is female
+        // Check if any accepted partner is female and has shared cycle
         let foundFemalePartner = null
         let foundRel = null
 
-        for (const rel of activeSharedRels) {
+        for (const rel of acceptedRels) {
           const partnerId = rel.participants?.find((p) => p !== user.id)
           if (!partnerId) continue
 
           const pUser = await getUser(partnerId)
-          // Female or default undefined female cycle
-          if (pUser && (pUser.gender === 'female' || !pUser.gender)) {
+          if (!pUser) continue
+
+          const isPartnerFemale = pUser.gender === 'female' || !pUser.gender
+          const isExplicitlyShared = Boolean(rel.isCycleShared || rel.shareCycleData)
+
+          // If partner is Female and either:
+          // 1. isCycleShared is true
+          // 2. Or is a couple relationship (auto-healing legacy overwrite)
+          if (isPartnerFemale && (isExplicitlyShared || rel.type === 'couple')) {
             foundFemalePartner = pUser
             foundRel = rel
+
+            // Auto-heal relationship in database if isCycleShared was false
+            if (!isExplicitlyShared) {
+              updateRelationshipCycleSharing(rel.id, true).catch(() => {})
+            }
             break
           }
         }
