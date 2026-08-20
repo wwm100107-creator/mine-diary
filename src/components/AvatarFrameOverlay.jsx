@@ -153,10 +153,51 @@ function AvatarFrameOverlayComponent({ frameId = 'none', size = 36, sizePreset }
             </svg>
           </div>
 
-          {/* Layer 7: Bottom Inferno Base, Ribbon & GOD Badge */}
+          {/* Layer 7: Bottom Inferno Base, Red-Purple Lightning Aura, LED Ribbon & GOD Banner */}
           <div className={s.godBottomBadge}>
             <div className={s.godInfernoFlames} />
-            <div className={s.godRibbon}>
+            
+            {/* Red & Purple Flashing Lightning Aura around Ribbon */}
+            <div className={s.godRibbonLightningAura}>
+              <span className={`${s.godRibbonBolt} ${s.grb1}`}>⚡</span>
+              <span className={`${s.godRibbonBolt} ${s.grb2}`}>✦</span>
+              <span className={`${s.godRibbonBolt} ${s.grb3}`}>⚡</span>
+              <span className={`${s.godRibbonBolt} ${s.grb4}`}>★</span>
+              <span className={`${s.godRibbonBolt} ${s.grb5}`}>⚡</span>
+              <span className={`${s.godRibbonBolt} ${s.grb6}`}>✦</span>
+            </div>
+
+            {/* Luxurious Curved Flowing Swallowtail Ribbon for GOD */}
+            <div className={s.godRibbonWrapper}>
+              <div className={s.godRibbonLedBorder} />
+              <svg viewBox="0 0 100 24" className={s.ribbonBannerSvg}>
+                <defs>
+                  <linearGradient id="godRibbonImperialGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#2E0854" />
+                    <stop offset="20%" stopColor="#7F1D1D" />
+                    <stop offset="50%" stopColor="#C026D3" />
+                    <stop offset="80%" stopColor="#991B1B" />
+                    <stop offset="100%" stopColor="#1E053A" />
+                  </linearGradient>
+                  <linearGradient id="godRibbonGoldTrim" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#FFE57F" />
+                    <stop offset="50%" stopColor="#FFD700" />
+                    <stop offset="100%" stopColor="#B45309" />
+                  </linearGradient>
+                </defs>
+                {/* Left Swallowtail */}
+                <path d="M12,6 L0,4 L4,11 L0,18 L12,16 Z" fill="#450A0A" />
+                <path d="M12,6 L2,4 L6,11 L2,18 L12,16 Z" fill="url(#godRibbonImperialGrad)" stroke="url(#godRibbonGoldTrim)" strokeWidth="0.7" />
+                {/* Right Swallowtail */}
+                <path d="M88,6 L100,4 L96,11 L100,18 L88,16 Z" fill="#450A0A" />
+                <path d="M88,6 L98,4 L94,11 L98,18 L88,16 Z" fill="url(#godRibbonImperialGrad)" stroke="url(#godRibbonGoldTrim)" strokeWidth="0.7" />
+                {/* Central Curved Ribbon Body */}
+                <path d="M10,6 C30,3 70,3 90,6 L88,18 C68,21 32,21 12,18 Z" fill="url(#godRibbonImperialGrad)" stroke="url(#godRibbonGoldTrim)" strokeWidth="0.9" />
+                {/* Top/Bottom Shimmer Highlights */}
+                <path d="M11,7 C31,4 69,4 89,7" stroke="#FFD700" strokeWidth="0.8" fill="none" opacity="0.9" />
+                <path d="M13,17 C33,20 67,20 87,17" stroke="#FF1E56" strokeWidth="0.8" fill="none" opacity="0.8" />
+              </svg>
+
               <span className={s.godCrestGlow}>♦</span>
               <span className={s.godText}>👑 GOD 👑</span>
               <span className={s.godCrestGlow}>♦</span>
@@ -280,7 +321,7 @@ function AvatarFrameOverlayComponent({ frameId = 'none', size = 36, sizePreset }
             </svg>
           </div>
 
-          {/* Layer 6: Bottom Oriental Storm Clouds, Golden Chains & SSSVIP Banner */}
+          {/* Layer 6: Bottom Clouds, Chains, Thunder Lightning Aura & SSSVIP Ribbon */}
           <div className={s.vip10BottomBadge}>
             {/* Swirling White/Cyan Storm Clouds */}
             <div className={s.bottomClouds}>
@@ -295,8 +336,46 @@ function AvatarFrameOverlayComponent({ frameId = 'none', size = 36, sizePreset }
               <span>⛓</span><span>✦</span><span>⛓</span>
             </div>
 
-            {/* SSSVIP Ornate Cyber Banner */}
-            <div className={s.vip10Ribbon}>
+            {/* Thunder Storm Lightning Aura around Ribbon */}
+            <div className={s.vip10RibbonLightningAura}>
+              <span className={`${s.sssvipRibbonBolt} ${s.srb1}`}>⚡</span>
+              <span className={`${s.sssvipRibbonBolt} ${s.srb2}`}>✦</span>
+              <span className={`${s.sssvipRibbonBolt} ${s.srb3}`}>⚡</span>
+              <span className={`${s.sssvipRibbonBolt} ${s.srb4}`}>■</span>
+              <span className={`${s.sssvipRibbonBolt} ${s.srb5}`}>⚡</span>
+            </div>
+
+            {/* Luxurious Curved Flowing Swallowtail Ribbon for SSSVIP */}
+            <div className={s.vip10RibbonWrapper}>
+              <div className={s.vip10RibbonLedBorder} />
+              <svg viewBox="0 0 100 24" className={s.ribbonBannerSvg}>
+                <defs>
+                  <linearGradient id="sssvipRibbonStormGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#0F172A" />
+                    <stop offset="25%" stopColor="#1E293B" />
+                    <stop offset="50%" stopColor="#0284C7" />
+                    <stop offset="75%" stopColor="#00E5FF" />
+                    <stop offset="100%" stopColor="#0A192F" />
+                  </linearGradient>
+                  <linearGradient id="sssvipRibbonGoldTrim" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#FFF9C4" />
+                    <stop offset="50%" stopColor="#00FFFF" />
+                    <stop offset="100%" stopColor="#FFD700" />
+                  </linearGradient>
+                </defs>
+                {/* Left Swallowtail */}
+                <path d="M12,6 L0,4 L4,11 L0,18 L12,16 Z" fill="#0A0F1D" />
+                <path d="M12,6 L2,4 L6,11 L2,18 L12,16 Z" fill="url(#sssvipRibbonStormGrad)" stroke="url(#sssvipRibbonGoldTrim)" strokeWidth="0.7" />
+                {/* Right Swallowtail */}
+                <path d="M88,6 L100,4 L96,11 L100,18 L88,16 Z" fill="#0A0F1D" />
+                <path d="M88,6 L98,4 L94,11 L98,18 L88,16 Z" fill="url(#sssvipRibbonStormGrad)" stroke="url(#sssvipRibbonGoldTrim)" strokeWidth="0.7" />
+                {/* Central Curved Ribbon Body */}
+                <path d="M10,6 C30,3 70,3 90,6 L88,18 C68,21 32,21 12,18 Z" fill="url(#sssvipRibbonStormGrad)" stroke="url(#sssvipRibbonGoldTrim)" strokeWidth="0.9" />
+                {/* Top/Bottom Shimmer Highlights */}
+                <path d="M11,7 C31,4 69,4 89,7" stroke="#00FFFF" strokeWidth="0.8" fill="none" opacity="0.95" />
+                <path d="M13,17 C33,20 67,20 87,17" stroke="#FFD700" strokeWidth="0.8" fill="none" opacity="0.8" />
+              </svg>
+
               <span className={s.vip10Text}>SSSVIP</span>
             </div>
           </div>
@@ -405,7 +484,7 @@ function AvatarFrameOverlayComponent({ frameId = 'none', size = 36, sizePreset }
             </svg>
           </div>
 
-          {/* Layer 6: Bottom Feathered Wreath & SSVIP Ribbon */}
+          {/* Layer 6: Bottom Feathered Wreath, Frost Mist Aura & SSVIP Ribbon */}
           <div className={s.vip9BottomBadge}>
             {/* Bottom Feathered Wings Spread */}
             <div className={s.bottomFeatherWreath}>
@@ -416,8 +495,46 @@ function AvatarFrameOverlayComponent({ frameId = 'none', size = 36, sizePreset }
               </svg>
             </div>
 
-            {/* Frosted SSVIP Ribbon Banner */}
-            <div className={s.vip9Ribbon}>
+            {/* Frost Mist & Diamond Dust Aura around Ribbon */}
+            <div className={s.vip9RibbonMistAura}>
+              <span className={`${s.ssvipRibbonCrystal} ${s.src1}`}>❄</span>
+              <span className={`${s.ssvipRibbonCrystal} ${s.src2}`}>✦</span>
+              <span className={`${s.ssvipRibbonCrystal} ${s.src3}`}>✧</span>
+              <span className={`${s.ssvipRibbonCrystal} ${s.src4}`}>❄</span>
+              <span className={`${s.ssvipRibbonCrystal} ${s.src5}`}>✦</span>
+            </div>
+
+            {/* Luxurious Curved Flowing Swallowtail Ribbon for SSVIP */}
+            <div className={s.vip9RibbonWrapper}>
+              <div className={s.vip9RibbonLedBorder} />
+              <svg viewBox="0 0 100 24" className={s.ribbonBannerSvg}>
+                <defs>
+                  <linearGradient id="ssvipRibbonIceGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#FFFFFF" />
+                    <stop offset="25%" stopColor="#E0F2FE" />
+                    <stop offset="50%" stopColor="#BAE6FD" />
+                    <stop offset="75%" stopColor="#7DD3FC" />
+                    <stop offset="100%" stopColor="#38BDF8" />
+                  </linearGradient>
+                  <linearGradient id="ssvipRibbonSilverTrim" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#FFFFFF" />
+                    <stop offset="50%" stopColor="#CBE6FE" />
+                    <stop offset="100%" stopColor="#7DA0FA" />
+                  </linearGradient>
+                </defs>
+                {/* Left Swallowtail */}
+                <path d="M12,6 L0,4 L4,11 L0,18 L12,16 Z" fill="#3B82F6" />
+                <path d="M12,6 L2,4 L6,11 L2,18 L12,16 Z" fill="url(#ssvipRibbonIceGrad)" stroke="url(#ssvipRibbonSilverTrim)" strokeWidth="0.7" />
+                {/* Right Swallowtail */}
+                <path d="M88,6 L100,4 L96,11 L100,18 L88,16 Z" fill="#3B82F6" />
+                <path d="M88,6 L98,4 L94,11 L98,18 L88,16 Z" fill="url(#ssvipRibbonIceGrad)" stroke="url(#ssvipRibbonSilverTrim)" strokeWidth="0.7" />
+                {/* Central Curved Ribbon Body */}
+                <path d="M10,6 C30,3 70,3 90,6 L88,18 C68,21 32,21 12,18 Z" fill="url(#ssvipRibbonIceGrad)" stroke="url(#ssvipRibbonSilverTrim)" strokeWidth="0.9" />
+                {/* Top/Bottom Shimmer Highlights */}
+                <path d="M11,7 C31,4 69,4 89,7" stroke="#FFFFFF" strokeWidth="0.8" fill="none" opacity="0.95" />
+                <path d="M13,17 C33,20 67,20 87,17" stroke="#7DA0FA" strokeWidth="0.8" fill="none" opacity="0.8" />
+              </svg>
+
               <span className={s.vip9Text}>SSVIP</span>
             </div>
           </div>
