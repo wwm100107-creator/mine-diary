@@ -14,13 +14,28 @@ export default function BannedScreen({ banDetails, onLogout, onAppealSubmitted }
   const [appealSuccess, setAppealSuccess] = useState('')
   const [appealError, setAppealError] = useState('')
 
-  // Tick every second
+  // ── Countdown Timer & Auto-Reload on Expiry ──
   useEffect(() => {
+    if (!targetDate) return
+
+    // If already expired at mount
+    if (targetDate.getTime() <= Date.now()) {
+      return
+    }
+
     const timer = setInterval(() => {
-      setNow(Date.now())
+      const currentNow = Date.now()
+      setNow(currentNow)
+      if (targetDate.getTime() <= currentNow) {
+        clearInterval(timer)
+        setTimeout(() => {
+          window.location.reload()
+        }, 1200)
+      }
     }, 1000)
+
     return () => clearInterval(timer)
-  }, [])
+  }, [targetDate])
 
   // Calculate remaining time
   const targetDate = useMemo(() => {
