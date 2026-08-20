@@ -27,6 +27,7 @@ import s from './App.module.css'
 export default function App() {
   // Session initialization
   const [user, setUser] = useState(() => getCurrentUser())
+  const isAdmin = isUserAdmin(user)
   const [isAttendanceModalOpen, setIsAttendanceModalOpen] = useState(false)
   const hasAutoOpenedAttendanceRef = useRef(false)
 
@@ -56,8 +57,6 @@ export default function App() {
     }
     return 'diary'
   })
-
-  const isAdmin = isUserAdmin(user)
 
   // ── Relationships & Partner Info for Dynamic Tab Navigation ───────────────
   const [userRelationships, setUserRelationships] = useState([])
