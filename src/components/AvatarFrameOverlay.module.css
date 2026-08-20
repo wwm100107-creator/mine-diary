@@ -624,6 +624,42 @@
   100% { opacity: 1; transform: scale(1.2); filter: drop-shadow(0 0 6px #FFF); }
 }
 
+/* Layer 5: Top Imperial Thunder Storm Crown */
+.vip10Crown {
+  position: absolute;
+  top: -14%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 74%;
+  height: 40%;
+  z-index: 16;
+  filter: drop-shadow(0 0 8px #00FFFF) drop-shadow(0 0 14px #FFD700);
+  animation: vip8CrownBounce 1.8s infinite ease-in-out;
+  will-change: transform;
+}
+
+.thunderCrownSvg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.thunderGem {
+  animation: thunderGemPulse 1s infinite alternate ease-in-out;
+  transform-origin: 22px 14px;
+}
+
+@keyframes thunderGemPulse {
+  0% {
+    filter: drop-shadow(0 0 2px #00FFFF);
+    transform: scale(0.95);
+  }
+  100% {
+    filter: drop-shadow(0 0 8px #FFFFFF) drop-shadow(0 0 14px #00FFFF);
+    transform: scale(1.15);
+  }
+}
+
 /* Layer 6: Bottom Clouds, Chains & SSSVIP Banner */
 .vip10BottomBadge {
   position: absolute;
@@ -1002,13 +1038,13 @@
 }
 
 /* ============================================
-   FRAME: 🔥 VIP 8 — RỒNG LỬA HOÀNG KIM
+   FRAME: 🔥 SVIP — THIÊN THẦN LỬA & VƯƠNG MIỆN HOÀNG GIA (SOLAR ANGEL ROYAL SVIP)
    ============================================ */
 .vip8Container {
   position: absolute;
-  inset: -22%;
-  width: 144%;
-  height: 144%;
+  inset: -30%;
+  width: 160%;
+  height: 160%;
   pointer-events: none;
   display: flex;
   align-items: center;
@@ -1018,183 +1054,159 @@
   transform-origin: center center;
 }
 
-.vip8FireAura {
+/* Layer 1: Blazing Solar Fire Aura Glow & Inner Ring */
+.vip8SolarFireAura {
   position: absolute;
-  inset: 15%;
-  border-radius: inherit;
+  inset: 12%;
+  border-radius: 50%;
   box-shadow: 
-    0 0 8px #FF1E00,
-    0 0 16px #FF6600,
-    0 0 26px #FFCC00,
-    inset 0 0 8px #FF3300;
-  animation: vip8FirePulse 1.2s infinite alternate ease-in-out;
+    0 0 16px #FF3D00,
+    0 0 32px #FF9100,
+    0 0 48px #FFE600;
+  animation: svipSolarPulse 1.8s infinite alternate ease-in-out;
   will-change: box-shadow;
-  transform: translateZ(0);
+  pointer-events: none;
 }
 
-@keyframes vip8FirePulse {
+@keyframes svipSolarPulse {
   0% {
     box-shadow: 
-      0 0 6px #FF1E00,
-      0 0 14px #FF6600,
-      0 0 22px #FFAA00,
-      inset 0 0 6px #FF3300;
-  }
-  50% {
-    box-shadow: 
-      0 0 12px #FF3300,
-      0 0 22px #FF9900,
-      0 0 34px #FFEA00,
-      inset 0 0 10px #FF5500;
+      0 0 10px #FF1E00,
+      0 0 20px #FF7700,
+      0 0 35px #FFAA00;
+    opacity: 0.8;
   }
   100% {
     box-shadow: 
-      0 0 10px #FF1E00,
-      0 0 18px #FF7700,
-      0 0 28px #FFD700,
-      inset 0 0 8px #FF4400;
+      0 0 20px #FF3300,
+      0 0 38px #FF9900,
+      0 0 56px #FFEA00;
+    opacity: 1;
   }
 }
 
+.vip8SolarRing {
+  position: absolute;
+  inset: 18%;
+  border-radius: inherit;
+  border: 3px solid #FF3300;
+  box-shadow: 
+    0 0 0 2px #FFD700,
+    0 0 12px #FF7700,
+    inset 0 0 8px #FFCC00;
+  animation: svipRingShine 1.5s infinite alternate ease-in-out;
+  z-index: 10;
+}
+
+@keyframes svipRingShine {
+  0% { filter: brightness(1); }
+  100% { filter: brightness(1.3) drop-shadow(0 0 6px #FFE600); }
+}
+
+/* Layer 2: Floating Fire Particle Sparks */
 .vip8Sparks {
   position: absolute;
-  inset: 5%;
+  inset: 4%;
   pointer-events: none;
 }
 
 .vip8Spark {
   position: absolute;
-  font-size: calc(var(--frame-size, 36px) * 0.18);
+  font-size: calc(var(--frame-size, 36px) * 0.22);
   line-height: 1;
-  color: #FFD700;
-  text-shadow: 0 0 4px #FF5500;
-  animation: vip8SparkRise 1.6s infinite ease-in-out;
+  color: #FFE066;
+  text-shadow: 0 0 6px #FF3D00, 0 0 10px #FF0055;
+  animation: svipSparkRise 1.6s infinite ease-in-out;
   will-change: transform, opacity;
 }
 
-.s1 { top: 15%; left: 8%; color: #FF4500; animation-delay: 0s; }
-.s2 { top: 10%; right: 12%; color: #FFE600; font-size: calc(var(--frame-size, 36px) * 0.15); animation-delay: 0.3s; }
-.s3 { bottom: 25%; left: 4%; color: #FFA500; animation-delay: 0.6s; }
-.s4 { bottom: 20%; right: 6%; color: #FF1E00; font-size: calc(var(--frame-size, 36px) * 0.16); animation-delay: 0.9s; }
-.s5 { top: 45%; left: 2%; color: #FFD700; font-size: calc(var(--frame-size, 36px) * 0.16); animation-delay: 1.2s; }
-.s6 { top: 40%; right: 2%; color: #FF6348; font-size: calc(var(--frame-size, 36px) * 0.15); animation-delay: 0.45s; }
+.s1 { top: 12%; left: 10%; color: #FF4500; animation-delay: 0s; }
+.s2 { top: 8%; right: 12%; color: #FFE600; font-size: calc(var(--frame-size, 36px) * 0.18); animation-delay: 0.3s; }
+.s3 { bottom: 26%; left: 2%; color: #FFA500; animation-delay: 0.6s; }
+.s4 { bottom: 22%; right: 4%; color: #FF1E00; font-size: calc(var(--frame-size, 36px) * 0.2); animation-delay: 0.9s; }
+.s5 { top: 42%; left: 0%; color: #FFD700; font-size: calc(var(--frame-size, 36px) * 0.2); animation-delay: 1.2s; }
+.s6 { top: 38%; right: 0%; color: #FF6348; font-size: calc(var(--frame-size, 36px) * 0.18); animation-delay: 0.45s; }
 
-@keyframes vip8SparkRise {
+@keyframes svipSparkRise {
   0% { opacity: 0; transform: scale(0.4) translateY(4px); }
   40% { opacity: 1; transform: scale(1.3) translateY(-3px); }
   80% { opacity: 0.8; transform: scale(0.9) translateY(-8px); }
   100% { opacity: 0; transform: scale(0.2) translateY(-14px); }
 }
 
-.vip8GoldBorder {
+/* Layer 3: Grand Layered White Angelic Wings */
+.vip8AngelWing {
   position: absolute;
-  inset: 15%;
-  border-radius: inherit;
-  border: 2.5px solid #FFD700;
-  box-shadow: 
-    0 0 0 1.5px #FFA500,
-    0 0 0 2.5px #8B0000,
-    inset 0 0 0 1.5px #FFF59D;
-  overflow: hidden;
-  z-index: 10;
-}
-
-.vip8ShineSweep {
-  position: absolute;
-  inset: -60%;
-  background: linear-gradient(
-    135deg,
-    transparent 35%,
-    rgba(255, 255, 255, 0.9) 50%,
-    transparent 65%
-  );
-  animation: vip8Shine 2.2s infinite cubic-bezier(0.4, 0, 0.2, 1);
+  top: -6%;
+  width: 50%;
+  height: 72%;
+  z-index: 12;
+  filter: drop-shadow(0 0 6px rgba(255, 68, 0, 0.6)) drop-shadow(0 0 12px rgba(255, 215, 0, 0.5));
+  animation: svipWingHover 2.2s infinite alternate ease-in-out;
   will-change: transform;
 }
 
-@keyframes vip8Shine {
-  0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-  40%, 100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
-}
-
-.vip8DragonWing {
-  position: absolute;
-  top: 14%;
-  width: 36%;
-  height: 52%;
-  z-index: 11;
-  filter: drop-shadow(0 0 4px #FF3D00);
-}
-
 .wingLeft {
-  left: -8%;
+  left: -18%;
   transform-origin: right center;
-  animation: vip8WingLeft 2.4s infinite ease-in-out;
 }
 
 .wingRight {
-  right: -8%;
+  right: -18%;
   transform-origin: left center;
-  animation: vip8WingRight 2.4s infinite ease-in-out;
 }
 
-.dragonSvg {
+.angelWingSvg {
   width: 100%;
   height: 100%;
   overflow: visible;
 }
 
-@keyframes vip8WingLeft {
-  0%, 100% { transform: rotate(0deg) scale(1); }
-  50% { transform: rotate(-4deg) scale(1.05); }
+@keyframes svipWingHover {
+  0% { transform: rotate(0deg) scale(1); }
+  100% { transform: rotate(-3deg) scale(1.05); }
 }
 
-@keyframes vip8WingRight {
-  0%, 100% { transform: rotate(0deg) scale(1); }
-  50% {
-    transform: rotate(4deg) scale(1.05);
-  }
+/* Layer 4: Silver Bramble Antlers */
+.vip8Bramble {
+  position: absolute;
+  bottom: 12%;
+  width: 38%;
+  height: 26%;
+  z-index: 14;
+  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.9)) drop-shadow(0 0 8px rgba(255, 68, 0, 0.5));
+  animation: svipBrambleGlow 1.8s infinite alternate ease-in-out;
 }
 
-.dragonEye {
-  animation: dragonEyePulse 1.2s infinite alternate ease-in-out;
-  transform-origin: center;
+.brambleLeft {
+  left: -4%;
 }
 
-@keyframes dragonEyePulse {
-  0% { filter: drop-shadow(0 0 1px #FF1E00); opacity: 0.85; }
-  100% { filter: drop-shadow(0 0 5px #FF0000) drop-shadow(0 0 8px #FFE600); opacity: 1; }
+.brambleRight {
+  right: -4%;
 }
 
-.borderGem {
-  animation: borderGemGlow 1.5s infinite alternate ease-in-out;
-  transform-origin: center;
+.brambleSvg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
 }
 
-@keyframes borderGemGlow {
-  0% { filter: drop-shadow(0 0 1px #FF1E00); }
-  100% { filter: drop-shadow(0 0 6px #FF1E00) drop-shadow(0 0 8px #FFD700); }
+@keyframes svipBrambleGlow {
+  0% { opacity: 0.8; filter: drop-shadow(0 0 2px #FFF); }
+  100% { opacity: 1; filter: drop-shadow(0 0 6px #FFF) drop-shadow(0 0 10px #FF7700); }
 }
 
-.fireOrb {
-  animation: fireOrbBreathe 1s infinite alternate ease-in-out;
-  transform-origin: center;
-}
-
-@keyframes fireOrbBreathe {
-  0% { filter: drop-shadow(0 0 2px #FF3D00); transform: scale(0.9); }
-  100% { filter: drop-shadow(0 0 8px #FFD700) drop-shadow(0 0 12px #FF1E00); transform: scale(1.15); }
-}
-
+/* Layer 5: Top Imperial Red & Gold Royal Crown */
 .vip8Crown {
   position: absolute;
-  top: -14%;
+  top: -15%;
   left: 50%;
   transform: translateX(-50%);
-  width: 72%;
-  height: 40%;
-  z-index: 15;
-  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.4)) drop-shadow(0 0 8px #FF8800);
+  width: 78%;
+  height: 42%;
+  z-index: 16;
+  filter: drop-shadow(0 0 8px #FF3D00) drop-shadow(0 0 14px #FFD700);
   animation: vip8CrownBounce 1.8s infinite ease-in-out;
   will-change: transform;
 }
@@ -1206,132 +1218,90 @@
 }
 
 .vip8Gem {
-  animation: vip8GemSparkle 1.2s infinite alternate ease-in-out;
-  transform-origin: 20px 14px;
+  animation: svipRubyPulse 1.2s infinite alternate ease-in-out;
+  transform-origin: 23px 14px;
 }
 
-@keyframes vip8CrownBounce {
-  0%, 100% {
-    transform: translateX(-50%) translateY(0) scale(1);
-  }
-  50% {
-    transform: translateX(-50%) translateY(-2px) scale(1.04);
-  }
-}
-
-@keyframes vip8GemSparkle {
+@keyframes svipRubyPulse {
   0% {
-    filter: drop-shadow(0 0 2px #E056FD);
+    filter: drop-shadow(0 0 2px #FF1E56);
     transform: scale(0.95);
   }
   100% {
-    filter: drop-shadow(0 0 8px #FF9FF3) drop-shadow(0 0 12px #9B59B6);
-    transform: scale(1.08);
+    filter: drop-shadow(0 0 8px #FF0040) drop-shadow(0 0 12px #FFE600);
+    transform: scale(1.15);
   }
 }
 
+/* Layer 6: Bottom Crimson Spikes & Flowing Golden Ribbon */
 .vip8BottomBadge {
   position: absolute;
-  bottom: -11%;
+  bottom: -12%;
   left: 50%;
   transform: translateX(-50%);
   z-index: 18;
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 80%;
+  width: 92%;
 }
 
-.centerRubyCrest {
-  width: calc(var(--frame-size, 36px) * 0.44);
-  height: calc(var(--frame-size, 36px) * 0.33);
-  margin-bottom: calc(var(--frame-size, 36px) * -0.14);
-  z-index: 21;
-  filter: drop-shadow(0 0 3px #FF1E00);
+.bottomCrimsonSpikes {
+  width: 100%;
+  height: calc(var(--frame-size, 36px) * 0.42);
+  margin-bottom: calc(var(--frame-size, 36px) * -0.22);
+  z-index: 16;
+  filter: drop-shadow(0 0 6px #FF0055);
 }
 
-.rubyCrestSvg {
+.spikesSvg {
   width: 100%;
   height: 100%;
   overflow: visible;
 }
 
-.crestRuby {
-  animation: crestRubyGlow 1.4s infinite alternate ease-in-out;
-  transform-origin: 8px 7px;
-}
-
-@keyframes crestRubyGlow {
-  0% { filter: drop-shadow(0 0 1px #FF1E00); transform: scale(0.95); }
-  100% { filter: drop-shadow(0 0 6px #FF1E00) drop-shadow(0 0 10px #FFD700); transform: scale(1.1); }
-}
-
-.clawLeft, .clawRight {
-  position: absolute;
-  top: calc(var(--frame-size, 36px) * 0.06);
-  display: flex;
-  gap: 1px;
-  font-size: calc(var(--frame-size, 36px) * 0.14);
-  line-height: 1;
-  color: #FFD700;
-  text-shadow: 0 0 2px #FF4500;
-  z-index: 20;
-}
-
-.clawLeft { left: 2px; }
-.clawRight { right: 2px; }
-
-.vip8Ribbon {
-  background: linear-gradient(135deg, #8B0000 0%, #B71C1C 25%, #D32F2F 50%, #E53935 75%, #5D0000 100%);
-  border: max(1px, calc(var(--frame-size, 36px) * 0.035)) solid #FFD700;
-  border-radius: calc(var(--frame-size, 36px) * 0.08);
-  box-shadow: 
-    0 0 8px #FF3D00,
-    0 2px 5px rgba(0, 0, 0, 0.5),
-    inset 0 1px 0 #FFF59D;
-  padding: calc(var(--frame-size, 36px) * 0.04) calc(var(--frame-size, 36px) * 0.14);
+.vip8RibbonWrapper {
+  position: relative;
+  width: 100%;
+  height: calc(var(--frame-size, 36px) * 0.55);
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 19;
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.4));
+}
+
+.ribbonBannerSvg {
+  position: absolute;
+  inset: 0;
   width: 100%;
-  box-sizing: border-box;
-  z-index: 18;
+  height: 100%;
+  overflow: visible;
 }
 
 .vip8Text {
+  position: relative;
+  z-index: 20;
   font-family: var(--font-pixel);
   font-size: calc(var(--frame-size, 36px) * 0.22);
   font-weight: 900;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  background: linear-gradient(180deg, #FFFFFF 0%, #FFF9C4 35%, #FFD700 70%, #FF9800 100%);
+  background: linear-gradient(180deg, #FFFFFF 0%, #FFF9C4 35%, #FFD700 70%, #B45309 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: vip8TextGlow 1s infinite alternate ease-in-out;
+  animation: vip8TextGlow 1.2s infinite alternate ease-in-out;
   white-space: nowrap;
+  margin-top: -1px;
 }
 
 @keyframes vip8TextGlow {
   0% {
-    text-shadow: 0 0 2px #FFD700, 0 0 5px #FF4500;
-    filter: brightness(1);
+    filter: drop-shadow(0 0 2px #FFD700);
   }
   100% {
-    text-shadow: 0 0 6px #FFE600, 0 0 12px #FF3D00, 0 0 18px #FF1E00;
-    filter: brightness(1.3);
+    filter: drop-shadow(0 0 8px #FFE600) drop-shadow(0 0 14px #FF3D00);
   }
-}
-
-.bottomGoldWings {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: calc(var(--frame-size, 36px) * 0.06);
-  font-size: calc(var(--frame-size, 36px) * 0.16);
-  color: #FFD700;
-  text-shadow: 0 0 4px #FF6600;
-  margin-top: -1px;
-  z-index: 17;
 }
 
 /* ============================================

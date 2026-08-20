@@ -6,7 +6,7 @@ export const AVATAR_FRAMES = [
   { id: 'god_cosmic', name: '🌌 GOD Nữ Thần', icon: '👑', desc: 'Cấp bậc Tối Thượng GOD Mode — Song Nữ Thần Valkyrie, lửa địa ngục & lôi quang 7 màu nhấp nháy' },
   { id: 'vip10_thunder', name: '⚡ SSSVIP Song Long', icon: '⚡', desc: 'SSSVIP Song Long Lôi Thần — Đầu rồng phong lôi, sấm sét liên tục & điện quang chớp giật' },
   { id: 'vip9_frost', name: '❄️ SSVIP Cánh Băng', icon: '❄️', desc: 'SSVIP Thiên Thần Băng Tuyết — Cánh thiên thần bạch kim & sương băng huyền ảo' },
-  { id: 'vip8_fire', name: '🔥 SVIP Rồng Lửa', icon: '🔥', desc: 'SVIP Rồng vàng hoàng kim & hào quang lửa cháy bùng nổ' },
+  { id: 'vip8_fire', name: '🔥 SVIP Thánh Hỏa', icon: '🔥', desc: 'SVIP Cánh thiên thần trắng, vương miện hoàng gia & hào quang lửa' },
   { id: 'cyber_aura', name: '⚡ Hào Quang Lửa', icon: '✨', desc: 'Lửa vàng & điện quang chớp giật' },
   { id: 'rainbow', name: '🌈 Cầu Vồng Pixel', icon: '🌈', desc: 'Viền cầu vồng luân chuyển 8-bit' },
   { id: 'sparkle_stars', name: '✨ Ngôi Sao Lấp Lánh', icon: '⭐', desc: 'Sao pixel nhấp nháy 4 góc' },
@@ -248,8 +248,37 @@ function AvatarFrameOverlayComponent({ frameId = 'none', size = 36, sizePreset }
                 <stop offset="70%" stopColor="#B45309" />
                 <stop offset="100%" stopColor="#78350F" />
               </linearGradient>
+              <linearGradient id="sssvipGemGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#FFFFFF" />
+                <stop offset="30%" stopColor="#E0F7FA" />
+                <stop offset="70%" stopColor="#00FFFF" />
+                <stop offset="100%" stopColor="#0284C7" />
+              </linearGradient>
             </defs>
           </svg>
+
+          {/* Layer 5: Top Imperial Thunder Storm Crown (Vương Miện Lôi Thần) */}
+          <div className={s.vip10Crown}>
+            <svg viewBox="0 0 44 26" className={s.thunderCrownSvg}>
+              {/* Crown Base Obsidian Rim */}
+              <path d="M4,22 L40,22 L38,18 L6,18 Z" fill="#0F172A" stroke="#0284C7" strokeWidth="0.8" />
+              {/* Gold Crown Tier with 5 Peaks */}
+              <polygon points="6,18 2,8 10,13 16,5 22,1 28,5 34,13 42,8 38,18" fill="url(#sssvipGoldGrad)" stroke="#B45309" strokeWidth="0.7" />
+              {/* Inner Cyan/Electric Highlights */}
+              <polygon points="10,17 7,10 13,14 18,8 22,4 26,8 31,14 37,10 34,17" fill="url(#sssvipDragonGrad)" opacity="0.85" />
+              {/* Center Lightning Trident / Finial */}
+              <polygon points="22,0 20,5 24,5" fill="#00FFFF" />
+              <circle cx="22" cy="0" r="1.2" fill="#FFFFFF" />
+              {/* Left & Right Peak Gold/Cyan Gems */}
+              <circle cx="2" cy="8" r="1" fill="#00FFFF" />
+              <circle cx="16" cy="5" r="1.1" fill="#FFD700" />
+              <circle cx="28" cy="5" r="1.1" fill="#FFD700" />
+              <circle cx="42" cy="8" r="1" fill="#00FFFF" />
+              {/* Central Glowing Electric Diamond Gem */}
+              <polygon points="22,9 26,14 22,19 18,14" fill="url(#sssvipGemGrad)" stroke="#FFFFFF" strokeWidth="0.7" className={s.thunderGem} />
+              <circle cx="22" cy="14" r="1.2" fill="#FFFFFF" opacity="0.9" />
+            </svg>
+          </div>
 
           {/* Layer 6: Bottom Oriental Storm Clouds, Golden Chains & SSSVIP Banner */}
           <div className={s.vip10BottomBadge}>
@@ -398,130 +427,196 @@ function AvatarFrameOverlayComponent({ frameId = 'none', size = 36, sizePreset }
       {/* ══════════════════════════════════════════════════════════════════════
          FRAME: 🔥 SVIP — RỒNG LỬA HOÀNG KIM (SUPREME GOLD FIRE DRAGON SVIP)
          ══════════════════════════════════════════════════════════════════════ */}
+      {/* ══════════════════════════════════════════════════════════════════════
+         FRAME: 🔥 SVIP — THIÊN THẦN LỬA & VƯƠNG MIỆN HOÀNG GIA (SOLAR ANGEL ROYAL SVIP)
+         ══════════════════════════════════════════════════════════════════════ */}
       {frameId === 'vip8_fire' && (
         <div className={s.vip8Container}>
-          {/* Layer 1: Blazing Multi-Tier Fire Aura Glow */}
-          <div className={s.vip8FireAura} />
+          {/* Layer 1: Blazing Solar Fire Aura Glow */}
+          <div className={s.vip8SolarFireAura} />
+          <div className={s.vip8SolarRing} />
 
           {/* Layer 2: Floating Fire Particle Sparks */}
           <div className={s.vip8Sparks}>
             <span className={`${s.vip8Spark} ${s.s1}`}>✦</span>
-            <span className={`${s.vip8Spark} ${s.s2}`}>■</span>
+            <span className={`${s.vip8Spark} ${s.s2}`}>✧</span>
             <span className={`${s.vip8Spark} ${s.s3}`}>✦</span>
-            <span className={`${s.vip8Spark} ${s.s4}`}>■</span>
-            <span className={`${s.vip8Spark} ${s.s5}`}>✦</span>
-            <span className={`${s.vip8Spark} ${s.s6}`}>■</span>
+            <span className={`${s.vip8Spark} ${s.s4}`}>✧</span>
+            <span className={`${s.vip8Spark} ${s.s5}`}>★</span>
+            <span className={`${s.vip8Spark} ${s.s6}`}>✦</span>
           </div>
 
-          {/* Layer 3: Base Gold Border with Light Sweep */}
-          <div className={s.vip8GoldBorder}>
-            <div className={s.vip8ShineSweep} />
-          </div>
-
-          {/* Layer 4: Left & Right Dragon Heads with Ruby Eyes and Flame Flares */}
-          <div className={`${s.vip8DragonWing} ${s.wingLeft}`}>
-            <svg viewBox="0 0 28 36" className={s.dragonSvg}>
-              {/* Dragon Wing & Mane */}
-              <path d="M28,2 C18,0 8,8 2,18 C-2,24 0,30 8,34 C16,38 22,30 24,24 C26,20 28,10 28,2 Z" fill="url(#vip8GoldGrad)" />
-              <path d="M26,6 C18,6 12,12 6,20 C4,23 8,26 12,28 C16,30 22,24 24,20 Z" fill="url(#vip8FireGrad)" />
-              {/* Dragon Head Profile */}
-              <path d="M20,10 L14,12 L11,9 L15,8 L13,5 L18,7 L22,6 Z" fill="url(#vip8GoldGrad)" stroke="#684200" strokeWidth="0.8" />
-              {/* Glowing Ruby Eye */}
-              <circle cx="16" cy="9" r="1.8" fill="#FF0000" className={s.dragonEye} />
-              <circle cx="16" cy="9" r="0.8" fill="#FFE600" />
-              {/* Left Diamond Ruby Gem */}
-              <polygon points="26,20 28,24 26,28 24,24" fill="#FF1E00" stroke="#FFD700" strokeWidth="0.6" className={s.borderGem} />
-              {/* Flaming Fireball at base */}
-              <circle cx="10" cy="26" r="4.5" fill="url(#vip8FireGrad)" className={s.fireOrb} />
+          {/* Layer 3: Left & Right Grand White Angelic Wings with Crimson Inner Glow */}
+          <div className={`${s.vip8AngelWing} ${s.wingLeft}`}>
+            <svg viewBox="0 0 46 64" className={s.angelWingSvg}>
+              {/* Outer Primary White Feathers */}
+              <path d="M46,6 C32,0 18,8 8,22 C0,34 -2,48 4,58 C14,64 26,56 34,44 C38,36 42,22 46,6 Z" fill="url(#svipWhiteWingGrad)" />
+              {/* Middle Layer Carved Feathers */}
+              <path d="M44,14 C32,10 20,18 12,30 C6,40 10,50 20,54 C28,54 36,44 40,32 Z" fill="url(#svipInnerFeatherGrad)" />
+              {/* Inner Fiery Crimson Glow Feathers */}
+              <path d="M46,24 C36,20 26,28 20,38 C16,46 22,50 30,50 C36,48 42,38 44,30 Z" fill="url(#svipCrimsonGlowGrad)" />
+              {/* White Feather Highlights */}
+              <path d="M42,10 C34,8 24,14 18,24 C14,32 18,40 26,42" stroke="#FFFFFF" strokeWidth="1.2" fill="none" opacity="0.8" />
             </svg>
           </div>
-          <div className={`${s.vip8DragonWing} ${s.wingRight}`}>
-            <svg viewBox="0 0 28 36" className={s.dragonSvg}>
-              {/* Dragon Wing & Mane */}
-              <path d="M0,2 C10,0 20,8 26,18 C30,24 28,30 20,34 C12,38 6,30 4,24 C2,20 0,10 0,2 Z" fill="url(#vip8GoldGrad)" />
-              <path d="M2,6 C10,6 16,12 22,20 C24,23 20,26 16,28 C12,30 6,24 4,20 Z" fill="url(#vip8FireGrad)" />
-              {/* Dragon Head Profile */}
-              <path d="M8,10 L14,12 L17,9 L13,8 L15,5 L10,7 L6,6 Z" fill="url(#vip8GoldGrad)" stroke="#684200" strokeWidth="0.8" />
-              {/* Glowing Ruby Eye */}
-              <circle cx="12" cy="9" r="1.8" fill="#FF0000" className={s.dragonEye} />
-              <circle cx="12" cy="9" r="0.8" fill="#FFE600" />
-              {/* Right Diamond Ruby Gem */}
-              <polygon points="2,20 4,24 2,28 0,24" fill="#FF1E00" stroke="#FFD700" strokeWidth="0.6" className={s.borderGem} />
-              {/* Flaming Fireball at base */}
-              <circle cx="18" cy="26" r="4.5" fill="url(#vip8FireGrad)" className={s.fireOrb} />
+          <div className={`${s.vip8AngelWing} ${s.wingRight}`}>
+            <svg viewBox="0 0 46 64" className={s.angelWingSvg}>
+              {/* Outer Primary White Feathers */}
+              <path d="M0,6 C14,0 28,8 38,22 C46,34 48,48 42,58 C32,64 20,56 12,44 C8,36 4,22 0,6 Z" fill="url(#svipWhiteWingGrad)" />
+              {/* Middle Layer Carved Feathers */}
+              <path d="M2,14 C14,10 26,18 34,30 C40,40 36,50 26,54 C18,54 10,44 6,32 Z" fill="url(#svipInnerFeatherGrad)" />
+              {/* Inner Fiery Crimson Glow Feathers */}
+              <path d="M0,24 C10,20 20,28 26,38 C30,46 24,50 16,50 C10,48 4,38 2,30 Z" fill="url(#svipCrimsonGlowGrad)" />
+              {/* White Feather Highlights */}
+              <path d="M4,10 C12,8 22,14 28,24 C32,32 28,40 20,42" stroke="#FFFFFF" strokeWidth="1.2" fill="none" opacity="0.8" />
             </svg>
           </div>
 
-          {/* Layer 5: Top Royal Imperial Crown with Purple Amethyst Gem & Wings */}
+          {/* Layer 4: Left & Right White Silver Bramble Antlers */}
+          <div className={`${s.vip8Bramble} ${s.brambleLeft}`}>
+            <svg viewBox="0 0 36 24" className={s.brambleSvg}>
+              <path d="M36,22 C26,18 16,16 6,10 C2,7 0,3 0,0 C3,5 8,8 14,10 C10,8 6,4 4,1 C9,6 16,9 22,10 C16,9 12,6 9,3 C16,8 24,12 32,14 Z" fill="url(#svipSilverBrambleGrad)" stroke="#FFFFFF" strokeWidth="0.6" />
+              {/* Thorns */}
+              <polygon points="12,10 8,6 14,9" fill="#FFFFFF" />
+              <polygon points="20,13 16,8 22,12" fill="#FFFFFF" />
+              <polygon points="28,16 25,12 30,15" fill="#FFFFFF" />
+            </svg>
+          </div>
+          <div className={`${s.vip8Bramble} ${s.brambleRight}`}>
+            <svg viewBox="0 0 36 24" className={s.brambleSvg}>
+              <path d="M0,22 C10,18 20,16 30,10 C34,7 36,3 36,0 C33,5 28,8 22,10 C26,8 30,4 32,1 C27,6 20,9 14,10 C20,9 24,6 27,3 C20,8 12,12 4,14 Z" fill="url(#svipSilverBrambleGrad)" stroke="#FFFFFF" strokeWidth="0.6" />
+              {/* Thorns */}
+              <polygon points="24,10 28,6 22,9" fill="#FFFFFF" />
+              <polygon points="16,13 20,8 14,12" fill="#FFFFFF" />
+              <polygon points="8,16 11,12 6,15" fill="#FFFFFF" />
+            </svg>
+          </div>
+
+          {/* Layer 5: Top Imperial Red & Gold Royal Crown with Ruby Finials */}
           <div className={s.vip8Crown}>
-            <svg viewBox="0 0 40 26" className={s.crownSvg}>
+            <svg viewBox="0 0 46 32" className={s.crownSvg}>
               <defs>
-                <linearGradient id="vip8GoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <linearGradient id="svipGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#FFFDF0" />
+                  <stop offset="25%" stopColor="#FFE066" />
+                  <stop offset="60%" stopColor="#F59E0B" />
+                  <stop offset="100%" stopColor="#B45309" />
+                </linearGradient>
+                <linearGradient id="svipRubyVelvetGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#FF1E56" />
+                  <stop offset="45%" stopColor="#C0082A" />
+                  <stop offset="100%" stopColor="#5D0014" />
+                </linearGradient>
+                <linearGradient id="svipRubyGemGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#FF6B8B" />
+                  <stop offset="50%" stopColor="#FF0040" />
+                  <stop offset="100%" stopColor="#780016" />
+                </linearGradient>
+                <linearGradient id="svipWhiteWingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#FFFFFF" />
+                  <stop offset="55%" stopColor="#F1F5F9" />
+                  <stop offset="100%" stopColor="#CBD5E1" />
+                </linearGradient>
+                <linearGradient id="svipInnerFeatherGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#FFFFFF" />
+                  <stop offset="40%" stopColor="#FFE4E6" />
+                  <stop offset="100%" stopColor="#FDA4AF" />
+                </linearGradient>
+                <linearGradient id="svipCrimsonGlowGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#FF4D6D" />
+                  <stop offset="60%" stopColor="#E11D48" />
+                  <stop offset="100%" stopColor="#881337" />
+                </linearGradient>
+                <linearGradient id="svipSilverBrambleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#FFFFFF" />
+                  <stop offset="60%" stopColor="#E2E8F0" />
+                  <stop offset="100%" stopColor="#94A3B8" />
+                </linearGradient>
+                <linearGradient id="svipRibbonGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                   <stop offset="0%" stopColor="#FFF9C4" />
                   <stop offset="25%" stopColor="#FFD700" />
-                  <stop offset="60%" stopColor="#FF9800" />
-                  <stop offset="100%" stopColor="#8D6E63" />
+                  <stop offset="50%" stopColor="#F59E0B" />
+                  <stop offset="75%" stopColor="#FFD700" />
+                  <stop offset="100%" stopColor="#92400E" />
                 </linearGradient>
-                <linearGradient id="vip8FireGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                  <stop offset="0%" stopColor="#FFE600" />
-                  <stop offset="45%" stopColor="#FF3D00" />
-                  <stop offset="100%" stopColor="#8B0000" />
+                <linearGradient id="svipCrimsonThornsGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#FF1E56" />
+                  <stop offset="50%" stopColor="#C0082A" />
+                  <stop offset="100%" stopColor="#3B0007" />
                 </linearGradient>
-                <linearGradient id="vip8RubyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#FF5252" />
-                  <stop offset="50%" stopColor="#D50000" />
-                  <stop offset="100%" stopColor="#5D0000" />
-                </linearGradient>
-                <radialGradient id="vip8GemGrad" cx="50%" cy="50%" r="50%">
-                  <stop offset="0%" stopColor="#E056FD" />
-                  <stop offset="50%" stopColor="#9B59B6" />
-                  <stop offset="100%" stopColor="#3C096C" />
-                </radialGradient>
               </defs>
-              {/* Crown Top Spikes */}
-              <path d="M20,0 L23,7 L31,3 L27,10 L37,8 L30,16 L38,20 L8,20 L2,16 L11,10 L7,3 L15,7 Z" fill="url(#vip8GoldGrad)" opacity="0.9" />
-              {/* Velvet Red Interior Dome */}
-              <path d="M7,22 C7,12 33,12 33,22 Z" fill="url(#vip8RubyGrad)" />
-              {/* Crown Base & Gold Filigree */}
-              <path d="M5,24 L35,24 L37,18 L32,12 L26,18 L20,4 L14,18 L8,12 L3,18 Z" fill="url(#vip8GoldGrad)" stroke="#5D4037" strokeWidth="1" />
-              {/* Purple Wings Flanking Amethyst Gem */}
-              <path d="M12,14 C15,11 17,14 18,14 C17,17 14,16 12,14 Z" fill="#9B59B6" />
-              <path d="M28,14 C25,11 23,14 22,14 C23,17 26,16 28,14 Z" fill="#9B59B6" />
-              {/* Center Hexagonal Amethyst Gem */}
-              <polygon points="20,8 24,11 24,17 20,20 16,17 16,11" fill="url(#vip8GemGrad)" stroke="#FFF59D" strokeWidth="1" className={s.vip8Gem} />
-              {/* Top Rubies */}
-              <circle cx="8" cy="12" r="1.8" fill="#FF1E00" stroke="#FFD700" strokeWidth="0.6" />
-              <circle cx="20" cy="4" r="2.4" fill="#FFD700" stroke="#D50000" strokeWidth="0.8" />
-              <circle cx="32" cy="12" r="1.8" fill="#FF1E00" stroke="#FFD700" strokeWidth="0.6" />
+
+              {/* Glowing Fiery Halo beneath Crown */}
+              <ellipse cx="23" cy="27" rx="16" ry="4" fill="#FF5500" opacity="0.6" filter="blur(1px)" />
+
+              {/* Crown Royal Velvet Interior Cushion */}
+              <path d="M10,24 C10,13 36,13 36,24 Z" fill="url(#svipRubyVelvetGrad)" />
+
+              {/* Crown Base Band with Velvet and Gold Trim */}
+              <rect x="8" y="23" width="30" height="6" rx="3" fill="#881337" stroke="url(#svipGoldGrad)" strokeWidth="1.2" />
+              {/* Gold Filigree / Oval Studs on Band */}
+              <circle cx="13" cy="26" r="1.4" fill="url(#svipGoldGrad)" />
+              <circle cx="18" cy="26" r="1.4" fill="url(#svipRubyGemGrad)" />
+              <circle cx="23" cy="26" r="1.8" fill="url(#svipGoldGrad)" />
+              <circle cx="28" cy="26" r="1.4" fill="url(#svipRubyGemGrad)" />
+              <circle cx="33" cy="26" r="1.4" fill="url(#svipGoldGrad)" />
+
+              {/* Gold Crown Arches & 5 Peaks */}
+              <path d="M8,23 L4,12 L12,17 L17,8 L23,2 L29,8 L34,17 L42,12 L38,23 Z" fill="url(#svipGoldGrad)" stroke="#78350F" strokeWidth="0.8" />
+
+              {/* Left/Right Peak Ruby Gems */}
+              <circle cx="4" cy="12" r="1.8" fill="url(#svipRubyGemGrad)" stroke="#FFD700" strokeWidth="0.6" />
+              <circle cx="17" cy="8" r="1.8" fill="url(#svipRubyGemGrad)" stroke="#FFD700" strokeWidth="0.6" />
+              <circle cx="29" cy="8" r="1.8" fill="url(#svipRubyGemGrad)" stroke="#FFD700" strokeWidth="0.6" />
+              <circle cx="42" cy="12" r="1.8" fill="url(#svipRubyGemGrad)" stroke="#FFD700" strokeWidth="0.6" />
+
+              {/* Center Grand Cross / Fleur-de-lis & Ruby Drop */}
+              <polygon points="23,0 21,5 25,5" fill="#FFE066" />
+              <circle cx="23" cy="0" r="1.4" fill="#FF0040" stroke="#FFD700" strokeWidth="0.6" />
+              {/* Grand Central Teardrop Ruby Gem */}
+              <polygon points="23,9 26,14 23,20 20,14" fill="url(#svipRubyGemGrad)" stroke="#FFF9C4" strokeWidth="0.8" className={s.vip8Gem} />
+              <circle cx="23" cy="14" r="1.2" fill="#FFFFFF" opacity="0.9" />
             </svg>
           </div>
 
-          {/* Layer 6: Bottom SVIP Crest Banner with Dragon Claws & Center Ruby */}
+          {/* Layer 6: Bottom Crimson Spikes, Flowing Golden Ribbon Banner & SVIP Text */}
           <div className={s.vip8BottomBadge}>
-            {/* Center Ruby Crest at top of banner */}
-            <div className={s.centerRubyCrest}>
-              <svg viewBox="0 0 16 14" className={s.rubyCrestSvg}>
-                <polygon points="8,0 16,5 12,14 4,14 0,5" fill="url(#vip8GoldGrad)" stroke="#5D4037" strokeWidth="0.8" />
-                <polygon points="8,3 12,6 10,11 6,11 4,6" fill="url(#vip8RubyGrad)" stroke="#FFD700" strokeWidth="0.6" className={s.crestRuby} />
+            {/* Fan of Sharp Crimson Spikes / Crystal Blades */}
+            <div className={s.bottomCrimsonSpikes}>
+              <svg viewBox="0 0 48 20" className={s.spikesSvg}>
+                {/* Spreading Blades */}
+                <polygon points="24,20 22,0 26,0" fill="#E11D48" stroke="#881337" strokeWidth="0.5" />
+                <polygon points="24,19 18,2 22,0" fill="url(#svipCrimsonThornsGrad)" />
+                <polygon points="24,19 30,2 26,0" fill="url(#svipCrimsonThornsGrad)" />
+                <polygon points="24,17 13,4 17,2" fill="url(#svipCrimsonThornsGrad)" />
+                <polygon points="24,17 35,4 31,2" fill="url(#svipCrimsonThornsGrad)" />
+                <polygon points="24,15 8,7 12,5" fill="url(#svipCrimsonThornsGrad)" />
+                <polygon points="24,15 40,7 36,5" fill="url(#svipCrimsonThornsGrad)" />
+                <polygon points="24,12 4,11 7,9" fill="url(#svipCrimsonThornsGrad)" />
+                <polygon points="24,12 44,11 41,9" fill="url(#svipCrimsonThornsGrad)" />
+                {/* Center Silver-tipped Spearhead */}
+                <polygon points="24,20 23,10 25,10" fill="#FFFFFF" />
               </svg>
             </div>
 
-            {/* Dragon Claws Left & Right */}
-            <div className={s.clawLeft}>
-              <span>▲</span><span>▲</span><span>▲</span>
-            </div>
-            <div className={s.clawRight}>
-              <span>▲</span><span>▲</span><span>▲</span>
-            </div>
+            {/* Curved Flowing Gold Ribbon Banner */}
+            <div className={s.vip8RibbonWrapper}>
+              <svg viewBox="0 0 100 24" className={s.ribbonBannerSvg}>
+                {/* Left Swallowtail */}
+                <path d="M12,6 L0,4 L4,11 L0,18 L12,16 Z" fill="#92400E" />
+                <path d="M12,6 L2,4 L6,11 L2,18 L12,16 Z" fill="url(#svipRibbonGoldGrad)" stroke="#78350F" strokeWidth="0.6" />
+                {/* Right Swallowtail */}
+                <path d="M88,6 L100,4 L96,11 L100,18 L88,16 Z" fill="#92400E" />
+                <path d="M88,6 L98,4 L94,11 L98,18 L88,16 Z" fill="url(#svipRibbonGoldGrad)" stroke="#78350F" strokeWidth="0.6" />
+                {/* Central Curved Ribbon Body */}
+                <path d="M10,6 C30,3 70,3 90,6 L88,18 C68,21 32,21 12,18 Z" fill="url(#svipRibbonGoldGrad)" stroke="#78350F" strokeWidth="0.8" />
+                {/* Top/Bottom Shimmer Highlights */}
+                <path d="M11,7 C31,4 69,4 89,7" stroke="#FFFDF0" strokeWidth="0.8" fill="none" opacity="0.9" />
+                <path d="M13,17 C33,20 67,20 87,17" stroke="#78350F" strokeWidth="0.8" fill="none" opacity="0.7" />
+              </svg>
 
-            {/* Red & Gold SVIP Ribbon */}
-            <div className={s.vip8Ribbon}>
+              {/* Text SVIP Centered on Banner */}
               <span className={s.vip8Text}>SVIP</span>
-            </div>
-
-            {/* Bottom Gold Wings Spread */}
-            <div className={s.bottomGoldWings}>
-              <span>❮</span><span>✦</span><span>❯</span>
             </div>
           </div>
         </div>
