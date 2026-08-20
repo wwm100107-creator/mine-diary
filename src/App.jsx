@@ -516,7 +516,15 @@ export default function App() {
               <div
                 className={s.avatarWrapper}
                 onClick={() => setIsAvatarModalOpen(true)}
-                title="Nhấn để đổi avatar cá nhân"
+                title="Nhấn để đổi avatar và giao diện cá nhân"
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    setIsAvatarModalOpen(true)
+                  }
+                }}
               >
                 <AvatarWithFrame
                   avatarUrl={user.avatar || 'bunny'}
@@ -524,18 +532,6 @@ export default function App() {
                   size="sm"
                   border={false}
                 />
-                <button
-                  type="button"
-                  className={s.avatarEditBtn}
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    setIsAvatarModalOpen(true)
-                  }}
-                  title="Đổi avatar cá nhân"
-                  aria-label="Đổi avatar cá nhân"
-                >
-                  📷
-                </button>
               </div>
               <div className={s.userInfoColumn}>
                 <span className={s.userDisplayName} title={user.displayName || user.name || user.username || user.id}>
