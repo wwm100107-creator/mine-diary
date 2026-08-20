@@ -238,6 +238,170 @@
   box-shadow: 2px 2px 0 var(--color-pink-300);
 }
 
+/* ============================================
+   VIP THEMED PROFILE CAPSULE BORDERS & AURAS
+   (Impeccable style: Perimeter effects only, zero obstruction of Name/UID text)
+   ============================================ */
+
+/* 1. 🌌 GOD MODE (god_cosmic / god) */
+.badge_frame_god_cosmic,
+.badge_frame_god {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.96) 0%, rgba(254, 242, 242, 0.94) 50%, rgba(250, 245, 255, 0.96) 100%) !important;
+  border: 2px solid #FF0055 !important;
+  box-shadow: 
+    0 0 10px rgba(255, 0, 85, 0.5),
+    0 0 20px rgba(217, 70, 239, 0.35),
+    0 0 32px rgba(255, 230, 0, 0.2),
+    2px 2px 0 #9333EA !important;
+  animation: godBadgeBorderRainbow 3s infinite linear !important;
+}
+
+.badge_frame_god_cosmic .userDisplayName,
+.badge_frame_god .userDisplayName {
+  color: #701A75 !important;
+  text-shadow: 0 0 1px #FFF, 0 0 8px rgba(217, 70, 239, 0.4);
+}
+
+.badge_frame_god_cosmic .userUidText,
+.badge_frame_god .userUidText {
+  color: #DC2626 !important;
+  font-weight: 700;
+  text-shadow: 0 0 6px rgba(255, 0, 85, 0.3);
+}
+
+@keyframes godBadgeBorderRainbow {
+  0% {
+    border-color: #FF0055;
+    box-shadow: 0 0 10px rgba(255, 0, 85, 0.6), 0 0 20px rgba(255, 85, 0, 0.35), 2px 2px 0 #9333EA;
+  }
+  25% {
+    border-color: #FF7700;
+    box-shadow: 0 0 12px rgba(255, 119, 0, 0.6), 0 0 22px rgba(255, 230, 0, 0.35), 2px 2px 0 #FF0055;
+  }
+  50% {
+    border-color: #FFE600;
+    box-shadow: 0 0 12px rgba(255, 230, 0, 0.6), 0 0 22px rgba(0, 242, 254, 0.35), 2px 2px 0 #FF7700;
+  }
+  75% {
+    border-color: #00F2FE;
+    box-shadow: 0 0 12px rgba(0, 242, 254, 0.6), 0 0 22px rgba(217, 70, 239, 0.35), 2px 2px 0 #0284C7;
+  }
+  100% {
+    border-color: #FF0055;
+    box-shadow: 0 0 10px rgba(255, 0, 85, 0.6), 0 0 20px rgba(255, 85, 0, 0.35), 2px 2px 0 #9333EA;
+  }
+}
+
+/* 2. ⚡ SSSVIP SONG LONG (vip10_thunder / sssvip) */
+.badge_frame_vip10_thunder,
+.badge_frame_sssvip {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.96) 0%, rgba(240, 249, 255, 0.94) 50%, rgba(255, 251, 235, 0.96) 100%) !important;
+  border: 2px solid #00FFFF !important;
+  box-shadow: 
+    0 0 10px rgba(0, 255, 255, 0.6),
+    0 0 20px rgba(2, 132, 199, 0.4),
+    0 0 30px rgba(255, 215, 0, 0.25),
+    2px 2px 0 #0284C7 !important;
+  animation: sssvipBadgeBorderElectric 1s infinite alternate ease-in-out !important;
+}
+
+.badge_frame_vip10_thunder .userDisplayName,
+.badge_frame_sssvip .userDisplayName {
+  color: #0369A1 !important;
+  text-shadow: 0 0 1px #FFF, 0 0 8px rgba(0, 255, 255, 0.4);
+}
+
+.badge_frame_vip10_thunder .userUidText,
+.badge_frame_sssvip .userUidText {
+  color: #D97706 !important;
+  font-weight: 700;
+  text-shadow: 0 0 6px rgba(255, 215, 0, 0.3);
+}
+
+@keyframes sssvipBadgeBorderElectric {
+  0% {
+    border-color: #00FFFF;
+    box-shadow: 0 0 8px rgba(0, 255, 255, 0.5), 0 0 18px rgba(2, 132, 199, 0.3), 2px 2px 0 #0284C7;
+  }
+  100% {
+    border-color: #FFD700;
+    box-shadow: 0 0 14px rgba(255, 215, 0, 0.7), 0 0 24px rgba(0, 255, 255, 0.5), 2px 2px 0 #FF9800;
+  }
+}
+
+/* 3. ❄️ SSVIP CÁNH BĂNG (vip9_frost / ssvip) */
+.badge_frame_vip9_frost,
+.badge_frame_ssvip {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.96) 0%, rgba(240, 246, 255, 0.94) 50%, rgba(245, 243, 255, 0.96) 100%) !important;
+  border: 2px solid #7DA0FA !important;
+  box-shadow: 
+    0 0 10px rgba(255, 255, 255, 0.9),
+    0 0 18px rgba(125, 160, 250, 0.5),
+    0 0 28px rgba(203, 230, 254, 0.4),
+    2px 2px 0 #7DA0FA !important;
+  animation: ssvipBadgeBorderFrost 2s infinite alternate ease-in-out !important;
+}
+
+.badge_frame_vip9_frost .userDisplayName,
+.badge_frame_ssvip .userDisplayName {
+  color: #1E40AF !important;
+  text-shadow: 0 0 1px #FFF, 0 0 8px rgba(125, 160, 250, 0.4);
+}
+
+.badge_frame_vip9_frost .userUidText,
+.badge_frame_ssvip .userUidText {
+  color: #2563EB !important;
+  font-weight: 700;
+  text-shadow: 0 0 6px rgba(147, 197, 253, 0.4);
+}
+
+@keyframes ssvipBadgeBorderFrost {
+  0% {
+    border-color: #7DA0FA;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.8), 0 0 16px rgba(125, 160, 250, 0.4), 2px 2px 0 #7DA0FA;
+  }
+  100% {
+    border-color: #CBE6FE;
+    box-shadow: 0 0 14px #FFFFFF, 0 0 22px rgba(138, 168, 248, 0.7), 2px 2px 0 #38BDF8;
+  }
+}
+
+/* 4. 🔥 SVIP THÁNH HỎA (vip8_fire / svip) */
+.badge_frame_vip8_fire,
+.badge_frame_svip {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.96) 0%, rgba(255, 245, 240, 0.94) 50%, rgba(255, 251, 235, 0.96) 100%) !important;
+  border: 2px solid #FF5500 !important;
+  box-shadow: 
+    0 0 10px rgba(255, 85, 0, 0.5),
+    0 0 18px rgba(255, 170, 0, 0.35),
+    2px 2px 0 #FF4500 !important;
+  animation: svipBadgeBorderSolar 1.6s infinite alternate ease-in-out !important;
+}
+
+.badge_frame_vip8_fire .userDisplayName,
+.badge_frame_svip .userDisplayName {
+  color: #991B1B !important;
+  text-shadow: 0 0 1px #FFF, 0 0 8px rgba(255, 85, 0, 0.35);
+}
+
+.badge_frame_vip8_fire .userUidText,
+.badge_frame_svip .userUidText {
+  color: #EA580C !important;
+  font-weight: 700;
+  text-shadow: 0 0 6px rgba(255, 170, 0, 0.35);
+}
+
+@keyframes svipBadgeBorderSolar {
+  0% {
+    border-color: #FF5500;
+    box-shadow: 0 0 8px rgba(255, 85, 0, 0.4), 0 0 16px rgba(255, 170, 0, 0.3), 2px 2px 0 #FF4500;
+  }
+  100% {
+    border-color: #FFD700;
+    box-shadow: 0 0 14px rgba(255, 215, 0, 0.6), 0 0 22px rgba(255, 68, 0, 0.4), 2px 2px 0 #FF7700;
+  }
+}
+
 .avatarWrapper {
   position: relative;
   display: inline-flex;

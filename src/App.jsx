@@ -520,36 +520,42 @@ export default function App() {
               </button>
             )}
 
-            <div className={s.userProfileBadge}>
-              <div
-                className={s.avatarWrapper}
-                onClick={() => setIsAvatarModalOpen(true)}
-                title="Nhấn để đổi avatar và giao diện cá nhân"
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault()
-                    setIsAvatarModalOpen(true)
-                  }
-                }}
-              >
-                <AvatarWithFrame
-                  avatarUrl={user.avatar || 'bunny'}
-                  frameId={user.avatarFrame || user.frame || 'none'}
-                  size="sm"
-                  border={false}
-                />
-              </div>
-              <div className={s.userInfoColumn}>
-                <span className={s.userDisplayName} title={user.displayName || user.name || user.username || user.id}>
-                  {user.displayName || user.name || user.username || user.id}
-                </span>
-                <span className={s.userUidText} title={`UID: ${user.id}`}>
-                  {user.id ? (user.id.startsWith('#') ? user.id : `#${user.id}`) : '#Guest'}
-                </span>
-              </div>
-            </div>
+            {(() => {
+              const activeFrameId = user.avatarFrame || user.frame || (user.vipTier === 'god' ? 'god_cosmic' : user.vipTier === 'sssvip' ? 'vip10_thunder' : user.vipTier === 'ssvip' ? 'vip9_frost' : user.vipTier === 'svip' ? 'vip8_fire' : 'none')
+
+              return (
+                <div className={`${s.userProfileBadge} ${s[`badge_frame_${activeFrameId}`] || ''}`}>
+                  <div
+                    className={s.avatarWrapper}
+                    onClick={() => setIsAvatarModalOpen(true)}
+                    title="Nhấn để đổi avatar và giao diện cá nhân"
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault()
+                        setIsAvatarModalOpen(true)
+                      }
+                    }}
+                  >
+                    <AvatarWithFrame
+                      avatarUrl={user.avatar || 'bunny'}
+                      frameId={activeFrameId}
+                      size="sm"
+                      border={false}
+                    />
+                  </div>
+                  <div className={s.userInfoColumn}>
+                    <span className={s.userDisplayName} title={user.displayName || user.name || user.username || user.id}>
+                      {user.displayName || user.name || user.username || user.id}
+                    </span>
+                    <span className={s.userUidText} title={`UID: ${user.id}`}>
+                      {user.id ? (user.id.startsWith('#') ? user.id : `#${user.id}`) : '#Guest'}
+                    </span>
+                  </div>
+                </div>
+              )
+            })()}
             <button
               className={s.logoutBtn}
               onClick={() => {
