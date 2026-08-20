@@ -1204,3 +1204,123 @@
   transform: translateY(-2px);
   box-shadow: 3px 3px 0 var(--color-pink-500);
 }
+
+/* ── VIP Tier Styles in Admin Dashboard ── */
+.userVipBadge {
+  font-family: var(--font-pixel);
+  font-size: 9px;
+  font-weight: bold;
+  padding: 1px 6px;
+  border-radius: 4px;
+  letter-spacing: 0.02em;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.vipTierSection {
+  margin-top: 14px;
+  padding: 12px 14px;
+  background: linear-gradient(135deg, #FFFDF5 0%, #FEF3C7 100%);
+  border: 1.5px solid #F59E0B;
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.vipTierHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.vipTierTitle {
+  font-family: var(--font-pixel);
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #92400E;
+}
+
+.currentVipTag {
+  font-family: var(--font-pixel);
+  font-size: 9px;
+  font-weight: bold;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.vipTierDesc {
+  font-size: 11px;
+  color: #78350F;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.vipTierForm {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.vipTierSelect {
+  flex: 1;
+  min-width: 200px;
+  height: 38px;
+  padding: 0 10px;
+  background: var(--color-white);
+  border: 2px solid #F59E0B;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-ink);
+  outline: none;
+}
+
+.vipTierSelect:focus {
+  border-color: #D97706;
+  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.25);
+}
+
+.vipUpdateBtn {
+  height: 38px;
+  padding: 0 16px;
+  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+  border: 2px solid #B45309;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-pixel);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-white);
+  cursor: pointer;
+  box-shadow: 2px 2px 0 #B45309;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.vipUpdateBtn:hover:not(:disabled) {
+  background: #D97706;
+  transform: translateY(-1px);
+  box-shadow: 3px 3px 0 #92400E;
+}
+
+.vipUpdateBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.vipSuccessMsg {
+  font-size: 11px;
+  font-weight: 600;
+  color: #059669;
+  background: #ECFDF5;
+  border: 1px solid #6EE7B7;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+

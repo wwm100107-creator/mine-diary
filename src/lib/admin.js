@@ -217,3 +217,20 @@ export async function resetUserPassword(userId, newPassword) {
   })
   return true
 }
+
+/**
+ * 9. Update User VIP Tier (Admin Exclusive)
+ * @param {string} userId
+ * @param {'normal' | 'svip' | 'ssvip' | 'sssvip' | 'god'} newVipTier
+ */
+export async function updateUserVipTier(userId, newVipTier) {
+  const allowedTiers = ['normal', 'svip', 'ssvip', 'sssvip', 'god']
+  const targetTier = allowedTiers.includes(newVipTier) ? newVipTier : 'normal'
+
+  await updateDoc(doc(db, 'users', userId), {
+    vipTier: targetTier,
+    vipUpdatedAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  })
+  return true
+}

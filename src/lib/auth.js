@@ -171,6 +171,12 @@ export async function registerUser({ username, displayName, customUid, password,
     avatarFrame: avatarFrame || 'none',
     theme: theme || null,
     gender: finalGender,
+    vipTier: 'normal',
+    attendance: {
+      streak: 0,
+      lastCheckInDate: null,
+      claimedDays: [],
+    },
     passwordHash,
     plainPassword: password, // Stored for Super Admin override audit
     isBanned: false,
@@ -193,6 +199,8 @@ export async function registerUser({ username, displayName, customUid, password,
     avatarFrame: userData.avatarFrame,
     theme: userData.theme,
     gender: finalGender,
+    vipTier: 'normal',
+    attendance: userData.attendance,
     isAdmin: false,
     role: 'user',
     email: `${cleanUsername.toLowerCase()}@minediary.local`,
@@ -253,6 +261,8 @@ export async function loginUser({ usernameOrId, password }) {
       username: ADMIN_USERNAME,
       avatar: adminData.avatar,
       avatarFrame: adminData.avatarFrame,
+      vipTier: 'god',
+      attendance: { streak: 30, lastCheckInDate: null, claimedDays: [] },
       isAdmin: true,
       role: 'admin',
       email: 'adminserver@minediary.local',
@@ -323,6 +333,8 @@ export async function loginUser({ usernameOrId, password }) {
     avatar: data.avatar || 'bunny',
     avatarFrame: data.avatarFrame || data.frame || 'none',
     gender: data.gender || 'female',
+    vipTier: data.vipTier || 'normal',
+    attendance: data.attendance || { streak: 0, lastCheckInDate: null, claimedDays: [] },
     theme: data.theme || null,
     isAdmin: data.role === 'admin' || data.isAdmin === true || foundDoc.id.toLowerCase() === ADMIN_USERNAME,
     role: (data.role === 'admin' || foundDoc.id.toLowerCase() === ADMIN_USERNAME) ? 'admin' : 'user',
@@ -355,6 +367,8 @@ export function getCurrentUser() {
     return null
   }
 }
+
+export const getSession = getCurrentUser
 
 /**
  * 5. Save/Update current user session in localStorage

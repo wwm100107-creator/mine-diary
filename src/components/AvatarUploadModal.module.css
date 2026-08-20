@@ -613,6 +613,59 @@
   z-index: 6;
 }
 
+.frameOptionCard.frameLocked {
+  background: #F9FAFB;
+  border-color: #D1D5DB;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+  cursor: not-allowed;
+  opacity: 0.85;
+}
+
+.frameOptionCard.frameLocked:hover {
+  transform: none;
+  border-color: #9CA3AF;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.frameOptionCard.frameLocked .miniFramePreview {
+  filter: grayscale(100%) opacity(0.55);
+  transition: filter 0.2s ease;
+}
+
+.lockOverlayBadge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: rgba(31, 41, 55, 0.88);
+  color: #FBBF24;
+  font-family: var(--font-pixel);
+  font-size: 8px;
+  font-weight: bold;
+  letter-spacing: 0.02em;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid #F59E0B;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  z-index: 10;
+}
+
+.vipWarningBanner {
+  margin: 4px 0 8px 0;
+  padding: 8px 12px;
+  background: #FFFBEB;
+  border: 1.5px solid #F59E0B;
+  border-radius: var(--radius-sm);
+  color: #92400E;
+  font-size: 11px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  animation: fadeIn 0.2s ease;
+}
+
 .miniFramePreview {
   width: 50px;
   height: 50px;

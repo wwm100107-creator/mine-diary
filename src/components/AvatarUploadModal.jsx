@@ -5,9 +5,12 @@ import AvatarFrameOverlay, { AVATAR_FRAMES } from './AvatarFrameOverlay'
 import { AVATARS } from '../utils/avatars'
 import { cropToSquare, generatePixelArt } from '../utils/pixelArt'
 import { THEME_PRESETS, applyTheme, getSavedTheme } from '../utils/theme'
+import { isFrameUnlocked, getFrameRequirementInfo } from '../utils/vipTiers'
+import { getCurrentUser } from '../lib/auth'
 import s from './AvatarUploadModal.module.css'
 
-export default function AvatarUploadModal({ currentAvatar, currentFrame = 'none', currentTheme = null, onSave, onClose }) {
+export default function AvatarUploadModal({ user, currentAvatar, currentFrame = 'none', currentTheme = null, onSave, onClose }) {
+  const currentUser = user || getCurrentUser()
   const [tab, setTab] = useState('upload') // 'upload' | 'preset'
   const [rawImage, setRawImage] = useState(null)
   const [originalPreview, setOriginalPreview] = useState(null)
@@ -16,6 +19,7 @@ export default function AvatarUploadModal({ currentAvatar, currentFrame = 'none'
   const [pixelDensity, setPixelDensity] = useState(40) // 32 | 40 | 48
   const [selectedPreset, setSelectedPreset] = useState(currentAvatar || 'bunny')
   const [selectedFrame, setSelectedFrame] = useState(currentFrame || 'none')
+  const [vipWarning, setVipWarning] = useState('')
   const [isProcessing, setIsProcessing] = useState(false)
   const [isDraggingOver, setIsDraggingOver] = useState(false)
 
@@ -355,17 +359,38 @@ export default function AvatarUploadModal({ currentAvatar, currentFrame = 'none'
               </span>
             </div>
 
+            {vipWarning && (
+              <div className={s.vipWarningBanner}>
+                <span>🔒</span> {vipWarning}
+              </div>
+            )}
+
             <div className={s.framesScrollRow}>
               {AVATAR_FRAMES.map((frame) => {
                 const isFrameActive = selectedFrame === frame.id
+                const isUnlocked = isFrameUnlocked(frame.id, currentUser)
+                const reqInfo = getFrameRequirementInfo(frame.id)
+
                 return (
                   <button
                     key={frame.id}
                     type="button"
-                    className={`${s.frameOptionCard} ${isFrameActive ? s.frameActive : ''}`}
-                    onClick={() => setSelectedFrame(frame.id)}
-                    title={`${frame.name} (${frame.desc})`}
+                    className={`${s.frameOptionCard} ${isFrameActive ? s.frameActive : ''} ${!isUnlocked ? s.frameLocked : ''}`}
+                    onClick={() => {
+                      if (!isUnlocked) {
+                        setVipWarning(`Khung "${frame.name}" đang bị khóa! Cần đạt quyền hạn ${reqInfo?.badge || reqInfo?.name} (Điểm danh ${reqInfo?.reqDays} ngày) hoặc được Admin cấp quyền để mở khóa! ✨`)
+                        return
+                      }
+                      setVipWarning('')
+                      setSelectedFrame(frame.id)
+                    }}
+                    title={!isUnlocked ? `[BỊ KHÓA] Yêu cầu ${reqInfo?.badge || reqInfo?.name}` : `${frame.name} (${frame.desc})`}
                   >
+                    {!isUnlocked && (
+                      <div className={s.lockOverlayBadge}>
+                        <span>🔒</span> {reqInfo?.shortName || 'VIP'}
+                      </div>
+                    )}
                     <div className={s.miniFramePreview}>
                       <PixelAvatar
                         avatarId={rawImage ? (avatarChoice === 'pixel' ? pixelatedPreview : originalPreview) : selectedPreset}

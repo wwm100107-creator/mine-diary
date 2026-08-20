@@ -10,7 +10,9 @@ import {
   rejectBanAppeal,
   resetUserPassword,
   deleteUserAccount,
+  updateUserVipTier,
 } from '../lib/admin'
+import { VIP_TIERS, getUserVipTier } from '../utils/vipTiers'
 import s from './AdminDashboard.module.css'
 
 function formatDate(date) {
@@ -78,6 +80,8 @@ export default function AdminDashboard({ user, onBack }) {
   const [superAdminCmd, setSuperAdminCmd] = useState('')
   const [superAdminUnlocked, setSuperAdminUnlocked] = useState(false)
   const [superAdminError, setSuperAdminError] = useState('')
+  const [targetVipTier, setTargetVipTier] = useState('normal')
+  const [vipUpdateSuccess, setVipUpdateSuccess] = useState('')
 
   const isAdmin = isUserAdmin(user)
 
@@ -277,6 +281,25 @@ export default function AdminDashboard({ user, onBack }) {
     }
   }
 
+  // Handle VIP Tier Update by Admin
+  const handleUpdateVipTier = async (e) => {
+    e.preventDefault()
+    if (!detailModalUser) return
+    setActionLoading(true)
+    setVipUpdateSuccess('')
+    try {
+      await updateUserVipTier(detailModalUser.id, targetVipTier)
+      setVipUpdateSuccess(`✓ Đã cập nhật quyền hạn VIP thành: "${VIP_TIERS[targetVipTier]?.name || targetVipTier}"`)
+      setDetailModalUser((prev) => ({ ...prev, vipTier: targetVipTier }))
+      await loadData()
+    } catch (err) {
+      console.error('Update VIP error:', err)
+      alert('Lỗi khi cập nhật quyền hạn VIP.')
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
   // Super Admin Authorization Command Handler
   const handleVerifySuperAdmin = (e) => {
     e.preventDefault()
@@ -452,6 +475,17 @@ export default function AdminDashboard({ user, onBack }) {
                         {u.isAdmin && (
                           <span className={s.roleAdminTag}>Admin</span>
                         )}
+                        {(() => {
+                          const uVip = getUserVipTier(u)
+                          return (
+                            <span
+                              className={s.userVipBadge}
+                              style={{ color: uVip.color, background: uVip.bg, border: `1px solid ${uVip.color}` }}
+                            >
+                              {uVip.badge}
+                            </span>
+                          )
+                        })()}
                       </div>
                       <span className={s.userFullId}>{u.id}</span>
                     </div>
@@ -496,6 +530,8 @@ export default function AdminDashboard({ user, onBack }) {
                       className={s.seeAllBtn}
                       onClick={() => {
                         setDetailModalUser(u)
+                        setTargetVipTier(u.vipTier || (isProtectedUser(u) ? 'god' : 'normal'))
+                        setVipUpdateSuccess('')
                         setResetSuccess('')
                         setNewPassInput('')
                         setSuperAdminUnlocked(false)
@@ -723,6 +759,50 @@ export default function AdminDashboard({ user, onBack }) {
                 <span style={{ fontSize: 11, color: 'var(--color-mint-400)', fontWeight: 600 }}>
                   {resetSuccess}
                 </span>
+              )}
+            </div>
+
+            {/* VIP Tier Management Section */}
+            <div className={s.vipTierSection}>
+              <div className={s.vipTierHeader}>
+                <span className={s.vipTierTitle}>👑 Quyền Hạn VIP & Khung Hiệu Ứng</span>
+                <span
+                  className={s.currentVipTag}
+                  style={{
+                    color: getUserVipTier(detailModalUser).color,
+                    background: getUserVipTier(detailModalUser).bg,
+                    border: `1px solid ${getUserVipTier(detailModalUser).color}`,
+                  }}
+                >
+                  Hiện tại: {getUserVipTier(detailModalUser).badge}
+                </span>
+              </div>
+              <p className={s.vipTierDesc}>
+                Chỉ Admin mới có quyền thăng cấp (Mở khóa khung VIP) hoặc thu hồi/giảm cấp VIP của người dùng này.
+              </p>
+              <form className={s.vipTierForm} onSubmit={handleUpdateVipTier}>
+                <select
+                  className={s.vipTierSelect}
+                  value={targetVipTier}
+                  onChange={(e) => setTargetVipTier(e.target.value)}
+                  disabled={actionLoading || isProtectedUser(detailModalUser)}
+                >
+                  <option value="normal">🌱 Bình thường (Khung cơ bản)</option>
+                  <option value="svip">🔥 SVIP Thánh Hỏa (Mở khóa SVIP)</option>
+                  <option value="ssvip">❄️ SSVIP Cánh Băng (Mở khóa SSVIP & dưới)</option>
+                  <option value="sssvip">⚡ SSSVIP Song Long (Mở khóa SSSVIP & dưới)</option>
+                  <option value="god">🌌 GOD Nữ Thần Tối Thượng (Mở khóa toàn bộ)</option>
+                </select>
+                <button
+                  type="submit"
+                  className={s.vipUpdateBtn}
+                  disabled={actionLoading || isProtectedUser(detailModalUser)}
+                >
+                  {actionLoading ? '...' : 'Cập Nhật Quyền VIP ✨'}
+                </button>
+              </form>
+              {vipUpdateSuccess && (
+                <span className={s.vipSuccessMsg}>{vipUpdateSuccess}</span>
               )}
             </div>
 

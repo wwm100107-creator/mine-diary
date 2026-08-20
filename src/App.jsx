@@ -14,9 +14,11 @@ import BannedScreen from './components/BannedScreen'
 import PixelAvatar from './components/PixelAvatar'
 import AvatarWithFrame from './components/AvatarWithFrame'
 import AvatarUploadModal from './components/AvatarUploadModal'
+import AttendanceModal from './components/AttendanceModal'
 import { upsertUser, getUser, uploadUserAvatar, subscribeToUserRelationships, subscribeToUserChats } from './lib/social'
 import { isUserAdmin } from './lib/admin'
 import { getCurrentUser, saveSession, logoutUser, verifyBanStatus } from './lib/auth'
+import { canCheckInToday } from './lib/attendance'
 import { loadMarkedDates, predictNextPeriod, toDateStr } from './utils/cycle'
 import { applyTheme, getSavedTheme } from './utils/theme'
 import { playCuteTing } from './utils/sound'
@@ -25,6 +27,18 @@ import s from './App.module.css'
 export default function App() {
   // Session initialization
   const [user, setUser] = useState(() => getCurrentUser())
+  const [isAttendanceModalOpen, setIsAttendanceModalOpen] = useState(false)
+  const hasAutoOpenedAttendanceRef = useRef(false)
+
+  // Auto-prompt attendance modal on first boot/login if today is unclaimed
+  useEffect(() => {
+    if (user?.id && !hasAutoOpenedAttendanceRef.current) {
+      hasAutoOpenedAttendanceRef.current = true
+      if (canCheckInToday(user)) {
+        setIsAttendanceModalOpen(true)
+      }
+    }
+  }, [user?.id])
 
   // Apply saved theme on boot & user change
   useEffect(() => {
@@ -512,6 +526,18 @@ export default function App() {
 
           {/* User Profile & Logout */}
           <div className={s.headerActions}>
+            {/* 30-Day VIP Attendance Button */}
+            <button
+              type="button"
+              className={s.attendanceHeaderBtn}
+              onClick={() => setIsAttendanceModalOpen(true)}
+              title="Mở Lộ Trình 30 Ngày Điểm Danh Nhận VIP"
+            >
+              <span className={s.giftIcon}>🎁</span>
+              <span className={s.attendanceBtnText}>Điểm Danh VIP</span>
+              {canCheckInToday(user) && <span className={s.redDotBadge} />}
+            </button>
+
             <div className={s.userProfileBadge}>
               <div
                 className={s.avatarWrapper}
@@ -605,11 +631,24 @@ export default function App() {
       {/* Avatar Upload, Pixel Art & Theme Modal */}
       {isAvatarModalOpen && (
         <AvatarUploadModal
+          user={user}
           currentAvatar={user.avatar || 'bunny'}
           currentFrame={user.avatarFrame || user.frame || 'none'}
           currentTheme={user.theme || getSavedTheme()}
           onSave={handleUpdateAvatar}
           onClose={() => setIsAvatarModalOpen(false)}
+        />
+      )}
+
+      {/* 30-Day VIP Attendance Modal */}
+      {isAttendanceModalOpen && user && (
+        <AttendanceModal
+          user={user}
+          onUpdateUser={(updated) => {
+            setUser(updated)
+            saveSession(updated)
+          }}
+          onClose={() => setIsAttendanceModalOpen(false)}
         />
       )}
     </div>
