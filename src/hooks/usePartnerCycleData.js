@@ -46,11 +46,7 @@ export function usePartnerCycleData(currentUserId, partnerId) {
   // 3. Check if partner granted permission to share cycle data
   const hasPermission = useMemo(() => {
     if (!relationship || relationship.status !== 'accepted') return false
-    // If relationship is couple and partner agreed to share cycle data
-    if (relationship.type === 'couple' && relationship.shareCycleData) {
-      return true
-    }
-    return Boolean(relationship.shareCycleData)
+    return Boolean(relationship.isCycleShared || relationship.shareCycleData)
   }, [relationship])
 
   // 4. Subscribe to partner's cycle data if authorized

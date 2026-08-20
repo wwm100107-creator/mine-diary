@@ -370,7 +370,7 @@ export const getRelationshipId = (a, b) => [a, b].sort().join('__')
 /**
  * Send or update a relationship request
  */
-export async function sendRelationshipRequest({ senderId, receiverId, type = 'couple', customName = '', customIcon = '', customIconImage = null }) {
+export async function sendRelationshipRequest({ senderId, receiverId, type = 'couple', customName = '', customIcon = '', customIconImage = null, isCycleShared = false }) {
   const relId = getRelationshipId(senderId, receiverId)
   const relRef = doc(db, 'relationships', relId)
   
@@ -388,7 +388,8 @@ export async function sendRelationshipRequest({ senderId, receiverId, type = 'co
     customIcon: finalIcon,
     customIconImage: customIconImage || null,
     status: 'pending',
-    shareCycleData: false,
+    isCycleShared: Boolean(isCycleShared),
+    shareCycleData: Boolean(isCycleShared),
     cancelRequesterId: null,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
@@ -400,13 +401,14 @@ export async function sendRelationshipRequest({ senderId, receiverId, type = 'co
 
 /**
  * Accept a relationship request.
- * If couple type, shareCycleData can be set to true/false.
+ * isCycleShared flag decides if cycle data is visible to the other party.
  */
-export async function acceptRelationshipRequest(relId, shareCycleData = false) {
+export async function acceptRelationshipRequest(relId, isCycleShared = false) {
   const relRef = doc(db, 'relationships', relId)
   await setDoc(relRef, {
     status: 'accepted',
-    shareCycleData: Boolean(shareCycleData),
+    isCycleShared: Boolean(isCycleShared),
+    shareCycleData: Boolean(isCycleShared),
     cancelRequesterId: null,
     updatedAt: serverTimestamp(),
   }, { merge: true })
@@ -443,6 +445,7 @@ export async function confirmCancelRelationship(relId) {
   const relRef = doc(db, 'relationships', relId)
   await setDoc(relRef, {
     status: 'cancelled',
+    isCycleShared: false,
     shareCycleData: false,
     cancelRequesterId: null,
     updatedAt: serverTimestamp(),

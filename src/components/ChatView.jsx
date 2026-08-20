@@ -48,6 +48,7 @@ export default function ChatView({ user }) {
   const [customRelName, setCustomRelName] = useState('')
   const [customRelIcon, setCustomRelIcon] = useState('')
   const [customRelImg, setCustomRelImg] = useState('')
+  const [senderShareCycle, setSenderShareCycle] = useState(false)
   const [isShareConfirmModalOpen, setIsShareConfirmModalOpen] = useState(false)
 
   // 1x1 Image upload handler for relationship icon
@@ -313,6 +314,7 @@ export default function ChatView({ user }) {
   // ── Relationship Actions ──
   const handleSendRelRequest = async () => {
     if (!user?.id || !activePartner?.id) return
+    const isFemale = user?.gender === 'female' || !user?.gender
     try {
       const relData = await sendRelationshipRequest({
         senderId: user.id,
@@ -321,8 +323,10 @@ export default function ChatView({ user }) {
         customName: customRelName,
         customIcon: customRelIcon,
         customIconImage: customRelImg || null,
+        isCycleShared: isFemale ? senderShareCycle : false,
       })
-      await sendChatMessage(user.id, activePartner.id, `💌 Đã gửi lời mời Set Mối Quan Hệ "${relData.customIcon} ${relData.customName}".`, {
+      const shareNote = (isFemale && senderShareCycle) ? ' (Đã bật chia sẻ chu kỳ 🌸)' : ''
+      await sendChatMessage(user.id, activePartner.id, `💌 Đã gửi lời mời Set Mối Quan Hệ "${relData.customIcon} ${relData.customName}"${shareNote}.`, {
         isSystemMessage: true,
         type: 'relationship_request',
       })
@@ -330,6 +334,7 @@ export default function ChatView({ user }) {
       setCustomRelName('')
       setCustomRelIcon('')
       setCustomRelImg('')
+      setSenderShareCycle(false)
     } catch (err) {
       console.error('Send rel request error:', err)
     }
@@ -337,9 +342,9 @@ export default function ChatView({ user }) {
 
   const handleTriggerAcceptRel = () => {
     if (!relationship) return
-    // If Couple type & current user is Female, ask for cycle sharing confirmation
+    // If current accepting user is Female, ask for cycle sharing confirmation for ANY relationship type
     const isFemale = user?.gender === 'female' || !user?.gender
-    if (relationship.type === 'couple' && isFemale) {
+    if (isFemale) {
       setIsShareConfirmModalOpen(true)
     } else {
       handleFinalAcceptRel(false)
@@ -1015,6 +1020,24 @@ export default function ChatView({ user }) {
                   </div>
                 </div>
               </div>
+
+              {/* Female Sender: Optional Cycle Sharing Switch */}
+              {(user?.gender === 'female' || !user?.gender) && (
+                <div style={{ background: '#FFF5F8', border: '1.5px solid #FF8FAB', borderRadius: 8, padding: '8px 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 10 }}>
+                  <div style={{ fontSize: 11, color: '#D81B60', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 5 }}>
+                    <span>🌸</span> Chia sẻ thông tin chu kỳ
+                  </div>
+                  <label style={{ display: 'inline-flex', alignItems: 'center', cursor: 'pointer', gap: 6, fontSize: 11, color: 'var(--color-ink)', fontWeight: 600 }}>
+                    <input
+                      type="checkbox"
+                      checked={senderShareCycle}
+                      onChange={(e) => setSenderShareCycle(e.target.checked)}
+                      style={{ accentColor: '#FF5E7E', cursor: 'pointer' }}
+                    />
+                    <span>{senderShareCycle ? 'Đồng ý chia sẻ' : 'Không chia sẻ'}</span>
+                  </label>
+                </div>
+              )}
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 10 }}>
@@ -1037,7 +1060,7 @@ export default function ChatView({ user }) {
         </div>
       )}
 
-      {/* ── Modal: Xác nhận chia sẻ chu kỳ (Dành cho bạn Nữ khi kết đôi) ── */}
+      {/* ── Modal: Xác nhận chia sẻ chu kỳ (Dành cho bạn Nữ khi xác nhận quan hệ) ── */}
       {isShareConfirmModalOpen && (
         <div className={s.modalOverlay} onClick={() => setIsShareConfirmModalOpen(false)}>
           <div className={s.modalContent} onClick={(e) => e.stopPropagation()}>
@@ -1045,11 +1068,11 @@ export default function ChatView({ user }) {
               <span>🌸</span> Chia Sẻ Thông Tin Chu Kỳ?
             </h3>
             <p style={{ fontSize: 13, lineHeight: 1.5, color: 'var(--color-ink)', margin: 0 }}>
-              Bạn đang thiết lập quan hệ <strong>Cặp Đôi 💖</strong> với <strong>{activePartner?.displayName}</strong>.
+              Bạn đang thiết lập quan hệ <strong>{relationship?.customIcon} {relationship?.customName}</strong> với <strong>{activePartner?.displayName}</strong>.
             </p>
             <div style={{ background: '#FFF5F8', border: '1.5px solid #FF8FAB', borderRadius: 10, padding: 12, fontSize: 12, color: '#D81B60' }}>
               ✨ <strong>Bạn có đồng ý chia sẻ thông tin chu kỳ & sức khỏe cho đối phương không?</strong><br />
-              Nếu đồng ý, người thương có thể theo dõi ngày dự kiến và gửi những lời nhắc quan tâm, chăm sóc bạn!
+              Nếu đồng ý, đối phương sẽ mở khóa tab <strong>"Theo dõi chu kỳ"</strong> để theo dõi ngày dự kiến và gửi những lời nhắc quan tâm, chăm sóc bạn!
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 8 }}>
               <button
@@ -1058,7 +1081,7 @@ export default function ChatView({ user }) {
                 style={{ padding: '10px 14px', fontSize: 11 }}
                 onClick={() => handleFinalAcceptRel(true)}
               >
-                💖 Đồng Ý Chia Sẻ Chu Kỳ Cho Người Thương
+                💖 Đồng Ý Chia Sẻ Thông Tin Chu Kỳ
               </button>
               <button
                 type="button"
@@ -1066,7 +1089,7 @@ export default function ChatView({ user }) {
                 style={{ padding: '10px 14px', fontSize: 11 }}
                 onClick={() => handleFinalAcceptRel(false)}
               >
-                🔒 Chỉ Kết Đôi, Không Chia Sẻ Dữ Liệu
+                🔒 Thiết Lập Quan Hệ & Không Chia Sẻ Dữ Liệu
               </button>
             </div>
           </div>

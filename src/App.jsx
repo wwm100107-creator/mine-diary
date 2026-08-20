@@ -61,16 +61,16 @@ export default function App() {
     return () => unsubscribe()
   }, [user?.id])
 
-  const coupleRel = useMemo(() => {
+  const sharedCycleRel = useMemo(() => {
     return userRelationships.find(
-      (r) => r.status === 'accepted' && (r.type === 'couple' || r.shareCycleData)
+      (r) => r.status === 'accepted' && Boolean(r.isCycleShared || r.shareCycleData)
     )
   }, [userRelationships])
 
   const partnerId = useMemo(() => {
-    if (!coupleRel) return null
-    return coupleRel.participants.find((p) => p !== user?.id)
-  }, [coupleRel, user?.id])
+    if (!sharedCycleRel) return null
+    return sharedCycleRel.participants.find((p) => p !== user?.id)
+  }, [sharedCycleRel, user?.id])
 
   useEffect(() => {
     if (!partnerId) {
@@ -80,28 +80,28 @@ export default function App() {
     getUser(partnerId).then(setPartnerUser).catch(console.error)
   }, [partnerId])
 
-  // ── Compute Allowed Navigation Tabs based on Gender & Relationship ────────
+  // ── Compute Allowed Navigation Tabs based on Gender & Cycle Sharing ────────
   // Rules:
-  // 1. Nam (Độc thân): ['diary', 'chat']
-  // 2. Nữ (Độc thân/Quan hệ khác): ['diary', 'health', 'chat']
-  // 3. Nam (Couple với Nữ): ['diary', 'partner_cycle', 'chat']
-  // 4. Nữ (Couple với Nữ): ['diary', 'health', 'partner_cycle', 'chat']
-  const isMale = user?.gender === 'male'
+  // 1. Nhật ký chung & Tin nhắn: Luôn luôn có.
+  // 2. Sức khỏe: Dành cho user Nữ.
+  // 3. Theo dõi chu kỳ: Bất kỳ user nào có mối quan hệ (accepted) với user Nữ có isCycleShared === true.
   const isFemale = user?.gender === 'female' || !user?.gender
-  const hasFemalePartner = partnerUser?.gender === 'female' || (!partnerUser?.gender && coupleRel)
+  const hasFemaleCycleShared = Boolean(
+    sharedCycleRel && (partnerUser?.gender === 'female' || !partnerUser?.gender)
+  )
 
   const navTabs = useMemo(() => {
     const tabs = [
       { id: 'diary', label: 'Nhật ký chung', icon: '📖' },
     ]
 
-    // Own Health tab (Only for Female)
+    // Own Health tab (For Female user)
     if (isFemale) {
       tabs.push({ id: 'health', label: 'Sức khỏe', icon: '🌸' })
     }
 
-    // Partner Cycle tab (When in couple relationship with female partner or partner shared cycle)
-    if (coupleRel && hasFemalePartner) {
+    // Partner Cycle tab (Unlocked for ANY user when partner shared cycle data)
+    if (hasFemaleCycleShared) {
       tabs.push({ id: 'partner_cycle', label: 'Theo dõi chu kỳ', icon: '💖' })
     }
 
@@ -114,7 +114,7 @@ export default function App() {
     }
 
     return tabs
-  }, [isMale, isFemale, coupleRel, hasFemalePartner, isAdmin])
+  }, [isFemale, hasFemaleCycleShared, isAdmin])
 
   // If current active tab is not in allowed tabs, automatically switch to 'diary'
   useEffect(() => {

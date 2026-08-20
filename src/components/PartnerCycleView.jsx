@@ -30,16 +30,16 @@ export default function PartnerCycleView({ user }) {
     return () => unsubscribe()
   }, [user?.id])
 
-  const coupleRel = useMemo(() => {
+  const activeRel = useMemo(() => {
     return userRelationships.find(
-      (r) => r.status === 'accepted' && (r.shareCycleData || r.type === 'couple')
+      (r) => r.status === 'accepted' && Boolean(r.isCycleShared || r.shareCycleData)
     )
   }, [userRelationships])
 
   const partnerId = useMemo(() => {
-    if (!coupleRel) return null
-    return coupleRel.participants.find((p) => p !== user.id)
-  }, [coupleRel, user?.id])
+    if (!activeRel) return null
+    return activeRel.participants.find((p) => p !== user.id)
+  }, [activeRel, user?.id])
 
   // 2. Fetch Partner Cycle Data
   const {
@@ -68,16 +68,16 @@ export default function PartnerCycleView({ user }) {
     }
   }
 
-  if (!coupleRel || !partnerUser) {
+  if (!activeRel || !partnerUser) {
     return (
       <div className={s.partnerView}>
         <div className={s.pixelCard} style={{ textAlign: 'center', padding: 48, margin: 'auto' }}>
           <div style={{ fontSize: 48, marginBottom: 12 }}>💖</div>
           <h3 className={s.cardTitle} style={{ justifyContent: 'center' }}>
-            Chưa Có Kết Nối Người Thương
+            Chưa Có Kết Nối Chia Sẻ Chu Kỳ
           </h3>
           <p style={{ fontSize: 13, color: 'var(--color-ink-soft)', maxWidth: 360, margin: '8px auto 0', lineHeight: 1.5 }}>
-            Hãy vào tab <strong>Tin nhắn 💬</strong> và bấm <strong>Set Quan Hệ</strong> với người thương của bạn để bắt đầu đồng bộ và chăm sóc chu kỳ nhé!
+            Hãy vào tab <strong>Tin nhắn 💬</strong> và gửi hoặc xác nhận lời mời <strong>Set Mối Quan Hệ</strong> (bật chia sẻ chu kỳ) để bắt đầu đồng bộ nhé!
           </p>
         </div>
       </div>
@@ -96,10 +96,10 @@ export default function PartnerCycleView({ user }) {
           />
           <div>
             <h2 className={s.partnerHeroName}>
-              {coupleRel.customIcon || '💖'} {partnerUser.displayName || partnerUser.name || partnerUser.id}
+              {activeRel.customIcon || '💖'} {partnerUser.displayName || partnerUser.name || partnerUser.id}
             </h2>
             <div className={s.partnerHeroSub}>
-              UID: #{partnerUser.id} • Mối quan hệ: <strong>{coupleRel.customName}</strong>
+              UID: #{partnerUser.id} • Mối quan hệ: <strong>{activeRel.customName}</strong>
             </div>
           </div>
         </div>
