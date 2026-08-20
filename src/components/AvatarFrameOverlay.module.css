@@ -16,13 +16,13 @@
 }
 
 /* ============================================
-   FRAME: 🌌 GOD MODE — SÁNG THẾ THẦN LINH VÔ CỰC
+   FRAME: 🌌 GOD MODE — NỮ THẦN SÁNG THẾ & LÔI QUANG 7 MÀU
    ============================================ */
 .godContainer {
   position: absolute;
-  inset: -32%;
-  width: 164%;
-  height: 164%;
+  inset: -34%;
+  width: 168%;
+  height: 168%;
   pointer-events: none;
   display: flex;
   align-items: center;
@@ -30,257 +30,380 @@
   z-index: 25;
 }
 
-/* Rotating Celestial God Halo Wheel (360 Deg Continuous) */
-.godHaloWheel {
-  position: absolute;
-  inset: -8%;
-  border-radius: 50%;
-  animation: godSpin 14s linear infinite;
-  pointer-events: none;
-}
-
-@keyframes godSpin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-.godHaloRay1, .godHaloRay2 {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background: conic-gradient(
-    from 0deg,
-    transparent 0deg,
-    rgba(255, 215, 0, 0.45) 45deg,
-    transparent 90deg,
-    rgba(0, 242, 254, 0.45) 135deg,
-    transparent 180deg,
-    rgba(255, 0, 127, 0.45) 225deg,
-    transparent 270deg,
-    rgba(121, 40, 202, 0.45) 315deg,
-    transparent 360deg
-  );
-}
-
-.godHaloRay2 {
-  transform: rotate(45deg);
-}
-
-.godHaloRing {
+/* Layer 1: Continuous 7-Color Rainbow Shifting Lightning Aura */
+.godRainbowLightningAura {
   position: absolute;
   inset: 6%;
   border-radius: 50%;
-  border: 1.5px dashed rgba(255, 255, 255, 0.8);
-  box-shadow: 0 0 12px rgba(255, 215, 0, 0.6), inset 0 0 12px rgba(0, 242, 254, 0.6);
-}
-
-/* Multi-Dimensional Prismatic Aura */
-.godAuraGlow {
-  position: absolute;
-  inset: 18%;
-  border-radius: inherit;
   box-shadow: 
-    0 0 10px #FFD700,
-    0 0 20px #FF007F,
-    0 0 35px #7928CA,
-    0 0 50px #00F2FE,
-    inset 0 0 12px #FFFFFF;
-  animation: godAuraPulse 1.8s infinite alternate ease-in-out;
+    0 0 16px #FF0055,
+    0 0 32px #FF7700,
+    0 0 54px #FFE600,
+    0 0 76px #00F2FE;
+  animation: rainbowLightningCycle 2.4s infinite linear;
+  pointer-events: none;
   will-change: box-shadow;
 }
 
-@keyframes godAuraPulse {
+@keyframes rainbowLightningCycle {
   0% {
     box-shadow: 
-      0 0 8px #FFD700,
-      0 0 16px #FF007F,
-      0 0 28px #7928CA,
-      0 0 42px #00F2FE,
-      inset 0 0 8px #FFFFFF;
+      0 0 14px #FF0055,
+      0 0 28px #FF5500,
+      0 0 45px #FFE600,
+      0 0 65px #00F2FE,
+      inset 0 0 10px #FF0055;
+  }
+  14% {
+    box-shadow: 
+      0 0 20px #FF5500,
+      0 0 35px #FFE600,
+      0 0 55px #00FF66,
+      0 0 75px #00F2FE,
+      inset 0 0 12px #FF5500;
+  }
+  28% {
+    box-shadow: 
+      0 0 18px #FFE600,
+      0 0 32px #00FF66,
+      0 0 50px #00F2FE,
+      0 0 70px #0066FF,
+      inset 0 0 10px #FFE600;
+  }
+  42% {
+    box-shadow: 
+      0 0 22px #00FF66,
+      0 0 38px #00F2FE,
+      0 0 58px #0066FF,
+      0 0 80px #9900FF,
+      inset 0 0 14px #00FF66;
+  }
+  57% {
+    box-shadow: 
+      0 0 18px #00F2FE,
+      0 0 34px #0066FF,
+      0 0 52px #9900FF,
+      0 0 72px #FF00AA,
+      inset 0 0 10px #00F2FE;
+  }
+  71% {
+    box-shadow: 
+      0 0 24px #0066FF,
+      0 0 40px #9900FF,
+      0 0 60px #FF00AA,
+      0 0 85px #FF0055,
+      inset 0 0 14px #0066FF;
+  }
+  85% {
+    box-shadow: 
+      0 0 18px #9900FF,
+      0 0 35px #FF00AA,
+      0 0 55px #FF0055,
+      0 0 75px #FF5500,
+      inset 0 0 10px #9900FF;
   }
   100% {
     box-shadow: 
-      0 0 16px #FFFFFF,
-      0 0 28px #FFD700,
-      0 0 45px #FF007F,
+      0 0 14px #FF0055,
+      0 0 28px #FF5500,
+      0 0 45px #FFE600,
       0 0 65px #00F2FE,
-      inset 0 0 16px #FFE600;
+      inset 0 0 10px #FF0055;
   }
 }
 
-/* Celestial Stardust Particles */
-.godParticles {
+.godInfernoFireAura {
   position: absolute;
-  inset: 0%;
+  inset: 14%;
+  border-radius: inherit;
+  box-shadow: 
+    0 0 10px #FF1E00,
+    0 0 22px #FF6600,
+    0 0 38px #FFCC00,
+    inset 0 0 12px #FF3300;
+  animation: godInfernoPulse 1.2s infinite alternate ease-in-out;
+  will-change: box-shadow;
+}
+
+@keyframes godInfernoPulse {
+  0% {
+    box-shadow: 
+      0 0 8px #FF1E00,
+      0 0 16px #FF6600,
+      0 0 28px #FFAA00,
+      inset 0 0 8px #FF3300;
+  }
+  100% {
+    box-shadow: 
+      0 0 16px #FF0055,
+      0 0 28px #FF7700,
+      0 0 46px #FFE600,
+      inset 0 0 16px #FF0055;
+  }
+}
+
+/* Layer 2: 7-Color Rainbow Lightning Sparks */
+.godRainbowSparks {
+  position: absolute;
+  inset: 2%;
   pointer-events: none;
 }
 
-.godStar {
+.godBolt {
   position: absolute;
-  font-size: 8px;
+  font-size: 10px;
   line-height: 1;
   color: #FFFFFF;
-  text-shadow: 0 0 6px #00F2FE, 0 0 10px #FF007F;
-  animation: godStarFloat 1.8s infinite ease-in-out;
+  text-shadow: 0 0 6px #00FFFF, 0 0 12px #FF00AA;
+  animation: rainbowBoltFlash 0.3s steps(2) infinite;
   will-change: transform, opacity;
 }
 
-.g1 { top: 8%; left: 12%; color: #FFD700; font-size: 9px; animation-delay: 0s; }
-.g2 { top: 6%; right: 14%; color: #00F2FE; font-size: 7px; animation-delay: 0.35s; }
-.g3 { bottom: 20%; left: 4%; color: #FF77E9; font-size: 8px; animation-delay: 0.7s; }
-.g4 { bottom: 18%; right: 6%; color: #FFFFFF; font-size: 9px; animation-delay: 1.05s; }
-.g5 { top: 45%; left: -2%; color: #FFE600; font-size: 7px; animation-delay: 1.4s; }
-.g6 { top: 40%; right: -2%; color: #70A6FF; font-size: 8px; animation-delay: 0.5s; }
+.gb1 { top: 6%; left: 8%; color: #FF0055; animation-delay: 0s; }
+.gb2 { top: 4%; right: 8%; color: #00F2FE; animation-delay: 0.08s; }
+.gb3 { bottom: 24%; left: -4%; color: #FFE600; font-size: 11px; animation-delay: 0.16s; }
+.gb4 { bottom: 22%; right: -2%; color: #D946EF; animation-delay: 0.24s; }
+.gb5 { top: 42%; left: -6%; color: #00FF66; font-size: 11px; animation-delay: 0.12s; }
+.gb6 { top: 38%; right: -6%; color: #FF7700; animation-delay: 0.2s; }
+.gb7 { top: 16%; left: 22%; color: #0066FF; font-size: 9px; animation-delay: 0.05s; }
+.gb8 { top: 14%; right: 22%; color: #FFFFFF; font-size: 8px; animation-delay: 0.18s; }
 
-@keyframes godStarFloat {
-  0% { opacity: 0; transform: scale(0.3) translateY(4px) rotate(0deg); }
-  50% { opacity: 1; transform: scale(1.3) translateY(-4px) rotate(90deg); }
-  100% { opacity: 0; transform: scale(0.3) translateY(-12px) rotate(180deg); }
+@keyframes rainbowBoltFlash {
+  0% { opacity: 0.2; transform: scale(0.5) rotate(0deg); filter: hue-rotate(0deg); }
+  50% { opacity: 1; transform: scale(1.4) rotate(15deg); filter: drop-shadow(0 0 8px #FFF) hue-rotate(180deg); }
+  100% { opacity: 0.1; transform: scale(0.6) rotate(-15deg); filter: hue-rotate(360deg); }
 }
 
-/* 6 Celestial Angelic Wings */
-.godWingsWrap {
+/* Layer 3: Central Double Obsidian Frame & Golden Laurel Wreath */
+.godCentralFrame {
   position: absolute;
-  top: 10%;
-  width: 44%;
-  height: 60%;
-  z-index: 18;
-  filter: drop-shadow(0 0 8px #FF007F) drop-shadow(0 0 14px #00F2FE);
-  animation: godWingsHover 2.2s infinite alternate ease-in-out;
-  will-change: transform;
+  inset: 16%;
+  border-radius: inherit;
+  border: 3.5px solid #18181B;
+  box-shadow: 
+    0 0 0 1.5px #D97706,
+    0 0 0 3px #FF0055,
+    inset 0 0 0 2px #FF3300;
+  overflow: hidden;
+  z-index: 10;
 }
 
-.godWingsLeft {
-  left: -14%;
-  transform-origin: right center;
+.godMagmaRing {
+  position: absolute;
+  inset: 2px;
+  border-radius: inherit;
+  border: 2px solid #FF3300;
+  box-shadow: 0 0 10px #FF5500, inset 0 0 10px #FF0055;
+  animation: magmaPulse 0.9s infinite alternate ease-in-out;
 }
 
-.godWingsRight {
-  right: -14%;
-  transform-origin: left center;
+@keyframes magmaPulse {
+  0% { opacity: 0.7; filter: brightness(1); }
+  100% { opacity: 1; filter: brightness(1.4); }
 }
 
-.godWingsSvg {
+.godLaurelWreath {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 11;
+  filter: drop-shadow(0 0 4px #FFD700);
+}
+
+.laurelSvg {
   width: 100%;
   height: 100%;
   overflow: visible;
 }
 
-@keyframes godWingsHover {
-  0% { transform: rotate(0deg) scale(1); }
-  100% { transform: rotate(-5deg) scale(1.08); }
-}
-
-/* Base Prismatic Border with Infinite Shimmer */
-.godGoldBorder {
-  position: absolute;
-  inset: 18%;
-  border-radius: inherit;
-  border: 3px solid #FFF;
-  box-shadow: 
-    0 0 0 1.5px #FFD700,
-    0 0 0 3px #FF007F,
-    inset 0 0 0 1.5px #00F2FE;
-  overflow: hidden;
-  z-index: 20;
-}
-
-.godPrismSweep {
+.godRainbowSurge {
   position: absolute;
   inset: -60%;
   background: linear-gradient(
     135deg,
-    transparent 30%,
-    rgba(255, 255, 255, 0.95) 45%,
-    rgba(0, 242, 254, 0.9) 50%,
-    rgba(255, 0, 127, 0.9) 55%,
-    transparent 70%
+    transparent 35%,
+    rgba(255, 255, 255, 0.95) 48%,
+    rgba(255, 0, 128, 0.9) 52%,
+    rgba(0, 242, 254, 0.9) 56%,
+    transparent 68%
   );
-  animation: godPrismShine 2s infinite cubic-bezier(0.4, 0, 0.2, 1);
+  animation: godRainbowSweep 1.6s infinite cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes godRainbowSweep {
+  0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+  40%, 100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+}
+
+/* Layer 4: Dark Angel Goddesses / Valkyries */
+.godValkyrie {
+  position: absolute;
+  top: -8%;
+  width: 54%;
+  height: 72%;
+  z-index: 14;
+  filter: drop-shadow(0 0 8px #D946EF) drop-shadow(0 0 14px #FF0055);
+  animation: valkyrieHover 2.2s infinite alternate ease-in-out;
   will-change: transform;
 }
 
-@keyframes godPrismShine {
-  0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-  45%, 100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+.valkyrieLeft {
+  left: -20%;
+  transform-origin: right center;
 }
 
-/* Supreme God Crown */
-.godCrown {
+.valkyrieRight {
+  right: -20%;
+  transform-origin: left center;
+}
+
+.goddessSvg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+@keyframes valkyrieHover {
+  0% { transform: rotate(0deg) scale(1); }
+  100% { transform: rotate(-3deg) scale(1.05); }
+}
+
+.goddessEye {
+  animation: goddessEyeGlow 0.6s infinite alternate ease-in-out;
+  transform-origin: center;
+}
+
+@keyframes goddessEyeGlow {
+  0% { filter: drop-shadow(0 0 2px #FF0000); opacity: 0.8; }
+  100% { filter: drop-shadow(0 0 8px #FF0000) drop-shadow(0 0 12px #FF5500); opacity: 1; transform: scale(1.2); }
+}
+
+/* Layer 5: Top Imperial Gold Crown */
+.godImperialCrown {
   position: absolute;
-  top: -16%;
+  top: -14%;
   left: 50%;
   transform: translateX(-50%);
-  width: 76%;
-  height: 44%;
-  z-index: 22;
-  filter: drop-shadow(0 0 10px #FFD700) drop-shadow(0 0 16px #FF007F);
-  animation: godCrownBounce 1.8s infinite ease-in-out;
+  width: 74%;
+  height: 40%;
+  z-index: 16;
+  filter: drop-shadow(0 0 8px #FFD700) drop-shadow(0 0 14px #FF0055);
+  animation: vip8CrownBounce 1.8s infinite ease-in-out;
   will-change: transform;
 }
 
-.godGemFlash {
-  animation: godGemColorShift 2s infinite linear;
+.godRubyGem {
+  animation: rubyHeartPulse 1s infinite alternate ease-in-out;
   transform-origin: 20px 13px;
 }
 
-@keyframes godCrownBounce {
-  0%, 100% { transform: translateX(-50%) translateY(0) scale(1); }
-  50% { transform: translateX(-50%) translateY(-3px) scale(1.06); }
+@keyframes rubyHeartPulse {
+  0% { filter: drop-shadow(0 0 2px #DC2626); transform: scale(0.95); }
+  100% { filter: drop-shadow(0 0 8px #FF0055) drop-shadow(0 0 12px #FFE600); transform: scale(1.15); }
 }
 
-@keyframes godGemColorShift {
-  0% { filter: hue-rotate(0deg) drop-shadow(0 0 4px #FFF); transform: scale(1); }
-  50% { filter: hue-rotate(180deg) drop-shadow(0 0 10px #00F2FE); transform: scale(1.15); }
-  100% { filter: hue-rotate(360deg) drop-shadow(0 0 4px #FFF); transform: scale(1); }
+/* Layer 6: Lower White Angel Wings */
+.godLowerWings {
+  position: absolute;
+  bottom: 6%;
+  width: 100%;
+  height: 28px;
+  z-index: 15;
+  pointer-events: none;
 }
 
-/* Bottom GOD Ribbon Banner */
+.lowerWingsSvg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* Layer 7: Bottom Inferno Base & Ribbon */
 .godBottomBadge {
   position: absolute;
-  bottom: -12%;
+  bottom: -11%;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 24;
+  z-index: 18;
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 82%;
 }
 
+.godInfernoFlames {
+  width: 100%;
+  height: 14px;
+  margin-bottom: -5px;
+  background: radial-gradient(ellipse at 50% 100%, rgba(255, 230, 0, 0.9) 0%, rgba(255, 68, 0, 0.7) 50%, transparent 80%);
+  filter: blur(2px);
+  animation: flamesFlicker 0.6s infinite alternate ease-in-out;
+}
+
+@keyframes flamesFlicker {
+  0% { transform: scaleX(0.9) scaleY(0.85); opacity: 0.8; }
+  100% { transform: scaleX(1.1) scaleY(1.2); opacity: 1; filter: drop-shadow(0 0 6px #FF5500); }
+}
+
 .godRibbon {
-  background: linear-gradient(135deg, #1E1B4B 0%, #4C1D95 30%, #7928CA 60%, #FF007F 100%);
-  border: 1.5px solid #FFE600;
-  border-radius: 4px;
+  background: linear-gradient(135deg, #18181B 0%, #27272A 40%, #18181B 100%);
+  border: 1.5px solid #FFD700;
+  border-radius: 3px;
   box-shadow: 
-    0 0 10px #FF007F,
-    0 0 16px #00F2FE,
-    inset 0 1px 0 #FFF;
+    0 0 10px #FF0055,
+    0 2px 6px rgba(0, 0, 0, 0.7),
+    inset 0 1px 0 #FDE047;
   padding: 1.5px 8px;
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 4px;
   width: 100%;
   box-sizing: border-box;
+  z-index: 19;
+}
+
+.godCrestGlow {
+  font-size: 7px;
+  color: #DC2626;
+  text-shadow: 0 0 4px #FF0055;
+  animation: crestGlowPulse 0.8s infinite alternate ease-in-out;
+}
+
+@keyframes crestGlowPulse {
+  0% { opacity: 0.6; filter: brightness(1); }
+  100% { opacity: 1; filter: drop-shadow(0 0 4px #FF0055) brightness(1.4); }
 }
 
 .godText {
   font-family: var(--font-pixel);
   font-size: 8.5px;
   font-weight: 900;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  background: linear-gradient(180deg, #FFFFFF 0%, #FFF275 40%, #FF77E9 80%, #00F2FE 100%);
+  background: linear-gradient(180deg, #FFFFFF 0%, #FFF9C4 30%, #FFD700 70%, #F59E0B 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: godTextShine 1.2s infinite alternate ease-in-out;
+  animation: godRainbowText 1.8s infinite linear;
   white-space: nowrap;
 }
 
-@keyframes godTextShine {
-  0% { filter: drop-shadow(0 0 2px #FFD700) brightness(1); }
-  100% { filter: drop-shadow(0 0 8px #FFF) drop-shadow(0 0 14px #FF007F) brightness(1.35); }
+@keyframes godRainbowText {
+  0% {
+    filter: drop-shadow(0 0 4px #FF0055) brightness(1.1);
+  }
+  33% {
+    filter: drop-shadow(0 0 6px #00F2FE) brightness(1.3);
+  }
+  66% {
+    filter: drop-shadow(0 0 6px #FFE600) brightness(1.2);
+  }
+  100% {
+    filter: drop-shadow(0 0 4px #FF0055) brightness(1.1);
+  }
 }
+
+
 
 /* ============================================
    FRAME: ⚡ SSSVIP — SONG LONG LÔI THẦN (STORM DRAGONS SSSVIP)

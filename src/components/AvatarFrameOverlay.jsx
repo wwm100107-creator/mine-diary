@@ -3,7 +3,7 @@ import s from './AvatarFrameOverlay.module.css'
 
 export const AVATAR_FRAMES = [
   { id: 'none', name: 'Mặc định', icon: '🚫', desc: 'Không khung viền' },
-  { id: 'god_cosmic', name: '🌌 GOD Sáng Thế', icon: '👑', desc: 'Cấp bậc Tối Thượng GOD Mode — Cực quang 6 cánh thiên thần & tinh vân vô cực' },
+  { id: 'god_cosmic', name: '🌌 GOD Nữ Thần', icon: '👑', desc: 'Cấp bậc Tối Thượng GOD Mode — Song Nữ Thần Valkyrie, lửa địa ngục & lôi quang 7 màu nhấp nháy' },
   { id: 'vip10_thunder', name: '⚡ SSSVIP Song Long', icon: '⚡', desc: 'SSSVIP Song Long Lôi Thần — Đầu rồng phong lôi, sấm sét liên tục & điện quang chớp giật' },
   { id: 'vip9_frost', name: '❄️ SSVIP Cánh Băng', icon: '❄️', desc: 'SSVIP Thiên Thần Băng Tuyết — Cánh thiên thần bạch kim & sương băng huyền ảo' },
   { id: 'vip8_fire', name: '🔥 SVIP Rồng Lửa', icon: '🔥', desc: 'SVIP Rồng vàng hoàng kim & hào quang lửa cháy bùng nổ' },
@@ -24,102 +24,131 @@ function AvatarFrameOverlayComponent({ frameId = 'none', size = 36 }) {
     <div className={`${s.frameOverlay} ${s[frameId] || ''}`} aria-hidden="true">
       
       {/* ══════════════════════════════════════════════════════════════════════
-         FRAME: 🌌 GOD MODE — SÁNG THẾ THẦN LINH VÔ CỰC (SUPREME COSMIC CREATOR)
+         FRAME: 🌌 GOD MODE — NỮ THẦN SÁNG THẾ & LÔI QUANG 7 MÀU (SUPREME GODDESS RAINBOW LIGHTNING)
          ══════════════════════════════════════════════════════════════════════ */}
       {frameId === 'god_cosmic' && (
         <div className={s.godContainer}>
-          {/* Rotating Cosmic God Halo (360 Deg Celestial Wheel) */}
-          <div className={s.godHaloWheel}>
-            <div className={s.godHaloRay1} />
-            <div className={s.godHaloRay2} />
-            <div className={s.godHaloRing} />
+          {/* Layer 1: 7-Color Rainbow Shifting Lightning Aura */}
+          <div className={s.godRainbowLightningAura} />
+          <div className={s.godInfernoFireAura} />
+
+          {/* Layer 2: Rapid 7-Color Zigzag Lightning Sparks & Embers */}
+          <div className={s.godRainbowSparks}>
+            <span className={`${s.godBolt} ${s.gb1}`}>⚡</span>
+            <span className={`${s.godBolt} ${s.gb2}`}>✦</span>
+            <span className={`${s.godBolt} ${s.gb3}`}>⚡</span>
+            <span className={`${s.godBolt} ${s.gb4}`}>✧</span>
+            <span className={`${s.godBolt} ${s.gb5}`}>⚡</span>
+            <span className={`${s.godBolt} ${s.gb6}`}>★</span>
+            <span className={`${s.godBolt} ${s.gb7}`}>⚡</span>
+            <span className={`${s.godBolt} ${s.gb8}`}>✦</span>
           </div>
 
-          {/* Multi-Dimensional Prismatic Aura */}
-          <div className={s.godAuraGlow} />
-
-          {/* Stardust Celestial Particles */}
-          <div className={s.godParticles}>
-            <span className={`${s.godStar} ${s.g1}`}>★</span>
-            <span className={`${s.godStar} ${s.g2}`}>✦</span>
-            <span className={`${s.godStar} ${s.g3}`}>✧</span>
-            <span className={`${s.godStar} ${s.g4}`}>✨</span>
-            <span className={`${s.godStar} ${s.g5}`}>✦</span>
-            <span className={`${s.godStar} ${s.g6}`}>⭐</span>
+          {/* Layer 3: Central Double Obsidian Frame & Golden Laurel Wreath */}
+          <div className={s.godCentralFrame}>
+            <div className={s.godMagmaRing} />
+            <div className={s.godLaurelWreath}>
+              <svg viewBox="0 0 48 48" className={s.laurelSvg}>
+                {/* Golden Laurel Leaves Left */}
+                <path d="M12,18 C8,14 6,22 10,24 C14,26 14,20 12,18 Z" fill="url(#godGoldLeafGrad)" />
+                <path d="M10,26 C6,24 6,32 10,33 C14,34 13,28 10,26 Z" fill="url(#godGoldLeafGrad)" />
+                <path d="M12,34 C9,34 10,40 14,40 C17,40 15,35 12,34 Z" fill="url(#godGoldLeafGrad)" />
+                {/* Golden Laurel Leaves Right */}
+                <path d="M36,18 C40,14 42,22 38,24 C34,26 34,20 36,18 Z" fill="url(#godGoldLeafGrad)" />
+                <path d="M38,26 C42,24 42,32 38,33 C34,34 35,28 38,26 Z" fill="url(#godGoldLeafGrad)" />
+                <path d="M36,34 C39,34 38,40 34,40 C31,40 33,35 36,34 Z" fill="url(#godGoldLeafGrad)" />
+              </svg>
+            </div>
+            <div className={s.godRainbowSurge} />
           </div>
 
-          {/* Six Angelic Celestial Wings (3 Left, 3 Right) */}
-          <div className={`${s.godWingsWrap} ${s.godWingsLeft}`}>
-            <svg viewBox="0 0 32 40" className={s.godWingsSvg}>
-              <path d="M32,4 C22,0 12,6 4,14 C-2,20 0,28 8,34 C16,40 24,32 28,24 C30,20 32,12 32,4 Z" fill="url(#godWingsGrad)" />
-              <path d="M30,10 C22,8 14,14 8,22 C5,26 8,30 14,32 C20,34 26,26 28,20 Z" fill="url(#godInnerGrad)" />
-              <path d="M32,18 C26,16 20,20 16,26 C14,29 16,32 20,34 C24,36 28,30 30,26 Z" fill="url(#godLightGrad)" />
+          {/* Layer 4: Left & Right Dark Angel Goddesses with Magenta/Crimson Wings */}
+          <div className={`${s.godValkyrie} ${s.valkyrieLeft}`}>
+            <svg viewBox="0 0 52 56" className={s.goddessSvg}>
+              {/* Grand Magenta & Crimson Fiery Wings */}
+              <path d="M52,6 C38,0 24,8 14,18 C4,28 0,42 0,54 C12,46 26,48 36,40 C46,32 50,20 52,6 Z" fill="url(#godWingMagentaGrad)" />
+              <path d="M48,12 C36,10 24,18 16,28 C8,38 10,48 20,50 C30,46 40,36 44,26 Z" fill="url(#godWingCrimsonGrad)" />
+              {/* Purple Hair & Goddess Head */}
+              <path d="M42,20 C36,16 32,24 34,32 C36,40 44,38 46,30 Z" fill="#9333EA" />
+              <circle cx="38" cy="24" r="3.2" fill="#FDE047" />
+              {/* Glowing Red Eyes */}
+              <circle cx="37" cy="24" r="1.4" fill="#FF0000" className={s.goddessEye} />
+              {/* Goddess Golden Crown */}
+              <polygon points="34,16 38,20 42,16 40,12 36,12" fill="url(#godGoldLeafGrad)" />
+              <circle cx="38" cy="14" r="0.9" fill="#DC2626" />
             </svg>
           </div>
-          <div className={`${s.godWingsWrap} ${s.godWingsRight}`}>
-            <svg viewBox="0 0 32 40" className={s.godWingsSvg}>
-              <path d="M0,4 C10,0 20,6 28,14 C34,20 32,28 24,34 C16,40 8,32 4,24 C2,20 0,12 0,4 Z" fill="url(#godWingsGrad)" />
-              <path d="M2,10 C10,8 18,14 24,22 C27,26 24,30 18,32 C12,34 6,26 4,20 Z" fill="url(#godInnerGrad)" />
-              <path d="M0,18 C6,16 12,20 16,26 C18,29 16,32 12,34 C8,36 4,30 2,26 Z" fill="url(#godLightGrad)" />
+          <div className={`${s.godValkyrie} ${s.valkyrieRight}`}>
+            <svg viewBox="0 0 52 56" className={s.goddessSvg}>
+              {/* Grand Magenta & Crimson Fiery Wings */}
+              <path d="M0,6 C14,0 28,8 38,18 C48,28 52,42 52,54 C40,46 26,48 16,40 C6,32 2,20 0,6 Z" fill="url(#godWingMagentaGrad)" />
+              <path d="M4,12 C16,10 28,18 36,28 C44,38 42,48 32,50 C22,46 12,36 8,26 Z" fill="url(#godWingCrimsonGrad)" />
+              {/* Purple Hair & Goddess Head */}
+              <path d="M10,20 C16,16 20,24 18,32 C16,40 8,38 6,30 Z" fill="#9333EA" />
+              <circle cx="14" cy="24" r="3.2" fill="#FDE047" />
+              {/* Glowing Red Eyes */}
+              <circle cx="15" cy="24" r="1.4" fill="#FF0000" className={s.goddessEye} />
+              {/* Goddess Golden Crown */}
+              <polygon points="18,16 14,20 10,16 12,12 16,12" fill="url(#godGoldLeafGrad)" />
+              <circle cx="14" cy="14" r="0.9" fill="#DC2626" />
             </svg>
           </div>
 
-          {/* Base Diamond Prismatic Border with Infinite Shimmer */}
-          <div className={s.godGoldBorder}>
-            <div className={s.godPrismSweep} />
-          </div>
-
-          {/* Supreme God Crown with 7-Color Rainbow Infinity Gem */}
-          <div className={s.godCrown}>
+          {/* Layer 5: Top Imperial Gold Crown with Ruby Heart */}
+          <div className={s.godImperialCrown}>
             <svg viewBox="0 0 40 26" className={s.crownSvg}>
               <defs>
-                <linearGradient id="godWingsGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#FFFFFF" />
-                  <stop offset="25%" stopColor="#FFF275" />
-                  <stop offset="50%" stopColor="#FF77E9" />
-                  <stop offset="75%" stopColor="#70A6FF" />
-                  <stop offset="100%" stopColor="#00F2FE" />
+                <linearGradient id="godGoldLeafGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#FFF9C4" />
+                  <stop offset="35%" stopColor="#FFD700" />
+                  <stop offset="70%" stopColor="#D97706" />
+                  <stop offset="100%" stopColor="#78350F" />
                 </linearGradient>
-                <linearGradient id="godInnerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#FFE600" />
-                  <stop offset="50%" stopColor="#FF007F" />
-                  <stop offset="100%" stopColor="#7928CA" />
+                <linearGradient id="godWingMagentaGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#F472B6" />
+                  <stop offset="35%" stopColor="#E879F9" />
+                  <stop offset="70%" stopColor="#A855F7" />
+                  <stop offset="100%" stopColor="#4C1D95" />
                 </linearGradient>
-                <linearGradient id="godLightGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#FFFFFF" />
-                  <stop offset="100%" stopColor="#00DFD8" />
+                <linearGradient id="godWingCrimsonGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#EF4444" />
+                  <stop offset="50%" stopColor="#DC2626" />
+                  <stop offset="100%" stopColor="#18181B" />
                 </linearGradient>
-                <linearGradient id="godCrownGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#FFFDE7" />
-                  <stop offset="30%" stopColor="#FFD700" />
-                  <stop offset="60%" stopColor="#FFA000" />
-                  <stop offset="100%" stopColor="#FF6F00" />
+                <linearGradient id="godInfernoGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+                  <stop offset="0%" stopColor="#FF0000" />
+                  <stop offset="40%" stopColor="#FF5500" />
+                  <stop offset="75%" stopColor="#FFE600" />
+                  <stop offset="100%" stopColor="#FFFFFF" />
                 </linearGradient>
-                <radialGradient id="godGemGrad" cx="50%" cy="50%" r="50%">
-                  <stop offset="0%" stopColor="#FFFFFF" />
-                  <stop offset="30%" stopColor="#00F2FE" />
-                  <stop offset="65%" stopColor="#E056FD" />
-                  <stop offset="100%" stopColor="#FF007F" />
-                </radialGradient>
               </defs>
-              {/* Solar Halo Spikes behind crown */}
-              <path d="M20,0 L23,8 L32,3 L29,11 L38,9 L32,16 L40,18 L32,22 L8,22 L0,18 L8,16 L2,9 L11,11 L8,3 L17,8 Z" fill="url(#godWingsGrad)" opacity="0.85" />
-              {/* Main Golden Sovereign Crown */}
-              <path d="M6,22 L34,22 L36,17 L31,10 L25,17 L20,4 L15,17 L9,10 L4,17 Z" fill="url(#godCrownGrad)" stroke="#B8860B" strokeWidth="1" />
-              {/* Infinity Center Diamond Gem */}
-              <polygon points="20,6 26,13 20,20 14,13" fill="url(#godGemGrad)" stroke="#FFF" strokeWidth="1" className={s.godGemFlash} />
-              {/* Flanking Cosmic Orbs */}
-              <circle cx="9" cy="10" r="2" fill="#00F2FE" stroke="#FFF" strokeWidth="0.6" />
-              <circle cx="20" cy="4" r="2.5" fill="#FFE600" stroke="#FF007F" strokeWidth="0.8" />
-              <circle cx="31" cy="10" r="2" fill="#00F2FE" stroke="#FFF" strokeWidth="0.6" />
+              {/* Crown Base & Arches */}
+              <path d="M6,22 L34,22 L36,17 L31,10 L25,17 L20,4 L15,17 L9,10 L4,17 Z" fill="url(#godGoldLeafGrad)" stroke="#5D4037" strokeWidth="1" />
+              {/* Center Ruby Gem */}
+              <polygon points="20,8 24,13 20,18 16,13" fill="#DC2626" stroke="#FFF" strokeWidth="0.8" className={s.godRubyGem} />
+              {/* Side Rubies */}
+              <circle cx="9" cy="11" r="1.5" fill="#EF4444" />
+              <circle cx="31" cy="11" r="1.5" fill="#EF4444" />
+              <circle cx="20" cy="4" r="1.8" fill="#FFE600" />
             </svg>
           </div>
 
-          {/* Bottom GOD Diamond Ribbon Badge */}
+          {/* Layer 6: Lower White Wings & Blazing Inferno Flames */}
+          <div className={s.godLowerWings}>
+            <svg viewBox="0 0 54 22" className={s.lowerWingsSvg}>
+              {/* Left & Right White Angel Feathers */}
+              <path d="M16,6 C10,2 2,6 0,14 C8,12 14,14 18,18 C16,12 18,8 16,6 Z" fill="#FFFFFF" filter="drop-shadow(0 0 4px #FFF)" />
+              <path d="M38,6 C44,2 52,6 54,14 C46,12 40,14 36,18 C38,12 36,8 38,6 Z" fill="#FFFFFF" filter="drop-shadow(0 0 4px #FFF)" />
+            </svg>
+          </div>
+
+          {/* Layer 7: Bottom Inferno Base, Ribbon & GOD Badge */}
           <div className={s.godBottomBadge}>
-            <div className={s.godHaloArch} />
+            <div className={s.godInfernoFlames} />
             <div className={s.godRibbon}>
+              <span className={s.godCrestGlow}>♦</span>
               <span className={s.godText}>👑 GOD 👑</span>
+              <span className={s.godCrestGlow}>♦</span>
             </div>
           </div>
         </div>
