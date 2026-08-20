@@ -62,7 +62,9 @@ function buildGrid(year, month) {
   return days
 }
 
-export default function Calendar({ userId, mode = 'standard', onDateSelect, className, readOnly = false }) {
+export default function Calendar({ userId, mode = 'standard', gender = 'female', onDateSelect, className, readOnly = false }) {
+  const isMale = gender === 'male'
+
   const now = new Date()
   const [view, setView] = useState({ year: now.getFullYear(), month: now.getMonth() })
   const [tick, setTick] = useState(0)
@@ -570,16 +572,18 @@ export default function Calendar({ userId, mode = 'standard', onDateSelect, clas
           const cls = [
             s.day,
             isToday ? s.isToday : '',
-            isPred ? s.predicted : '',
-            // Advanced AI: apply level class; Standard: plain fertileSet tint
-            aiLevel === 'peak' ? s.fertileAiPeak :
-            aiLevel === 'high' ? s.fertileAiHigh :
-            aiLevel === 'low'  ? s.fertileAiLow  :
-            isFertile          ? s.fertile        : '',
+            // Male: no period prediction styling
+            !isMale && isPred ? s.predicted : '',
+            // Advanced AI: apply level class; Standard: plain fertileSet tint (female only)
+            !isMale && aiLevel === 'peak' ? s.fertileAiPeak :
+            !isMale && aiLevel === 'high' ? s.fertileAiHigh :
+            !isMale && aiLevel === 'low'  ? s.fertileAiLow  :
+            !isMale && isFertile          ? s.fertile        : '',
             isHovered ? s.isHovered : '',
             isActive ? s.activeDay : '',
             isDropTarget ? s.dragOver : '',
           ].join(' ')
+
 
           return (
             <div
@@ -601,8 +605,8 @@ export default function Calendar({ userId, mode = 'standard', onDateSelect, clas
               <div className={s.dayInner}>
                 <span className={s.dayNumber}>{cell.date.getDate()}</span>
 
-                {/* 1. Predicted Period: Grayscale Strawberry 🍓 */}
-                {isPred && dayIcons.length === 0 && (
+                {/* 1. Predicted Period: Grayscale Strawberry 🍓 (female only) */}
+                {!isMale && isPred && dayIcons.length === 0 && (
                   <span
                     className={s.predictedStrawberry}
                     title="Dự đoán chu kỳ (Dâu tây mờ)"
@@ -614,8 +618,8 @@ export default function Calendar({ userId, mode = 'standard', onDateSelect, clas
                   </span>
                 )}
 
-                {/* 2. Ovulation Flower Indicator */}
-                {isOvulation && (
+                {/* 2. Ovulation Flower Indicator (female only) */}
+                {!isMale && isOvulation && (
                   <span
                     className={s.ovulationIcon}
                     title="Ngày rụng trứng"
@@ -699,25 +703,28 @@ export default function Calendar({ userId, mode = 'standard', onDateSelect, clas
             <span className={s.trayLabel}>Khay Icon:</span>
             
             <div className={s.trayItems}>
-              {/* Default Icons */}
+              {/* Default Icons — period icons (🍓❌) hidden for male */}
               {[
-                { icon: '🍓', title: 'Kinh nguyệt (Bắt đầu)' },
-                { icon: '❌', title: 'Kết thúc kinh' },
-                { icon: '🎂', title: 'Sinh nhật / Kỷ niệm' },
-              ].map(({ icon, title }) => (
-                <button
-                  key={icon}
-                  type="button"
-                  className={s.trayBtn}
-                  draggable={true}
-                  onDragStart={(e) => handleTrayDragStart(e, icon)}
-                  onDragEnd={handleDragEnd}
-                  onTouchStart={(e) => handleTouchStart(e, { type: 'TRAY', icon })}
-                  title={`Kéo thả ${title} vào ô ngày`}
-                >
-                  {icon}
-                </button>
-              ))}
+                { icon: '🍓', title: 'Kinh nguyệt (Bắt đầu)', femaleOnly: true },
+                { icon: '❌', title: 'Kết thúc kinh',          femaleOnly: true },
+                { icon: '🎂', title: 'Sinh nhật / Kỷ niệm',   femaleOnly: false },
+              ]
+                .filter(({ femaleOnly }) => !femaleOnly || !isMale)
+                .map(({ icon, title }) => (
+                  <button
+                    key={icon}
+                    type="button"
+                    className={s.trayBtn}
+                    draggable={true}
+                    onDragStart={(e) => handleTrayDragStart(e, icon)}
+                    onDragEnd={handleDragEnd}
+                    onTouchStart={(e) => handleTouchStart(e, { type: 'TRAY', icon })}
+                    title={`Kéo thả ${title} vào ô ngày`}
+                  >
+                    {icon}
+                  </button>
+                ))}
+
 
               {/* Custom Added Icons */}
               {customIcons.map((icon, idx) => (

@@ -185,8 +185,8 @@ export default function HealthView({ user }) {
         </div>
       </div>
 
-      {/* ── Mode Switcher (If partner relationship exists) ── */}
-      {coupleRel && partnerUser && (
+      {/* ── Mode Switcher: only show if partner is FEMALE (has a cycle) ── */}
+      {coupleRel && partnerUser && partnerUser.gender !== 'male' && (
         <div className={s.modeSwitcher}>
           <button
             type="button"
@@ -205,6 +205,7 @@ export default function HealthView({ user }) {
           </button>
         </div>
       )}
+
 
       {/* ════════════════════════════════════════════════════════════════
           MODE 1: VIEW PARTNER'S CYCLE DATA (Theo Dõi Chu Kỳ Người Thương)
@@ -328,7 +329,8 @@ export default function HealthView({ user }) {
               <h2 className={s.cardTitle}>
                 <span>📅</span> Lịch Chu Kỳ {predictionMode === 'advanced' ? '(AI Bayesian)' : '(Chu Kỳ Chuẩn)'}
               </h2>
-              <HealthCalendar userId={user.id} mode={predictionMode} onDateSelect={setSelectedDate} />
+              <HealthCalendar userId={user.id} mode={predictionMode} gender={user?.gender || 'female'} onDateSelect={setSelectedDate} />
+
               
               {/* Dynamic Insights if Advanced AI mode active */}
               {predictionMode === 'advanced' && insights?.length > 0 && (
