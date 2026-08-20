@@ -4,10 +4,11 @@
  */
 
 import {
-  collection, doc, getDocs, updateDoc, setDoc, deleteDoc,
+  collection, doc, getDoc, getDocs, updateDoc, setDoc, deleteDoc,
   serverTimestamp, Timestamp, orderBy, query, where,
 } from 'firebase/firestore'
 import { db } from './firebase'
+import { VIP_TIERS } from '../utils/vipTiers'
 
 /**
  * 1. Verify if a user has Admin privileges
@@ -220,15 +221,35 @@ export async function resetUserPassword(userId, newPassword) {
 
 /**
  * 9. Update User VIP Tier (Admin Exclusive)
+ * Automatically syncs attendance claimed days and streak corresponding to the required days for that VIP tier
  * @param {string} userId
  * @param {'normal' | 'svip' | 'ssvip' | 'sssvip' | 'god'} newVipTier
  */
 export async function updateUserVipTier(userId, newVipTier) {
   const allowedTiers = ['normal', 'svip', 'ssvip', 'sssvip', 'god']
   const targetTier = allowedTiers.includes(newVipTier) ? newVipTier : 'normal'
+  const reqDays = VIP_TIERS[targetTier]?.reqDays || 0
 
-  await updateDoc(doc(db, 'users', userId), {
+  const userRef = doc(db, 'users', userId)
+  const userSnap = await getDoc(userRef)
+  const userData = userSnap.exists() ? userSnap.data() : {}
+  const currentAttendance = userData.attendance || { streak: 0, lastCheckInDate: null, claimedDays: [] }
+
+  // Auto-fill all required days up to reqDays
+  const existingClaimed = new Set(currentAttendance.claimedDays || [])
+  for (let d = 1; d <= reqDays; d++) {
+    existingClaimed.add(d)
+  }
+
+  const updatedAttendance = {
+    ...currentAttendance,
+    streak: Math.max(currentAttendance.streak || 0, reqDays),
+    claimedDays: Array.from(existingClaimed).sort((a, b) => a - b),
+  }
+
+  await updateDoc(userRef, {
     vipTier: targetTier,
+    attendance: updatedAttendance,
     vipUpdatedAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   })

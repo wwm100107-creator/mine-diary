@@ -17,6 +17,35 @@ function getTodayStr() {
 }
 
 /**
+ * Synchronize attendance claimedDays and streak with user's current VIP tier
+ * Ensures users granted VIP by Admin automatically have completed tick marks for previous days
+ * @param {Object} user
+ * @returns {Object} synchronized attendance object
+ */
+export function syncVipAttendanceProgress(user) {
+  if (!user) return { streak: 0, lastCheckInDate: null, claimedDays: [] }
+
+  const vipTier = (user.vipTier || 'normal').toLowerCase()
+  const reqDays = VIP_TIERS[vipTier]?.reqDays || 0
+  const currentAttendance = user.attendance || { streak: 0, lastCheckInDate: null, claimedDays: [] }
+  const existingClaimed = new Set(currentAttendance.claimedDays || [])
+
+  // Auto-fill all required days up to reqDays
+  for (let d = 1; d <= reqDays; d++) {
+    existingClaimed.add(d)
+  }
+
+  const finalClaimedDays = Array.from(existingClaimed).sort((a, b) => a - b)
+  const finalStreak = Math.max(currentAttendance.streak || 0, reqDays)
+
+  return {
+    ...currentAttendance,
+    streak: finalStreak,
+    claimedDays: finalClaimedDays,
+  }
+}
+
+/**
  * Check if the user has already checked in today
  */
 export function canCheckInToday(user) {

@@ -10,12 +10,17 @@ export default function AttendanceModal({ user, onUpdateUser, onClose }) {
   const [successMessage, setSuccessMessage] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
 
+  const currentVip = getUserVipTier(user)
+  const reqDaysForVip = currentVip?.reqDays || 0
+
   const attendance = user?.attendance || { streak: 0, lastCheckInDate: null, claimedDays: [] }
   const claimedDays = new Set(attendance.claimedDays || [])
-  const streak = attendance.streak || 0
+  for (let d = 1; d <= reqDaysForVip; d++) {
+    claimedDays.add(d)
+  }
+  const streak = Math.max(attendance.streak || 0, reqDaysForVip)
   const isAvailableToday = canCheckInToday(user)
   const nextClaimDay = isAvailableToday ? Math.min(streak + 1, 30) : streak
-  const currentVip = getUserVipTier(user)
 
   const handleClaim = async () => {
     if (!isAvailableToday || loading) return

@@ -9,6 +9,7 @@ import {
   query, where, serverTimestamp, updateDoc,
 } from 'firebase/firestore'
 import { db } from './firebase'
+import { VIP_TIERS } from '../utils/vipTiers'
 
 const SESSION_KEY = 'minediary:current_user'
 
@@ -325,6 +326,32 @@ export async function loginUser({ usernameOrId, password }) {
     throw err
   }
 
+  // ── Sync Attendance Progress with VIP Tier ──
+  const vipTier = data.vipTier || 'normal'
+  const reqDays = VIP_TIERS[vipTier]?.reqDays || 0
+  const rawAttendance = data.attendance || { streak: 0, lastCheckInDate: null, claimedDays: [] }
+
+  const claimedSet = new Set(rawAttendance.claimedDays || [])
+  for (let d = 1; d <= reqDays; d++) {
+    claimedSet.add(d)
+  }
+  const finalClaimedDays = Array.from(claimedSet).sort((a, b) => a - b)
+  const finalStreak = Math.max(rawAttendance.streak || 0, reqDays)
+
+  const syncedAttendance = {
+    ...rawAttendance,
+    streak: finalStreak,
+    claimedDays: finalClaimedDays,
+  }
+
+  // If attendance was upgraded by VIP tier, save to database
+  if (finalStreak !== (rawAttendance.streak || 0) || finalClaimedDays.length !== (rawAttendance.claimedDays || []).length) {
+    updateDoc(doc(db, 'users', foundDoc.id), {
+      attendance: syncedAttendance,
+      updatedAt: serverTimestamp(),
+    }).catch(console.warn)
+  }
+
   const sessionUser = {
     id: foundDoc.id,
     name: data.displayName || data.name || foundDoc.id,
@@ -333,8 +360,8 @@ export async function loginUser({ usernameOrId, password }) {
     avatar: data.avatar || 'bunny',
     avatarFrame: data.avatarFrame || data.frame || 'none',
     gender: data.gender || 'female',
-    vipTier: data.vipTier || 'normal',
-    attendance: data.attendance || { streak: 0, lastCheckInDate: null, claimedDays: [] },
+    vipTier,
+    attendance: syncedAttendance,
     theme: data.theme || null,
     isAdmin: data.role === 'admin' || data.isAdmin === true || foundDoc.id.toLowerCase() === ADMIN_USERNAME,
     role: (data.role === 'admin' || foundDoc.id.toLowerCase() === ADMIN_USERNAME) ? 'admin' : 'user',
