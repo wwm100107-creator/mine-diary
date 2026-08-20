@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef, useLayoutEffect } from 'react'
 import { useGoogleLogin } from '@react-oauth/google'
+import { doc, onSnapshot } from 'firebase/firestore'
+import { db } from './lib/firebase'
 import DiaryView from './components/DiaryView'
 import HealthView from './components/HealthView'
 import AdminDashboard from './components/AdminDashboard'
@@ -18,6 +20,8 @@ import s from './App.module.css'
 export default function App() {
   // Session initialization
   const [user, setUser] = useState(() => getCurrentUser())
+  const [banErrorNotice, setBanErrorNotice] = useState('')
+  const [banDetailsNotice, setBanDetailsNotice] = useState(null)
   const [currentTab, setCurrentTab] = useState(() => {
     if (typeof window !== 'undefined') {
       if (window.location.pathname === '/admin' || window.location.hash === '#admin') {
@@ -183,11 +187,67 @@ export default function App() {
     }
   }
 
+  // ── Realtime Ban Security Guard (Firestore onSnapshot) ───────────────────
+  useEffect(() => {
+    if (!user?.id) return
+
+    const userDocRef = doc(db, 'users', user.id)
+    const unsubscribe = onSnapshot(userDocRef, (snap) => {
+      if (!snap.exists()) return
+
+      const data = snap.data()
+      if (data.isBanned) {
+        let isStillBanned = true
+        let banUntilDate = null
+        let banMessage = 'Tài khoản của bạn đã bị khóa bởi Quản trị viên!'
+
+        if (data.banUntil) {
+          banUntilDate = data.banUntil.toDate ? data.banUntil.toDate() : new Date(data.banUntil)
+          if (new Date() > banUntilDate) {
+            isStillBanned = false // Ban expired
+          } else {
+            const formattedTime = banUntilDate.toLocaleString('vi-VN', {
+              day: '2-digit', month: '2-digit', year: 'numeric',
+              hour: '2-digit', minute: '2-digit',
+            })
+            banMessage = `Tài khoản của bạn đã bị khóa đến ${formattedTime}.\nLý do: "${data.banReason || 'Vi phạm điều khoản cộng đồng'}".`
+          }
+        } else {
+          banMessage = `Tài khoản của bạn đã bị khóa vĩnh viễn.\nLý do: "${data.banReason || 'Vi phạm điều khoản cộng đồng'}".`
+        }
+
+        if (isStillBanned) {
+          // ── FORCE LOGOUT: Clear session, state, and redirect to AuthLanding ──
+          logoutUser()
+          setUser(null)
+          setBanErrorNotice(banMessage)
+          setBanDetailsNotice({
+            userId: snap.id,
+            banReason: data.banReason || 'Vi phạm điều khoản cộng đồng',
+            banUntilDate,
+            appeal: data.appeal || null,
+          })
+          window.history.pushState({}, '', '/')
+        }
+      }
+    }, (err) => {
+      console.warn('[Ban Guard] Listener error:', err)
+    })
+
+    return () => unsubscribe()
+  }, [user?.id])
+
   // ── Unauthenticated / Landing Page ────────────────────────────────────────
   if (!user) {
     return (
       <AuthLanding
-        onAuthSuccess={(loggedInUser) => setUser(loggedInUser)}
+        initialBanError={banErrorNotice}
+        initialBannedInfo={banDetailsNotice}
+        onAuthSuccess={(loggedInUser) => {
+          setBanErrorNotice('')
+          setBanDetailsNotice(null)
+          setUser(loggedInUser)
+        }}
         onGoogleLogin={() => login()}
       />
     )

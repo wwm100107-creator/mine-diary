@@ -17,20 +17,34 @@ function generateRandomUid() {
   return `${prefix}_${num}`
 }
 
-export default function AuthLanding({ onAuthSuccess, onGoogleLogin }) {
+export default function AuthLanding({
+  onAuthSuccess,
+  onGoogleLogin,
+  initialBanError = '',
+  initialBannedInfo = null,
+}) {
   const [tab, setTab] = useState('login') // 'login' | 'register'
   const [showPassword, setShowPassword] = useState(false)
   const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+  const [error, setError] = useState(initialBanError || '')
 
   // Banned state & Appeal modal
-  const [bannedInfo, setBannedInfo] = useState(null)
+  const [bannedInfo, setBannedInfo] = useState(initialBannedInfo || null)
   const [isAppealModalOpen, setIsAppealModalOpen] = useState(false)
   const [appealText, setAppealText] = useState('')
   const [appealSubmitting, setAppealSubmitting] = useState(false)
   const [appealSuccess, setAppealSuccess] = useState('')
   const [appealError, setAppealError] = useState('')
+
+  useEffect(() => {
+    if (initialBanError) {
+      setError(initialBanError)
+    }
+    if (initialBannedInfo) {
+      setBannedInfo(initialBannedInfo)
+    }
+  }, [initialBanError, initialBannedInfo])
 
   // Form states
   const [loginInput, setLoginInput] = useState({ usernameOrId: '', password: '' })
