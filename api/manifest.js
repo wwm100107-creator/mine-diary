@@ -7,7 +7,30 @@
 export default function handler(req, res) {
   const { role, gender, isAdmin } = req.query || {}
 
-  const isUserAdmin = role === 'admin' || isAdmin === 'true' || isAdmin === '1'
+  // Check query params first, then fallback to parsing session from Cookie headers
+  let finalRole = role || ''
+  let finalGender = gender || ''
+  let finalIsAdmin = role === 'admin' || isAdmin === 'true' || isAdmin === '1'
+
+  if (!finalRole && !finalGender && req.headers?.cookie) {
+    try {
+      const cookies = Object.fromEntries(
+        req.headers.cookie.split(';').map((c) => {
+          const [k, ...v] = c.trim().split('=')
+          return [k, decodeURIComponent(v.join('='))]
+        })
+      )
+      const rawUser = cookies['minediary_user'] || cookies['minediary:session']
+      if (rawUser) {
+        const parsed = JSON.parse(rawUser)
+        finalRole = parsed.role || (parsed.isAdmin ? 'admin' : 'user')
+        finalGender = parsed.gender || ''
+        finalIsAdmin = Boolean(parsed.isAdmin || parsed.role === 'admin' || parsed.id === 'adminserver')
+      }
+    } catch (e) {}
+  }
+
+  const isUserAdmin = finalIsAdmin || finalRole === 'admin'
 
   let appName = 'Mine Diary - Nhật Ký & Chu Kỳ Pixel'
   let shortName = 'MineDiary'
