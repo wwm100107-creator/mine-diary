@@ -1,27 +1,46 @@
 import React, { useState, useEffect, useMemo } from 'react'
-import { createPortal } from 'react-dom'
 import { submitBanAppeal } from '../lib/admin'
 import s from './BannedScreen.module.css'
+
+function parseBanDate(val) {
+  if (!val) return null
+  if (val instanceof Date) return isNaN(val.getTime()) ? null : val
+  if (typeof val.toDate === 'function') {
+    try {
+      const d = val.toDate()
+      return isNaN(d.getTime()) ? null : d
+    } catch (e) {
+      return null
+    }
+  }
+  if (typeof val === 'number') {
+    const d = new Date(val)
+    return isNaN(d.getTime()) ? null : d
+  }
+  if (typeof val === 'string') {
+    const d = new Date(val)
+    return isNaN(d.getTime()) ? null : d
+  }
+  return null
+}
 
 export default function BannedScreen({ banDetails, onLogout, onAppealSubmitted }) {
   const { userId, banReason, banUntilDate, appeal } = banDetails || {}
 
-  // ── Countdown Timer State ──
-  const [now, setNow] = useState(Date.now())
+  // 1. Calculate targetDate FIRST before hooks
+  const targetDate = useMemo(() => parseBanDate(banUntilDate), [banUntilDate])
+
+  // 2. Countdown Timer State
+  const [now, setNow] = useState(() => Date.now())
   const [isAppealOpen, setIsAppealOpen] = useState(false)
   const [appealMessage, setAppealMessage] = useState('')
   const [appealSubmitting, setAppealSubmitting] = useState(false)
   const [appealSuccess, setAppealSuccess] = useState('')
   const [appealError, setAppealError] = useState('')
 
-  // ── Countdown Timer & Auto-Reload on Expiry ──
+  // 3. Countdown Timer & Auto-Reload on Expiry
   useEffect(() => {
     if (!targetDate) return
-
-    // If already expired at mount
-    if (targetDate.getTime() <= Date.now()) {
-      return
-    }
 
     const timer = setInterval(() => {
       const currentNow = Date.now()
@@ -37,14 +56,8 @@ export default function BannedScreen({ banDetails, onLogout, onAppealSubmitted }
     return () => clearInterval(timer)
   }, [targetDate])
 
-  // Calculate remaining time
-  const targetDate = useMemo(() => {
-    if (!banUntilDate) return null
-    return banUntilDate instanceof Date ? banUntilDate : new Date(banUntilDate)
-  }, [banUntilDate])
-
-  const timeDiff = targetDate ? Math.max(0, targetDate.getTime() - now) : null
   const isPermanent = !targetDate
+  const timeDiff = targetDate ? Math.max(0, targetDate.getTime() - now) : 0
   const isExpired = targetDate && timeDiff <= 0
 
   const countdownParts = useMemo(() => {
@@ -87,9 +100,7 @@ export default function BannedScreen({ banDetails, onLogout, onAppealSubmitted }
     }
   }
 
-  if (typeof document === 'undefined') return null
-
-  return createPortal(
+  return (
     <div className={s.bannedOverlay} role="alertdialog" aria-modal="true" aria-label="Tài khoản bị khóa">
       
       {/* Pixel floating background particles */}
@@ -142,22 +153,22 @@ export default function BannedScreen({ banDetails, onLogout, onAppealSubmitted }
           ) : (
             <div className={s.countdownDisplay}>
               <div className={s.countdownUnit}>
-                <span className={s.countdownNum}>{countdownParts?.days}</span>
+                <span className={s.countdownNum}>{countdownParts?.days || '00'}</span>
                 <span className={s.countdownLabel}>NGÀY</span>
               </div>
               <span className={s.colonDivider}>:</span>
               <div className={s.countdownUnit}>
-                <span className={s.countdownNum}>{countdownParts?.hours}</span>
+                <span className={s.countdownNum}>{countdownParts?.hours || '00'}</span>
                 <span className={s.countdownLabel}>GIỜ</span>
               </div>
               <span className={s.colonDivider}>:</span>
               <div className={s.countdownUnit}>
-                <span className={s.countdownNum}>{countdownParts?.minutes}</span>
+                <span className={s.countdownNum}>{countdownParts?.minutes || '00'}</span>
                 <span className={s.countdownLabel}>PHÚT</span>
               </div>
               <span className={s.colonDivider}>:</span>
               <div className={s.countdownUnit}>
-                <span className={s.countdownNum}>{countdownParts?.seconds}</span>
+                <span className={s.countdownNum}>{countdownParts?.seconds || '00'}</span>
                 <span className={s.countdownLabel}>GIÂY</span>
               </div>
             </div>
@@ -264,7 +275,6 @@ export default function BannedScreen({ banDetails, onLogout, onAppealSubmitted }
         </div>
       )}
 
-    </div>,
-    document.body
+    </div>
   )
 }
