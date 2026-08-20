@@ -19,6 +19,7 @@ import { isUserAdmin } from './lib/admin'
 import { getCurrentUser, saveSession, logoutUser, verifyBanStatus } from './lib/auth'
 import { loadMarkedDates, predictNextPeriod, toDateStr } from './utils/cycle'
 import { applyTheme, getSavedTheme } from './utils/theme'
+import { playCuteTing } from './utils/sound'
 import s from './App.module.css'
 
 export default function App() {
@@ -183,8 +184,18 @@ export default function App() {
 
   // ── In-App Pixel Toast Notifications System ─────────────────────────────
   const [toasts, setToasts] = useState([])
+  const [activeChatPartnerId, setActiveChatPartnerId] = useState(null)
   const initialChatsLoadedRef = useRef(false)
   const lastSeenMsgsRef = useRef(new Map())
+
+  // Listen to active chat room partner ID from ChatView
+  useEffect(() => {
+    const handleActivePartnerChange = (e) => {
+      setActiveChatPartnerId(e.detail || null)
+    }
+    window.addEventListener('minediary:active_chat_partner', handleActivePartnerChange)
+    return () => window.removeEventListener('minediary:active_chat_partner', handleActivePartnerChange)
+  }, [])
 
   useEffect(() => {
     if (!user?.id) {
@@ -214,6 +225,14 @@ export default function App() {
         if (key !== prevKey) {
           lastSeenMsgsRef.current.set(c.chatId, key)
 
+          // 🛑 Anti-spam condition: Do NOT trigger toast if currently viewing this partner's chat room!
+          if (currentTab === 'chat' && activeChatPartnerId === c.partnerId) {
+            return
+          }
+
+          // 🔔 Play cute 8-bit Ting sound effect
+          playCuteTing()
+
           const isCare = c.isSystemMessage || c.lastMessageType === 'care_reminder'
           const newToast = {
             id: `toast_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
@@ -234,7 +253,7 @@ export default function App() {
     })
 
     return () => unsubscribe()
-  }, [user?.id])
+  }, [user?.id, currentTab, activeChatPartnerId])
 
   const handleDismissToast = (toastId) => {
     setToasts((prev) => prev.filter((t) => t.id !== toastId))

@@ -113,6 +113,22 @@ export default function ChatView({ user }) {
     return () => window.removeEventListener('minediary:open_chat', handleOpenChatEvent)
   }, [])
 
+  // 1.2 Broadcast current active partner ID to global Root (for toast suppression)
+  useEffect(() => {
+    window.dispatchEvent(
+      new CustomEvent('minediary:active_chat_partner', {
+        detail: activePartner?.id || null,
+      })
+    )
+    return () => {
+      window.dispatchEvent(
+        new CustomEvent('minediary:active_chat_partner', {
+          detail: null,
+        })
+      )
+    }
+  }, [activePartner?.id])
+
   // 2. Separate active chats vs pending requests
   const { activeChats, requestChats } = useMemo(() => {
     const local = getRecentChats(user?.id)
