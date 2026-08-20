@@ -328,11 +328,13 @@ export function subscribeToUserChats(myId, callback) {
       const partnerId = data.participants.find((p) => p !== myId)
       if (!partnerId) continue
 
-      // Fetch partner profile
+      // Fetch partner profile (Skip if partner account was deleted)
       const partnerDoc = await getUser(partnerId)
-      const partnerDisplayName = partnerDoc?.displayName || partnerDoc?.name || partnerId
-      const partnerAvatar = partnerDoc?.avatar || 'bunny'
-      const partnerFrame = partnerDoc?.avatarFrame || partnerDoc?.frame || 'none'
+      if (!partnerDoc) continue
+
+      const partnerDisplayName = partnerDoc.displayName || partnerDoc.name || partnerId
+      const partnerAvatar = partnerDoc.avatar || 'bunny'
+      const partnerFrame = partnerDoc.avatarFrame || partnerDoc.frame || 'none'
 
       chats.push({
         chatId: d.id,

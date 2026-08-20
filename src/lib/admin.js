@@ -4,8 +4,8 @@
  */
 
 import {
-  collection, doc, getDocs, updateDoc, setDoc,
-  serverTimestamp, Timestamp, orderBy, query,
+  collection, doc, getDocs, updateDoc, setDoc, deleteDoc,
+  serverTimestamp, Timestamp, orderBy, query, where,
 } from 'firebase/firestore'
 import { db } from './firebase'
 
@@ -97,14 +97,44 @@ export async function banUser({ userId, durationDays, customBanUntil, reason }) 
 }
 
 /**
- * 3.1 Delete a user account completely
+ * 3.1 Delete a user account completely (with cascading cleanup of chats and relationships)
  * Strictly immune for adminserver.
  */
 export async function deleteUserAccount(userId) {
   if (isProtectedUser(userId)) {
     throw new Error('Tài khoản Quản trị viên tối cao (adminserver) là Bất tử, không thể bị xóa!')
   }
+
+  // 1. Delete user document
   await deleteDoc(doc(db, 'users', userId))
+
+  // 2. Cascade delete all chat rooms & messages involving this user
+  try {
+    const qChats = query(collection(db, 'chats'), where('participants', 'array-contains', userId))
+    const chatsSnap = await getDocs(qChats)
+    for (const cDoc of chatsSnap.docs) {
+      // Delete message sub-documents
+      const msgsSnap = await getDocs(collection(db, 'chats', cDoc.id, 'messages'))
+      for (const mDoc of msgsSnap.docs) {
+        await deleteDoc(doc(db, 'chats', cDoc.id, 'messages', mDoc.id))
+      }
+      await deleteDoc(doc(db, 'chats', cDoc.id))
+    }
+  } catch (err) {
+    console.warn('Cascade delete chats warning:', err)
+  }
+
+  // 3. Cascade delete all relationships involving this user
+  try {
+    const qRels = query(collection(db, 'relationships'), where('participants', 'array-contains', userId))
+    const relsSnap = await getDocs(qRels)
+    for (const rDoc of relsSnap.docs) {
+      await deleteDoc(doc(db, 'relationships', rDoc.id))
+    }
+  } catch (err) {
+    console.warn('Cascade delete relationships warning:', err)
+  }
+
   return true
 }
 
