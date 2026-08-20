@@ -520,6 +520,36 @@
   box-shadow: 1px 1px 0 #B71C1C;
 }
 
+.vipActionBtn {
+  font-family: var(--font-pixel);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 6px 12px;
+  background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+  border: 2px solid #F59E0B;
+  border-radius: var(--radius-sm);
+  color: #92400E;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 #F59E0B;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+  font-weight: bold;
+}
+
+.vipActionBtn:hover:not(:disabled) {
+  background: #F59E0B;
+  color: #FFFFFF;
+  border-color: #B45309;
+  transform: translateY(-2px);
+  box-shadow: 3px 3px 0 #B45309;
+}
+
+.vipActionBtn:active:not(:disabled) {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 #B45309;
+}
+
 .deleteActionBtn {
   font-family: var(--font-pixel);
   font-size: 11px;

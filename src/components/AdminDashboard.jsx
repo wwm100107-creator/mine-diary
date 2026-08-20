@@ -76,6 +76,11 @@ export default function AdminDashboard({ user, onBack }) {
   const [resetSuccess, setResetSuccess] = useState('')
   const [actionLoading, setActionLoading] = useState(false)
 
+  // Dedicated VIP Management Modal States
+  const [vipModalUser, setVipModalUser] = useState(null)
+  const [selectedVipTier, setSelectedVipTier] = useState('normal')
+  const [vipModalSuccess, setVipModalSuccess] = useState('')
+
   // Super Admin command state
   const [superAdminCmd, setSuperAdminCmd] = useState('')
   const [superAdminUnlocked, setSuperAdminUnlocked] = useState(false)
@@ -300,6 +305,31 @@ export default function AdminDashboard({ user, onBack }) {
     }
   }
 
+  // Handle Quick VIP Tier Update from dedicated VIP Modal
+  const handleConfirmVipUpdate = async (e) => {
+    e.preventDefault()
+    if (!vipModalUser) return
+    setActionLoading(true)
+    setVipModalSuccess('')
+    try {
+      await updateUserVipTier(vipModalUser.id, selectedVipTier)
+      const tierName = VIP_TIERS[selectedVipTier]?.name || selectedVipTier
+      setVipModalSuccess(`✓ Đã cập nhật quyền hạn VIP thành "${tierName}" thành công!`)
+      setUsers((prev) =>
+        prev.map((u) => (u.id === vipModalUser.id ? { ...u, vipTier: selectedVipTier } : u))
+      )
+      setVipModalUser((prev) => (prev ? { ...prev, vipTier: selectedVipTier } : null))
+      setTimeout(() => {
+        setVipModalUser(null)
+      }, 1200)
+    } catch (err) {
+      console.error('Update VIP error:', err)
+      alert('Lỗi khi cập nhật quyền hạn VIP: ' + err.message)
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
   // Super Admin Authorization Command Handler
   const handleVerifySuperAdmin = (e) => {
     e.preventDefault()
@@ -480,9 +510,21 @@ export default function AdminDashboard({ user, onBack }) {
                           return (
                             <span
                               className={s.userVipBadge}
-                              style={{ color: uVip.color, background: uVip.bg, border: `1px solid ${uVip.color}` }}
+                              style={{
+                                color: uVip.color,
+                                background: uVip.bg,
+                                border: `1px solid ${uVip.color}`,
+                                cursor: 'pointer',
+                              }}
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                setVipModalUser(u)
+                                setSelectedVipTier(u.vipTier || (isProtectedUser(u) ? 'god' : 'normal'))
+                                setVipModalSuccess('')
+                              }}
+                              title="Nhấn để đổi cấp VIP cho người dùng này"
                             >
-                              {uVip.badge}
+                              {uVip.badge} ⚙️
                             </span>
                           )
                         })()}
@@ -547,11 +589,37 @@ export default function AdminDashboard({ user, onBack }) {
                   {/* Column 6: Action (Centered) */}
                   <td className={s.colAction}>
                     {isProtectedUser(u) ? (
-                      <span className={s.protectedShieldBadge} title="Tài khoản bất tử không thể bị xóa hoặc hạn chế">
-                        🛡️ Bất Khả Xâm Phạm
-                      </span>
+                      <div className={s.actionBtnGroup}>
+                        <button
+                          type="button"
+                          className={s.vipActionBtn}
+                          onClick={() => {
+                            setVipModalUser(u)
+                            setSelectedVipTier('god')
+                            setVipModalSuccess('')
+                          }}
+                          title="Tài khoản Admin Tối Cao sở hữu cấp GOD"
+                        >
+                          👑 GOD VIP
+                        </button>
+                        <span className={s.protectedShieldBadge} title="Tài khoản bất tử không thể bị xóa hoặc hạn chế">
+                          🛡️ Bất Khả Xâm Phạm
+                        </span>
+                      </div>
                     ) : u.isBanned ? (
                       <div className={s.actionBtnGroup}>
+                        <button
+                          type="button"
+                          className={s.vipActionBtn}
+                          onClick={() => {
+                            setVipModalUser(u)
+                            setSelectedVipTier(u.vipTier || 'normal')
+                            setVipModalSuccess('')
+                          }}
+                          title="Cấp VIP hoặc hạ VIP cho người dùng này"
+                        >
+                          👑 VIP
+                        </button>
                         {u.appeal?.status === 'pending' && (
                           <button
                             type="button"
@@ -585,6 +653,18 @@ export default function AdminDashboard({ user, onBack }) {
                       </div>
                     ) : (
                       <div className={s.actionBtnGroup}>
+                        <button
+                          type="button"
+                          className={s.vipActionBtn}
+                          onClick={() => {
+                            setVipModalUser(u)
+                            setSelectedVipTier(u.vipTier || 'normal')
+                            setVipModalSuccess('')
+                          }}
+                          title="Cấp VIP hoặc hạ VIP cho người dùng này"
+                        >
+                          👑 VIP
+                        </button>
                         <button
                           type="button"
                           className={s.banActionBtn}
@@ -1036,6 +1116,173 @@ export default function AdminDashboard({ user, onBack }) {
                 ✓ Chấp Thuận & Mở Khóa Ngay
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── 4. Dedicated VIP Tier Management Modal (Cấp / Hạ VIP Trực Tiếp) ── */}
+      {vipModalUser && (
+        <div className={s.modalOverlay} onClick={() => setVipModalUser(null)}>
+          <div className={s.modalCard} onClick={(e) => e.stopPropagation()}>
+            <div
+              className={s.modalHeader}
+              style={{
+                background: 'linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%)',
+                borderBottomColor: '#F59E0B',
+              }}
+            >
+              <h3 className={s.modalTitle} style={{ color: '#92400E' }}>
+                <span>👑</span> Cấp VIP & Điều Chỉnh Quyền Hạn
+              </h3>
+              <button
+                type="button"
+                className={s.modalCloseBtn}
+                onClick={() => setVipModalUser(null)}
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Target user preview */}
+            <div className={s.targetUserBox} style={{ background: '#FFFDF5', borderColor: '#FDE68A' }}>
+              <PixelAvatar avatarId={vipModalUser.avatar || 'bunny'} size={44} />
+              <div>
+                <strong style={{ fontSize: 14, color: 'var(--color-ink)' }}>
+                  {vipModalUser.displayName || vipModalUser.id}
+                </strong>
+                <div style={{ fontSize: 11, color: 'var(--color-ink-soft)', fontFamily: 'monospace' }}>
+                  UID: {vipModalUser.id}
+                </div>
+                {(() => {
+                  const currentVip = getUserVipTier(vipModalUser)
+                  return (
+                    <div style={{ marginTop: 4 }}>
+                      <span
+                        className={s.userVipBadge}
+                        style={{
+                          color: currentVip.color,
+                          background: currentVip.bg,
+                          border: `1.5px solid ${currentVip.color}`,
+                          fontSize: 10,
+                          padding: '2px 8px',
+                        }}
+                      >
+                        Cấp hiện tại: {currentVip.badge} (Rank {currentVip.rank})
+                      </span>
+                    </div>
+                  )
+                })()}
+              </div>
+            </div>
+
+            <form onSubmit={handleConfirmVipUpdate} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+              {/* VIP Tier Select */}
+              <div className={s.formGroup}>
+                <label className={s.formLabel}>Chọn Cấp Quyền Hạn VIP Cho Tài Khoản:</label>
+                <select
+                  className={s.vipTierSelect}
+                  value={selectedVipTier}
+                  onChange={(e) => setSelectedVipTier(e.target.value)}
+                  style={{
+                    width: '100%',
+                    height: 44,
+                    fontSize: 13,
+                    fontWeight: 700,
+                    borderRadius: 10,
+                    border: '2px solid #F59E0B',
+                    background: '#FFFBEB',
+                    color: '#78350F',
+                    padding: '0 12px',
+                  }}
+                >
+                  <option value="normal">🌱 Bình Thường (Rank 0 — Khóa toàn bộ khung VIP)</option>
+                  <option value="svip">🔥 SVIP Thánh Hỏa (Rank 1 — Mở khóa khung SVIP)</option>
+                  <option value="ssvip">❄️ SSVIP Cánh Băng (Rank 2 — Mở khóa SSVIP & SVIP)</option>
+                  <option value="sssvip">⚡ SSSVIP Song Long (Rank 3 — Mở khóa SSSVIP, SSVIP, SVIP)</option>
+                  <option value="god">🌌 GOD Nữ Thần Tối Thượng (Rank 4 — Mở khóa 100% tất cả khung VIP)</option>
+                </select>
+              </div>
+
+              {/* Quick 1-Click Tier Selection Buttons */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 6 }}>
+                {[
+                  { id: 'normal', label: '🌱 Bình Thường', color: '#6B7280', bg: '#F3F4F6' },
+                  { id: 'svip', label: '🔥 SVIP', color: '#EF4444', bg: '#FEF2F2' },
+                  { id: 'ssvip', label: '❄️ SSVIP', color: '#0284C7', bg: '#F0F9FF' },
+                  { id: 'sssvip', label: '⚡ SSSVIP', color: '#D97706', bg: '#FFFBEB' },
+                  { id: 'god', label: '🌌 GOD', color: '#9333EA', bg: '#FAF5FF' },
+                ].map((tier) => (
+                  <button
+                    key={tier.id}
+                    type="button"
+                    onClick={() => setSelectedVipTier(tier.id)}
+                    style={{
+                      padding: '8px 10px',
+                      borderRadius: 8,
+                      border: selectedVipTier === tier.id ? `2px solid ${tier.color}` : '1px solid #E5E7EB',
+                      background: selectedVipTier === tier.id ? tier.bg : '#FFFFFF',
+                      color: tier.color,
+                      fontWeight: selectedVipTier === tier.id ? 'bold' : 'normal',
+                      fontSize: 11,
+                      cursor: 'pointer',
+                      boxShadow: selectedVipTier === tier.id ? `0 0 0 2px ${tier.color}33` : 'none',
+                      transition: 'all 0.15s ease',
+                    }}
+                  >
+                    {tier.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Success Feedback */}
+              {vipModalSuccess && (
+                <div
+                  className={s.vipSuccessMsg}
+                  style={{
+                    padding: '8px 12px',
+                    fontSize: 12,
+                    background: '#ECFDF5',
+                    border: '1px solid #10B981',
+                    borderRadius: 8,
+                    color: '#047857',
+                    textAlign: 'center',
+                    fontWeight: 'bold',
+                  }}
+                >
+                  {vipModalSuccess}
+                </div>
+              )}
+
+              {/* Modal Actions */}
+              <div className={s.modalActions}>
+                <button
+                  type="button"
+                  className={s.cancelBtn}
+                  onClick={() => setVipModalUser(null)}
+                >
+                  Đóng
+                </button>
+                <button
+                  type="submit"
+                  className={s.vipUpdateBtn}
+                  disabled={actionLoading}
+                  style={{
+                    height: 42,
+                    padding: '0 24px',
+                    fontSize: 12,
+                    fontWeight: 'bold',
+                    background: 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)',
+                    color: '#FFFFFF',
+                    border: 'none',
+                    borderRadius: 10,
+                    cursor: 'pointer',
+                    boxShadow: '0 3px 8px rgba(217, 119, 6, 0.4)',
+                  }}
+                >
+                  {actionLoading ? 'Đang cập nhật...' : 'Lưu Thay Đổi Cấp VIP ✨'}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
