@@ -520,15 +520,15 @@
 
 /* ── 4. Animated Frame Selection Section ── */
 .frameSelectorSection {
-  margin-top: 14px;
-  padding: 12px;
+  margin-top: 16px;
+  padding: 14px 12px;
   background: var(--color-white);
   border: 2px solid var(--color-pink-200);
   border-radius: var(--radius-lg);
   box-shadow: 2px 2px 0 var(--color-pink-100);
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 .frameSelectorHeader {
@@ -558,20 +558,21 @@
 
 .framesScrollRow {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  align-items: stretch;
+  gap: 16px;
   overflow-x: auto;
-  padding: 4px 2px 8px;
+  overflow-y: visible;
+  padding: 24px 14px 22px;
   -webkit-overflow-scrolling: touch;
 }
 
 .framesScrollRow::-webkit-scrollbar {
-  height: 4px;
+  height: 5px;
 }
 
 .framesScrollRow::-webkit-scrollbar-thumb {
   background: var(--color-pink-200);
-  border-radius: 4px;
+  border-radius: 999px;
 }
 
 .frameOptionCard {
@@ -579,72 +580,96 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 8px 10px;
-  background: var(--color-cream);
+  justify-content: space-between;
+  padding: 22px 14px 14px;
+  background: #FFFFFF;
   border: 2px solid var(--color-border);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   cursor: pointer;
-  box-shadow: 2px 2px 0 var(--color-border);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.05);
   transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-  min-width: 86px;
+  min-width: 128px;
+  width: 128px;
+  min-height: 148px;
   flex-shrink: 0;
   outline: none;
+  overflow: visible;
+  z-index: 1;
 }
 
 .frameOptionCard:hover {
-  transform: translateY(-2px);
+  transform: translateY(-3px);
   border-color: var(--color-pink-400);
-  background: #FFF5F8;
-  box-shadow: 2px 3px 0 var(--color-pink-200);
+  background: #FFF8FA;
+  box-shadow: 0 6px 14px rgba(255, 143, 171, 0.25);
+  z-index: 5;
 }
 
 .frameOptionCard.frameActive {
   background: #FFF0F5;
   border: 2px solid var(--color-pink-500);
-  box-shadow: 2px 3px 0 var(--color-pink-400);
-  transform: scale(1.04);
+  box-shadow: 0 6px 16px rgba(255, 143, 171, 0.38);
+  transform: translateY(-3px) scale(1.03);
+  z-index: 6;
 }
 
 .miniFramePreview {
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
-  margin-bottom: 4px;
+  margin-top: 4px;
+  margin-bottom: 28px;
+  z-index: 2;
+  overflow: visible;
 }
 
 .frameCardName {
+  position: relative;
+  z-index: 10;
   font-family: var(--font-pixel);
-  font-size: 9px;
+  font-size: 10px;
+  font-weight: 600;
   letter-spacing: 0.02em;
-  color: var(--color-ink-soft);
+  color: var(--color-ink);
   text-align: center;
   white-space: nowrap;
+  width: 100%;
+  padding: 5px 8px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1.5px solid var(--color-border-mid);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+  margin-top: auto;
+  box-sizing: border-box;
 }
 
 .frameActive .frameCardName {
   color: var(--color-pink-500);
+  border-color: var(--color-pink-400);
   font-weight: 700;
+  background: #FFFFFF;
 }
 
 .frameCheckBadge {
   position: absolute;
-  top: -4px;
-  right: -4px;
-  width: 15px;
-  height: 15px;
+  top: -6px;
+  right: -6px;
+  width: 18px;
+  height: 18px;
   background: #5EB5A0;
   color: var(--color-white);
-  border: 1px solid #2E7D32;
+  border: 1.5px solid #2E7D32;
   border-radius: 50%;
-  font-size: 8px;
+  font-size: 9px;
   font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 15;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
 }
 
 /* ── Theme Selector Section ── */

@@ -362,7 +362,7 @@ export default function AvatarUploadModal({ currentAvatar, currentFrame = 'none'
                     <div className={s.miniFramePreview}>
                       <PixelAvatar
                         avatarId={rawImage ? (avatarChoice === 'pixel' ? pixelatedPreview : originalPreview) : selectedPreset}
-                        size={32}
+                        size={40}
                         border={false}
                         frameId={frame.id}
                       />

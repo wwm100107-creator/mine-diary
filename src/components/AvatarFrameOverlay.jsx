@@ -21,7 +21,13 @@ function AvatarFrameOverlayComponent({ frameId = 'none', size = 36 }) {
   const cornerOffset = -Math.floor(starSize * 0.35)
 
   return (
-    <div className={`${s.frameOverlay} ${s[frameId] || ''}`} aria-hidden="true">
+    <div
+      className={`${s.frameOverlay} ${s[frameId] || ''}`}
+      style={{
+        '--frame-size': `${size}px`,
+      }}
+      aria-hidden="true"
+    >
       
       {/* ══════════════════════════════════════════════════════════════════════
          FRAME: 🌌 GOD MODE — NỮ THẦN SÁNG THẾ & LÔI QUANG 7 MÀU (SUPREME GODDESS RAINBOW LIGHTNING)

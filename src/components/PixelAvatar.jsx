@@ -26,6 +26,7 @@ export default function PixelAvatar({
     width: size,
     height: size,
     flexShrink: 0,
+    overflow: 'visible',
     ...style,
   }
 
