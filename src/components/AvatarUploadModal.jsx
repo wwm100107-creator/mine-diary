@@ -9,8 +9,18 @@ import { isFrameUnlocked, getFrameRequirementInfo } from '../utils/vipTiers'
 import { getCurrentUser } from '../lib/auth'
 import s from './AvatarUploadModal.module.css'
 
-export default function AvatarUploadModal({ user, currentAvatar, currentFrame = 'none', currentTheme = null, onSave, onClose }) {
-  const currentUser = user || getCurrentUser()
+export default function AvatarUploadModal({
+  user,
+  isRegistration = false,
+  currentAvatar,
+  currentFrame = 'none',
+  currentTheme = null,
+  onSave,
+  onClose,
+}) {
+  const currentUser = isRegistration
+    ? { id: 'guest_register', vipTier: 'normal', role: 'user', isAdmin: false }
+    : (user || getCurrentUser() || { vipTier: 'normal', role: 'user', isAdmin: false })
   const [tab, setTab] = useState('upload') // 'upload' | 'preset'
   const [rawImage, setRawImage] = useState(null)
   const [originalPreview, setOriginalPreview] = useState(null)
@@ -378,7 +388,11 @@ export default function AvatarUploadModal({ user, currentAvatar, currentFrame = 
                     className={`${s.frameOptionCard} ${isFrameActive ? s.frameActive : ''} ${!isUnlocked ? s.frameLocked : ''}`}
                     onClick={() => {
                       if (!isUnlocked) {
-                        setVipWarning(`Khung "${frame.name}" đang bị khóa! Cần đạt quyền hạn ${reqInfo?.badge || reqInfo?.name} (Điểm danh ${reqInfo?.reqDays} ngày) hoặc được Admin cấp quyền để mở khóa! ✨`)
+                        setVipWarning(
+                          isRegistration
+                            ? `Khung "${frame.name}" bị khóa! Hãy hoàn tất đăng ký tài khoản và điểm danh ${reqInfo?.reqDays} ngày để mở khóa cấp ${reqInfo?.badge || reqInfo?.name}! 🔒`
+                            : `Khung "${frame.name}" đang bị khóa! Cần đạt quyền hạn ${reqInfo?.badge || reqInfo?.name} (Điểm danh ${reqInfo?.reqDays} ngày) hoặc được Admin cấp quyền để mở khóa! ✨`
+                        )
                         return
                       }
                       setVipWarning('')
@@ -388,7 +402,7 @@ export default function AvatarUploadModal({ user, currentAvatar, currentFrame = 
                   >
                     {!isUnlocked && (
                       <div className={s.lockOverlayBadge}>
-                        <span>🔒</span> {reqInfo?.shortName || 'VIP'}
+                        <span>🔒</span> {reqInfo?.badge || reqInfo?.shortName || 'VIP'}
                       </div>
                     )}
                     <div className={s.miniFramePreview}>

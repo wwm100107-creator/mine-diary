@@ -520,9 +520,11 @@ export default function AuthLanding({
         </button>
       </div>
 
-      {/* ── Full Avatar, Frame & Theme Customization Modal ── */}
+      {/* ── Full Avatar, Frame & Theme Customization Modal (New User: VIP Tier is strictly Normal) ── */}
       {isAvatarModalOpen && (
         <AvatarUploadModal
+          user={{ id: 'guest_register', vipTier: 'normal', role: 'user', isAdmin: false }}
+          isRegistration={true}
           currentAvatar={registerInput.avatar}
           currentFrame={registerInput.avatarFrame || 'none'}
           currentTheme={registerInput.theme || null}
