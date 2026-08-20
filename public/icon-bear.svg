@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bearBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F0F8FF" />
+      <stop offset="50%" stop-color="#D0E8FF" />
+      <stop offset="100%" stop-color="#90CAF9" />
+    </linearGradient>
+    <linearGradient id="starGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FDE047" />
+      <stop offset="100%" stop-color="#EAB308" />
+    </linearGradient>
+  </defs>
+
+  <!-- Base Squircle -->
+  <rect x="24" y="24" width="464" height="464" rx="108" fill="url(#bearBg)" stroke="#60A5FA" stroke-width="16" />
+  <rect x="40" y="40" width="432" height="432" rx="92" fill="none" stroke="#FFF" stroke-width="8" opacity="0.6" />
+
+  <!-- Bear Round Ears -->
+  <!-- Left Ear -->
+  <circle cx="150" cy="140" r="54" fill="#60A5FA" stroke="#1E3A8A" stroke-width="12" />
+  <circle cx="150" cy="140" r="30" fill="#BFDBFE" />
+
+  <!-- Right Ear -->
+  <circle cx="362" cy="140" r="54" fill="#60A5FA" stroke="#1E3A8A" stroke-width="12" />
+  <circle cx="362" cy="140" r="30" fill="#BFDBFE" />
+
+  <!-- Bear Head -->
+  <rect x="116" y="150" width="280" height="230" rx="80" fill="#93C5FD" stroke="#1E3A8A" stroke-width="14" />
+
+  <!-- Muzzle -->
+  <ellipse cx="256" cy="275" rx="72" ry="54" fill="#DBEAFE" stroke="#1E3A8A" stroke-width="8" />
+
+  <!-- Eyes -->
+  <!-- Left Eye -->
+  <rect x="180" y="210" width="28" height="38" rx="8" fill="#1E3A8A" />
+  <rect x="186" y="214" width="10" height="12" rx="3" fill="#FFFFFF" />
+  <rect x="194" y="232" width="6" height="6" rx="2" fill="#FFFFFF" />
+
+  <!-- Right Eye -->
+  <rect x="304" y="210" width="28" height="38" rx="8" fill="#1E3A8A" />
+  <rect x="310" y="214" width="10" height="12" rx="3" fill="#FFFFFF" />
+  <rect x="318" y="232" width="6" height="6" rx="2" fill="#FFFFFF" />
+
+  <!-- Nose & Mouth -->
+  <polygon points="256,260 240,244 272,244" fill="#1E3A8A" />
+  <path d="M244,272 Q256,284 256,274 Q256,284 268,272" fill="none" stroke="#1E3A8A" stroke-width="7" stroke-linecap="round" />
+
+  <!-- Cyan Blush Cheeks -->
+  <rect x="140" y="250" width="34" height="18" rx="7" fill="#60A5FA" opacity="0.6" />
+  <rect x="338" y="250" width="34" height="18" rx="7" fill="#60A5FA" opacity="0.6" />
+
+  <!-- Golden Star Badge (Bottom Center) -->
+  <g transform="translate(256, 388) scale(1.4)">
+    <path d="M0,-24 L6,-7 L24,-7 L10,4 L15,22 L0,11 L-15,22 L-10,4 L-24,-7 L-6,-7 Z" fill="url(#starGrad)" stroke="#1E3A8A" stroke-width="4" stroke-linejoin="round" />
+    <circle cx="-3" cy="-3" r="3" fill="#FFF" opacity="0.8" />
+  </g>
+</svg>

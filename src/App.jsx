@@ -24,6 +24,7 @@ import { loadMarkedDates, predictNextPeriod, toDateStr } from './utils/cycle'
 import { applyTheme, getSavedTheme } from './utils/theme'
 import { playCuteTing } from './utils/sound'
 import { useSharedCycleStatus } from './hooks/useSharedCycleStatus'
+import { useDynamicFavicon } from './hooks/useDynamicFavicon'
 import { requestNotificationPermission } from './lib/push'
 import s from './App.module.css'
 
@@ -31,6 +32,10 @@ export default function App() {
   // Session initialization
   const [user, setUser] = useState(() => getCurrentUser())
   const isAdmin = isUserAdmin(user)
+
+  // ── Dynamic Animated Favicon (Wolf for Admin, Bunny/Bear for Users, Split for Guest) ──
+  useDynamicFavicon(user)
+
   const [isAttendanceModalOpen, setIsAttendanceModalOpen] = useState(false)
   const [isNotifModalOpen, setIsNotifModalOpen] = useState(false)
   const hasAutoOpenedAttendanceRef = useRef(false)

@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bunnyBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFF0F5" />
+      <stop offset="50%" stop-color="#FFD0E3" />
+      <stop offset="100%" stop-color="#FF8FAB" />
+    </linearGradient>
+    <linearGradient id="heartPink" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF5E7E" />
+      <stop offset="100%" stop-color="#FF2A55" />
+    </linearGradient>
+  </defs>
+
+  <!-- Base Squircle -->
+  <rect x="24" y="24" width="464" height="464" rx="108" fill="url(#bunnyBg)" stroke="#FF8FAB" stroke-width="16" />
+  <rect x="40" y="40" width="432" height="432" rx="92" fill="none" stroke="#FFF" stroke-width="8" opacity="0.6" />
+
+  <!-- Ears -->
+  <rect x="160" y="96" width="48" height="112" rx="16" fill="#FFFFFF" stroke="#3D2B35" stroke-width="12" />
+  <rect x="174" y="116" width="20" height="72" rx="8" fill="#FF8FAB" />
+  <rect x="304" y="96" width="48" height="112" rx="16" fill="#FFFFFF" stroke="#3D2B35" stroke-width="12" />
+  <rect x="318" y="116" width="20" height="72" rx="8" fill="#FF8FAB" />
+
+  <!-- Head -->
+  <rect x="128" y="176" width="256" height="208" rx="64" fill="#FFFFFF" stroke="#3D2B35" stroke-width="14" />
+
+  <!-- Eyes -->
+  <rect x="180" y="240" width="32" height="44" rx="10" fill="#3D2B35" />
+  <rect x="186" y="244" width="12" height="14" rx="4" fill="#FFFFFF" />
+  <rect x="196" y="264" width="8" height="8" rx="2" fill="#FFFFFF" />
+  <rect x="300" y="240" width="32" height="44" rx="10" fill="#3D2B35" />
+  <rect x="306" y="244" width="12" height="14" rx="4" fill="#FFFFFF" />
+  <rect x="316" y="264" width="8" height="8" rx="2" fill="#FFFFFF" />
+
+  <!-- Blush Cheeks -->
+  <rect x="144" y="280" width="36" height="20" rx="8" fill="#FF8FAB" opacity="0.85" />
+  <rect x="332" y="280" width="36" height="20" rx="8" fill="#FF8FAB" opacity="0.85" />
+
+  <!-- Nose & Mouth -->
+  <polygon points="256,274 246,262 266,262" fill="#FF5E7E" />
+  <path d="M242,284 Q256,296 256,286 Q256,296 270,284" fill="none" stroke="#3D2B35" stroke-width="8" stroke-linecap="round" />
+
+  <!-- Pink Heart -->
+  <g transform="translate(256, 384) scale(1.3)">
+    <path d="M0,8 C-16,-12 -36,2 0,32 C36,2 16,-12 0,8 Z" fill="url(#heartPink)" stroke="#3D2B35" stroke-width="6" stroke-linejoin="round" />
+    <circle cx="-6" cy="6" r="3" fill="#FFF" opacity="0.8" />
+  </g>
+</svg>

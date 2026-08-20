@@ -1,0 +1,133 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Dark Night Sky Gradient -->
+    <linearGradient id="wolfBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0F172A" />
+      <stop offset="50%" stop-color="#1E293B" />
+      <stop offset="100%" stop-color="#334155" />
+    </linearGradient>
+
+    <!-- Golden Moon Glow Gradient -->
+    <linearGradient id="moonGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FEF08A" />
+      <stop offset="100%" stop-color="#F59E0B" />
+    </linearGradient>
+
+    <!-- Wolf Fur Gradient -->
+    <linearGradient id="furGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E2E8F0" />
+      <stop offset="60%" stop-color="#94A3B8" />
+      <stop offset="100%" stop-color="#475569" />
+    </linearGradient>
+
+    <style>
+      @keyframes moonPulse {
+        0%, 100% { transform: scale(1); filter: drop-shadow(0 0 12px #F59E0B); }
+        50% { transform: scale(1.08); filter: drop-shadow(0 0 28px #FDE047); }
+      }
+      @keyframes smokeFloat1 {
+        0% { opacity: 0; transform: translateY(0) scale(0.6) rotate(0deg); }
+        50% { opacity: 0.8; }
+        100% { opacity: 0; transform: translateY(-70px) scale(1.4) rotate(25deg); }
+      }
+      @keyframes smokeFloat2 {
+        0% { opacity: 0; transform: translateY(0) scale(0.5) rotate(0deg); }
+        50% { opacity: 0.7; }
+        100% { opacity: 0; transform: translateY(-90px) scale(1.6) rotate(-30deg); }
+      }
+      @keyframes wolfHowl {
+        0%, 100% { transform: translateY(0) rotate(0deg); }
+        50% { transform: translateY(-4px) rotate(-2deg); }
+      }
+      @keyframes starBlink {
+        0%, 100% { opacity: 0.3; transform: scale(0.8); }
+        50% { opacity: 1; transform: scale(1.2); }
+      }
+      .animatedMoon {
+        transform-origin: 380px 140px;
+        animation: moonPulse 3s infinite ease-in-out;
+      }
+      .smoke1 {
+        animation: smokeFloat1 2.2s infinite ease-out;
+        transform-origin: 190px 170px;
+      }
+      .smoke2 {
+        animation: smokeFloat2 2.8s infinite ease-out 0.8s;
+        transform-origin: 210px 160px;
+      }
+      .wolfHead {
+        transform-origin: 220px 320px;
+        animation: wolfHowl 3s infinite ease-in-out;
+      }
+      .star1 { animation: starBlink 2s infinite ease-in-out; }
+      .star2 { animation: starBlink 2.5s infinite ease-in-out 0.7s; }
+      .star3 { animation: starBlink 1.8s infinite ease-in-out 1.2s; }
+    </style>
+  </defs>
+
+  <!-- Base Squircle Frame with Cosmic Purple/Gold Border -->
+  <rect x="24" y="24" width="464" height="464" rx="108" fill="url(#wolfBg)" stroke="#F59E0B" stroke-width="16" />
+  <rect x="40" y="40" width="432" height="432" rx="92" fill="none" stroke="#94A3B8" stroke-width="6" opacity="0.4" />
+
+  <!-- Twinkling Pixel Stars -->
+  <circle cx="90" cy="110" r="4" fill="#FDE047" class="star1" />
+  <circle cx="140" cy="80" r="3" fill="#FFF" class="star2" />
+  <circle cx="280" cy="90" r="4" fill="#67E8F9" class="star3" />
+  <circle cx="100" cy="220" r="3" fill="#FFF" class="star2" />
+
+  <!-- Glowing Pixel Crescent Moon (Top Right) -->
+  <g class="animatedMoon">
+    <path d="M410,140 C410,195 365,240 310,240 C345,225 370,185 370,140 C370,95 345,55 310,40 C365,40 410,85 410,140 Z" fill="url(#moonGlow)" stroke="#F59E0B" stroke-width="6" />
+  </g>
+
+  <!-- Animated Mystic Smoke Aura / Howling Breath Particles -->
+  <g>
+    <!-- Smoke Cluster 1 -->
+    <ellipse cx="230" cy="140" rx="18" ry="12" fill="#E2E8F0" opacity="0.6" class="smoke1" />
+    <circle cx="250" cy="120" r="14" fill="#94A3B8" opacity="0.5" class="smoke1" />
+    <!-- Smoke Cluster 2 -->
+    <ellipse cx="210" cy="150" rx="22" ry="14" fill="#CBD5E1" opacity="0.6" class="smoke2" />
+    <circle cx="240" cy="100" r="16" fill="#67E8F9" opacity="0.4" class="smoke2" />
+  </g>
+
+  <!-- ── Pixel Art Grey Wolf Head (Howling upwards at the moon) ── -->
+  <g class="wolfHead">
+    <!-- Back Ear -->
+    <polygon points="170,220 140,110 210,160" fill="#475569" stroke="#0F172A" stroke-width="8" />
+    <polygon points="165,200 150,130 195,165" fill="#94A3B8" />
+
+    <!-- Wolf Neck & Fur Base -->
+    <path d="M120,440 L160,340 L180,310 L230,300 L300,320 L360,440 Z" fill="url(#furGrad)" stroke="#0F172A" stroke-width="12" />
+    <!-- Fur spikes -->
+    <polygon points="140,420 110,380 155,360" fill="#64748B" />
+    <polygon points="340,420 370,380 325,360" fill="#475569" />
+
+    <!-- Wolf Snout (Tilted upwards 45deg howling) -->
+    <polygon points="200,280 230,190 280,140 310,160 270,240 250,290" fill="#CBD5E1" stroke="#0F172A" stroke-width="12" />
+    <!-- Open Muzzle / Howling Mouth -->
+    <polygon points="265,150 285,135 305,155 285,170" fill="#0F172A" />
+    <polygon points="280,140 290,145 282,152" fill="#F43F5E" /> <!-- Red tongue hint -->
+
+    <!-- Main Front Ear -->
+    <polygon points="200,240 180,100 250,150" fill="#94A3B8" stroke="#0F172A" stroke-width="10" />
+    <polygon points="200,220 190,125 235,160" fill="#E2E8F0" />
+
+    <!-- Piercing Crimson / Golden Wolf Eye -->
+    <polygon points="230,215 250,210 245,225" fill="#EF4444" stroke="#0F172A" stroke-width="4" />
+    <circle cx="240" cy="216" r="2.5" fill="#FDE047" />
+
+    <!-- Crown of the Alpha (Gold Royal Accent) -->
+    <g transform="translate(195, 140) scale(0.65) rotate(-25)">
+      <path d="M0,0 L14,-28 L28,-8 L42,-34 L56,-8 L70,-28 L84,0 Z" fill="#F59E0B" stroke="#0F172A" stroke-width="6" stroke-linejoin="round" />
+      <circle cx="14" cy="-28" r="4" fill="#EF4444" />
+      <circle cx="42" cy="-34" r="5" fill="#3B82F6" />
+      <circle cx="70" cy="-28" r="4" fill="#EF4444" />
+    </g>
+  </g>
+
+  <!-- Mystic Runes / Gold Badge (Bottom) -->
+  <g transform="translate(256, 420)">
+    <rect x="-60" y="-16" width="120" height="32" rx="16" fill="#1E293B" stroke="#F59E0B" stroke-width="4" />
+    <text x="0" y="6" fill="#FDE047" font-family="monospace" font-size="14" font-weight="bold" text-anchor="middle" letter-spacing="3">ALPHA</text>
+  </g>
+</svg>
