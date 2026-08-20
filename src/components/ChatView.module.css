@@ -484,37 +484,86 @@
 }
 
 .avatarPair {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 12px;
+  flex-shrink: 0;
+  position: relative;
+  padding: 4px 6px;
+  overflow: visible;
+  transition: gap 0.25s ease, padding 0.25s ease;
+}
+
+.avatarPair.hasWideUserFrame {
+  padding-left: 14px;
+  gap: 18px;
+}
+
+.avatarPair.hasWidePartnerFrame {
+  padding-right: 14px;
+  gap: 18px;
+}
+
+.avatarPair.hasWideUserFrame.hasWidePartnerFrame {
+  gap: 26px;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.avatarSlot {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  min-height: 36px;
+  flex-shrink: 0;
+  overflow: visible;
+  z-index: 2;
+}
+
+.avatarSlot.wideSlot {
+  min-width: 48px;
+  padding: 0 4px;
+}
+
+.relLinkWrap {
+  position: relative;
+  z-index: 35; /* Always prominently float above avatar frame wings, dragons, and auras */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
 }
 
 .relLinkCenterBtn {
-  background: #FFF0F5;
-  border: 1.5px solid #FF8FAB;
+  background: rgba(255, 255, 255, 0.96);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border: 2px solid #FF8FAB;
   border-radius: 999px;
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: 0;
   cursor: pointer;
-  box-shadow: 1px 1px 0 #FFB7C5;
-  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 3px 10px rgba(255, 143, 171, 0.4), 2px 2px 0 #FFB7C5;
+  transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
   outline: none;
+  position: relative;
 }
 
 .relLinkCenterBtn:hover {
-  transform: scale(1.15) rotate(5deg);
-  background: #FFE0EB;
-  border-color: #FF5E7E;
-  box-shadow: 2px 2px 0 #FF8FAB;
+  transform: scale(1.22) rotate(8deg);
+  background: #FFF0F5;
+  border-color: #FF4D6D;
+  box-shadow: 0 4px 14px rgba(255, 77, 109, 0.5), 2px 2px 0 #FF8FAB;
 }
 
 .relLinkCenterBtn:active {
-  transform: scale(0.95);
+  transform: scale(0.92);
 }
 
 .relPillIcon {
@@ -546,7 +595,10 @@
 .headerPartnerDetails {
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 2px;
+  position: relative;
+  z-index: 10;
+  margin-left: 8px;
 }
 
 .headerPartnerName {

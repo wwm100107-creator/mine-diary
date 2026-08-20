@@ -654,50 +654,67 @@ export default function ChatView({ user }) {
                     ‹ Danh sách
                   </button>
 
-                  {/* Connected Avatars Pair */}
-                  <div className={s.avatarPair}>
-                    <AvatarWithFrame
-                      avatarUrl={user.avatar || 'bunny'}
-                      frameId={user.avatarFrame || user.frame || 'none'}
-                      size={32}
-                      border={false}
-                    />
-                    <button
-                      type="button"
-                      className={s.relLinkCenterBtn}
-                      onClick={() => {
-                        if (relationship?.status === 'accepted') {
-                          setRelType(relationship.type || 'couple')
-                          setCustomRelName(relationship.customName || '')
-                          setCustomRelIcon(relationship.customIcon || '')
-                          setCustomRelImg(relationship.customIconImage || '')
-                        } else {
-                          setRelType('couple')
-                          setCustomRelName('')
-                          setCustomRelIcon('')
-                          setCustomRelImg('')
-                        }
-                        setIsSetRelModalOpen(true)
-                      }}
-                      title={relationship?.status === 'accepted' ? `Mối quan hệ: ${relationship.customName} (Bấm để xem/đổi)` : 'Bấm vào đây để Set Mối Quan Hệ (🔗)'}
-                    >
-                      {relationship?.status === 'accepted' ? (
-                        relationship.customIconImage ? (
-                          <img src={relationship.customIconImage} alt="Icon" className={s.customIconImg} />
-                        ) : (
-                          <span className={s.relPillIcon}>{relationship.customIcon || '💖'}</span>
-                        )
-                      ) : (
-                        <span className={s.relPillIcon}>🔗</span>
-                      )}
-                    </button>
-                    <AvatarWithFrame
-                      avatarUrl={activePartner.avatar || 'bunny'}
-                      frameId={activePartner.avatarFrame || activePartner.frame || 'none'}
-                      size={34}
-                      border={false}
-                    />
-                  </div>
+                  {/* Connected Avatars Pair with Dynamic Auto-Spacing */}
+                  {(() => {
+                    const userFrame = user.avatarFrame || user.frame || 'none'
+                    const partnerFrame = activePartner.avatarFrame || activePartner.frame || 'none'
+                    const isWideUser = ['god_cosmic', 'vip10_thunder', 'vip9_frost', 'vip8_fire', 'cyber_aura', 'sakura_hearts'].includes(userFrame)
+                    const isWidePartner = ['god_cosmic', 'vip10_thunder', 'vip9_frost', 'vip8_fire', 'cyber_aura', 'sakura_hearts'].includes(partnerFrame)
+
+                    return (
+                      <div className={`${s.avatarPair} ${isWideUser ? s.hasWideUserFrame : ''} ${isWidePartner ? s.hasWidePartnerFrame : ''}`}>
+                        <div className={`${s.avatarSlot} ${isWideUser ? s.wideSlot : ''}`}>
+                          <AvatarWithFrame
+                            avatarUrl={user.avatar || 'bunny'}
+                            frameId={userFrame}
+                            size={34}
+                            border={false}
+                          />
+                        </div>
+
+                        <div className={s.relLinkWrap}>
+                          <button
+                            type="button"
+                            className={s.relLinkCenterBtn}
+                            onClick={() => {
+                              if (relationship?.status === 'accepted') {
+                                setRelType(relationship.type || 'couple')
+                                setCustomRelName(relationship.customName || '')
+                                setCustomRelIcon(relationship.customIcon || '')
+                                setCustomRelImg(relationship.customIconImage || '')
+                              } else {
+                                setRelType('couple')
+                                setCustomRelName('')
+                                setCustomRelIcon('')
+                                setCustomRelImg('')
+                              }
+                              setIsSetRelModalOpen(true)
+                            }}
+                            title={relationship?.status === 'accepted' ? `Mối quan hệ: ${relationship.customName} (Bấm để xem/đổi)` : 'Bấm vào đây để Set Mối Quan Hệ (🔗)'}
+                          >
+                            {relationship?.status === 'accepted' ? (
+                              relationship.customIconImage ? (
+                                <img src={relationship.customIconImage} alt="Icon" className={s.customIconImg} />
+                              ) : (
+                                <span className={s.relPillIcon}>{relationship.customIcon || '💖'}</span>
+                              )
+                            ) : (
+                              <span className={s.relPillIcon}>🔗</span>
+                            )}
+                          </button>
+                        </div>
+
+                        <div className={`${s.avatarSlot} ${isWidePartner ? s.wideSlot : ''}`}>
+                          <AvatarWithFrame
+                            avatarUrl={activePartner.avatar || 'bunny'}
+                            frameId={partnerFrame}
+                            size={34}
+                            border={false}
+                          />
+                        </div>
+                      </div>
+                    )
+                  })()}
 
                   {/* Partner Info */}
                   <div className={s.headerPartnerDetails}>
