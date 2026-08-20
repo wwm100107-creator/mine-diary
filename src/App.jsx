@@ -3,7 +3,7 @@ import { useGoogleLogin } from '@react-oauth/google'
 import DiaryView from './components/DiaryView'
 import HealthView from './components/HealthView'
 import AdminDashboard from './components/AdminDashboard'
-import FloatingChat from './components/FloatingChat'
+import ChatView from './components/ChatView'
 import EasterEgg from './components/EasterEgg'
 import AuthLanding from './components/AuthLanding'
 import PixelAvatar from './components/PixelAvatar'
@@ -23,6 +23,8 @@ export default function App() {
       if (window.location.pathname === '/admin' || window.location.hash === '#admin') {
         return 'admin'
       }
+      if (window.location.hash === '#chat') return 'chat'
+      if (window.location.hash === '#health') return 'health'
     }
     return 'diary'
   })
@@ -59,6 +61,12 @@ export default function App() {
     const handleLocationChange = () => {
       if (window.location.pathname === '/admin' || window.location.hash === '#admin') {
         setCurrentTab('admin')
+      } else if (window.location.hash === '#chat') {
+        setCurrentTab('chat')
+      } else if (window.location.hash === '#health') {
+        setCurrentTab('health')
+      } else {
+        setCurrentTab('diary')
       }
     }
     window.addEventListener('popstate', handleLocationChange)
@@ -69,6 +77,10 @@ export default function App() {
     setCurrentTab(tab)
     if (tab === 'admin') {
       window.history.pushState({}, '', '/admin')
+    } else if (tab === 'chat') {
+      window.history.pushState({}, '', '#chat')
+    } else if (tab === 'health') {
+      window.history.pushState({}, '', '#health')
     } else {
       window.history.pushState({}, '', '/')
     }
@@ -241,6 +253,14 @@ export default function App() {
           >
             <span className={s.navIcon}>🌸</span> Sức khỏe
           </button>
+          <button
+            ref={(el) => { tabRefs.current['chat'] = el }}
+            className={`${s.navBtn} ${currentTab === 'chat' ? s.active : ''}`}
+            onClick={() => switchTab('chat')}
+            aria-current={currentTab === 'chat' ? 'page' : undefined}
+          >
+            <span className={s.navIcon}>💬</span> Tin nhắn
+          </button>
 
           {/* Admin Navigation Button (Visible only to Admin accounts) */}
           {isAdmin && (
@@ -307,10 +327,9 @@ export default function App() {
       <main key={currentTab} className={s.main}>
         {currentTab === 'diary' && <DiaryView user={user} />}
         {currentTab === 'health' && <HealthView user={user} />}
+        {currentTab === 'chat' && <ChatView user={user} />}
+        {currentTab === 'admin' && isAdmin && <AdminDashboard />}
       </main>
-
-      {/* Floating Messenger-style Chat Bubble (Bottom Right) */}
-      <FloatingChat user={user} />
 
       {/* Author Dedication Easter Egg (Bottom Left) */}
       <EasterEgg />
