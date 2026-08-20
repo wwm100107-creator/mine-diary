@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import PixelAvatar from './PixelAvatar'
+import AvatarWithFrame from './AvatarWithFrame'
 import AvatarUploadModal from './AvatarUploadModal'
 import BannedScreen from './BannedScreen'
 import { AVATARS, getAvatar } from '../utils/avatars'
@@ -15,7 +16,7 @@ const RANDOM_UID_PREFIXES = [
 
 function generateRandomUid() {
   const prefix = RANDOM_UID_PREFIXES[Math.floor(Math.random() * RANDOM_UID_PREFIXES.length)]
-  const num = Math.floor(1000 + Math.random() * 9000)
+  const num = Math.floor(100000 + Math.random() * 900000)
   return `${prefix}_${num}`
 }
 
@@ -57,6 +58,9 @@ export default function AuthLanding({
     password: '',
     confirmPassword: '',
     avatar: 'bunny',
+    avatarFrame: 'none',
+    theme: null,
+    gender: null, // Initially null -> no iOS droplet active
   })
 
   // Selected avatar object for display
@@ -95,9 +99,23 @@ export default function AuthLanding({
     e.preventDefault()
     setError('')
     setBannedInfo(null)
+
+    if (!registerInput.gender) {
+      setError('Vui lòng chọn Giới tính của bạn (Nữ ♀ hoặc Nam ♂)!')
+      return
+    }
+
     if (registerInput.password !== registerInput.confirmPassword) {
       setError('Mật khẩu xác nhận không trùng khớp!')
       return
+    }
+
+    if (registerInput.customUid) {
+      const uidPattern = /^[a-zA-Z0-9\u00C0-\u1EF9]+_\d{6}$/
+      if (!uidPattern.test(registerInput.customUid.trim())) {
+        setError('UID sai định dạng! Vui lòng nhập theo mẫu [Chữ_6 số] (Ví dụ: ABC_211107).')
+        return
+      }
     }
 
     setLoading(true)
@@ -108,7 +126,9 @@ export default function AuthLanding({
         customUid: registerInput.customUid,
         password: registerInput.password,
         avatar: registerInput.avatar,
-        gender: registerInput.gender || 'female',
+        avatarFrame: registerInput.avatarFrame || 'none',
+        theme: registerInput.theme || null,
+        gender: registerInput.gender,
       })
       onAuthSuccess?.(user)
     } catch (err) {
@@ -316,7 +336,7 @@ export default function AuthLanding({
             <div className={s.inputGroup}>
               <label className={s.inputLabel}>
                 <span>UID Cá Nhân</span>
-                <span className={s.tagPreview}>Tự đặt hoặc bấm Random</span>
+                <span className={s.tagPreview}>Mẫu [Chữ_6 số]</span>
               </label>
               <div className={s.uidInputRow}>
                 <div className={s.inputFieldWrap} style={{ flex: 1 }}>
@@ -324,7 +344,7 @@ export default function AuthLanding({
                   <input
                     type="text"
                     className={s.pixelInput}
-                    placeholder="Ví dụ: MiuMiu_99, UY123..."
+                    placeholder="Nhập [chữ_ 6 số], VD: ABC_211107"
                     value={registerInput.customUid}
                     onChange={(e) => setRegisterInput({ ...registerInput, customUid: e.target.value })}
                   />
@@ -333,55 +353,96 @@ export default function AuthLanding({
                   type="button"
                   className={s.randomUidBtn}
                   onClick={handleGenerateUid}
-                  title="Tạo UID ngẫu nhiên"
+                  title="Tạo UID ngẫu nhiên đúng mẫu [Chữ_6 số]"
                 >
                   <span className={s.diceIcon}>🎲</span> Random
                 </button>
               </div>
             </div>
 
-            {/* 4. Giới Tính (Gender: Nữ / Nam) — Glassmorphism Switcher */}
+            {/* 4. Giới Tính (Gender: Nữ ♀ / Nam ♂) — iOS Liquid Droplet Switcher */}
             <div className={s.inputGroup}>
               <label className={s.inputLabel}>
                 <span>Giới Tính</span>
-                <span className={s.tagPreview}>Hỗ trợ theo dõi chu kỳ</span>
+                <span className={s.tagPreview}>Nữ ♀ hoặc Nam ♂</span>
               </label>
-              <div className={s.genderGlassSwitcher}>
+              <div className={s.genderDropletContainer}>
+                {/* iOS Liquid Droplet Glass Indicator */}
+                <div
+                  className={`${s.dropletIndicator} ${
+                    registerInput.gender === 'female'
+                      ? s.dropletFemale
+                      : registerInput.gender === 'male'
+                      ? s.dropletMale
+                      : s.dropletHidden
+                  }`}
+                  aria-hidden="true"
+                />
+
                 <button
                   type="button"
-                  className={`${s.genderOptionBtn} ${s.genderOptionBtnFemale} ${registerInput.gender === 'female' ? s.genderActive : ''}`}
+                  className={`${s.genderOptionBtn} ${registerInput.gender === 'female' ? s.genderActiveFemale : ''}`}
                   onClick={() => setRegisterInput({ ...registerInput, gender: 'female' })}
                   title="Chọn giới tính Nữ"
                 >
-                  <span className={s.genderIcon}>🌸</span>
-                  <span className={s.genderLabel}>♀ Nữ (Mặc định)</span>
+                  <span className={s.genderLabel}>Nữ ♀</span>
                 </button>
+
                 <button
                   type="button"
-                  className={`${s.genderOptionBtn} ${s.genderOptionBtnMale} ${registerInput.gender === 'male' ? s.genderActive : ''}`}
+                  className={`${s.genderOptionBtn} ${registerInput.gender === 'male' ? s.genderActiveMale : ''}`}
                   onClick={() => setRegisterInput({ ...registerInput, gender: 'male' })}
                   title="Chọn giới tính Nam"
                 >
-                  <span className={s.genderIcon}>⚡</span>
-                  <span className={s.genderLabel}>♂ Nam</span>
+                  <span className={s.genderLabel}>Nam ♂</span>
                 </button>
               </div>
+
+              {/* Dynamic Note when Nữ ♀ is selected */}
+              {registerInput.gender === 'female' && (
+                <div className={s.femaleCycleNote}>
+                  🌸 Có tính năng tính chu kỳ
+                </div>
+              )}
             </div>
 
-            {/* 5. Avatar Selector Trigger */}
+            {/* 5. Avatar Pixel Của Bạn */}
             <div className={s.inputGroup}>
-              <label className={s.inputLabel}>Avatar Pixel Của Bạn</label>
+              <label className={s.inputLabel}>
+                <span>Avatar & Khung Viền Của Bạn</span>
+                <span className={s.tagPreview}>Tùy chỉnh cá nhân</span>
+              </label>
               <div className={s.avatarPickerRow}>
-                <div className={s.avatarCurrent}>
-                  <PixelAvatar avatarId={registerInput.avatar} size={36} border={false} />
-                  <span style={{ fontFamily: 'var(--font-pixel)', fontSize: 13 }}>
-                    {currentSelectedAvatar.name}
-                  </span>
+                <div
+                  className={s.avatarCurrent}
+                  onClick={() => setIsAvatarModalOpen(true)}
+                  title="Nhấn để đổi avatar và khung viền"
+                  role="button"
+                  tabIndex={0}
+                >
+                  <AvatarWithFrame
+                    avatarUrl={registerInput.avatar}
+                    frameId={registerInput.avatarFrame || 'none'}
+                    size={40}
+                    border={false}
+                  />
+                  <div className={s.avatarInfo}>
+                    <span className={s.avatarNameText}>
+                      {currentSelectedAvatar?.name || 'Tùy chỉnh'}
+                    </span>
+                    {registerInput.avatarFrame && registerInput.avatarFrame !== 'none' ? (
+                      <span className={s.avatarFrameBadge}>✨ Khung hiệu ứng</span>
+                    ) : (
+                      <span className={s.avatarSubtext}>Bấm để đổi avatar / khung</span>
+                    )}
+                  </div>
                 </div>
+
                 <button
                   type="button"
                   className={s.avatarChangeBtn}
                   onClick={() => setIsAvatarModalOpen(true)}
+                  title="Mở bảng chọn Avatar, Khung viền & Theme"
                 >
                   Đổi Avatar 🎨
                 </button>
@@ -459,40 +520,23 @@ export default function AuthLanding({
         </button>
       </div>
 
-      {/* ── Pixel Avatar Picker Modal ── */}
+      {/* ── Full Avatar, Frame & Theme Customization Modal ── */}
       {isAvatarModalOpen && (
-        <div className={s.modalOverlay} onClick={() => setIsAvatarModalOpen(false)}>
-          <div className={s.avatarModal} onClick={(e) => e.stopPropagation()}>
-            <div className={s.modalHeader}>
-              <h3 className={s.modalTitle}>
-                <span>🎨</span> Chọn Avatar Pixel
-              </h3>
-              <button
-                type="button"
-                className={s.modalCloseBtn}
-                onClick={() => setIsAvatarModalOpen(false)}
-              >
-                ✕
-              </button>
-            </div>
-            <div className={s.avatarGrid}>
-              {AVATARS.map((av) => (
-                <button
-                  key={av.id}
-                  type="button"
-                  className={`${s.avatarItem} ${registerInput.avatar === av.id ? s.selected : ''}`}
-                  onClick={() => {
-                    setRegisterInput({ ...registerInput, avatar: av.id })
-                    setIsAvatarModalOpen(false)
-                  }}
-                >
-                  <PixelAvatar avatarId={av.id} size={48} border={false} />
-                  <span className={s.avatarName}>{av.name}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
+        <AvatarUploadModal
+          currentAvatar={registerInput.avatar}
+          currentFrame={registerInput.avatarFrame || 'none'}
+          currentTheme={registerInput.theme || null}
+          onSave={(newAvatar, newFrame, newTheme) => {
+            setRegisterInput((prev) => ({
+              ...prev,
+              avatar: newAvatar,
+              avatarFrame: newFrame || 'none',
+              theme: newTheme || null,
+            }))
+            setIsAvatarModalOpen(false)
+          }}
+          onClose={() => setIsAvatarModalOpen(false)}
+        />
       )}
 
       {/* ── Ban Appeal Modal ── */}

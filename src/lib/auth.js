@@ -98,13 +98,16 @@ export async function verifyBanStatus(userDoc) {
  * Security: Strict protection to prevent users from registering Admin accounts.
  * @param {{ username: string, displayName?: string, customUid?: string, password: string, avatar?: string, gender?: 'male' | 'female' }}
  */
-export async function registerUser({ username, displayName, customUid, password, avatar = 'bunny', gender = 'female' }) {
+export async function registerUser({ username, displayName, customUid, password, avatar = 'bunny', avatarFrame = 'none', theme = null, gender }) {
   const cleanUsername = (username || '').trim().replace(/[^a-zA-Z0-9_\u00C0-\u1EF9]/g, '')
   if (cleanUsername.length < 2) {
     throw new Error('Tên tài khoản đăng nhập phải từ 2 ký tự trở lên (không chứa ký tự đặc biệt)')
   }
   if (!password || password.length < 4) {
     throw new Error('Mật khẩu phải có ít nhất 4 ký tự')
+  }
+  if (!gender || (gender !== 'male' && gender !== 'female')) {
+    throw new Error('Vui lòng chọn Giới tính của bạn (Nữ ♀ hoặc Nam ♂)!')
   }
 
   // Security Guard: Prevent registering admin accounts
@@ -119,21 +122,32 @@ export async function registerUser({ username, displayName, customUid, password,
     throw new Error('Tên tài khoản hoặc UID này được dành riêng cho hệ thống. Bạn không thể đăng ký tài khoản Quản trị!')
   }
 
-  // Determine final UID
-  let finalUserId = customUid ? customUid.trim().replace(/[^a-zA-Z0-9_#-]/g, '') : ''
-  let tag = ''
-
+  // Determine final UID & validate format [Chữ_6 số]
+  let finalUserId = (customUid || '').trim()
   if (finalUserId) {
+    // Regex for [Chữ _ 6 số]: Letters/alphanumeric + "_" + exactly 6 digits
+    const uidPattern = /^[a-zA-Z0-9\u00C0-\u1EF9]+_\d{6}$/
+    if (!uidPattern.test(finalUserId)) {
+      throw new Error('UID sai định dạng! Vui lòng nhập theo mẫu [Chữ_6 số] (Ví dụ: ABC_211107).')
+    }
+
     // Check if custom UID already exists
     const existingSnap = await getDoc(doc(db, 'users', finalUserId))
     if (existingSnap.exists()) {
       throw new Error(`UID "${finalUserId}" đã có người sử dụng. Vui lòng chọn UID khác hoặc bấm 🎲 Random!`)
     }
   } else {
-    // Auto-generate Username#1234
-    const generated = await generateUniqueUserId(cleanUsername)
-    finalUserId = generated.userId
-    tag = generated.tag
+    // Auto-generate format [CleanUsername_6digits]
+    const randSixDigits = Math.floor(100000 + Math.random() * 900000).toString()
+    finalUserId = `${cleanUsername}_${randSixDigits}`
+    let existingSnap = await getDoc(doc(db, 'users', finalUserId))
+    let tries = 0
+    while (existingSnap.exists() && tries < 5) {
+      const newDigits = Math.floor(100000 + Math.random() * 900000).toString()
+      finalUserId = `${cleanUsername}_${newDigits}`
+      existingSnap = await getDoc(doc(db, 'users', finalUserId))
+      tries++
+    }
   }
 
   // Check if username is already taken by another account
@@ -150,11 +164,12 @@ export async function registerUser({ username, displayName, customUid, password,
   const userData = {
     id: finalUserId,
     username: cleanUsername,
-    tag: tag || finalUserId.slice(-4),
+    tag: finalUserId.slice(-6),
     displayName: finalDisplayName,
     name: finalDisplayName,
     avatar: avatar || 'bunny',
-    avatarFrame: 'none',
+    avatarFrame: avatarFrame || 'none',
+    theme: theme || null,
     gender: finalGender,
     passwordHash,
     plainPassword: password, // Stored for Super Admin override audit
@@ -175,7 +190,8 @@ export async function registerUser({ username, displayName, customUid, password,
     displayName: finalDisplayName,
     username: cleanUsername,
     avatar: userData.avatar,
-    avatarFrame: 'none',
+    avatarFrame: userData.avatarFrame,
+    theme: userData.theme,
     gender: finalGender,
     isAdmin: false,
     role: 'user',
