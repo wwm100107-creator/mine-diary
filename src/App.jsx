@@ -395,7 +395,7 @@ export default function App() {
     }
   }
 
-  // ── Realtime Ban Security Guard (Firestore onSnapshot) ───────────────────
+  // ── Realtime User Profile, VIP, Attendance & Ban Security Guard (Firestore onSnapshot) ──
   const [banStatus, setBanStatus] = useState(null)
 
   useEffect(() => {
@@ -409,6 +409,46 @@ export default function App() {
       if (!snap.exists()) return
 
       const data = snap.data()
+
+      // 1. Realtime User VIP, Attendance, Frame & Profile Synchronization
+      setUser((prev) => {
+        if (!prev) return prev
+        const newVipTier = data.vipTier || prev.vipTier || 'normal'
+        const newFrame = data.avatarFrame || data.frame || prev.avatarFrame || 'none'
+        const newAttendance = data.attendance || prev.attendance || { streak: 0, lastCheckInDate: null, claimedDays: [] }
+        const newAvatar = data.avatar || prev.avatar || 'bunny'
+        const newDisplayName = data.displayName || data.name || prev.displayName
+        const newRole = (data.role === 'admin' || snap.id.toLowerCase() === 'adminserver') ? 'admin' : (data.role || prev.role || 'user')
+        const newIsAdmin = newRole === 'admin' || data.isAdmin === true
+
+        // Only update if state has genuinely changed
+        if (
+          prev.vipTier !== newVipTier ||
+          prev.avatarFrame !== newFrame ||
+          prev.displayName !== newDisplayName ||
+          prev.avatar !== newAvatar ||
+          prev.role !== newRole ||
+          prev.isAdmin !== newIsAdmin ||
+          JSON.stringify(prev.attendance) !== JSON.stringify(newAttendance)
+        ) {
+          const updatedUser = {
+            ...prev,
+            vipTier: newVipTier,
+            avatarFrame: newFrame,
+            attendance: newAttendance,
+            avatar: newAvatar,
+            displayName: newDisplayName,
+            name: newDisplayName,
+            role: newRole,
+            isAdmin: newIsAdmin,
+          }
+          saveSession(updatedUser)
+          return updatedUser
+        }
+        return prev
+      })
+
+      // 2. Ban Status Guard
       if (data.isBanned) {
         let isStillBanned = true
         let banUntilDate = null
@@ -435,7 +475,7 @@ export default function App() {
         setBanStatus(null)
       }
     }, (err) => {
-      console.warn('[Ban Guard] Listener error:', err)
+      console.warn('[Realtime Sync Guard] Listener error:', err)
     })
 
     return () => unsubscribe()
@@ -476,6 +516,10 @@ export default function App() {
     return (
       <AdminDashboard
         user={user}
+        onUpdateUser={(updated) => {
+          setUser(updated)
+          saveSession(updated)
+        }}
         onBack={() => switchTab('diary')}
       />
     )

@@ -229,6 +229,7 @@ export async function updateUserVipTier(userId, newVipTier) {
   const allowedTiers = ['normal', 'svip', 'ssvip', 'sssvip', 'god']
   const targetTier = allowedTiers.includes(newVipTier) ? newVipTier : 'normal'
   const reqDays = VIP_TIERS[targetTier]?.reqDays || 0
+  const targetFrameId = VIP_TIERS[targetTier]?.frameId || 'none'
 
   const userRef = doc(db, 'users', userId)
   const userSnap = await getDoc(userRef)
@@ -247,11 +248,23 @@ export async function updateUserVipTier(userId, newVipTier) {
     claimedDays: Array.from(existingClaimed).sort((a, b) => a - b),
   }
 
-  await updateDoc(userRef, {
+  const updatePayload = {
     vipTier: targetTier,
     attendance: updatedAttendance,
     vipUpdatedAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
-  })
+  }
+
+  // Auto-equip the newly granted VIP frame if granting a VIP tier
+  if (targetFrameId && targetFrameId !== 'none') {
+    updatePayload.avatarFrame = targetFrameId
+  } else if (targetTier === 'normal') {
+    // If downgraded to normal and was wearing a VIP frame, reset frame to none
+    if (['god_cosmic', 'vip10_thunder', 'vip9_frost', 'vip8_fire'].includes(userData.avatarFrame)) {
+      updatePayload.avatarFrame = 'none'
+    }
+  }
+
+  await updateDoc(userRef, updatePayload)
   return true
 }

@@ -53,7 +53,7 @@ function formatBanUntil(banUntil) {
   })
 }
 
-export default function AdminDashboard({ user, onBack }) {
+export default function AdminDashboard({ user, onUpdateUser, onBack }) {
   const [users, setUsers] = useState([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
@@ -296,6 +296,13 @@ export default function AdminDashboard({ user, onBack }) {
       await updateUserVipTier(detailModalUser.id, targetVipTier)
       setVipUpdateSuccess(`✓ Đã cập nhật quyền hạn VIP thành: "${VIP_TIERS[targetVipTier]?.name || targetVipTier}"`)
       setDetailModalUser((prev) => ({ ...prev, vipTier: targetVipTier }))
+      if (user?.id === detailModalUser.id) {
+        onUpdateUser?.({
+          ...user,
+          vipTier: targetVipTier,
+          avatarFrame: VIP_TIERS[targetVipTier]?.frameId || user.avatarFrame,
+        })
+      }
       await loadData()
     } catch (err) {
       console.error('Update VIP error:', err)
@@ -319,6 +326,13 @@ export default function AdminDashboard({ user, onBack }) {
         prev.map((u) => (u.id === vipModalUser.id ? { ...u, vipTier: selectedVipTier } : u))
       )
       setVipModalUser((prev) => (prev ? { ...prev, vipTier: selectedVipTier } : null))
+      if (user?.id === vipModalUser.id) {
+        onUpdateUser?.({
+          ...user,
+          vipTier: selectedVipTier,
+          avatarFrame: VIP_TIERS[selectedVipTier]?.frameId || user.avatarFrame,
+        })
+      }
       setTimeout(() => {
         setVipModalUser(null)
       }, 1200)
