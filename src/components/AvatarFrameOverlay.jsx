@@ -169,7 +169,6 @@ function AvatarFrameOverlayComponent({ frameId = 'none', size = 36, sizePreset }
 
             {/* Luxurious Curved Flowing Swallowtail Ribbon for GOD */}
             <div className={s.godRibbonWrapper}>
-              <div className={s.godRibbonLedBorder} />
               <svg viewBox="0 0 100 24" className={s.ribbonBannerSvg}>
                 <defs>
                   <linearGradient id="godRibbonImperialGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -196,6 +195,11 @@ function AvatarFrameOverlayComponent({ frameId = 'none', size = 36, sizePreset }
                 {/* Top/Bottom Shimmer Highlights */}
                 <path d="M11,7 C31,4 69,4 89,7" stroke="#FFD700" strokeWidth="0.8" fill="none" opacity="0.9" />
                 <path d="M13,17 C33,20 67,20 87,17" stroke="#FF1E56" strokeWidth="0.8" fill="none" opacity="0.8" />
+                
+                {/* EXACT CONTOUR SLIM ANIMATED LED RUNNER */}
+                <path d="M10,6 C30,3 70,3 90,6 L88,18 C68,21 32,21 12,18 Z" fill="none" strokeWidth="1" className={s.godSvgLedPath} />
+                <path d="M12,6 L2,4 L6,11 L2,18 L12,16 Z" fill="none" strokeWidth="1" className={s.godSvgLedPath} />
+                <path d="M88,6 L98,4 L94,11 L98,18 L88,16 Z" fill="none" strokeWidth="1" className={s.godSvgLedPath} />
               </svg>
 
               <span className={s.godCrestGlow}>♦</span>
@@ -347,7 +351,6 @@ function AvatarFrameOverlayComponent({ frameId = 'none', size = 36, sizePreset }
 
             {/* Luxurious Curved Flowing Swallowtail Ribbon for SSSVIP */}
             <div className={s.vip10RibbonWrapper}>
-              <div className={s.vip10RibbonLedBorder} />
               <svg viewBox="0 0 100 24" className={s.ribbonBannerSvg}>
                 <defs>
                   <linearGradient id="sssvipRibbonStormGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -374,6 +377,11 @@ function AvatarFrameOverlayComponent({ frameId = 'none', size = 36, sizePreset }
                 {/* Top/Bottom Shimmer Highlights */}
                 <path d="M11,7 C31,4 69,4 89,7" stroke="#00FFFF" strokeWidth="0.8" fill="none" opacity="0.95" />
                 <path d="M13,17 C33,20 67,20 87,17" stroke="#FFD700" strokeWidth="0.8" fill="none" opacity="0.8" />
+
+                {/* EXACT CONTOUR SLIM ANIMATED LED RUNNER */}
+                <path d="M10,6 C30,3 70,3 90,6 L88,18 C68,21 32,21 12,18 Z" fill="none" strokeWidth="1" className={s.sssvipSvgLedPath} />
+                <path d="M12,6 L2,4 L6,11 L2,18 L12,16 Z" fill="none" strokeWidth="1" className={s.sssvipSvgLedPath} />
+                <path d="M88,6 L98,4 L94,11 L98,18 L88,16 Z" fill="none" strokeWidth="1" className={s.sssvipSvgLedPath} />
               </svg>
 
               <span className={s.vip10Text}>SSSVIP</span>
@@ -506,7 +514,6 @@ function AvatarFrameOverlayComponent({ frameId = 'none', size = 36, sizePreset }
 
             {/* Luxurious Curved Flowing Swallowtail Ribbon for SSVIP */}
             <div className={s.vip9RibbonWrapper}>
-              <div className={s.vip9RibbonLedBorder} />
               <svg viewBox="0 0 100 24" className={s.ribbonBannerSvg}>
                 <defs>
                   <linearGradient id="ssvipRibbonIceGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -533,6 +540,11 @@ function AvatarFrameOverlayComponent({ frameId = 'none', size = 36, sizePreset }
                 {/* Top/Bottom Shimmer Highlights */}
                 <path d="M11,7 C31,4 69,4 89,7" stroke="#FFFFFF" strokeWidth="0.8" fill="none" opacity="0.95" />
                 <path d="M13,17 C33,20 67,20 87,17" stroke="#7DA0FA" strokeWidth="0.8" fill="none" opacity="0.8" />
+
+                {/* EXACT CONTOUR SLIM ANIMATED LED RUNNER */}
+                <path d="M10,6 C30,3 70,3 90,6 L88,18 C68,21 32,21 12,18 Z" fill="none" strokeWidth="1" className={s.ssvipSvgLedPath} />
+                <path d="M12,6 L2,4 L6,11 L2,18 L12,16 Z" fill="none" strokeWidth="1" className={s.ssvipSvgLedPath} />
+                <path d="M88,6 L98,4 L94,11 L98,18 L88,16 Z" fill="none" strokeWidth="1" className={s.ssvipSvgLedPath} />
               </svg>
 
               <span className={s.vip9Text}>SSVIP</span>

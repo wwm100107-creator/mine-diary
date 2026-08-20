@@ -387,59 +387,48 @@
   align-items: center;
   justify-content: center;
   z-index: 19;
-  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.5));
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.5));
 }
 
-.godRibbonLedBorder {
-  position: absolute;
-  inset: -1px;
-  border-radius: calc(var(--frame-size, 36px) * 0.1);
-  animation: godLedColorCycle 2s linear infinite, godLedPulse 0.8s infinite alternate ease-in-out;
-  pointer-events: none;
-  z-index: 18;
-}
-
-@keyframes godLedColorCycle {
+@keyframes svgLedRunner {
   0% {
-    box-shadow: 
-      0 0 6px #FF0040,
-      0 0 14px #FF0040,
-      inset 0 0 6px #FF0040;
-    filter: drop-shadow(0 0 6px #FF0040);
-  }
-  25% {
-    box-shadow: 
-      0 0 6px #9333EA,
-      0 0 14px #9333EA,
-      inset 0 0 6px #A855F7;
-    filter: drop-shadow(0 0 6px #9333EA);
-  }
-  50% {
-    box-shadow: 
-      0 0 6px #FFD700,
-      0 0 14px #FFE600,
-      inset 0 0 6px #FFD700;
-    filter: drop-shadow(0 0 6px #FFD700);
-  }
-  75% {
-    box-shadow: 
-      0 0 6px #DC2626,
-      0 0 14px #F43F5E,
-      inset 0 0 6px #DC2626;
-    filter: drop-shadow(0 0 6px #DC2626);
+    stroke-dashoffset: 0;
   }
   100% {
-    box-shadow: 
-      0 0 6px #FF0040,
-      0 0 14px #FF0040,
-      inset 0 0 6px #FF0040;
-    filter: drop-shadow(0 0 6px #FF0040);
+    stroke-dashoffset: -240;
   }
 }
 
-@keyframes godLedPulse {
-  0% { opacity: 0.8; }
-  100% { opacity: 1; transform: scale(1.02); }
+/* GOD — Slim SVG Ribbon Contour LED Runner */
+.godSvgLedPath {
+  stroke-dasharray: 20 60;
+  animation: svgLedRunner 1.8s linear infinite, godSvgLedColorCycle 2s linear infinite;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+
+@keyframes godSvgLedColorCycle {
+  0% {
+    stroke: #FF0040;
+    filter: drop-shadow(0 0 1.5px #FF0040) drop-shadow(0 0 3px #DC2626);
+  }
+  25% {
+    stroke: #9333EA;
+    filter: drop-shadow(0 0 1.5px #9333EA) drop-shadow(0 0 3px #C026D3);
+  }
+  50% {
+    stroke: #FFD700;
+    filter: drop-shadow(0 0 1.5px #FFD700) drop-shadow(0 0 3px #FFE600);
+  }
+  75% {
+    stroke: #DC2626;
+    filter: drop-shadow(0 0 1.5px #DC2626) drop-shadow(0 0 3px #F43F5E);
+  }
+  100% {
+    stroke: #FF0040;
+    filter: drop-shadow(0 0 1.5px #FF0040) drop-shadow(0 0 3px #DC2626);
+  }
 }
 
 .godCrestGlow {
@@ -831,59 +820,39 @@
   align-items: center;
   justify-content: center;
   z-index: 19;
-  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.6));
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.5));
 }
 
-.vip10RibbonLedBorder {
-  position: absolute;
-  inset: -1px;
-  border-radius: calc(var(--frame-size, 36px) * 0.1);
-  animation: sssvipLedColorCycle 2.5s linear infinite, sssvipLedPulse 0.8s infinite alternate ease-in-out;
+/* SSSVIP — Slim SVG Ribbon Contour LED Runner */
+.sssvipSvgLedPath {
+  stroke-dasharray: 20 60;
+  animation: svgLedRunner 2.2s linear infinite, sssvipSvgLedColorCycle 2.5s linear infinite;
+  stroke-linecap: round;
+  stroke-linejoin: round;
   pointer-events: none;
-  z-index: 18;
 }
 
-@keyframes sssvipLedColorCycle {
+@keyframes sssvipSvgLedColorCycle {
   0% {
-    box-shadow: 
-      0 0 6px #00FFFF,
-      0 0 14px #00FFFF,
-      inset 0 0 6px #00FFFF;
-    filter: drop-shadow(0 0 6px #00FFFF);
+    stroke: #00FFFF;
+    filter: drop-shadow(0 0 1.5px #00FFFF) drop-shadow(0 0 3px #0284C7);
   }
   25% {
-    box-shadow: 
-      0 0 6px #FFE600,
-      0 0 14px #FFD700,
-      inset 0 0 6px #FFE600;
-    filter: drop-shadow(0 0 6px #FFE600);
+    stroke: #FFE600;
+    filter: drop-shadow(0 0 1.5px #FFE600) drop-shadow(0 0 3px #FFD700);
   }
   50% {
-    box-shadow: 
-      0 0 6px #38BDF8,
-      0 0 14px #0284C7,
-      inset 0 0 6px #38BDF8;
-    filter: drop-shadow(0 0 6px #38BDF8);
+    stroke: #38BDF8;
+    filter: drop-shadow(0 0 1.5px #38BDF8) drop-shadow(0 0 3px #00FFFF);
   }
   75% {
-    box-shadow: 
-      0 0 6px #A855F7,
-      0 0 14px #C084FC,
-      inset 0 0 6px #A855F7;
-    filter: drop-shadow(0 0 6px #A855F7);
+    stroke: #A855F7;
+    filter: drop-shadow(0 0 1.5px #A855F7) drop-shadow(0 0 3px #C084FC);
   }
   100% {
-    box-shadow: 
-      0 0 6px #00FFFF,
-      0 0 14px #00FFFF,
-      inset 0 0 6px #00FFFF;
-    filter: drop-shadow(0 0 6px #00FFFF);
+    stroke: #00FFFF;
+    filter: drop-shadow(0 0 1.5px #00FFFF) drop-shadow(0 0 3px #0284C7);
   }
-}
-
-@keyframes sssvipLedPulse {
-  0% { opacity: 0.8; }
-  100% { opacity: 1; transform: scale(1.02); }
 }
 
 .vip10Text {
@@ -1180,20 +1149,7 @@
   position: absolute;
   inset: -12px -16px;
   pointer-events: none;
-  background: radial-gradient(
-    ellipse at center,
-    rgba(255, 255, 255, 0.45) 0%,
-    rgba(125, 160, 250, 0.3) 50%,
-    transparent 80%
-  );
-  filter: blur(4px);
-  animation: ssvipRibbonMistDrift 2.4s infinite alternate ease-in-out;
   z-index: 16;
-}
-
-@keyframes ssvipRibbonMistDrift {
-  0% { transform: scale(0.9) translateY(0); opacity: 0.6; }
-  100% { transform: scale(1.1) translateY(-2px); opacity: 1; filter: blur(5px) drop-shadow(0 0 8px rgba(125, 160, 250, 0.7)); }
 }
 
 .ssvipRibbonCrystal {
@@ -1225,59 +1181,39 @@
   align-items: center;
   justify-content: center;
   z-index: 19;
-  filter: drop-shadow(0 2px 6px rgba(125, 160, 250, 0.5));
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.4));
 }
 
-.vip9RibbonLedBorder {
-  position: absolute;
-  inset: -1px;
-  border-radius: calc(var(--frame-size, 36px) * 0.1);
-  animation: ssvipLedColorCycle 3s linear infinite, ssvipLedPulse 0.8s infinite alternate ease-in-out;
+/* SSVIP — Slim SVG Ribbon Contour LED Runner */
+.ssvipSvgLedPath {
+  stroke-dasharray: 22 58;
+  animation: svgLedRunner 2.6s linear infinite, ssvipSvgLedColorCycle 3s linear infinite;
+  stroke-linecap: round;
+  stroke-linejoin: round;
   pointer-events: none;
-  z-index: 18;
 }
 
-@keyframes ssvipLedColorCycle {
+@keyframes ssvipSvgLedColorCycle {
   0% {
-    box-shadow: 
-      0 0 6px #FFFFFF,
-      0 0 14px #E0F2FE,
-      inset 0 0 6px #FFFFFF;
-    filter: drop-shadow(0 0 6px #FFFFFF);
+    stroke: #FFFFFF;
+    filter: drop-shadow(0 0 1.5px #FFFFFF) drop-shadow(0 0 3px #7DD3FC);
   }
   25% {
-    box-shadow: 
-      0 0 6px #38BDF8,
-      0 0 14px #0284C7,
-      inset 0 0 6px #38BDF8;
-    filter: drop-shadow(0 0 6px #38BDF8);
+    stroke: #38BDF8;
+    filter: drop-shadow(0 0 1.5px #38BDF8) drop-shadow(0 0 3px #0284C7);
   }
   50% {
-    box-shadow: 
-      0 0 6px #2DD4BF,
-      0 0 14px #0D9488,
-      inset 0 0 6px #2DD4BF;
-    filter: drop-shadow(0 0 6px #2DD4BF);
+    stroke: #2DD4BF;
+    filter: drop-shadow(0 0 1.5px #2DD4BF) drop-shadow(0 0 3px #0D9488);
   }
   75% {
-    box-shadow: 
-      0 0 6px #C084FC,
-      0 0 14px #9333EA,
-      inset 0 0 6px #C084FC;
-    filter: drop-shadow(0 0 6px #C084FC);
+    stroke: #C084FC;
+    filter: drop-shadow(0 0 1.5px #C084FC) drop-shadow(0 0 3px #9333EA);
   }
   100% {
-    box-shadow: 
-      0 0 6px #FFFFFF,
-      0 0 14px #E0F2FE,
-      inset 0 0 6px #FFFFFF;
-    filter: drop-shadow(0 0 6px #FFFFFF);
+    stroke: #FFFFFF;
+    filter: drop-shadow(0 0 1.5px #FFFFFF) drop-shadow(0 0 3px #7DD3FC);
   }
-}
-
-@keyframes ssvipLedPulse {
-  0% { opacity: 0.8; }
-  100% { opacity: 1; transform: scale(1.02); }
 }
 
 .vip9Text {
