@@ -1,22 +1,20 @@
-// public/sw.js — Native Lightweight Service Worker for Mine Diary PWA
-const CACHE_NAME = 'minediary-cache-v2'
+// public/sw.js — Native Lightweight & Safe Service Worker for Mine Diary PWA
+const CACHE_NAME = 'minediary-cache-v3'
 const PRECACHE_ASSETS = [
-  '/',
-  '/index.html',
   '/favicon.svg',
   '/icons.svg',
   '/manifest.json',
 ]
 
-// ── 1. Install Event: Precache core app shell ──
+// ── 1. Install Event: Precache ONLY essential static icons (NEVER precache index.html) ──
 self.addEventListener('install', (e) => {
   e.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(PRECACHE_ASSETS))
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(PRECACHE_ASSETS)).catch(console.warn)
   )
   self.skipWaiting()
 })
 
-// ── 2. Activate Event: Clean up outdated caches ──
+// ── 2. Activate Event: Immediately purge ALL older caches ──
 self.addEventListener('activate', (e) => {
   e.waitUntil(
     caches.keys().then((keys) =>
@@ -28,7 +26,7 @@ self.addEventListener('activate', (e) => {
   self.clients.claim()
 })
 
-// ── 3. Fetch Event: Offline caching strategies ──
+// ── 3. Fetch Event: Safe Network-First for HTML/Scripts ──
 self.addEventListener('fetch', (e) => {
   const url = new URL(e.request.url)
 
@@ -37,7 +35,7 @@ self.addEventListener('fetch', (e) => {
     return
   }
 
-  // Bypass Firebase / Google Auth / Cloud Storage APIs (Firestore manages its own offline IndexedDB)
+  // Bypass Firebase / Google Auth / Cloud Storage APIs
   if (
     url.hostname.includes('firestore.googleapis.com') ||
     url.hostname.includes('googleapis.com') ||
@@ -47,11 +45,19 @@ self.addEventListener('fetch', (e) => {
     return
   }
 
-  // A. Fonts & Static Assets: Stale-While-Revalidate with Cache-First Fallback
+  // A. HTML / Page Navigations: ALWAYS Network-First, NEVER serve stale index.html
+  if (e.request.mode === 'navigate' || url.pathname === '/' || url.pathname === '/index.html') {
+    e.respondWith(
+      fetch(e.request).catch(() => caches.match(e.request))
+    )
+    return
+  }
+
+  // B. Fonts & Media Assets: Cache-First with Network fallback
   if (
     url.hostname.includes('fonts.googleapis.com') ||
     url.hostname.includes('fonts.gstatic.com') ||
-    url.pathname.match(/\.(woff2?|ttf|otf|eot|svg|png|jpg|jpeg|gif|webp|css|js)$/)
+    url.pathname.match(/\.(woff2?|ttf|otf|eot|svg|png|jpg|jpeg|gif|webp)$/)
   ) {
     e.respondWith(
       caches.match(e.request).then((cached) => {
@@ -70,25 +76,7 @@ self.addEventListener('fetch', (e) => {
     return
   }
 
-  // B. HTML / Page Navigations: Network-First with Cache fallback
-  if (e.request.mode === 'navigate') {
-    e.respondWith(
-      fetch(e.request)
-        .then((res) => {
-          if (res && res.status === 200) {
-            const clone = res.clone()
-            caches.open(CACHE_NAME).then((cache) => cache.put(e.request, clone))
-          }
-          return res
-        })
-        .catch(() =>
-          caches.match(e.request).then((cached) => cached || caches.match('/index.html') || caches.match('/'))
-        )
-    )
-    return
-  }
-
-  // C. Default: Network with Cache fallback
+  // C. JS / CSS Chunks: Network with Cache fallback & Auto-Purge on 404
   e.respondWith(
     fetch(e.request)
       .then((res) => {
@@ -101,3 +89,4 @@ self.addEventListener('fetch', (e) => {
       .catch(() => caches.match(e.request))
   )
 })
+

@@ -8,6 +8,14 @@ import { applyTheme, getSavedTheme } from './utils/theme'
 import ErrorBoundary from './components/ErrorBoundary.jsx'
 import App from './App.jsx'
 
+// ── Global Recovery: Auto-recover from dynamic module chunk failures ──
+if (typeof window !== 'undefined') {
+  window.addEventListener('vite:preloadError', () => {
+    console.warn('[Vite] Chunk preload failure, auto-reloading page...')
+    window.location.reload()
+  })
+}
+
 // ── Anti-FOUC: Synchronously apply saved theme before React mounts ──
 try {
   applyTheme(getSavedTheme())
@@ -18,12 +26,17 @@ try {
 // ponytail: CLIENT_ID hardcode tạm, chuyển sang .env khi deploy
 const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID ?? 'PASTE_YOUR_CLIENT_ID_HERE'
 
-// ── PWA: Service Worker Registration for Offline Caching (Production only) ──
+// ── PWA: Safe Service Worker Registration (Production only) ──
 if ('serviceWorker' in navigator && import.meta.env.PROD) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').catch((err) => {
-      console.warn('[PWA] Service Worker registration failed:', err)
-    })
+    navigator.serviceWorker
+      .register('/sw.js')
+      .then((reg) => {
+        reg.update().catch(() => {})
+      })
+      .catch((err) => {
+        console.warn('[PWA] Service Worker registration skipped:', err)
+      })
   })
 }
 
