@@ -16,6 +16,15 @@ if (typeof window !== 'undefined') {
   })
 }
 
+// ── Anti-SW Caching: Cleanly unregister any legacy service workers ──
+if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then((registrations) => {
+    for (const reg of registrations) {
+      reg.unregister()
+    }
+  }).catch(() => {})
+}
+
 // ── Anti-FOUC: Synchronously apply saved theme before React mounts ──
 try {
   applyTheme(getSavedTheme())
@@ -25,20 +34,6 @@ try {
 
 // ponytail: CLIENT_ID hardcode tạm, chuyển sang .env khi deploy
 const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID ?? 'PASTE_YOUR_CLIENT_ID_HERE'
-
-// ── PWA: Safe Service Worker Registration (Production only) ──
-if ('serviceWorker' in navigator && import.meta.env.PROD) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker
-      .register('/sw.js')
-      .then((reg) => {
-        reg.update().catch(() => {})
-      })
-      .catch((err) => {
-        console.warn('[PWA] Service Worker registration skipped:', err)
-      })
-  })
-}
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
