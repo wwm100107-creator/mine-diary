@@ -1,0 +1,711 @@
+/* ============================================
+   MINE DIARY — App Shell Styles (Responsive 100%)
+   App.module.css (iOS Glassmorphism + Cute Pixel)
+   ============================================ */
+
+/* App shell layout */
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  overflow: hidden;
+  background: var(--color-cream);
+  font-family: var(--font-ui);
+}
+
+/* ── Header ── */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  height: 62px;
+  flex-shrink: 0;
+  background: linear-gradient(90deg,
+    rgba(255, 208, 227, 0.85) 0%,
+    rgba(237, 224, 247, 0.85) 50%,
+    rgba(232, 248, 242, 0.85) 100%
+  );
+  border-bottom: 2px solid var(--color-border);
+  position: relative;
+  z-index: 10;
+  box-sizing: border-box;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.logoTitle {
+  font-family: var(--font-pixel);
+  font-size: 20px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-ink);
+  white-space: nowrap;
+}
+
+.logoTitle span { color: var(--color-pink-400); }
+
+/* ── iOS Glassmorphism + Cute Pixel Navigation Bar ── */
+.navBar {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-radius: 999px;
+  border: 1.5px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 20px rgba(255, 143, 171, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  z-index: 5;
+  user-select: none;
+}
+
+/* Sliding Active Indicator Pill (iOS Glass Glide) */
+.slidingIndicator {
+  position: absolute;
+  top: 5px;
+  bottom: 5px;
+  background: linear-gradient(135deg, #FFFFFF 0%, #FFF2F6 100%);
+  border: 1.5px solid #FF8FAB;
+  border-radius: 999px;
+  box-shadow: 2px 2px 0 var(--color-pink-300), 0 4px 14px rgba(255, 143, 171, 0.32);
+  z-index: 1;
+  pointer-events: none;
+  transition:
+    left 320ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    width 320ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    opacity 200ms ease;
+}
+
+.navBtn {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 15px;
+  background: transparent;
+  border: none;
+  border-radius: 999px;
+  font-family: var(--font-pixel);
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-ink-soft);
+  cursor: pointer;
+  transition: color 250ms ease, transform 150ms ease;
+  white-space: nowrap;
+  outline: none;
+}
+
+.navBtn:hover {
+  color: var(--color-pink-500);
+}
+
+.navBtn:active {
+  transform: scale(0.96);
+}
+
+.navBtn.active {
+  color: var(--color-pink-500);
+  font-weight: 700;
+  text-shadow: 0 0 1px rgba(255, 143, 171, 0.3);
+}
+
+.navIcon {
+  font-size: 13px;
+  line-height: 1;
+  transition: transform 250ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.navBtn.active .navIcon {
+  transform: scale(1.18);
+}
+
+.adminNavPill {
+  font-size: 8px;
+  background: var(--color-pink-500);
+  color: var(--color-white);
+  padding: 1px 4px;
+  border-radius: 4px;
+  margin-left: 2px;
+}
+
+/* User Controls in Header */
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.userProfileBadge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px;
+  background: rgba(255, 255, 255, 0.65);
+  border: 1.5px solid rgba(255, 143, 171, 0.45);
+  border-radius: var(--radius-md);
+  box-shadow: 2px 2px 0 rgba(255, 143, 171, 0.25);
+  user-select: none;
+  transition: all var(--transition-fast);
+}
+
+.userProfileBadge:hover {
+  background: var(--color-white);
+  border-color: var(--color-pink-400);
+  box-shadow: 2px 2px 0 var(--color-pink-300);
+}
+
+.avatarWrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.avatarEditBtn {
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  width: 16px;
+  height: 16px;
+  background: var(--color-white);
+  border: 1.5px solid var(--color-pink-500);
+  border-radius: 50%;
+  font-size: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 1px 1px 0 var(--color-pink-400);
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  line-height: 1;
+  padding: 0;
+  z-index: 3;
+}
+
+.avatarWrapper:hover .avatarEditBtn {
+  background: var(--color-pink-200);
+  transform: scale(1.2);
+}
+
+.userInfoColumn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 1px;
+  line-height: 1.15;
+}
+
+.userDisplayName {
+  font-family: var(--font-pixel);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--color-ink);
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.userUidText {
+  font-family: var(--font-pixel);
+  font-size: 10px;
+  letter-spacing: 0.03em;
+  color: var(--color-ink-faint);
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.logoutBtn {
+  font-family: var(--font-pixel);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 6px 10px;
+  background: var(--color-white);
+  border: 2px solid var(--color-border-mid);
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--color-ink-faint);
+  box-shadow: 2px 2px 0 var(--color-border-mid);
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.logoutBtn:hover {
+  background: var(--color-pink-100);
+  border-color: var(--color-pink-300);
+  color: var(--color-pink-400);
+  box-shadow: 2px 2px 0 var(--color-pink-300);
+}
+
+/* ── Main area with Page Transition Fade-In ── */
+.main {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+  animation: pageTransition 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes pageTransition {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.995);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ── Calendar slide panel ── */
+.calendarPanel {
+  width: 380px;
+  min-width: 380px;
+  flex-shrink: 0;
+  overflow: visible;
+  transition:
+    width 380ms cubic-bezier(0.4, 0, 0.2, 1),
+    min-width 380ms cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: width, opacity;
+  border-right: 2px solid var(--color-border);
+}
+
+.calendarPanel.shrunk {
+  width: 0 !important;
+  min-width: 0 !important;
+  opacity: 0;
+  pointer-events: none;
+  border-right: none;
+  overflow: hidden;
+}
+
+/* ── Mini calendar (top-right, appears when shrunk) ── */
+.miniCal {
+  position: fixed;
+  top: 74px;
+  right: 16px;
+  width: 180px;
+  background: var(--color-white);
+  border: 2px solid var(--color-border-mid);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(255, 143, 171, 0.30);
+  z-index: 100;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.85) translateY(-8px);
+  transform-origin: top right;
+  transition: opacity 350ms cubic-bezier(0.4, 0, 0.2, 1),
+              transform 350ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.miniCal.visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: scale(1) translateY(0);
+  transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1),
+              transform 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.miniCalHeader {
+  background: linear-gradient(135deg, var(--color-pink-200), var(--color-lavender-100));
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.miniCalDate {
+  font-family: var(--font-pixel);
+  font-size: 13px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-ink);
+}
+
+.miniCalExpandBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-ink-soft);
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  padding: 2px;
+  transition: color 150ms, transform 200ms;
+  line-height: 1;
+}
+
+.miniCalExpandBtn:hover {
+  color: var(--color-pink-400);
+  transform: scale(1.2);
+}
+
+.miniCalBody {
+  padding: 8px 12px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.miniCalLabel {
+  font-family: var(--font-pixel);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-ink-faint);
+}
+
+.miniCalHint {
+  font-size: 12px;
+  color: var(--color-ink-soft);
+  font-weight: 600;
+}
+
+/* ── Diary Section ── */
+.diaryWrapper {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-cream);
+  position: relative;
+  overflow: hidden;
+}
+
+.prompt {
+  margin: auto;
+  text-align: center;
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.promptIcon {
+  font-size: 48px;
+  line-height: 1;
+  animation: pixelFloat 3s ease-in-out infinite;
+}
+
+@keyframes pixelFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.promptText {
+  font-family: var(--font-pixel);
+  font-size: 22px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-ink);
+  line-height: 1.3;
+}
+
+.promptHint {
+  font-size: 13px;
+  color: var(--color-ink-soft);
+}
+
+/* ── Writing view ── */
+.writingView {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+  animation: slideInDiary 400ms cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+@keyframes slideInDiary {
+  from { opacity: 0; transform: translateX(24px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.diaryHeader {
+  padding: 12px 24px;
+  background: var(--color-white);
+  border-bottom: 2px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.diaryDateBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.diaryDateDay {
+  font-family: var(--font-pixel);
+  font-size: 18px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-ink);
+  line-height: 1;
+}
+
+.diaryDateFull {
+  font-size: 13px;
+  color: var(--color-ink-soft);
+  font-weight: 600;
+}
+
+.diaryHeaderActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.saveStatus {
+  font-family: var(--font-pixel);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--color-mint-400);
+  opacity: 0;
+  transition: opacity 200ms;
+}
+
+.saveStatus.visible {
+  opacity: 1;
+}
+
+.saveBtn {
+  font-family: var(--font-pixel);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 6px 16px;
+  background: var(--color-pink-300);
+  border: 2px solid var(--color-pink-500);
+  border-radius: 4px;
+  color: var(--color-white);
+  cursor: pointer;
+  box-shadow: 2px 2px 0 var(--color-pink-500);
+  transition: all var(--transition-fast);
+}
+
+.saveBtn:hover {
+  background: var(--color-pink-400);
+  transform: translateY(-1px);
+  box-shadow: 3px 3px 0 var(--color-pink-500);
+}
+
+.saveBtn:active {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 var(--color-pink-500);
+}
+
+/* ── Mood Selector ── */
+.moodBar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 24px;
+  background: var(--color-pink-50);
+  border-bottom: 1px solid var(--color-border);
+  overflow-x: auto;
+  flex-shrink: 0;
+}
+
+.moodBarLabel {
+  font-family: var(--font-pixel);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-ink-soft);
+  white-space: nowrap;
+}
+
+.moodTag {
+  font-family: var(--font-pixel);
+  font-size: 11px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  background: var(--color-white);
+  border: 2px solid var(--color-border-mid);
+  border-radius: 999px;
+  color: var(--color-ink-soft);
+  cursor: pointer;
+  box-shadow: 1px 1px 0 var(--color-border);
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.moodTag:hover {
+  background: var(--color-pink-100);
+  border-color: var(--color-pink-300);
+  transform: translateY(-1px);
+}
+
+.moodTag.moodActive {
+  background: var(--color-pink-200);
+  border-color: var(--color-pink-500);
+  color: var(--color-pink-500);
+  box-shadow: 2px 2px 0 var(--color-pink-400);
+}
+
+/* ── Footer ── */
+.diaryFooter {
+  padding: 8px 24px;
+  border-top: 2px solid var(--color-border);
+  background: var(--color-white);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.wordCount {
+  font-family: var(--font-pixel);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-ink-faint);
+}
+
+/* ================================================================
+   📱 100% RESPONSIVE MEDIA QUERIES (Mobile & Tablet)
+   ================================================================ */
+
+/* ── Tablet & Small Laptops (max-width: 1024px) ── */
+@media (max-width: 1024px) {
+  .calendarPanel {
+    width: 340px;
+    min-width: 340px;
+  }
+}
+
+/* ── Mobile Devices & Small Screens (max-width: 768px) ── */
+@media (max-width: 768px) {
+  .header {
+    padding: 0 12px;
+    height: 56px;
+    gap: 6px;
+  }
+
+  .logoTitle {
+    font-size: 15px;
+  }
+
+  .navBar {
+    position: static;
+    transform: none;
+    padding: 3px;
+    gap: 2px;
+  }
+
+  .slidingIndicator {
+    top: 3px;
+    bottom: 3px;
+  }
+
+  .navBtn {
+    padding: 5px 9px;
+    font-size: 10px;
+    gap: 4px;
+  }
+
+  .userProfileBadge {
+    padding: 3px 6px;
+    gap: 5px;
+  }
+
+  .userDisplayName {
+    font-size: 10px;
+    max-width: 80px;
+  }
+
+  .userUidText {
+    font-size: 8px;
+    max-width: 80px;
+  }
+
+  .logoutBtn {
+    padding: 4px 8px;
+    font-size: 9px;
+  }
+
+  /* Stack layout */
+  .main {
+    flex-direction: column;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    height: 100%;
+  }
+
+  .calendarPanel {
+    width: 100% !important;
+    min-width: 100% !important;
+    border-right: none;
+    border-bottom: 2px solid var(--color-border);
+  }
+
+  .calendarPanel.shrunk {
+    display: none;
+  }
+
+  .diaryWrapper {
+    width: 100%;
+    min-width: 100%;
+    flex: 1;
+    min-height: 420px;
+  }
+
+  .miniCal {
+    top: 60px;
+    right: 10px;
+    width: 160px;
+  }
+
+  .diaryHeader {
+    padding: 10px 14px;
+  }
+
+  .diaryDateDay {
+    font-size: 16px;
+  }
+
+  .diaryDateFull {
+    font-size: 12px;
+  }
+
+  .moodBar {
+    padding: 6px 14px;
+    gap: 4px;
+  }
+
+  .moodTag {
+    font-size: 10px;
+    padding: 3px 8px;
+  }
+
+  .diaryFooter {
+    padding: 6px 14px;
+  }
+}

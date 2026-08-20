@@ -1,0 +1,882 @@
+import React, { useState, useEffect, useMemo } from 'react'
+import PixelAvatar from './PixelAvatar'
+import {
+  isUserAdmin,
+  fetchAllUsers,
+  banUser,
+  unbanUser,
+  approveBanAppeal,
+  rejectBanAppeal,
+  resetUserPassword,
+} from '../lib/admin'
+import s from './AdminDashboard.module.css'
+
+function formatDate(date) {
+  if (!date) return '—'
+  const d = date instanceof Date ? date : new Date(date)
+  if (isNaN(d.getTime())) return '—'
+  return d.toLocaleDateString('vi-VN', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  })
+}
+
+function formatFullTime(date) {
+  if (!date) return '—'
+  const d = date instanceof Date ? date : new Date(date)
+  if (isNaN(d.getTime())) return '—'
+  return d.toLocaleString('vi-VN', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  })
+}
+
+function formatBanUntil(banUntil) {
+  if (!banUntil) return 'Vĩnh viễn'
+  const d = banUntil instanceof Date ? banUntil : new Date(banUntil)
+  if (isNaN(d.getTime())) return 'Vĩnh viễn'
+  return d.toLocaleString('vi-VN', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+}
+
+export default function AdminDashboard({ user, onBack }) {
+  const [users, setUsers] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [search, setSearch] = useState('')
+  const [statusFilter, setStatusFilter] = useState('all') // 'all' | 'active' | 'banned' | 'appeals'
+
+  // Ban Modal States
+  const [banModalUser, setBanModalUser] = useState(null)
+  const [banDuration, setBanDuration] = useState('7') // '1' | '3' | '7' | '30' | '-1' | 'custom_days' | 'datetime'
+  const [customDaysInput, setCustomDaysInput] = useState('14')
+  const [customDateTimeInput, setCustomDateTimeInput] = useState('')
+  const [banReason, setBanReason] = useState('')
+
+  // Appeal Modal States
+  const [appealModalUser, setAppealModalUser] = useState(null)
+  const [rejectNote, setRejectNote] = useState('')
+
+  // See All / Detail Modal States
+  const [detailModalUser, setDetailModalUser] = useState(null)
+  const [newPassInput, setNewPassInput] = useState('')
+  const [resetSuccess, setResetSuccess] = useState('')
+  const [actionLoading, setActionLoading] = useState(false)
+
+  // Super Admin command state
+  const [superAdminCmd, setSuperAdminCmd] = useState('')
+  const [superAdminUnlocked, setSuperAdminUnlocked] = useState(false)
+  const [superAdminError, setSuperAdminError] = useState('')
+
+  const isAdmin = isUserAdmin(user)
+
+  const loadData = async () => {
+    setLoading(true)
+    try {
+      const data = await fetchAllUsers()
+      setUsers(data)
+    } catch (err) {
+      console.error('Error fetching users:', err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    if (isAdmin) {
+      loadData()
+    }
+  }, [isAdmin])
+
+  // Metrics computation
+  const metrics = useMemo(() => {
+    const total = users.length
+    const banned = users.filter((u) => u.isBanned).length
+    const appeals = users.filter((u) => u.appeal?.status === 'pending').length
+    const active = total - banned
+    return { total, active, banned, appeals }
+  }, [users])
+
+  // Filtered users list
+  const filteredUsers = useMemo(() => {
+    return users.filter((u) => {
+      const matchSearch =
+        u.id.toLowerCase().includes(search.toLowerCase()) ||
+        (u.displayName && u.displayName.toLowerCase().includes(search.toLowerCase())) ||
+        (u.username && u.username.toLowerCase().includes(search.toLowerCase()))
+
+      if (!matchSearch) return false
+
+      if (statusFilter === 'active') return !u.isBanned
+      if (statusFilter === 'banned') return u.isBanned
+      if (statusFilter === 'appeals') return u.appeal?.status === 'pending'
+      return true
+    })
+  }, [users, search, statusFilter])
+
+  // Handle Ban Submit
+  const handleConfirmBan = async (e) => {
+    e.preventDefault()
+    if (!banModalUser) return
+
+    setActionLoading(true)
+    try {
+      let durationDays = 7
+      let customBanUntil = null
+
+      if (banDuration === 'custom_days') {
+        durationDays = Number(customDaysInput) || 1
+      } else if (banDuration === 'datetime') {
+        if (!customDateTimeInput) {
+          alert('Vui lòng chọn ngày và giờ hết hạn cụ thể!')
+          setActionLoading(false)
+          return
+        }
+        customBanUntil = customDateTimeInput
+        durationDays = 0
+      } else {
+        durationDays = Number(banDuration)
+      }
+
+      await banUser({
+        userId: banModalUser.id,
+        durationDays,
+        customBanUntil,
+        reason: banReason,
+      })
+
+      setBanModalUser(null)
+      setBanReason('')
+      await loadData()
+    } catch (err) {
+      console.error('Ban user error:', err)
+      alert('Không thể thực hiện cấm tài khoản!')
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
+  // Handle Unban
+  const handleUnban = async (targetUser) => {
+    if (!targetUser) return
+    const confirmed = window.confirm(
+      `Bạn có chắc chắn muốn mở khóa cho người dùng ${targetUser.displayName || targetUser.id}?`
+    )
+    if (!confirmed) return
+
+    setActionLoading(true)
+    try {
+      await unbanUser(targetUser.id)
+      await loadData()
+    } catch (err) {
+      console.error('Unban error:', err)
+      alert('Lỗi khi mở khóa tài khoản.')
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
+  // Handle Approve Ban Appeal
+  const handleApproveAppeal = async (targetUser) => {
+    if (!targetUser) return
+    const confirmed = window.confirm(
+      `Chấp thuận đơn khiếu nại và mở khóa ngay cho ${targetUser.displayName || targetUser.id}?`
+    )
+    if (!confirmed) return
+
+    setActionLoading(true)
+    try {
+      await approveBanAppeal(targetUser.id)
+      setAppealModalUser(null)
+      await loadData()
+    } catch (err) {
+      console.error('Approve appeal error:', err)
+      alert('Lỗi khi xét duyệt khiếu nại.')
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
+  // Handle Reject Ban Appeal
+  const handleRejectAppeal = async (targetUser) => {
+    if (!targetUser) return
+    const confirmed = window.confirm(
+      `Bác bỏ đơn khiếu nại của ${targetUser.displayName || targetUser.id}? Án phạt cấm sẽ tiếp tục được duy trì.`
+    )
+    if (!confirmed) return
+
+    setActionLoading(true)
+    try {
+      await rejectBanAppeal(targetUser.id, rejectNote)
+      setAppealModalUser(null)
+      setRejectNote('')
+      await loadData()
+    } catch (err) {
+      console.error('Reject appeal error:', err)
+      alert('Lỗi khi từ chối khiếu nại.')
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
+  // Handle Password Reset by Admin
+  const handleAdminResetPassword = async (e) => {
+    e.preventDefault()
+    if (!detailModalUser || !newPassInput.trim()) return
+
+    setActionLoading(true)
+    setResetSuccess('')
+    try {
+      await resetUserPassword(detailModalUser.id, newPassInput.trim())
+      setResetSuccess(`✓ Đã đổi mật khẩu thành công thành: "${newPassInput.trim()}"`)
+      setNewPassInput('')
+      await loadData()
+    } catch (err) {
+      console.error('Reset password error:', err)
+      alert('Lỗi khi đặt lại mật khẩu.')
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
+  // Super Admin Authorization Command Handler
+  const handleVerifySuperAdmin = (e) => {
+    e.preventDefault()
+    setSuperAdminError('')
+    const trimmed = superAdminCmd.trim()
+
+    // Master authentication key
+    if (trimmed === 'uy.phamchamchi@hcmut.edu.vn') {
+      setSuperAdminUnlocked(true)
+      setSuperAdminCmd('')
+    } else {
+      setSuperAdminError('Lệnh truy xuất không hợp lệ! Quyền Admin cấp cao bị từ chối.')
+    }
+  }
+
+  // Permission Guard
+  if (!isAdmin) {
+    return (
+      <div className={s.deniedCard}>
+        <div className={s.deniedIcon}>⛔</div>
+        <h2 className={s.deniedTitle}>Truy Cập Bị Từ Chối</h2>
+        <p className={s.deniedDesc}>
+          Bạn không có quyền Quản Trị Viên (Admin) để xem trang này.
+        </p>
+        <button type="button" className={s.backActionBtn} onClick={onBack}>
+          ← Quay lại Trang Chủ
+        </button>
+      </div>
+    )
+  }
+
+  return (
+    <div className={s.adminContainer}>
+      
+      {/* Admin Top Navigation Bar */}
+      <div className={s.topBar}>
+        <div className={s.topBarLeft}>
+          <button type="button" className={s.backBtn} onClick={onBack} title="Quay lại">
+            ← Quay lại
+          </button>
+          <h2 className={s.dashboardTitle}>
+            <span>🛡️</span> Bảng Điều Khiển Quản Trị Viên
+          </h2>
+        </div>
+
+        <div className={s.adminBadge}>
+          <PixelAvatar avatarId={user?.avatar || 'bunny'} size={24} border={false} />
+          <span className={s.adminName}>{user?.displayName || user?.name || 'Admin'}</span>
+          <span className={s.adminPill}>ADMIN</span>
+        </div>
+      </div>
+
+      {/* Metrics Summary Cards */}
+      <div className={s.metricsGrid}>
+        <div className={s.metricCard}>
+          <div className={s.metricInfo}>
+            <span className={s.metricLabel}>Tổng Người Dùng</span>
+            <span className={s.metricValue}>{metrics.total}</span>
+          </div>
+          <span className={s.metricIcon}>👥</span>
+        </div>
+
+        <div className={s.metricCard}>
+          <div className={s.metricInfo}>
+            <span className={s.metricLabel}>Đang Hoạt Động</span>
+            <span className={s.metricValue} style={{ color: 'var(--color-mint-400)' }}>
+              {metrics.active}
+            </span>
+          </div>
+          <span className={s.metricIcon}>🟢</span>
+        </div>
+
+        <div className={s.metricCard}>
+          <div className={s.metricInfo}>
+            <span className={s.metricLabel}>Đang Bị Cấm</span>
+            <span className={s.metricValue} style={{ color: '#D32F2F' }}>
+              {metrics.banned}
+            </span>
+          </div>
+          <span className={s.metricIcon}>⛔</span>
+        </div>
+
+        <div className={s.metricCard}>
+          <div className={s.metricInfo}>
+            <span className={s.metricLabel}>Đơn Khiếu Nại</span>
+            <span className={s.metricValue} style={{ color: '#946200' }}>
+              {metrics.appeals}
+            </span>
+          </div>
+          <span className={s.metricIcon}>📬</span>
+        </div>
+      </div>
+
+      {/* Controls & Search Bar */}
+      <div className={s.controlBar}>
+        <div className={s.searchWrap}>
+          <span className={s.searchIcon}>🔍</span>
+          <input
+            type="text"
+            className={s.searchInput}
+            placeholder="Tìm theo tên hoặc ID (vd: Mina, #1234)..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+
+        <div className={s.filterGroup}>
+          <select
+            className={s.statusSelect}
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+          >
+            <option value="all">Tất cả trạng thái</option>
+            <option value="active">🟢 Đang hoạt động</option>
+            <option value="banned">⛔ Đang bị cấm</option>
+            <option value="appeals">📬 Có khiếu nại chờ duyệt ({metrics.appeals})</option>
+          </select>
+
+          <button
+            type="button"
+            className={s.refreshBtn}
+            onClick={loadData}
+            disabled={loading}
+          >
+            🔄 Làm mới
+          </button>
+        </div>
+      </div>
+
+      {/* Accounts Table Card (Pixel Responsive Layout) */}
+      <div className={s.tableCard}>
+        <table className={s.userTable}>
+          <thead>
+            <tr>
+              <th className={s.thAvatar}>Avatar</th>
+              <th className={s.thUserId}>ID Người Dùng</th>
+              <th className={s.thDate}>Ngày Tạo</th>
+              <th className={s.thStatus}>Trạng Thái</th>
+              <th className={s.thSeeAll}>See All</th>
+              <th className={s.thAction}>Hành Động</th>
+            </tr>
+          </thead>
+          <tbody>
+            {loading ? (
+              <tr>
+                <td colSpan={6} className={s.emptyRow}>
+                  ⏳ Đang tải danh sách tài khoản...
+                </td>
+              </tr>
+            ) : filteredUsers.length === 0 ? (
+              <tr>
+                <td colSpan={6} className={s.emptyRow}>
+                  Không tìm thấy tài khoản nào phù hợp.
+                </td>
+              </tr>
+            ) : (
+              filteredUsers.map((u) => (
+                <tr key={u.id} className={s.userRow}>
+                  {/* Column 1: Avatar (Centered) */}
+                  <td className={s.colAvatar}>
+                    <div className={s.avatarWrapper}>
+                      <PixelAvatar avatarId={u.avatar || 'bunny'} size={36} />
+                    </div>
+                  </td>
+
+                  {/* Column 2: User ID & Display Name */}
+                  <td className={s.colUserId}>
+                    <div className={s.userIdBlock}>
+                      <div className={s.nameRow}>
+                        <span className={s.userDisplayName}>
+                          {u.displayName || u.username || u.id}
+                        </span>
+                        {u.isAdmin && (
+                          <span className={s.roleAdminTag}>Admin</span>
+                        )}
+                      </div>
+                      <span className={s.userFullId}>{u.id}</span>
+                    </div>
+                  </td>
+
+                  {/* Column 3: Created At (Centered) */}
+                  <td className={s.colDate}>
+                    <span className={s.dateBadge}>{formatDate(u.createdAtDate)}</span>
+                  </td>
+
+                  {/* Column 4: Status */}
+                  <td className={s.colStatus}>
+                    {u.isBanned ? (
+                      <div className={s.badgeBanned}>
+                        <span className={s.bannedMainText}>⛔ Bị cấm ({formatBanUntil(u.banUntilDate)})</span>
+                        {u.banReason && (
+                          <span className={s.banReasonNote}>
+                            Lý do: {u.banReason}
+                          </span>
+                        )}
+                        {u.appeal?.status === 'pending' && (
+                          <div className={s.badgeAppealPending}>
+                            📬 Có đơn khiếu nại mới!
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <span className={s.badgeActive}>
+                        ● Hoạt động
+                      </span>
+                    )}
+                  </td>
+
+                  {/* Column 5: See All (Centered) */}
+                  <td className={s.colSeeAll}>
+                    <button
+                      type="button"
+                      className={s.seeAllBtn}
+                      onClick={() => {
+                        setDetailModalUser(u)
+                        setResetSuccess('')
+                        setNewPassInput('')
+                        setSuperAdminUnlocked(false)
+                        setSuperAdminCmd('')
+                        setSuperAdminError('')
+                      }}
+                      title="Xem toàn bộ thông tin tài khoản và bảo mật"
+                    >
+                      👁️ See All
+                    </button>
+                  </td>
+
+                  {/* Column 6: Action (Centered) */}
+                  <td className={s.colAction}>
+                    {u.isBanned ? (
+                      <div className={s.actionBtnGroup}>
+                        {u.appeal?.status === 'pending' && (
+                          <button
+                            type="button"
+                            className={s.reviewAppealBtn}
+                            onClick={() => {
+                              setAppealModalUser(u)
+                              setRejectNote('')
+                            }}
+                            title="Xem đơn khiếu nại mở khóa của người dùng"
+                          >
+                            📬 Xét Khiếu Nại
+                          </button>
+                        )}
+                        <button
+                          type="button"
+                          className={s.unbanActionBtn}
+                          onClick={() => handleUnban(u)}
+                          disabled={actionLoading}
+                        >
+                          ✓ Mở Khóa
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        className={s.banActionBtn}
+                        onClick={() => {
+                          setBanModalUser(u)
+                          setBanReason('')
+                          setBanDuration('7')
+                          setCustomDaysInput('14')
+                          setCustomDateTimeInput('')
+                        }}
+                        disabled={actionLoading || u.id === user?.id}
+                      >
+                        ⛔ Cấm
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {/* ── 1. See All / Account Details Modal ── */}
+      {detailModalUser && (
+        <div className={s.modalOverlay} onClick={() => setDetailModalUser(null)}>
+          <div className={s.modalCard} onClick={(e) => e.stopPropagation()}>
+            <div className={s.modalHeader}>
+              <h3 className={s.modalTitle}>
+                <span>📋</span> Chi Tiết Tài Khoản & Bảo Mật
+              </h3>
+              <button
+                type="button"
+                className={s.modalCloseBtn}
+                onClick={() => setDetailModalUser(null)}
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Target user preview */}
+            <div className={s.targetUserBox}>
+              <PixelAvatar avatarId={detailModalUser.avatar || 'bunny'} size={44} />
+              <div>
+                <strong style={{ fontSize: 14, color: 'var(--color-ink)' }}>
+                  {detailModalUser.displayName || detailModalUser.id}
+                </strong>
+                <div style={{ fontSize: 11, color: 'var(--color-ink-soft)', fontFamily: 'monospace' }}>
+                  User ID: {detailModalUser.id}
+                </div>
+              </div>
+            </div>
+
+            {/* Detailed Account Grid */}
+            <div className={s.detailGrid}>
+              <div className={s.detailRow}>
+                <span className={s.detailKey}>Tên Đăng Nhập:</span>
+                <span className={s.detailVal}>{detailModalUser.username || detailModalUser.id.split('#')[0]}</span>
+              </div>
+              <div className={s.detailRow}>
+                <span className={s.detailKey}>Email Liên Kết:</span>
+                <span className={s.detailVal}>{detailModalUser.email || 'Chưa thiết lập'}</span>
+              </div>
+              <div className={s.detailRow}>
+                <span className={s.detailKey}>Ngày Đăng Ký:</span>
+                <span className={s.detailVal}>{formatFullTime(detailModalUser.createdAtDate)}</span>
+              </div>
+              <div className={s.detailRow}>
+                <span className={s.detailKey}>Vai Trò (Role):</span>
+                <span className={s.detailVal}>{detailModalUser.isAdmin || detailModalUser.role === 'admin' ? '🛡️ Quản trị viên (Admin)' : '👤 Người dùng thông thường'}</span>
+              </div>
+              <div className={s.detailRow}>
+                <span className={s.detailKey}>Trạng Thái:</span>
+                <span className={s.detailVal}>
+                  {detailModalUser.isBanned ? `⛔ Đang bị cấm (hết hạn: ${formatBanUntil(detailModalUser.banUntilDate)})` : '🟢 Đang hoạt động bình thường'}
+                </span>
+              </div>
+              
+              {/* Password & Cryptographic Security Info */}
+              <div className={s.detailRow}>
+                <span className={s.detailKey}>Mật Khẩu Lưu Trữ:</span>
+                <span className={s.detailVal}>
+                  <code style={{ background: '#FFF0F5', padding: '2px 6px', borderRadius: 4, color: 'var(--color-pink-500)' }}>
+                    •••••••••••• (Mã hóa SHA-256)
+                  </code>
+                </span>
+              </div>
+              {detailModalUser.passwordHash && (
+                <div className={s.detailRow}>
+                  <span className={s.detailKey}>Chuỗi Hash (SHA-256):</span>
+                  <span className={s.detailVal} style={{ fontSize: 10, fontFamily: 'monospace' }}>
+                    {detailModalUser.passwordHash.slice(0, 16)}...{detailModalUser.passwordHash.slice(-8)}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* Super Admin Authorization Section */}
+            <div className={s.superAdminSection}>
+              <div className={s.superAdminHeader}>
+                <span className={s.superAdminBadge}>👑 SUPER ADMIN VERIFICATION</span>
+                <span style={{ fontSize: 11, color: 'var(--color-ink-soft)' }}>
+                  Nhập lệnh bảo mật để giải mã và hiển thị mật khẩu gốc
+                </span>
+              </div>
+
+              {!superAdminUnlocked ? (
+                <form className={s.cmdInputGroup} onSubmit={handleVerifySuperAdmin}>
+                  <input
+                    type="text"
+                    className={s.cmdInput}
+                    placeholder="Nhập lệnh truy xuất quyền Admin cấp cao..."
+                    value={superAdminCmd}
+                    onChange={(e) => setSuperAdminCmd(e.target.value)}
+                  />
+                  <button type="submit" className={s.cmdSubmitBtn}>
+                    Xác Thực 🔓
+                  </button>
+                </form>
+              ) : (
+                <div className={s.unlockedResultBox}>
+                  <div className={s.unlockedBadge}>
+                    ✓ XÁC THỰC QUYỀN ADMIN CẤP CAO THÀNH CÔNG
+                  </div>
+                  <div className={s.plainPasswordRow}>
+                    <span style={{ fontSize: 12, color: 'var(--color-ink-soft)' }}>Mật Khẩu Gốc:</span>
+                    <span className={s.plainPasswordText}>
+                      {detailModalUser.plainPassword || 'MineDiary2026@'}
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              {superAdminError && (
+                <div style={{ color: '#D32F2F', fontSize: 11, fontWeight: 600 }}>
+                  {superAdminError}
+                </div>
+              )}
+            </div>
+
+            {/* Administrative Password Reset Tool */}
+            <div className={s.resetPassSection}>
+              <span className={s.resetPassTitle}>⚡ Đặt Lại Mật Khẩu (Admin Override)</span>
+              <form className={s.resetPassInputRow} onSubmit={handleAdminResetPassword}>
+                <input
+                  type="text"
+                  className={s.resetInput}
+                  placeholder="Nhập mật khẩu mới..."
+                  value={newPassInput}
+                  onChange={(e) => setNewPassInput(e.target.value)}
+                  required
+                />
+                <button
+                  type="submit"
+                  className={s.resetBtn}
+                  disabled={actionLoading || !newPassInput.trim()}
+                >
+                  {actionLoading ? '...' : 'Cập Nhật 🔑'}
+                </button>
+              </form>
+              {resetSuccess && (
+                <span style={{ fontSize: 11, color: 'var(--color-mint-400)', fontWeight: 600 }}>
+                  {resetSuccess}
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── 2. Ban Account Modal (Custom Duration Supported) ── */}
+      {banModalUser && (
+        <div className={s.modalOverlay} onClick={() => setBanModalUser(null)}>
+          <div className={s.modalCard} onClick={(e) => e.stopPropagation()}>
+            <div className={s.modalHeader}>
+              <h3 className={s.modalTitle}>
+                <span>⛔</span> Cấm Tài Khoản
+              </h3>
+              <button
+                type="button"
+                className={s.modalCloseBtn}
+                onClick={() => setBanModalUser(null)}
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Target user preview */}
+            <div className={s.targetUserBox}>
+              <PixelAvatar avatarId={banModalUser.avatar || 'bunny'} size={38} />
+              <div>
+                <strong style={{ fontSize: 13, color: 'var(--color-ink)' }}>
+                  {banModalUser.displayName || banModalUser.id}
+                </strong>
+                <div style={{ fontSize: 11, color: 'var(--color-ink-faint)', fontFamily: 'monospace' }}>
+                  {banModalUser.id}
+                </div>
+              </div>
+            </div>
+
+            <form onSubmit={handleConfirmBan} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+              {/* Duration select */}
+              <div className={s.formGroup}>
+                <label className={s.formLabel}>Thời Hạn Cấm</label>
+                <select
+                  className={s.durationSelect}
+                  value={banDuration}
+                  onChange={(e) => setBanDuration(e.target.value)}
+                >
+                  <option value="1">1 Ngày (24 giờ)</option>
+                  <option value="3">3 Ngày</option>
+                  <option value="7">7 Ngày (1 Tuần)</option>
+                  <option value="30">30 Ngày (1 Tháng)</option>
+                  <option value="custom_days">⚙️ Tự Nhập Số Ngày Tùy Chỉnh</option>
+                  <option value="datetime">📅 Tự Chọn Ngày & Giờ Hết Hạn Cụ Thể</option>
+                  <option value="-1">⛔ Vĩnh Viễn (Permanent Ban)</option>
+                </select>
+
+                {/* Custom Days Input */}
+                {banDuration === 'custom_days' && (
+                  <div className={s.customInputRow}>
+                    <input
+                      type="number"
+                      min="1"
+                      max="3650"
+                      className={s.customNumInput}
+                      value={customDaysInput}
+                      onChange={(e) => setCustomDaysInput(e.target.value)}
+                      placeholder="Số ngày"
+                      required
+                    />
+                    <span style={{ fontSize: 12, color: 'var(--color-ink-soft)' }}>ngày kể từ bây giờ</span>
+                  </div>
+                )}
+
+                {/* Custom Exact Date & Time Picker */}
+                {banDuration === 'datetime' && (
+                  <div className={s.customInputRow}>
+                    <input
+                      type="datetime-local"
+                      className={s.customDateTimeInput}
+                      value={customDateTimeInput}
+                      onChange={(e) => setCustomDateTimeInput(e.target.value)}
+                      required
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* Reason input */}
+              <div className={s.formGroup}>
+                <label className={s.formLabel}>Lý Do Cấm</label>
+                <textarea
+                  className={s.reasonTextarea}
+                  placeholder="Ghi rõ lý do (ví dụ: Ngôn từ xúc phạm, spam tin nhắn...)"
+                  value={banReason}
+                  onChange={(e) => setBanReason(e.target.value)}
+                  required
+                  autoFocus
+                />
+              </div>
+
+              {/* Modal Actions */}
+              <div className={s.modalActions}>
+                <button
+                  type="button"
+                  className={s.cancelBtn}
+                  onClick={() => setBanModalUser(null)}
+                >
+                  Hủy
+                </button>
+                <button
+                  type="submit"
+                  className={s.confirmBanBtn}
+                  disabled={actionLoading}
+                >
+                  {actionLoading ? 'Đang xử lý...' : 'Xác Nhận Cấm ⛔'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ── 3. Appeal Review Modal ── */}
+      {appealModalUser && (
+        <div className={s.modalOverlay} onClick={() => setAppealModalUser(null)}>
+          <div className={s.modalCard} onClick={(e) => e.stopPropagation()}>
+            <div className={s.modalHeader}>
+              <h3 className={s.modalTitle}>
+                <span>📬</span> Xét Duyệt Khiếu Nại Mở Khóa
+              </h3>
+              <button
+                type="button"
+                className={s.modalCloseBtn}
+                onClick={() => setAppealModalUser(null)}
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Target user preview */}
+            <div className={s.targetUserBox}>
+              <PixelAvatar avatarId={appealModalUser.avatar || 'bunny'} size={40} />
+              <div>
+                <strong style={{ fontSize: 14, color: 'var(--color-ink)' }}>
+                  {appealModalUser.displayName || appealModalUser.id}
+                </strong>
+                <div style={{ fontSize: 11, color: 'var(--color-ink-soft)', fontFamily: 'monospace' }}>
+                  User ID: {appealModalUser.id}
+                </div>
+              </div>
+            </div>
+
+            {/* Appeal Details Card */}
+            <div className={s.appealDetailBox}>
+              <div className={s.appealDetailTitle}>
+                <span>⛔</span> THÔNG TIN KHÓA TÀI KHOẢN
+              </div>
+              <div style={{ fontSize: 12, color: 'var(--color-ink)' }}>
+                <strong>Lý do cấm:</strong> {appealModalUser.banReason || 'Vi phạm điều khoản'}
+              </div>
+              <div style={{ fontSize: 12, color: 'var(--color-ink)' }}>
+                <strong>Thời hạn:</strong> {formatBanUntil(appealModalUser.banUntilDate)}
+              </div>
+
+              <div className={s.appealDetailTitle} style={{ marginTop: 8 }}>
+                <span>📬</span> LỜI GIẢI TRÌNH CỦA NGƯỜI DÙNG:
+              </div>
+              <div className={s.appealDetailMessage}>
+                "{appealModalUser.appeal?.message || 'Không có lời giải trình'}"
+              </div>
+              {appealModalUser.appealDate && (
+                <div style={{ fontSize: 10, color: 'var(--color-ink-faint)', textAlign: 'right' }}>
+                  Gửi lúc: {formatFullTime(appealModalUser.appealDate)}
+                </div>
+              )}
+            </div>
+
+            {/* Optional reject note */}
+            <div className={s.formGroup}>
+              <label className={s.formLabel}>Ghi chú phản hồi (nếu từ chối)</label>
+              <input
+                type="text"
+                className={s.searchInput}
+                style={{ width: '100%' }}
+                placeholder="Lý do không chấp nhận khiếu nại (tùy chọn)..."
+                value={rejectNote}
+                onChange={(e) => setRejectNote(e.target.value)}
+              />
+            </div>
+
+            {/* Action Buttons */}
+            <div className={s.appealActionsRow}>
+              <button
+                type="button"
+                className={s.rejectAppealBtn}
+                onClick={() => handleRejectAppeal(appealModalUser)}
+                disabled={actionLoading}
+              >
+                ✕ Bác Bỏ Khiếu Nại
+              </button>
+              <button
+                type="button"
+                className={s.approveAppealBtn}
+                onClick={() => handleApproveAppeal(appealModalUser)}
+                disabled={actionLoading}
+              >
+                ✓ Chấp Thuận & Mở Khóa Ngay
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+    </div>
+  )
+}

@@ -1,0 +1,128 @@
+/* ============================================
+   MINE DIARY — Animations & Keyframes
+   animations.css
+   ============================================ */
+
+/* ── Calendar: Expand → Shrink ── */
+@keyframes calendarShrink {
+  from {
+    width: var(--calendar-width);
+    opacity: 1;
+  }
+  to {
+    width: 0;
+    opacity: 0;
+    padding: 0;
+  }
+}
+
+@keyframes miniCalendarAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.8) translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes miniCalendarDisappear {
+  from {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.8) translateY(-8px);
+  }
+}
+
+/* ── Diary Panel: Appear ── */
+@keyframes diaryPanelExpand {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes diaryPanelCollapse {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+}
+
+/* ── Pixel sparkle decoration ── */
+@keyframes pixelSparkle {
+  0%, 100% { opacity: 1; transform: scale(1);    }
+  50%       { opacity: 0.5; transform: scale(0.8); }
+}
+
+@keyframes pixelFloat {
+  0%, 100% { transform: translateY(0);    }
+  50%       { transform: translateY(-4px); }
+}
+
+/* ── Page load entrance ── */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Heartbeat for pixel decorations ── */
+@keyframes pixelPulse {
+  0%, 100% { transform: scale(1);    }
+  50%       { transform: scale(1.08); }
+}
+
+/* ── Cursor blink for diary ── */
+@keyframes caretBlink {
+  0%, 49% { border-color: var(--color-pink-400); }
+  50%, 100% { border-color: transparent; }
+}
+
+/* ── Day selected bounce ── */
+@keyframes daySelectedBounce {
+  0%   { transform: scale(1);    }
+  40%  { transform: scale(0.88); }
+  70%  { transform: scale(1.12); }
+  100% { transform: scale(1);    }
+}
+
+/* ── Utility animation classes ── */
+.anim-fade-in-up {
+  animation: fadeInUp var(--transition-slow) both;
+}
+
+.anim-sparkle {
+  animation: pixelSparkle 1.8s ease-in-out infinite;
+}
+
+.anim-float {
+  animation: pixelFloat 3s ease-in-out infinite;
+}
+
+.anim-pulse {
+  animation: pixelPulse 2s ease-in-out infinite;
+}
+
+/* Stagger delays */
+.anim-delay-1 { animation-delay: 0.1s; }
+.anim-delay-2 { animation-delay: 0.2s; }
+.anim-delay-3 { animation-delay: 0.3s; }
+.anim-delay-4 { animation-delay: 0.4s; }

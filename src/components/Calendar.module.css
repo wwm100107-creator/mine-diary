@@ -1,0 +1,848 @@
+/* ============================================
+   MINE DIARY — Calendar Styles (Cute Pixel Craft)
+   Calendar.module.css
+   ============================================ */
+
+.calendar {
+  width: 100%;
+  min-width: 360px;
+  background: var(--color-white);
+  border-right: 2px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  user-select: none;
+  font-family: var(--font-ui);
+  position: relative;
+  box-sizing: border-box;
+}
+
+/* ── 1. Cute Pixel Header (Digital Clock + Month Navigation) ── */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: linear-gradient(135deg, #FFE8F0 0%, #FFD0E3 50%, #EDE0F7 100%);
+  border-bottom: 2px solid var(--color-border);
+  min-height: 56px;
+  box-sizing: border-box;
+  gap: 8px;
+}
+
+/* ── Digital Clock Badge (Asia/Ho_Chi_Minh) ── */
+.digitalClock {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 8px;
+  background: var(--color-white);
+  border: 2px solid var(--color-pink-300);
+  border-radius: var(--radius-md);
+  box-shadow: 2px 2px 0 var(--color-pink-300);
+  user-select: none;
+  flex-shrink: 0;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.digitalClock:hover {
+  transform: translateY(-1px);
+  box-shadow: 2px 3px 0 var(--color-pink-400);
+}
+
+.clockIcon {
+  font-size: 13px;
+  line-height: 1;
+  filter: drop-shadow(1px 1px 0 rgba(255, 255, 255, 0.8));
+}
+
+.clockTime {
+  font-family: var(--font-pixel), 'Courier New', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--color-pink-500);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+/* ── Month / Year Navigator Group ── */
+.monthNav {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.title {
+  font-family: var(--font-pixel);
+  font-size: 18px;
+  letter-spacing: 0.05em;
+  color: var(--color-ink);
+  text-transform: uppercase;
+  text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.85);
+  white-space: nowrap;
+}
+
+.navBtn {
+  background: var(--color-white);
+  border: 2px solid var(--color-border-mid);
+  border-radius: var(--radius-sm);
+  color: var(--color-ink-soft);
+  font-size: 11px;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 var(--color-pink-300);
+  transition: all var(--transition-fast);
+}
+
+.navBtn:hover {
+  background: var(--color-pink-100);
+  border-color: var(--color-pink-400);
+  color: var(--color-pink-500);
+  transform: translateY(-1px);
+  box-shadow: 3px 3px 0 var(--color-pink-400);
+}
+
+.navBtn:active {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 var(--color-pink-400);
+}
+
+/* ── 2. Unified 7-Column Grid Container (Weekdays + Day Cells) ── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  padding: 10px 12px 12px;
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* ── Weekday Header Cells (T2 - CN) ── */
+.weekdayCell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  height: 24px;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.weekdayText {
+  font-family: var(--font-pixel);
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  text-align: center;
+  color: var(--color-ink-soft);
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.weekdayCell.weekend .weekdayText {
+  color: var(--color-pink-400);
+  font-weight: 700;
+}
+
+/* ── 3. Individual Day Cell (Fixed Stationary Grid Container) ── */
+.day {
+  aspect-ratio: 1;
+  min-height: 42px;
+  position: relative;
+  cursor: pointer;
+  z-index: 1;
+  user-select: none;
+  border: none;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.day.isHovered:not(.otherMonth) {
+  z-index: 50 !important;
+}
+
+.day.otherMonth {
+  opacity: 0;
+  cursor: default;
+  pointer-events: none;
+}
+
+/* ── Inner Container: Holds number & icons, handles zoom cleanly ── */
+.dayInner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 3px 2px;
+  border-radius: var(--radius-md);
+  border: 2px solid var(--color-border);
+  background: var(--color-cream);
+  color: var(--color-ink);
+  box-shadow: 1px 1px 0 var(--color-border);
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.22s ease, border-color 0.2s ease, background 0.2s ease;
+  transform-origin: center center;
+  pointer-events: auto;
+  box-sizing: border-box;
+}
+
+/* ── 0.5s HOVER / TAP EFFECT: Zoom ONLY inner container ── */
+.day.isHovered:not(.otherMonth) .dayInner {
+  transform: scale(1.28) translateY(-4px);
+  z-index: 50;
+  background: var(--color-white);
+  border-color: var(--color-pink-400);
+  box-shadow: 0 8px 18px rgba(255, 143, 171, 0.45), 3px 3px 0 var(--color-pink-300);
+}
+
+.day.isToday .dayInner {
+  border-color: var(--color-pink-400);
+  background: #FFF5F8;
+  box-shadow: 0 0 0 2px var(--color-pink-200), inset 0 0 0 1px var(--color-pink-300);
+}
+
+.day.predicted .dayInner {
+  background: repeating-linear-gradient(
+    45deg,
+    var(--color-pink-50),
+    var(--color-pink-50) 4px,
+    var(--color-white) 4px,
+    var(--color-white) 8px
+  );
+  border-color: #FFB7C5;
+  border-style: dashed;
+}
+
+.day.fertile .dayInner {
+  background: rgba(181, 234, 215, 0.25);
+  border-color: var(--color-mint-300);
+}
+
+.day.activeDay .dayInner {
+  background: var(--color-pink-100);
+  border-color: var(--color-pink-500);
+  box-shadow: 2px 2px 0 var(--color-pink-300);
+}
+
+.day.dragOver .dayInner {
+  background: var(--color-pink-100) !important;
+  border: 2px dashed var(--color-pink-500) !important;
+  transform: scale(1.18) !important;
+  box-shadow: 0 0 14px rgba(255, 143, 171, 0.65) !important;
+}
+
+.dayNumber {
+  line-height: 1;
+  font-size: 11px;
+  font-family: var(--font-ui);
+  font-weight: 700;
+  color: var(--color-ink);
+}
+
+/* Mini Quick Write Diary Button on Zoom Pop-up */
+.openDiaryMiniBtn {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--color-white);
+  border: 1.5px solid var(--color-pink-500);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  cursor: pointer;
+  box-shadow: 1px 1px 0 var(--color-pink-500);
+  z-index: 60;
+  animation: miniPopIn 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: transform 0.15s ease;
+}
+
+.openDiaryMiniBtn:hover {
+  transform: scale(1.2);
+  background: var(--color-pink-100);
+}
+
+@keyframes miniPopIn {
+  from { transform: scale(0); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* ── 4. Predicted Period: Grayscale Strawberry with 0.55 Opacity ── */
+.predictedStrawberry {
+  font-size: 12px;
+  line-height: 1;
+  filter: grayscale(100%);
+  opacity: 0.55;
+  animation: pulseGlow 2.5s ease-in-out infinite;
+  display: inline-block;
+  user-select: none;
+}
+
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.45; transform: scale(0.95); }
+  50% { opacity: 0.75; transform: scale(1.08); }
+}
+
+/* Ovulation flower indicator */
+.ovulationIcon {
+  font-size: 11px;
+  line-height: 1;
+  animation: gentleBounce 2s ease-in-out infinite;
+  display: inline-block;
+}
+
+@keyframes gentleBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
+}
+
+/* ── 5. Playing Card Overlapping Stacked Icons (Margin -5px) ── */
+.iconStack {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 16px;
+  margin-top: auto;
+  transition: all 0.25s ease;
+}
+
+.stackedIcon {
+  font-size: 11px;
+  line-height: 1;
+  margin-left: -5px;
+  filter: drop-shadow(1px 1px 0 rgba(255, 255, 255, 0.95));
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), margin 0.2s ease;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: element;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1px 2px;
+  border-radius: 4px;
+  touch-action: none;
+}
+
+.stackedIcon:first-child {
+  margin-left: 0;
+}
+
+.day.isHovered .stackedIcon {
+  margin-left: 1px;
+  font-size: 13px;
+  background: var(--color-white);
+  border: 1px solid var(--color-border-mid);
+  box-shadow: 1px 1px 0 var(--color-border-mid);
+}
+
+.stackedIcon:hover {
+  transform: scale(1.25) translateY(-2px);
+  background: var(--color-pink-50) !important;
+  border-color: var(--color-pink-400) !important;
+}
+
+.stackedIcon:active {
+  cursor: grabbing;
+  transform: scale(1.05);
+}
+
+.extraBadge {
+  font-family: var(--font-pixel);
+  font-size: 9px;
+  background: var(--color-pink-400);
+  border: 1px solid var(--color-pink-500);
+  color: var(--color-white);
+  padding: 0 4px;
+  border-radius: 999px;
+  margin-left: 2px;
+  line-height: 12px;
+  height: 13px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 1px 1px 0 var(--color-pink-300);
+}
+
+/* ── Empty Placeholder Cell (Previous/Next Month) ── */
+.emptyDayCell {
+  aspect-ratio: 1;
+  min-height: 42px;
+  opacity: 0;
+  pointer-events: none;
+  border: none;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  visibility: hidden;
+}
+
+/* ── 6. Icon Tray & Trash Zone Row ── */
+.trayAndTrashRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 10px;
+  background: linear-gradient(to right, #FFF5F8, #FFE8F0);
+  border-top: 2px dashed var(--color-border-mid);
+  border-bottom: 2px solid var(--color-border);
+  box-sizing: border-box;
+}
+
+.iconTray {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+
+.trayLabel {
+  font-family: var(--font-pixel);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-ink-soft);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.trayItems {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow-x: auto;
+  flex: 1;
+  min-width: 0;
+  padding: 2px 2px 4px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.trayItems::-webkit-scrollbar {
+  height: 4px;
+}
+
+.trayItems::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.trayItems::-webkit-scrollbar-thumb {
+  background: var(--color-pink-200);
+  border-radius: 4px;
+}
+
+.trayBtn {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  background: var(--color-white);
+  border: 2px solid var(--color-border-mid);
+  border-radius: var(--radius-md);
+  cursor: grab;
+  box-shadow: 2px 2px 0 var(--color-border-mid);
+  transition: all var(--transition-fast);
+  user-select: none;
+  touch-action: none;
+  flex-shrink: 0;
+}
+
+.trayBtn:hover {
+  background: var(--color-pink-100);
+  border-color: var(--color-pink-400);
+  transform: translateY(-2px) scale(1.12);
+  box-shadow: 2px 3px 0 var(--color-pink-300);
+}
+
+.trayBtn:active {
+  cursor: grabbing;
+  transform: translateY(1px);
+  box-shadow: 1px 1px 0 var(--color-pink-300);
+}
+
+/* Custom Added Icon in Tray with mini remove button */
+.customTrayItem {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.removeTrayIconBtn {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #D32F2F;
+  color: var(--color-white);
+  border: 1px solid #B71C1C;
+  font-size: 8px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transform: scale(0.6);
+  transition: all 0.15s ease;
+  z-index: 5;
+  box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.2);
+}
+
+.customTrayItem:hover .removeTrayIconBtn {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Add Tray Icon Button (➕) */
+.addTrayIconBtn {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  background: #FFF0F5;
+  border: 2px dashed #FF8FAB;
+  border-radius: var(--radius-md);
+  color: var(--color-pink-500);
+  cursor: pointer;
+  box-shadow: 1px 1px 0 var(--color-pink-200);
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.addTrayIconBtn:hover {
+  background: var(--color-pink-200);
+  border-style: solid;
+  border-color: var(--color-pink-400);
+  color: var(--color-white);
+  transform: translateY(-2px) scale(1.1);
+  box-shadow: 2px 3px 0 var(--color-pink-300);
+}
+
+.addTrayIconBtn:active {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 var(--color-pink-300);
+}
+
+/* ── 7. Trash Zone (Xóa Icon Kéo Thả) ── */
+.trashZone {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 9px;
+  background: var(--color-white);
+  border: 2px dashed #FFAEB8;
+  border-radius: var(--radius-md);
+  color: #D32F2F;
+  font-family: var(--font-pixel);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: copy;
+  user-select: none;
+  box-shadow: 2px 2px 0 #FFAEB8;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.trashZone:hover {
+  background: #FFF0F2;
+  border-color: #D32F2F;
+  transform: translateY(-1px);
+  box-shadow: 2px 3px 0 #D32F2F;
+}
+
+.trashZone.trashOver {
+  background: #FFEAEA !important;
+  border-color: #D32F2F !important;
+  border-style: solid !important;
+  color: #B71C1C !important;
+  transform: scale(1.12) translateY(-2px);
+  box-shadow: 0 4px 14px rgba(211, 47, 47, 0.35), 3px 3px 0 #B71C1C !important;
+  animation: trashWiggle 0.25s ease infinite alternate;
+}
+
+@keyframes trashWiggle {
+  0% { transform: scale(1.12) rotate(-4deg) translateY(-2px); }
+  100% { transform: scale(1.12) rotate(4deg) translateY(-2px); }
+}
+
+.trashIcon {
+  font-size: 15px;
+  line-height: 1;
+}
+
+.trashText {
+  font-size: 10px;
+  font-weight: 700;
+}
+
+/* ── 8. Mobile Touch Ghost Follower ── */
+.touchGhost {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%) scale(1.4);
+  font-size: 26px;
+  line-height: 1;
+  filter: drop-shadow(0 6px 14px rgba(232, 96, 122, 0.65));
+  animation: ghostFloat 0.2s ease-out;
+}
+
+@keyframes ghostFloat {
+  from { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+  to { transform: translate(-50%, -50%) scale(1.4); opacity: 1; }
+}
+
+/* ── 9. Prediction Summary Card ── */
+.prediction {
+  padding: 10px 14px;
+  background: var(--color-cream);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.predictionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.predictionLabel {
+  font-family: var(--font-pixel);
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-ink);
+}
+
+.predictionValue {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  color: var(--color-ink-soft);
+}
+
+.predictionValue strong {
+  color: var(--color-pink-500);
+  font-weight: 700;
+}
+
+.predictionOvulation {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  color: var(--color-ink);
+  margin-top: 2px;
+}
+
+.predictionOvulation strong {
+  color: var(--color-pink-500);
+}
+
+.confidence {
+  font-family: var(--font-pixel);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-pink-400);
+  background: var(--color-pink-50);
+  border: 1px solid var(--color-pink-200);
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+/* ── 10. Today Quick Button ── */
+.footer {
+  padding: 10px 14px;
+  display: flex;
+  justify-content: center;
+  background: var(--color-white);
+}
+
+.todayBtn {
+  font-family: var(--font-pixel);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 6px 16px;
+  background: var(--color-white);
+  border: 2px solid var(--color-pink-300);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  color: var(--color-pink-500);
+  box-shadow: 2px 2px 0 var(--color-pink-300);
+  transition: all var(--transition-fast);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.todayBtn:hover {
+  background: var(--color-pink-100);
+  border-color: var(--color-pink-400);
+  color: var(--color-pink-500);
+  transform: translateY(-1px);
+  box-shadow: 3px 3px 0 var(--color-pink-400);
+}
+
+.todayBtn:active {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 var(--color-pink-400);
+}
+
+/* ================================================================
+   📱 100% RESPONSIVE MEDIA QUERIES (Mobile & Tablet)
+   ================================================================ */
+
+@media (max-width: 768px) {
+  .calendar {
+    min-width: 0 !important;
+    width: 100% !important;
+    border-right: none;
+  }
+
+  .header {
+    padding: 8px 10px;
+    min-height: 48px;
+    gap: 6px;
+  }
+
+  .digitalClock {
+    padding: 3px 6px;
+    gap: 3px;
+  }
+
+  .clockIcon {
+    font-size: 11px;
+  }
+
+  .clockTime {
+    font-size: 11px;
+  }
+
+  .title {
+    font-size: 15px;
+  }
+
+  .navBtn {
+    width: 24px;
+    height: 24px;
+    font-size: 10px;
+  }
+
+  .grid {
+    gap: 3px;
+    padding: 6px 8px;
+  }
+
+  .weekdayCell {
+    height: 20px;
+  }
+
+  .weekdayText {
+    font-size: 10px;
+  }
+
+  .day {
+    min-height: 38px;
+  }
+
+  .dayInner {
+    padding: 2px 1px;
+    border-radius: 6px;
+    border-width: 1.5px;
+  }
+
+  .dayNumber {
+    font-size: 10px;
+  }
+
+  .stackedIcon {
+    font-size: 10px;
+    margin-left: -4px;
+  }
+
+  .predictedStrawberry {
+    font-size: 10px;
+  }
+
+  .ovulationIcon {
+    font-size: 10px;
+  }
+
+  .extraBadge {
+    font-size: 8px;
+    height: 11px;
+    padding: 0 3px;
+  }
+
+  .trayAndTrashRow {
+    padding: 6px 8px;
+    gap: 6px;
+    flex-wrap: nowrap;
+  }
+
+  .trayLabel {
+    font-size: 9px;
+  }
+
+  .trayBtn {
+    width: 26px;
+    height: 26px;
+    font-size: 13px;
+  }
+
+  .addTrayIconBtn {
+    width: 26px;
+    height: 26px;
+    font-size: 11px;
+  }
+
+  .trashZone {
+    padding: 4px 7px;
+    font-size: 9px;
+  }
+
+  .trashIcon {
+    font-size: 13px;
+  }
+
+  .prediction {
+    padding: 8px 10px;
+  }
+
+  .predictionLabel {
+    font-size: 11px;
+  }
+
+  .predictionValue {
+    font-size: 11px;
+  }
+
+  .todayBtn {
+    padding: 5px 12px;
+    font-size: 11px;
+  }
+}

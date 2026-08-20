@@ -1,0 +1,120 @@
+/* ============================================
+   MINE DIARY — Typography
+   typography.css
+   ============================================ */
+
+/* ── Google Fonts ── */
+@import url('https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@400;600;700&family=Dancing+Script:wght@400;500;600;700&family=Caveat:wght@400;500;700&display=swap');
+
+/* ── 1FTV VIP Festigan (local font — đặt file vào assets/fonts/) ── */
+/* Thay đường dẫn src nếu bạn có file font thật */
+@font-face {
+  font-family: 'Festigan';
+  src: url('../assets/fonts/1FTV-VIP-Festigan.woff2') format('woff2'),
+       url('../assets/fonts/1FTV-VIP-Festigan.woff')  format('woff'),
+       url('../assets/fonts/1FTV-VIP-Festigan.ttf')   format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Fallback stack khi chưa có file font Festigan */
+:root {
+  --font-pixel:    'Festigan', 'Bangers', 'Impact', cursive;
+  --font-diary:    'Festigan', 'Dancing Script', 'Caveat', cursive;
+  --font-ui:       'Nunito', system-ui, -apple-system, sans-serif;
+
+  --font-size-xs:  10px;
+  --font-size-sm:  12px;
+  --font-size-base:14px;
+  --font-size-md:  16px;
+  --font-size-lg:  20px;
+  --font-size-xl:  24px;
+  --font-size-2xl: 32px;
+
+  /* Pixel font scale — Bangers (display font, cần size to hơn) */
+  --font-size-pixel-xs:  14px;
+  --font-size-pixel-sm:  16px;
+  --font-size-pixel-base:20px;
+  --font-size-pixel-lg:  26px;
+
+  /* Diary font scale */
+  --font-size-diary-sm:  18px;
+  --font-size-diary-base:22px;
+  --font-size-diary-lg:  26px;
+
+  --line-height-tight:   1.2;
+  --line-height-base:    1.6;
+  --line-height-relaxed: 1.8;
+  --line-height-diary:   2.0;  /* Extra room for handwriting feel */
+
+  --letter-spacing-pixel: 0.06em;  /* Bangers trông tốt với tracking rộng hơn */
+  --letter-spacing-tight: -0.01em;
+}
+
+/* ── Base Reset ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  font-family: var(--font-ui);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+  color: var(--color-ink);
+  background-color: var(--color-cream);
+}
+
+/* ── Typography Classes ── */
+
+/* Pixel headings — dùng cho header, labels UI */
+.text-pixel {
+  font-family: var(--font-pixel);
+  letter-spacing: var(--letter-spacing-pixel);
+  line-height: var(--line-height-tight);
+  text-transform: uppercase;  /* Bangers đẹp nhất ở uppercase */
+}
+
+.text-pixel-xs   { font-size: var(--font-size-pixel-xs);   }
+.text-pixel-sm   { font-size: var(--font-size-pixel-sm);   }
+.text-pixel-base { font-size: var(--font-size-pixel-base); }
+.text-pixel-lg   { font-size: var(--font-size-pixel-lg);   }
+
+/* Diary text — chữ viết tay trong nhật ký */
+.text-diary {
+  font-family: var(--font-diary);
+  line-height: var(--line-height-diary);
+  color: var(--color-ink);
+}
+
+.text-diary-sm   { font-size: var(--font-size-diary-sm);   }
+.text-diary-base { font-size: var(--font-size-diary-base); }
+.text-diary-lg   { font-size: var(--font-size-diary-lg);   }
+
+/* UI text */
+.text-ui   { font-family: var(--font-ui); }
+.text-sm   { font-size: var(--font-size-sm);   }
+.text-base { font-size: var(--font-size-base); }
+.text-lg   { font-size: var(--font-size-lg);   }
+
+/* Color utilities */
+.text-ink       { color: var(--color-ink);       }
+.text-ink-soft  { color: var(--color-ink-soft);  }
+.text-ink-faint { color: var(--color-ink-faint); }
+.text-pink      { color: var(--color-pink-400);  }
+.text-mint      { color: var(--color-mint-400);  }
+
+/* Selection highlight */
+::selection {
+  background: var(--color-pink-200);
+  color: var(--color-ink);
+}

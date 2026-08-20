@@ -1,0 +1,85 @@
+.cardsGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.symptomBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.blockLabel {
+  font-family: var(--font-pixel);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-ink-soft);
+}
+
+/* Form elements */
+.selectInput {
+  font-family: var(--font-ui);
+  font-size: 14px;
+  padding: 10px 12px;
+  border: 2px solid var(--color-border-mid);
+  border-radius: 8px;
+  background-color: var(--color-white);
+  color: var(--color-ink);
+  outline: none;
+  cursor: pointer;
+  transition: all 150ms;
+}
+.selectInput:focus { border-color: var(--color-pink-400); }
+
+.checkboxGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-family: var(--font-ui);
+  color: var(--color-ink);
+  cursor: pointer;
+}
+
+.twoColumns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.inputWrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--color-cream);
+  border: 2px solid var(--color-border-mid);
+  border-radius: 8px;
+  padding: 0 12px;
+  width: fit-content;
+  transition: border-color 150ms;
+}
+.inputWrap:focus-within { border-color: var(--color-pink-400); }
+
+.numberInput {
+  width: 60px;
+  height: 40px;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: var(--font-ui);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-ink);
+  text-align: center;
+}
+.numberInput::placeholder { color: var(--color-ink-faint); font-weight: 400; }
+
+.inputDeco { font-size: 18px; }
