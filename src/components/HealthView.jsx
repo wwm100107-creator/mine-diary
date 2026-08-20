@@ -347,7 +347,7 @@ export default function HealthView({ user }) {
               <h2 className={s.cardTitle}>
                 <span>📝</span> Triệu Chứng: {selectedDate.split('-').reverse().join('/')}
               </h2>
-              <SymptomCards userId={user.id} dateStr={selectedDate} />
+              <SymptomCards userId={user.id} dateStr={selectedDate} mode={predictionMode} />
             </div>
           </div>
 
