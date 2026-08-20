@@ -490,6 +490,47 @@
   flex-shrink: 0;
 }
 
+.relLinkCenterBtn {
+  background: #FFF0F5;
+  border: 1.5px solid #FF8FAB;
+  border-radius: 999px;
+  width: 26px;
+  height: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  cursor: pointer;
+  box-shadow: 1px 1px 0 #FFB7C5;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  outline: none;
+}
+
+.relLinkCenterBtn:hover {
+  transform: scale(1.15) rotate(5deg);
+  background: #FFE0EB;
+  border-color: #FF5E7E;
+  box-shadow: 2px 2px 0 #FF8FAB;
+}
+
+.relLinkCenterBtn:active {
+  transform: scale(0.95);
+}
+
+.relPillIcon {
+  font-size: 13px;
+  line-height: 1;
+  animation: pulseHeart 1.5s infinite ease-in-out;
+}
+
+.customIconImg {
+  width: 20px;
+  height: 20px;
+  object-fit: cover;
+  border-radius: 4px;
+  image-rendering: pixelated;
+}
+
 .heartPill {
   color: #FF4D6D;
   font-size: 13px;

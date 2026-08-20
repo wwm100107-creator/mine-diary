@@ -47,7 +47,33 @@ export default function ChatView({ user }) {
   const [relType, setRelType] = useState('couple')
   const [customRelName, setCustomRelName] = useState('')
   const [customRelIcon, setCustomRelIcon] = useState('')
+  const [customRelImg, setCustomRelImg] = useState('')
   const [isShareConfirmModalOpen, setIsShareConfirmModalOpen] = useState(false)
+
+  // 1x1 Image upload handler for relationship icon
+  const handleRelImageUpload = (e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (file.size > 2 * 1024 * 1024) {
+      alert('Kích thước ảnh tối đa là 2MB!')
+      return
+    }
+    const reader = new FileReader()
+    reader.onload = (event) => {
+      const img = new Image()
+      img.onload = () => {
+        const canvas = document.createElement('canvas')
+        canvas.width = 64
+        canvas.height = 64
+        const ctx = canvas.getContext('2d')
+        ctx.imageSmoothingEnabled = false
+        ctx.drawImage(img, 0, 0, 64, 64)
+        setCustomRelImg(canvas.toDataURL('image/png'))
+      }
+      img.src = event.target.result
+    }
+    reader.readAsDataURL(file)
+  }
 
   // Multi-result search state
   const [searchResults, setSearchResults] = useState([])
@@ -260,6 +286,7 @@ export default function ChatView({ user }) {
         type: relType,
         customName: customRelName,
         customIcon: customRelIcon,
+        customIconImage: customRelImg || null,
       })
       await sendChatMessage(user.id, activePartner.id, `💌 Đã gửi lời mời Set Mối Quan Hệ "${relData.customIcon} ${relData.customName}".`, {
         isSystemMessage: true,
@@ -268,6 +295,7 @@ export default function ChatView({ user }) {
       setIsSetRelModalOpen(false)
       setCustomRelName('')
       setCustomRelIcon('')
+      setCustomRelImg('')
     } catch (err) {
       console.error('Send rel request error:', err)
     }
@@ -596,7 +624,35 @@ export default function ChatView({ user }) {
                       size={32}
                       border={false}
                     />
-                    <span className={s.heartPill}>♥</span>
+                    <button
+                      type="button"
+                      className={s.relLinkCenterBtn}
+                      onClick={() => {
+                        if (relationship?.status === 'accepted') {
+                          setRelType(relationship.type || 'couple')
+                          setCustomRelName(relationship.customName || '')
+                          setCustomRelIcon(relationship.customIcon || '')
+                          setCustomRelImg(relationship.customIconImage || '')
+                        } else {
+                          setRelType('couple')
+                          setCustomRelName('')
+                          setCustomRelIcon('')
+                          setCustomRelImg('')
+                        }
+                        setIsSetRelModalOpen(true)
+                      }}
+                      title={relationship?.status === 'accepted' ? `Mối quan hệ: ${relationship.customName} (Bấm để xem/đổi)` : 'Bấm vào đây để Set Mối Quan Hệ (🔗)'}
+                    >
+                      {relationship?.status === 'accepted' ? (
+                        relationship.customIconImage ? (
+                          <img src={relationship.customIconImage} alt="Icon" className={s.customIconImg} />
+                        ) : (
+                          <span className={s.relPillIcon}>{relationship.customIcon || '💖'}</span>
+                        )
+                      ) : (
+                        <span className={s.relPillIcon}>🔗</span>
+                      )}
+                    </button>
                     <AvatarWithFrame
                       avatarUrl={activePartner.avatar || 'bunny'}
                       frameId={activePartner.avatarFrame || activePartner.frame || 'none'}
@@ -851,12 +907,13 @@ export default function ChatView({ user }) {
               })}
             </div>
 
-            {/* Custom Name / Icon if custom or override */}
-            <div style={{ display: 'flex', gap: 8, flexDirection: 'column', marginTop: 4 }}>
+            {/* Custom Name / Icon & 1x1 Image Upload */}
+            <div style={{ display: 'flex', gap: 10, flexDirection: 'column', marginTop: 6 }}>
               <label style={{ fontSize: 11, fontWeight: 'bold', color: 'var(--color-ink)' }}>
-                Tên danh hiệu tùy chỉnh (Không bắt buộc):
+                Tên danh hiệu & Biểu tượng tùy chỉnh (Không bắt buộc):
               </label>
-              <div style={{ display: 'flex', gap: 8 }}>
+              
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                 <input
                   type="text"
                   placeholder="Icon (vd: 🌸)"
@@ -871,6 +928,58 @@ export default function ChatView({ user }) {
                   onChange={(e) => setCustomRelName(e.target.value)}
                   style={{ flex: 1, padding: '6px 10px', borderRadius: 6, border: '1.5px solid var(--color-border-mid)', fontSize: 12 }}
                 />
+              </div>
+
+              {/* 1x1 Image Upload Option */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, background: '#FFF5F8', padding: '8px 12px', borderRadius: 8, border: '1.5px dashed #FFB7C5' }}>
+                {customRelImg ? (
+                  <div style={{ position: 'relative', width: 34, height: 34, flexShrink: 0 }}>
+                    <img
+                      src={customRelImg}
+                      alt="Icon Preview"
+                      style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 6, border: '1.5px solid #FF5E7E' }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setCustomRelImg('')}
+                      style={{ position: 'absolute', top: -6, right: -6, background: '#D32F2F', color: '#FFF', border: 'none', borderRadius: '50%', width: 16, height: 16, fontSize: 9, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                      title="Xóa ảnh"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ) : (
+                  <div style={{ width: 34, height: 34, borderRadius: 6, border: '1.5px dashed #FF8FAB', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, color: '#FF8FAB', flexShrink: 0 }}>
+                    🖼️
+                  </div>
+                )}
+                <div style={{ flex: 1 }}>
+                  <label
+                    style={{
+                      display: 'inline-block',
+                      padding: '4px 10px',
+                      background: '#FFF',
+                      border: '1.5px solid #FF8FAB',
+                      borderRadius: 6,
+                      fontSize: 11,
+                      fontFamily: 'var(--font-pixel)',
+                      color: '#D81B60',
+                      cursor: 'pointer',
+                      boxShadow: '1px 1px 0 #FFB7C5',
+                    }}
+                  >
+                    <span>📷</span> Up ảnh 1x1 làm Icon
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleRelImageUpload}
+                      style={{ display: 'none' }}
+                    />
+                  </label>
+                  <div style={{ fontSize: 10, color: 'var(--color-ink-light)', marginTop: 2 }}>
+                    Tự động scale ảnh vuông 1x1 thành pixel icon
+                  </div>
+                </div>
               </div>
             </div>
 

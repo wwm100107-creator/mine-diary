@@ -61,7 +61,7 @@ function buildGrid(year, month) {
   return days
 }
 
-export default function Calendar({ userId, onDateSelect, className }) {
+export default function Calendar({ userId, onDateSelect, className, readOnly = false }) {
   const now = new Date()
   const [view, setView] = useState({ year: now.getFullYear(), month: now.getMonth() })
   const [tick, setTick] = useState(0)
@@ -699,103 +699,105 @@ export default function Calendar({ userId, onDateSelect, className }) {
         })}
       </div>
 
-      {/* ── 3. Cute Pixel Icon Tray & Trash Zone Row ── */}
-      <div className={s.trayAndTrashRow}>
-        {/* Khay Icon (Hỗ trợ cuộn ngang mượt mà khi thêm nhiều icon) */}
-        <div className={s.iconTray} role="toolbar" aria-label="Khay biểu tượng">
-          <span className={s.trayLabel}>Khay Icon:</span>
-          
-          <div className={s.trayItems}>
-            {/* Default Icons */}
-            {[
-              { icon: '🍓', title: 'Kinh nguyệt (Bắt đầu)' },
-              { icon: '❌', title: 'Kết thúc kinh' },
-              { icon: '🎂', title: 'Sinh nhật / Kỷ niệm' },
-            ].map(({ icon, title }) => (
-              <button
-                key={icon}
-                type="button"
-                className={s.trayBtn}
-                draggable={true}
-                onDragStart={(e) => handleTrayDragStart(e, icon)}
-                onDragEnd={handleDragEnd}
-                onTouchStart={(e) => handleTouchStart(e, { type: 'TRAY', icon })}
-                title={`Kéo thả ${title} vào ô ngày`}
-              >
-                {icon}
-              </button>
-            ))}
-
-            {/* Custom Added Icons */}
-            {customIcons.map((icon, idx) => (
-              <div key={`custom-${icon}-${idx}`} className={s.customTrayItem}>
+      {/* ── 3. Cute Pixel Icon Tray & Trash Zone Row (Hidden in readOnly mode) ── */}
+      {!readOnly && (
+        <div className={s.trayAndTrashRow}>
+          {/* Khay Icon (Hỗ trợ cuộn ngang mượt mà khi thêm nhiều icon) */}
+          <div className={s.iconTray} role="toolbar" aria-label="Khay biểu tượng">
+            <span className={s.trayLabel}>Khay Icon:</span>
+            
+            <div className={s.trayItems}>
+              {/* Default Icons */}
+              {[
+                { icon: '🍓', title: 'Kinh nguyệt (Bắt đầu)' },
+                { icon: '❌', title: 'Kết thúc kinh' },
+                { icon: '🎂', title: 'Sinh nhật / Kỷ niệm' },
+              ].map(({ icon, title }) => (
                 <button
+                  key={icon}
                   type="button"
                   className={s.trayBtn}
                   draggable={true}
-                  onDragStart={(e) => handleTrayDragStart(e, icon, true)}
+                  onDragStart={(e) => handleTrayDragStart(e, icon)}
                   onDragEnd={handleDragEnd}
-                  onTouchStart={(e) => handleTouchStart(e, { type: 'TRAY_CUSTOM', icon, isCustom: true })}
-                  title={`Kéo thả icon ${icon} vào ô ngày (hoặc kéo vào Thùng rác để xóa)`}
+                  onTouchStart={(e) => handleTouchStart(e, { type: 'TRAY', icon })}
+                  title={`Kéo thả ${title} vào ô ngày`}
                 >
                   {icon}
                 </button>
-                <button
-                  type="button"
-                  className={s.removeTrayIconBtn}
-                  onClick={(e) => handleRemoveCustomIcon(e, icon)}
-                  title="Xóa icon khỏi khay"
-                  aria-label={`Xóa icon ${icon}`}
-                >
-                  ✕
-                </button>
-              </div>
-            ))}
+              ))}
 
-            {/* Add Custom Icon Button (➕) */}
-            <button
-              type="button"
-              className={s.addTrayIconBtn}
-              onClick={(e) => {
-                e.preventDefault()
-                e.stopPropagation()
-                setShowIconPicker(true)
-              }}
-              title="Thêm icon tùy chỉnh vào khay"
-              aria-label="Thêm icon tùy chỉnh"
-            >
-              ➕
-            </button>
+              {/* Custom Added Icons */}
+              {customIcons.map((icon, idx) => (
+                <div key={`custom-${icon}-${idx}`} className={s.customTrayItem}>
+                  <button
+                    type="button"
+                    className={s.trayBtn}
+                    draggable={true}
+                    onDragStart={(e) => handleTrayDragStart(e, icon, true)}
+                    onDragEnd={handleDragEnd}
+                    onTouchStart={(e) => handleTouchStart(e, { type: 'TRAY_CUSTOM', icon, isCustom: true })}
+                    title={`Kéo thả icon ${icon} vào ô ngày (hoặc kéo vào Thùng rác để xóa)`}
+                  >
+                    {icon}
+                  </button>
+                  <button
+                    type="button"
+                    className={s.removeTrayIconBtn}
+                    onClick={(e) => handleRemoveCustomIcon(e, icon)}
+                    title="Xóa icon khỏi khay"
+                    aria-label={`Xóa icon ${icon}`}
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+
+              {/* Add Custom Icon Button (➕) */}
+              <button
+                type="button"
+                className={s.addTrayIconBtn}
+                onClick={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  setShowIconPicker(true)
+                }}
+                title="Thêm icon tùy chỉnh vào khay"
+                aria-label="Thêm icon tùy chỉnh"
+              >
+                ➕
+              </button>
+            </div>
+          </div>
+
+          {/* Khu vực Thùng rác xóa icon */}
+          <div
+            className={`${s.trashZone} ${isTrashOver ? s.trashOver : ''}`}
+            data-trash-zone="true"
+            onDragOver={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              e.dataTransfer.dropEffect = 'move'
+              setIsTrashOver(true)
+            }}
+            onDragEnter={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              setIsTrashOver(true)
+            }}
+            onDragLeave={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              setIsTrashOver(false)
+            }}
+            onDrop={handleTrashDrop}
+            title="Kéo thả icon từ ô ngày hoặc khay vào đây để xóa"
+          >
+            <span className={s.trashIcon}>🗑️</span>
+            <span className={s.trashText}>Thùng rác</span>
           </div>
         </div>
-
-        {/* Khu vực Thùng rác xóa icon */}
-        <div
-          className={`${s.trashZone} ${isTrashOver ? s.trashOver : ''}`}
-          data-trash-zone="true"
-          onDragOver={(e) => {
-            e.preventDefault()
-            e.stopPropagation()
-            e.dataTransfer.dropEffect = 'move'
-            setIsTrashOver(true)
-          }}
-          onDragEnter={(e) => {
-            e.preventDefault()
-            e.stopPropagation()
-            setIsTrashOver(true)
-          }}
-          onDragLeave={(e) => {
-            e.preventDefault()
-            e.stopPropagation()
-            setIsTrashOver(false)
-          }}
-          onDrop={handleTrashDrop}
-          title="Kéo thả icon từ ô ngày hoặc khay vào đây để xóa"
-        >
-          <span className={s.trashIcon}>🗑️</span>
-          <span className={s.trashText}>Thùng rác</span>
-        </div>
-      </div>
+      )}
 
       {/* ── 4. Custom Icon Picker Modal ── */}
       {showIconPicker && (

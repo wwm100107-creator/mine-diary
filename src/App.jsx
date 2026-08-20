@@ -1,9 +1,10 @@
-import { useState, useEffect, useRef, useLayoutEffect } from 'react'
+import { useState, useEffect, useRef, useLayoutEffect, useMemo } from 'react'
 import { useGoogleLogin } from '@react-oauth/google'
 import { doc, onSnapshot, updateDoc } from 'firebase/firestore'
 import { db } from './lib/firebase'
 import DiaryView from './components/DiaryView'
 import HealthView from './components/HealthView'
+import PartnerCycleView from './components/PartnerCycleView'
 import AdminDashboard from './components/AdminDashboard'
 import ChatView from './components/ChatView'
 import EasterEgg from './components/EasterEgg'
@@ -12,7 +13,7 @@ import BannedScreen from './components/BannedScreen'
 import PixelAvatar from './components/PixelAvatar'
 import AvatarWithFrame from './components/AvatarWithFrame'
 import AvatarUploadModal from './components/AvatarUploadModal'
-import { upsertUser, getUser, uploadUserAvatar } from './lib/social'
+import { upsertUser, getUser, uploadUserAvatar, subscribeToUserRelationships } from './lib/social'
 import { isUserAdmin } from './lib/admin'
 import { getCurrentUser, saveSession, logoutUser, verifyBanStatus } from './lib/auth'
 import { loadMarkedDates, predictNextPeriod, toDateStr } from './utils/cycle'
@@ -35,11 +36,90 @@ export default function App() {
       }
       if (window.location.hash === '#chat') return 'chat'
       if (window.location.hash === '#health') return 'health'
+      if (window.location.hash === '#partner-cycle') return 'partner_cycle'
     }
     return 'diary'
   })
 
   const isAdmin = isUserAdmin(user)
+
+  // ── Relationships & Partner Info for Dynamic Tab Navigation ───────────────
+  const [userRelationships, setUserRelationships] = useState([])
+  const [partnerUser, setPartnerUser] = useState(null)
+
+  useEffect(() => {
+    if (!user?.id) {
+      setUserRelationships([])
+      setPartnerUser(null)
+      return
+    }
+    const unsubscribe = subscribeToUserRelationships(user.id, (rels) => {
+      setUserRelationships(rels)
+    })
+    return () => unsubscribe()
+  }, [user?.id])
+
+  const coupleRel = useMemo(() => {
+    return userRelationships.find(
+      (r) => r.status === 'accepted' && (r.type === 'couple' || r.shareCycleData)
+    )
+  }, [userRelationships])
+
+  const partnerId = useMemo(() => {
+    if (!coupleRel) return null
+    return coupleRel.participants.find((p) => p !== user?.id)
+  }, [coupleRel, user?.id])
+
+  useEffect(() => {
+    if (!partnerId) {
+      setPartnerUser(null)
+      return
+    }
+    getUser(partnerId).then(setPartnerUser).catch(console.error)
+  }, [partnerId])
+
+  // ── Compute Allowed Navigation Tabs based on Gender & Relationship ────────
+  // Rules:
+  // 1. Nam (Độc thân): ['diary', 'chat']
+  // 2. Nữ (Độc thân/Quan hệ khác): ['diary', 'health', 'chat']
+  // 3. Nam (Couple với Nữ): ['diary', 'partner_cycle', 'chat']
+  // 4. Nữ (Couple với Nữ): ['diary', 'health', 'partner_cycle', 'chat']
+  const isMale = user?.gender === 'male'
+  const isFemale = user?.gender === 'female' || !user?.gender
+  const hasFemalePartner = partnerUser?.gender === 'female' || (!partnerUser?.gender && coupleRel)
+
+  const navTabs = useMemo(() => {
+    const tabs = [
+      { id: 'diary', label: 'Nhật ký chung', icon: '📖' },
+    ]
+
+    // Own Health tab (Only for Female)
+    if (isFemale) {
+      tabs.push({ id: 'health', label: 'Sức khỏe', icon: '🌸' })
+    }
+
+    // Partner Cycle tab (When in couple relationship with female partner or partner shared cycle)
+    if (coupleRel && hasFemalePartner) {
+      tabs.push({ id: 'partner_cycle', label: 'Theo dõi chu kỳ', icon: '💖' })
+    }
+
+    // Chat tab (Always present)
+    tabs.push({ id: 'chat', label: 'Tin nhắn', icon: '💬' })
+
+    // Admin tab
+    if (isAdmin) {
+      tabs.push({ id: 'admin', label: 'Quản trị', icon: '🛡️' })
+    }
+
+    return tabs
+  }, [isMale, isFemale, coupleRel, hasFemalePartner, isAdmin])
+
+  // If current active tab is not in allowed tabs, automatically switch to 'diary'
+  useEffect(() => {
+    if (!navTabs.some((t) => t.id === currentTab)) {
+      setCurrentTab('diary')
+    }
+  }, [navTabs, currentTab])
 
   // ── iOS Glass Sliding Tab Indicator State ───────────────────────────────
   const navRef = useRef(null)
@@ -64,7 +144,7 @@ export default function App() {
     updateIndicator()
     window.addEventListener('resize', updateIndicator)
     return () => window.removeEventListener('resize', updateIndicator)
-  }, [currentTab, isAdmin])
+  }, [currentTab, navTabs])
 
   // ── URL & History Listener ───────────────────────────────────────────────
   useEffect(() => {
@@ -75,6 +155,8 @@ export default function App() {
         setCurrentTab('chat')
       } else if (window.location.hash === '#health') {
         setCurrentTab('health')
+      } else if (window.location.hash === '#partner-cycle') {
+        setCurrentTab('partner_cycle')
       } else {
         setCurrentTab('diary')
       }
@@ -91,6 +173,8 @@ export default function App() {
       window.history.pushState({}, '', '#chat')
     } else if (tab === 'health') {
       window.history.pushState({}, '', '#health')
+    } else if (tab === 'partner_cycle') {
+      window.history.pushState({}, '', '#partner-cycle')
     } else {
       window.history.pushState({}, '', '/')
     }
@@ -385,42 +469,17 @@ export default function App() {
               aria-hidden="true"
             />
 
-            <button
-              ref={(el) => { tabRefs.current['diary'] = el }}
-              className={`${s.navBtn} ${currentTab === 'diary' ? s.active : ''}`}
-              onClick={() => switchTab('diary')}
-              aria-current={currentTab === 'diary' ? 'page' : undefined}
-            >
-              <span className={s.navIcon}>📖</span> Nhật ký chung
-            </button>
-            <button
-              ref={(el) => { tabRefs.current['health'] = el }}
-              className={`${s.navBtn} ${currentTab === 'health' ? s.active : ''}`}
-              onClick={() => switchTab('health')}
-              aria-current={currentTab === 'health' ? 'page' : undefined}
-            >
-              <span className={s.navIcon}>🌸</span> Sức khỏe
-            </button>
-            <button
-              ref={(el) => { tabRefs.current['chat'] = el }}
-              className={`${s.navBtn} ${currentTab === 'chat' ? s.active : ''}`}
-              onClick={() => switchTab('chat')}
-              aria-current={currentTab === 'chat' ? 'page' : undefined}
-            >
-              <span className={s.navIcon}>💬</span> Tin nhắn
-            </button>
-
-            {/* Admin Navigation Button (Visible only to Admin accounts) */}
-            {isAdmin && (
+            {navTabs.map((t) => (
               <button
-                ref={(el) => { tabRefs.current['admin'] = el }}
-                className={`${s.navBtn} ${currentTab === 'admin' ? s.active : ''}`}
-                onClick={() => switchTab('admin')}
-                aria-current={currentTab === 'admin' ? 'page' : undefined}
+                key={t.id}
+                ref={(el) => { tabRefs.current[t.id] = el }}
+                className={`${s.navBtn} ${currentTab === t.id ? s.active : ''}`}
+                onClick={() => switchTab(t.id)}
+                aria-current={currentTab === t.id ? 'page' : undefined}
               >
-                <span className={s.navIcon}>🛡️</span> Quản trị
+                <span className={s.navIcon}>{t.icon}</span> {t.label}
               </button>
-            )}
+            ))}
           </div>
         </div>
       </header>
@@ -429,6 +488,7 @@ export default function App() {
       <main key={currentTab} className={s.main}>
         {currentTab === 'diary' && <DiaryView user={user} />}
         {currentTab === 'health' && <HealthView user={user} />}
+        {currentTab === 'partner_cycle' && <PartnerCycleView user={user} />}
         {currentTab === 'chat' && <ChatView user={user} />}
         {currentTab === 'admin' && isAdmin && <AdminDashboard />}
       </main>

@@ -364,7 +364,7 @@ export const getRelationshipId = (a, b) => [a, b].sort().join('__')
 /**
  * Send or update a relationship request
  */
-export async function sendRelationshipRequest({ senderId, receiverId, type = 'couple', customName = '', customIcon = '' }) {
+export async function sendRelationshipRequest({ senderId, receiverId, type = 'couple', customName = '', customIcon = '', customIconImage = null }) {
   const relId = getRelationshipId(senderId, receiverId)
   const relRef = doc(db, 'relationships', relId)
   
@@ -380,6 +380,7 @@ export async function sendRelationshipRequest({ senderId, receiverId, type = 'co
     type,
     customName: finalName,
     customIcon: finalIcon,
+    customIconImage: customIconImage || null,
     status: 'pending',
     shareCycleData: false,
     cancelRequesterId: null,
