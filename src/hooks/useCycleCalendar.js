@@ -75,6 +75,63 @@ export function useCycleCalendar({
     return toDateStr(new Date(prediction.ovulationDate))
   }, [prediction?.ovulationDate])
 
+  // 4. ── Advanced AI: 3-level day coloring map ─────────────────────────────
+  // Returns: Map<dateStr, 'peak' | 'high' | 'low'>
+  // Standard mode: empty map (uses plain fertileSet coloring instead)
+  const dayLevelMap = useMemo(() => {
+    if (mode !== 'advanced' || !prediction?.ovulationDate) return new Map()
+
+    const map = new Map()
+    const ovStr = toDateStr(new Date(prediction.ovulationDate))
+
+    // Walk every day in the fertile window and assign levels
+    for (const dateStr of fertileSet) {
+      const d = new Date(dateStr)
+      const ov = new Date(prediction.ovulationDate)
+      ov.setHours(0, 0, 0, 0)
+      d.setHours(0, 0, 0, 0)
+      const diff = Math.round((d - ov) / 86_400_000) // days relative to ovulation
+
+      // Default probabilistic level (Standard Days logic inside Advanced)
+      let level = 'low'
+      if (diff === 0 || diff === -1) level = 'peak'       // O, O-1 → peak
+      else if (diff >= -3 && diff <= 1) level = 'high'    // O-3..O+1 → high
+      else level = 'low'                                   // outer days → low
+
+      map.set(dateStr, level)
+    }
+
+    // LH Peak override: LH peak day + next day → force 'peak'
+    if (prediction.lhPeakDetected) {
+      // Find the LH peak day from logs (scan resolvedLogs)
+      for (const [dateStr, entry] of Object.entries(resolvedLogs)) {
+        if (entry?.lhTest === 'peak' || entry?.lhTest === 'positive') {
+          map.set(dateStr, 'peak')
+          // next day
+          const next = new Date(dateStr)
+          next.setDate(next.getDate() + 1)
+          map.set(toDateStr(next), 'peak')
+        }
+      }
+    }
+
+    // BBT shift override: days AFTER confirmed shift → downgrade to 'low' (window closed)
+    if (prediction.bbtShiftDetected) {
+      // Find first BBT shift date from logs using same 3-over-6 logic result
+      // Cheapest: use fertileEnd as the cutoff (already computed in Engine 2)
+      if (prediction.fertileEnd) {
+        const cutoff = toDateStr(new Date(prediction.fertileEnd))
+        for (const [dateStr] of map) {
+          if (dateStr > cutoff) {
+            map.set(dateStr, 'low')
+          }
+        }
+      }
+    }
+
+    return map
+  }, [mode, prediction, fertileSet, resolvedLogs])
+
   const weeklyFertility = useMemo(() => {
     return calculateWeeklyFertility(prediction)
   }, [prediction])
@@ -86,6 +143,7 @@ export function useCycleCalendar({
     userLogs: resolvedLogs,
     predictedPeriodSet,
     fertileSet,
+    dayLevelMap,
     ovulationDateStr,
     weeklyFertility,
     confidence: prediction?.confidence || 'low',

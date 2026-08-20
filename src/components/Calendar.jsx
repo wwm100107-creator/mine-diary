@@ -108,6 +108,7 @@ export default function Calendar({ userId, mode = 'standard', onDateSelect, clas
     prediction,
     predictedPeriodSet: predictedSet,
     fertileSet,
+    dayLevelMap,
     ovulationDateStr,
     confidence,
     insights,
@@ -554,6 +555,9 @@ export default function Calendar({ userId, mode = 'standard', onDateSelect, clas
             prediction?.ovulationDate &&
             str === toDateStr(prediction.ovulationDate)
 
+          // ── Advanced AI: 3-level fertility coloring ──
+          const aiLevel = dayLevelMap.get(str) // 'peak' | 'high' | 'low' | undefined
+
           const dayIcons = getDayIcons(userId, str)
           const maxVisible = 3
           const visibleIcons = dayIcons.slice(0, maxVisible)
@@ -567,7 +571,11 @@ export default function Calendar({ userId, mode = 'standard', onDateSelect, clas
             s.day,
             isToday ? s.isToday : '',
             isPred ? s.predicted : '',
-            isFertile ? s.fertile : '',
+            // Advanced AI: apply level class; Standard: plain fertileSet tint
+            aiLevel === 'peak' ? s.fertileAiPeak :
+            aiLevel === 'high' ? s.fertileAiHigh :
+            aiLevel === 'low'  ? s.fertileAiLow  :
+            isFertile          ? s.fertile        : '',
             isHovered ? s.isHovered : '',
             isActive ? s.activeDay : '',
             isDropTarget ? s.dragOver : '',

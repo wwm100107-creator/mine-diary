@@ -228,6 +228,46 @@
   border-color: var(--color-mint-300);
 }
 
+/* ── Advanced AI: 3-level fertility coloring ── */
+
+/* PEAK: LH positive / ovulation day — vivid crimson pulse */
+.day.fertileAiPeak .dayInner {
+  background: linear-gradient(135deg, rgba(255, 76, 96, 0.18) 0%, rgba(255, 143, 171, 0.12) 100%);
+  border-color: #F44336;
+  border-width: 2px;
+  box-shadow: 0 0 0 2px rgba(244, 67, 54, 0.18);
+  animation: peakPulse 2s ease-in-out infinite;
+}
+@keyframes peakPulse {
+  0%, 100% { box-shadow: 0 0 0 2px rgba(244, 67, 54, 0.18); }
+  50%       { box-shadow: 0 0 0 4px rgba(244, 67, 54, 0.30); }
+}
+.day.fertileAiPeak .dayNumber {
+  color: #C62828;
+  font-weight: 800;
+}
+
+/* HIGH: fertile window core — warm amber glow */
+.day.fertileAiHigh .dayInner {
+  background: linear-gradient(135deg, rgba(255, 193, 7, 0.16) 0%, rgba(255, 152, 0, 0.10) 100%);
+  border-color: #FFA726;
+  border-width: 2px;
+}
+.day.fertileAiHigh .dayNumber {
+  color: #E65100;
+  font-weight: 700;
+}
+
+/* LOW: BBT-closed or outer fertile edge — cool mint (same as standard but faded) */
+.day.fertileAiLow .dayInner {
+  background: rgba(178, 223, 219, 0.14);
+  border-color: #B2DFDB;
+  border-style: dashed;
+}
+.day.fertileAiLow .dayNumber {
+  color: var(--color-ink-soft);
+}
+
 .day.activeDay .dayInner {
   background: var(--color-pink-100);
   border-color: var(--color-pink-500);
