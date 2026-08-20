@@ -1,5 +1,5 @@
 // public/sw.js — Native Lightweight Service Worker for Mine Diary PWA
-const CACHE_NAME = 'minediary-cache-v1'
+const CACHE_NAME = 'minediary-cache-v2'
 const PRECACHE_ASSETS = [
   '/',
   '/index.html',
@@ -32,16 +32,17 @@ self.addEventListener('activate', (e) => {
 self.addEventListener('fetch', (e) => {
   const url = new URL(e.request.url)
 
-  // Only handle GET requests, ignore chrome-extension
-  if (e.request.method !== 'GET' || url.protocol.startsWith('chrome-extension')) {
+  // Only handle GET requests, ignore chrome-extension / non-http
+  if (e.request.method !== 'GET' || !url.protocol.startsWith('http')) {
     return
   }
 
-  // Bypass Firebase / Google Auth APIs (Firestore manages its own offline IndexedDB)
+  // Bypass Firebase / Google Auth / Cloud Storage APIs (Firestore manages its own offline IndexedDB)
   if (
     url.hostname.includes('firestore.googleapis.com') ||
-    url.hostname.includes('googleapis.com/identitytoolkit') ||
-    url.hostname.includes('securetoken.googleapis.com')
+    url.hostname.includes('googleapis.com') ||
+    url.hostname.includes('google.com') ||
+    url.hostname.includes('firebasestorage.googleapis.com')
   ) {
     return
   }
@@ -54,7 +55,8 @@ self.addEventListener('fetch', (e) => {
   ) {
     e.respondWith(
       caches.match(e.request).then((cached) => {
-        const fetchPromise = fetch(e.request)
+        if (cached) return cached
+        return fetch(e.request)
           .then((networkRes) => {
             if (networkRes && networkRes.status === 200) {
               const clone = networkRes.clone()
@@ -62,8 +64,7 @@ self.addEventListener('fetch', (e) => {
             }
             return networkRes
           })
-          .catch(() => cached)
-        return cached || fetchPromise
+          .catch(() => cached || fetch(e.request))
       })
     )
     return
@@ -81,7 +82,7 @@ self.addEventListener('fetch', (e) => {
           return res
         })
         .catch(() =>
-          caches.match(e.request).then((cached) => cached || caches.match('/index.html'))
+          caches.match(e.request).then((cached) => cached || caches.match('/index.html') || caches.match('/'))
         )
     )
     return

@@ -1,7 +1,8 @@
 // src/lib/firebase.js
-// Central Firebase init with Offline Persistence Enabled (IndexedDB multi-tab) + Cloud Storage
-import { initializeApp } from 'firebase/app'
+// Central Firebase init with Safe Offline Persistence + Storage
+import { initializeApp, getApps, getApp } from 'firebase/app'
 import {
+  getFirestore,
   initializeFirestore,
   persistentLocalCache,
   persistentMultipleTabManager,
@@ -17,13 +18,25 @@ const firebaseConfig = {
   appId:             import.meta.env.VITE_FIREBASE_APP_ID,
 }
 
-export const app = initializeApp(firebaseConfig)
+// ponytail: Ensure singleton app instance across hot reloads & rapid F5
+export const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp()
 
-// ponytail: persistentLocalCache with persistentMultipleTabManager enables seamless offline DB read/write
-export const db = initializeFirestore(app, {
-  localCache: persistentLocalCache({
-    tabManager: persistentMultipleTabManager(),
-  }),
-})
+// ponytail: Safely initialize Firestore with persistent multi-tab cache,
+// falling back gracefully to getFirestore if IndexedDB is temporarily locked on rapid refresh
+let firestoreDb
+try {
+  firestoreDb = initializeFirestore(app, {
+    localCache: persistentLocalCache({
+      tabManager: persistentMultipleTabManager(),
+    }),
+  })
+} catch (err) {
+  try {
+    firestoreDb = getFirestore(app)
+  } catch (fallbackErr) {
+    console.warn('[Firebase] Fallback getFirestore:', fallbackErr)
+  }
+}
 
+export const db = firestoreDb || getFirestore(app)
 export const storage = getStorage(app)
