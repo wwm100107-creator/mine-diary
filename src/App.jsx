@@ -30,15 +30,15 @@ export default function App() {
   const [isAttendanceModalOpen, setIsAttendanceModalOpen] = useState(false)
   const hasAutoOpenedAttendanceRef = useRef(false)
 
-  // Auto-prompt attendance modal on first boot/login if today is unclaimed
+  // Auto-prompt attendance modal on first boot/login if today is unclaimed (Regular Users only)
   useEffect(() => {
-    if (user?.id && !hasAutoOpenedAttendanceRef.current) {
+    if (user?.id && !hasAutoOpenedAttendanceRef.current && !isAdmin) {
       hasAutoOpenedAttendanceRef.current = true
       if (canCheckInToday(user)) {
         setIsAttendanceModalOpen(true)
       }
     }
-  }, [user?.id])
+  }, [user?.id, isAdmin])
 
   // Apply saved theme on boot & user change
   useEffect(() => {
@@ -526,17 +526,19 @@ export default function App() {
 
           {/* User Profile & Logout */}
           <div className={s.headerActions}>
-            {/* 30-Day VIP Attendance Button */}
-            <button
-              type="button"
-              className={s.attendanceHeaderBtn}
-              onClick={() => setIsAttendanceModalOpen(true)}
-              title="Mở Lộ Trình 30 Ngày Điểm Danh Nhận VIP"
-            >
-              <span className={s.giftIcon}>🎁</span>
-              <span className={s.attendanceBtnText}>Điểm Danh VIP</span>
-              {canCheckInToday(user) && <span className={s.redDotBadge} />}
-            </button>
+            {/* 30-Day VIP Attendance Button (Not for Admin) */}
+            {!isAdmin && (
+              <button
+                type="button"
+                className={s.attendanceHeaderBtn}
+                onClick={() => setIsAttendanceModalOpen(true)}
+                title="Mở Lộ Trình 30 Ngày Điểm Danh Nhận VIP"
+              >
+                <span className={s.giftIcon}>🎁</span>
+                <span className={s.attendanceBtnText}>Điểm Danh VIP</span>
+                {canCheckInToday(user) && <span className={s.redDotBadge} />}
+              </button>
+            )}
 
             <div className={s.userProfileBadge}>
               <div
@@ -640,8 +642,8 @@ export default function App() {
         />
       )}
 
-      {/* 30-Day VIP Attendance Modal */}
-      {isAttendanceModalOpen && user && (
+      {/* 30-Day VIP Attendance Modal (Regular Users only) */}
+      {isAttendanceModalOpen && user && !isAdmin && (
         <AttendanceModal
           user={user}
           onUpdateUser={(updated) => {
