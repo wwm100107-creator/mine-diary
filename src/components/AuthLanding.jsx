@@ -468,8 +468,9 @@ export default function AuthLanding({
                   className={s.togglePassBtn}
                   onClick={() => setShowPassword(!showPassword)}
                   aria-label={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
+                  title={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
                 >
-                  {showPassword ? '👁️' : '🔒'}
+                  {showPassword ? '🙈' : '👁️'}
                 </button>
               </div>
             </div>
@@ -487,6 +488,15 @@ export default function AuthLanding({
                   onChange={(e) => setRegisterInput({ ...registerInput, confirmPassword: e.target.value })}
                   required
                 />
+                <button
+                  type="button"
+                  className={s.togglePassBtn}
+                  onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
+                  title={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
+                >
+                  {showPassword ? '🙈' : '👁️'}
+                </button>
               </div>
             </div>
 
