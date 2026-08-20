@@ -20,7 +20,14 @@ export default function AvatarUploadModal({ currentAvatar, currentFrame = 'none'
   const [isDraggingOver, setIsDraggingOver] = useState(false)
 
   // ── Theme State & Realtime Preview Engine ──
-  const initialThemeRef = useRef(currentTheme || getSavedTheme())
+  const resolvedInitialTheme =
+    typeof currentTheme === 'object' && currentTheme !== null && currentTheme.colors
+      ? currentTheme
+      : (typeof currentTheme === 'string'
+          ? (THEME_PRESETS.find(p => p.id === currentTheme) || THEME_PRESETS[0])
+          : getSavedTheme())
+
+  const initialThemeRef = useRef(resolvedInitialTheme)
   const [selectedThemeId, setSelectedThemeId] = useState(initialThemeRef.current?.id || 'strawberry')
   const [customColors, setCustomColors] = useState(
     initialThemeRef.current?.colors || {

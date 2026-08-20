@@ -20,6 +20,10 @@ function AvatarFrameOverlayComponent({ frameId = 'none', size = 36, sizePreset }
   const activePreset = sizePreset || (size <= 36 ? 'sm' : size <= 50 ? 'md' : 'lg')
   const scale = activePreset === 'xs' ? 0.65 : activePreset === 'sm' ? 0.72 : 1.0
 
+  // Scale offset based on avatar size for standard corner frames
+  const starSize = Math.max(6, Math.floor(size * 0.22))
+  const cornerOffset = -Math.floor(starSize * 0.35)
+
   return (
     <div
       className={`${s.frameOverlay} ${s[frameId] || ''} ${s[`size_${activePreset}`] || ''}`}
