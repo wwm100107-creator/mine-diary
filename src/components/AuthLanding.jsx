@@ -14,6 +14,38 @@ const RANDOM_UID_PREFIXES = [
   'Pika', 'Chibi', 'BaoBao', 'Yuki', 'Hana',
 ]
 
+const BLING_STARS = [
+  // ── Left Wing Zone (X: 3% to 26%) ──
+  { id: 'l1', x: 4, y: 8, size: 24, type: 'radiant', color: '#FFE066', delay: 0.1, duration: 2.4 },
+  { id: 'l2', x: 18, y: 15, size: 14, type: 'cross', color: '#FF9ECE', delay: 1.1, duration: 2.8 },
+  { id: 'l3', x: 7, y: 26, size: 20, type: 'sparkle', color: '#7DD3FC', delay: 0.6, duration: 3.0 },
+  { id: 'l4', x: 22, y: 38, size: 12, type: 'mini', color: '#FDE047', delay: 1.8, duration: 2.2 },
+  { id: 'l5', x: 5, y: 50, size: 26, type: 'radiant', color: '#FFB6C1', delay: 0.4, duration: 2.6 },
+  { id: 'l6', x: 17, y: 62, size: 16, type: 'cross', color: '#C084FC', delay: 2.1, duration: 3.1 },
+  { id: 'l7', x: 6, y: 74, size: 22, type: 'sparkle', color: '#FDE047', delay: 1.3, duration: 2.5 },
+  { id: 'l8', x: 20, y: 84, size: 14, type: 'mini', color: '#7DD3FC', delay: 0.9, duration: 2.9 },
+  { id: 'l9', x: 5, y: 92, size: 24, type: 'radiant', color: '#FFD700', delay: 1.6, duration: 2.7 },
+
+  // ── Right Wing Zone (X: 74% to 97%) ──
+  { id: 'r1', x: 95, y: 8, size: 24, type: 'radiant', color: '#FFB6C1', delay: 0.5, duration: 2.5 },
+  { id: 'r2', x: 80, y: 16, size: 15, type: 'cross', color: '#FDE047', delay: 1.4, duration: 2.3 },
+  { id: 'r3', x: 93, y: 28, size: 22, type: 'sparkle', color: '#7DD3FC', delay: 0.2, duration: 3.2 },
+  { id: 'r4', x: 78, y: 40, size: 13, type: 'mini', color: '#C084FC', delay: 2.3, duration: 2.1 },
+  { id: 'r5', x: 94, y: 52, size: 28, type: 'radiant', color: '#FFE066', delay: 1.0, duration: 2.8 },
+  { id: 'r6', x: 81, y: 64, size: 16, type: 'cross', color: '#FF9ECE', delay: 0.7, duration: 2.7 },
+  { id: 'r7', x: 92, y: 76, size: 20, type: 'sparkle', color: '#FDE047', delay: 1.9, duration: 3.0 },
+  { id: 'r8', x: 78, y: 86, size: 14, type: 'mini', color: '#7DD3FC', delay: 0.3, duration: 2.4 },
+  { id: 'r9', x: 95, y: 93, size: 25, type: 'radiant', color: '#FFB6C1', delay: 1.7, duration: 2.9 },
+
+  // ── Top Zone (Above Card Corners) ──
+  { id: 't1', x: 30, y: 4, size: 18, type: 'sparkle', color: '#FDE047', delay: 0.8, duration: 2.6 },
+  { id: 't2', x: 70, y: 5, size: 18, type: 'cross', color: '#7DD3FC', delay: 1.5, duration: 3.1 },
+
+  // ── Bottom Zone (Below Card Corners) ──
+  { id: 'b1', x: 28, y: 96, size: 18, type: 'cross', color: '#FF9ECE', delay: 2.0, duration: 2.7 },
+  { id: 'b2', x: 72, y: 95, size: 20, type: 'sparkle', color: '#FFE066', delay: 0.4, duration: 2.8 },
+]
+
 function generateRandomUid() {
   const prefix = RANDOM_UID_PREFIXES[Math.floor(Math.random() * RANDOM_UID_PREFIXES.length)]
   const num = Math.floor(100000 + Math.random() * 900000)
@@ -173,11 +205,58 @@ export default function AuthLanding({
 
   return (
     <div className={s.landing}>
-      {/* Floating Retro Background Elements */}
-      <div className={`${s.bgFloating} ${s.float1}`} aria-hidden="true">🌸</div>
-      <div className={`${s.bgFloating} ${s.float2}`} aria-hidden="true">✦</div>
-      <div className={`${s.bgFloating} ${s.float3}`} aria-hidden="true">🍓</div>
-      <div className={`${s.bgFloating} ${s.float4}`} aria-hidden="true">✨</div>
+      {/* ── Bling Bling Sparkling Star Background Aura ── */}
+      <div className={s.blingContainer} aria-hidden="true">
+        {BLING_STARS.map((star) => {
+          const { id, x, y, size, type, color, delay, duration } = star
+          return (
+            <div
+              key={id}
+              className={s.blingStar}
+              style={{
+                left: `${x}%`,
+                top: `${y}%`,
+                width: `${size}px`,
+                height: `${size}px`,
+                color,
+                animationDelay: `${delay}s`,
+                animationDuration: `${duration}s`,
+              }}
+            >
+              {type === 'radiant' && (
+                <svg width={size} height={size} viewBox="0 0 32 32" fill="none">
+                  <circle cx="16" cy="16" r="12" fill={color} fillOpacity="0.28" />
+                  <path d="M16 0 C16 9 23 16 32 16 C23 16 16 23 16 32 C16 23 9 16 0 16 C9 16 16 9 16 0 Z" fill={color} />
+                  <circle cx="16" cy="16" r="3.5" fill="#FFFFFF" />
+                  <path d="M7 7 L25 25 M25 7 L7 25" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeOpacity="0.8" />
+                </svg>
+              )}
+
+              {type === 'sparkle' && (
+                <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="8" fill={color} fillOpacity="0.22" />
+                  <path d="M12 0 C12 7 17 12 24 12 C17 12 12 17 12 24 C12 17 7 12 0 12 C7 12 12 7 12 0 Z" fill={color} />
+                  <circle cx="12" cy="12" r="2.5" fill="#FFFFFF" />
+                </svg>
+              )}
+
+              {type === 'cross' && (
+                <svg width={size} height={size} viewBox="0 0 16 16" fill="none">
+                  <path d="M8 0 L8 16 M0 8 L16 8" stroke={color} strokeWidth="2.5" strokeLinecap="round" />
+                  <circle cx="8" cy="8" r="2" fill="#FFFFFF" />
+                </svg>
+              )}
+
+              {type === 'mini' && (
+                <svg width={size} height={size} viewBox="0 0 12 12" fill="none">
+                  <path d="M6 0 L6 12 M0 6 L12 6" stroke={color} strokeWidth="2" strokeLinecap="round" />
+                  <circle cx="6" cy="6" r="1.5" fill="#FFFFFF" />
+                </svg>
+              )}
+            </div>
+          )
+        })}
+      </div>
 
       {/* Main Auth Card */}
       <div className={s.authCard}>

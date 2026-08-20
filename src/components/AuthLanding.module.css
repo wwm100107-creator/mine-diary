@@ -29,18 +29,55 @@
   pointer-events: none;
 }
 
-/* Floating retro background elements */
-.bgFloating {
+/* ── Bling Bling Sparkling Star Background Aura ── */
+.blingContainer {
   position: absolute;
+  inset: 0;
+  overflow: hidden;
   pointer-events: none;
-  user-select: none;
   z-index: 1;
 }
 
-.float1 { top: 8%; left: 10%; font-size: 28px; animation: pixelFloat 3.5s ease-in-out infinite; }
-.float2 { top: 15%; right: 12%; font-size: 24px; animation: pixelFloat 4s ease-in-out infinite 1s; }
-.float3 { bottom: 12%; left: 8%; font-size: 26px; animation: pixelFloat 3.8s ease-in-out infinite 0.5s; }
-.float4 { bottom: 10%; right: 10%; font-size: 30px; animation: pixelFloat 4.2s ease-in-out infinite 1.5s; }
+.blingStar {
+  position: absolute;
+  pointer-events: none;
+  user-select: none;
+  transform: translate(-50%, -50%);
+  transform-origin: center center;
+  animation: blingShine infinite ease-in-out;
+  will-change: transform, opacity, filter;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@keyframes blingShine {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.1) rotate(0deg);
+    filter: drop-shadow(0 0 0px transparent);
+  }
+  20% {
+    opacity: 0.8;
+    transform: translate(-50%, -50%) scale(0.85) rotate(35deg);
+    filter: drop-shadow(0 0 6px currentColor);
+  }
+  45%, 55% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.35) rotate(90deg);
+    filter: drop-shadow(0 0 12px currentColor) drop-shadow(0 0 20px #FFFFFF);
+  }
+  80% {
+    opacity: 0.65;
+    transform: translate(-50%, -50%) scale(0.8) rotate(145deg);
+    filter: drop-shadow(0 0 6px currentColor);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.1) rotate(180deg);
+    filter: drop-shadow(0 0 0px transparent);
+  }
+}
 
 /* ── Container Card ── */
 .authCard {
