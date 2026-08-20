@@ -131,16 +131,22 @@ export default function ChatView({ user }) {
     }
   }, [activePartner?.id])
 
-  // 2. Separate active chats vs pending requests
+  // Clear legacy phantom recentChats from localStorage
+  useEffect(() => {
+    if (user?.id) {
+      try {
+        localStorage.removeItem(`minediary:recent_chats:${user.id}`)
+      } catch (e) {}
+    }
+  }, [user?.id])
+
+  // 2. Separate active chats vs pending requests (Solely from Firestore Realtime)
   const { activeChats, requestChats } = useMemo(() => {
-    const local = getRecentChats(user?.id)
     const active = []
     const requests = []
-    const seen = new Set()
 
-    // 1. Inbox realtime chats
+    // 1. Inbox realtime chats directly from Firestore
     inboxChats.forEach((c) => {
-      seen.add(c.partnerId)
       const chatItem = {
         id: c.partnerId,
         displayName: c.displayName,
@@ -155,13 +161,6 @@ export default function ChatView({ user }) {
         requests.push(chatItem)
       } else {
         active.push(chatItem)
-      }
-    })
-
-    // 2. Merge local cache for partners not yet having room
-    local.forEach((c) => {
-      if (!seen.has(c.id)) {
-        active.push(c)
       }
     })
 
@@ -569,7 +568,6 @@ export default function ChatView({ user }) {
                       className={`${s.chatItem} ${isSelected ? s.chatItemSelected : ''}`}
                       onClick={() => {
                         setActivePartner(partner)
-                        saveRecentChat(user.id, partner, 'accepted')
                       }}
                       role="button"
                       tabIndex={0}
