@@ -33,14 +33,23 @@ try {
 }
 
 // ponytail: CLIENT_ID hardcode tạm, chuyển sang .env khi deploy
-const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID ?? 'PASTE_YOUR_CLIENT_ID_HERE'
+const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || 'dummy-google-client-id'
 
-createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    <ErrorBoundary>
-      <GoogleOAuthProvider clientId={CLIENT_ID}>
-        <App />
-      </GoogleOAuthProvider>
-    </ErrorBoundary>
-  </StrictMode>,
-)
+try {
+  const container = document.getElementById('root')
+  if (container) {
+    const root = createRoot(container)
+    root.render(
+      <StrictMode>
+        <ErrorBoundary>
+          <GoogleOAuthProvider clientId={CLIENT_ID}>
+            <App />
+          </GoogleOAuthProvider>
+        </ErrorBoundary>
+      </StrictMode>
+    )
+  }
+} catch (bootErr) {
+  console.error('[App Boot Failure]:', bootErr)
+}
+
