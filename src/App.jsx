@@ -307,15 +307,6 @@ export default function App() {
             }
           }
         }
-
-        // 2. Nhắc nhở uống thuốc hàng ngày
-        const lastPillNotif = localStorage.getItem(`minediary:notif:pill:${user.id}`)
-        if (lastPillNotif !== todayStr) {
-          new Notification('Đừng quên uống thuốc nhé! 💊', {
-            body: 'Đã đến giờ uống thuốc hàng ngày của bạn rồi đó.',
-          })
-          localStorage.setItem(`minediary:notif:pill:${user.id}`, todayStr)
-        }
       } catch (e) {
         console.warn('Background notification check warning:', e)
       }

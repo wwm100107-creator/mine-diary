@@ -68,7 +68,7 @@ export default function NotificationPermissionModal({ user, onClose, onPermissio
               <span>💌</span> Tin nhắn từ người ấy
             </div>
             <div className={s.featureTag}>
-              <span>🌸</span> Nhắc nhở chu kỳ & thuốc
+              <span>🌸</span> Nhắc nhở chu kỳ từ người ấy
             </div>
             <div className={s.featureTag}>
               <span>✨</span> Nhận khi thoát ứng dụng
