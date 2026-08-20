@@ -375,7 +375,7 @@ export default function AvatarUploadModal({ currentAvatar, currentFrame = 'none'
                       />
                     </div>
                     <span className={s.frameCardName}>
-                      {frame.icon} {frame.name}
+                      {frame.name}
                     </span>
                     {isFrameActive && <span className={s.frameCheckBadge}>✓</span>}
                   </button>
