@@ -328,88 +328,99 @@
   overflow: hidden;
 }
 
-/* ── Mini calendar (top-right, appears when shrunk) ── */
+/* ── Mini calendar (Floating compact pill, appears when calendar is collapsed) ── */
 .miniCal {
   position: fixed;
-  top: 74px;
-  right: 16px;
-  width: 180px;
-  background: var(--color-white);
-  border: 2px solid var(--color-border-mid);
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(255, 143, 171, 0.30);
+  top: 76px;
+  right: 18px;
+  height: 32px;
+  padding: 4px 10px 4px 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(10px);
+  border: 1.5px solid var(--color-pink-400);
+  border-radius: 999px;
+  box-shadow: 0 4px 14px rgba(255, 143, 171, 0.28), 0 1px 3px rgba(0, 0, 0, 0.06);
   z-index: 100;
-  overflow: hidden;
+  cursor: pointer;
+  user-select: none;
+  color: var(--color-ink);
   opacity: 0;
   pointer-events: none;
-  transform: scale(0.85) translateY(-8px);
+  transform: scale(0.85) translateY(-6px);
   transform-origin: top right;
-  transition: opacity 350ms cubic-bezier(0.4, 0, 0.2, 1),
-              transform 350ms cubic-bezier(0.4, 0, 0.2, 1);
+  transition: opacity 250ms cubic-bezier(0.4, 0, 0.2, 1),
+              transform 350ms cubic-bezier(0.34, 1.56, 0.64, 1),
+              background 150ms,
+              border-color 150ms,
+              box-shadow 150ms;
 }
 
 .miniCal.visible {
   opacity: 1;
   pointer-events: auto;
   transform: scale(1) translateY(0);
-  transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1),
-              transform 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.miniCalHeader {
-  background: linear-gradient(135deg, var(--color-pink-200), var(--color-lavender-100));
-  padding: 8px 12px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--color-border);
+.miniCal:hover {
+  background: var(--color-pink-100);
+  border-color: var(--color-pink-500);
+  box-shadow: 0 6px 18px rgba(255, 143, 171, 0.38);
+  transform: scale(1.04) translateY(-1px);
 }
 
-.miniCalDate {
-  font-family: var(--font-pixel);
+.miniCal:active {
+  transform: scale(0.96) translateY(1px);
+}
+
+.miniCalIcon {
   font-size: 13px;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: var(--color-ink);
-}
-
-.miniCalExpandBtn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--color-ink-soft);
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-  padding: 2px;
-  transition: color 150ms, transform 200ms;
   line-height: 1;
 }
 
-.miniCalExpandBtn:hover {
-  color: var(--color-pink-400);
-  transform: scale(1.2);
-}
-
-.miniCalBody {
-  padding: 8px 12px 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.miniCalLabel {
+.miniCalDateText {
   font-family: var(--font-pixel);
-  font-size: 10px;
+  font-size: 12px;
   letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--color-ink-faint);
+  font-weight: 700;
+  color: var(--color-pink-500);
 }
 
-.miniCalHint {
-  font-size: 12px;
+.miniCalExpandIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   color: var(--color-ink-soft);
-  font-weight: 600;
+  transition: transform 150ms ease;
+}
+
+.miniCal:hover .miniCalExpandIcon {
+  color: var(--color-pink-500);
+  transform: scale(1.15);
+}
+
+.headerCalBtn {
+  font-family: var(--font-pixel);
+  font-size: 11px;
+  letter-spacing: 0.03em;
+  padding: 5px 10px;
+  background: var(--color-pink-50);
+  border: 1.5px solid var(--color-pink-300);
+  border-radius: 6px;
+  color: var(--color-pink-500);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all var(--transition-fast);
+}
+
+.headerCalBtn:hover {
+  background: var(--color-pink-100);
+  border-color: var(--color-pink-500);
+  transform: translateY(-1px);
 }
 
 /* ── Diary Section ── */
@@ -760,9 +771,15 @@
   }
 
   .miniCal {
-    top: 60px;
-    right: 10px;
-    width: 160px;
+    top: auto;
+    bottom: 20px;
+    right: 14px;
+    height: 34px;
+    padding: 4px 12px;
+    gap: 6px;
+    font-size: 12px;
+    box-shadow: 0 6px 20px rgba(255, 143, 171, 0.45), 0 2px 6px rgba(0, 0, 0, 0.1);
+    z-index: 200;
   }
 
   .diaryHeader {

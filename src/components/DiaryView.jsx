@@ -97,39 +97,21 @@ export default function DiaryView({ user }) {
         <Calendar userId={user.id} onDateSelect={handleDateSelect} />
       </div>
 
-      {/* Mini calendar */}
-      <div
+      {/* Compact floating mini-calendar pill button */}
+      <button
         className={`${s.miniCal} ${calShrunk ? s.visible : ''}`}
-        role="complementary"
-        aria-label="Lịch thu nhỏ"
+        onClick={() => setCalShrunk(false)}
+        aria-label="Mở lại toàn bộ lịch"
+        title="Nhấp để mở lại lịch"
       >
-        <div className={s.miniCalHeader}>
-          <span className={s.miniCalDate}>{formatMiniDate(selectedDate)}</span>
-          <button
-            className={s.miniCalExpandBtn}
-            onClick={() => setCalShrunk(false)}
-            aria-label="Mở rộng lịch"
-            title="Mở lịch"
-          >
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-              <rect x="0" y="0" width="2" height="6" fill="currentColor"/>
-              <rect x="0" y="0" width="6" height="2" fill="currentColor"/>
-              <rect x="8" y="0" width="6" height="2" fill="currentColor"/>
-              <rect x="12" y="0" width="2" height="6" fill="currentColor"/>
-              <rect x="0" y="8" width="2" height="6" fill="currentColor"/>
-              <rect x="0" y="12" width="6" height="2" fill="currentColor"/>
-              <rect x="8" y="12" width="6" height="2" fill="currentColor"/>
-              <rect x="12" y="8" width="2" height="6" fill="currentColor"/>
-            </svg>
-          </button>
-        </div>
-        <div className={s.miniCalBody}>
-          <span className={s.miniCalLabel}>Đang xem</span>
-          <span className={s.miniCalHint}>
-            {selectedDate ? formatFullDate(selectedDate) : '—'}
-          </span>
-        </div>
-      </div>
+        <span className={s.miniCalIcon} aria-hidden="true">📅</span>
+        <span className={s.miniCalDateText}>{formatMiniDate(selectedDate)}</span>
+        <span className={s.miniCalExpandIcon} aria-hidden="true">
+          <svg width="11" height="11" viewBox="0 0 14 14" fill="none">
+            <path d="M1 5V1H5M9 1H13V5M13 9V13H9M5 13H1V9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </span>
+      </button>
 
       {/* Diary section */}
       <section className={s.diaryWrapper} aria-label="Nhật ký">
@@ -147,6 +129,15 @@ export default function DiaryView({ user }) {
                 <div className={s.diaryDateFull}>{formatFullDate(selectedDate)}</div>
               </div>
               <div className={s.diaryHeaderActions}>
+                {calShrunk && (
+                  <button
+                    className={s.headerCalBtn}
+                    onClick={() => setCalShrunk(false)}
+                    title="Mở bảng lịch"
+                  >
+                    📅 Lịch
+                  </button>
+                )}
                 <span
                   className={`${s.saveStatus} ${savedVisible ? s.visible : ''}`}
                   role="status" aria-live="polite"
