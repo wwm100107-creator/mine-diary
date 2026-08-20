@@ -4,14 +4,15 @@ import {
   PieChart, Pie, Cell, Legend
 } from 'recharts'
 import s from './HealthChart.module.css'
-import { loadMarkedDates, predictNextPeriod } from '../utils/cycle'
+import { loadMarkedDates, loadAllUserSymptoms, predictNextPeriod } from '../utils/cycle'
 
-const symptomData = [
-  { name: 'Đau bụng', value: 4, color: '#FF8FAB' }, // pink-400
-  { name: 'Mệt mỏi', value: 3, color: '#CDB4DB' },  // lavender
-  { name: 'Nổi mụn', value: 2, color: '#FFC8DD' },  // pink-200
-  { name: 'Đau đầu', value: 1, color: '#BDE0FE' },  // blue
-]
+const SYMPTOM_COLORS = {
+  cramps:   { label: 'Đau bụng',  color: '#FF8FAB' },
+  fatigue:  { label: 'Mệt mỏi',  color: '#CDB4DB' },
+  acne:     { label: 'Nổi mụn',  color: '#FFC8DD' },
+  headache: { label: 'Đau đầu',  color: '#BDE0FE' },
+  backache: { label: 'Đau lưng', color: '#B5EAD7' },
+}
 
 const CustomTooltip = ({ active, payload }) => {
   if (active && payload && payload.length) {
@@ -28,27 +29,43 @@ const CustomTooltip = ({ active, payload }) => {
 }
 
 export default function HealthChart({ userId }) {
-  
-  // Lấy dữ liệu chu kỳ thực tế thay vì mock
+
   const cycleData = useMemo(() => {
     const marks = loadMarkedDates(userId)
     const prediction = predictNextPeriod(marks)
     if (!prediction || !prediction.cycles) return []
-    
-    // Lấy tối đa 6 chu kỳ gần nhất
     const recent = prediction.cycles.slice(-6)
     return recent.map(c => {
       const d = new Date(c.startDate)
       return {
         month: `T${d.getMonth() + 1}`,
-        length: c.cycleLength || prediction.cycleLength // fallback for last cycle
+        length: c.cycleLength || prediction.cycleLength
       }
     })
   }, [userId])
 
+  // ── Compute symptom frequency from REAL localStorage logs ──
+  const symptomData = useMemo(() => {
+    const logs = loadAllUserSymptoms(userId)
+    const counts = {}
+    for (const entry of Object.values(logs)) {
+      if (!Array.isArray(entry?.physical)) continue
+      for (const sym of entry.physical) {
+        counts[sym] = (counts[sym] || 0) + 1
+      }
+    }
+    return Object.entries(counts)
+      .map(([id, value]) => ({
+        name: SYMPTOM_COLORS[id]?.label || id,
+        value,
+        color: SYMPTOM_COLORS[id]?.color || '#CDB4DB',
+      }))
+      .sort((a, b) => b.value - a.value)
+  }, [userId])
+
   return (
     <div className={s.chartWrap}>
-      
+
       {/* Cycle Length Chart */}
       <div className={s.chartBlock}>
         <h3 className={s.chartTitle}>Độ dài chu kỳ ({cycleData.length || 0} chu kỳ gần nhất)</h3>
@@ -72,33 +89,38 @@ export default function HealthChart({ userId }) {
       <div className={s.chartBlock}>
         <h3 className={s.chartTitle}>Tần suất triệu chứng</h3>
         <div className={s.chartContainer}>
-          <ResponsiveContainer width="100%" height={220}>
-            <PieChart>
-              <Pie
-                data={symptomData}
-                innerRadius={60}
-                outerRadius={80}
-                paddingAngle={5}
-                dataKey="value"
-                stroke="none"
-              >
-                {symptomData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
-                ))}
-              </Pie>
-              <Tooltip content={<CustomTooltip />} />
-              <Legend 
-                verticalAlign="middle" 
-                align="right"
-                layout="vertical"
-                iconType="circle"
-                wrapperStyle={{ fontSize: '12px', color: '#685D61' }}
-              />
-            </PieChart>
-          </ResponsiveContainer>
+          {symptomData.length > 0 ? (
+            <ResponsiveContainer width="100%" height={220}>
+              <PieChart>
+                <Pie
+                  data={symptomData}
+                  innerRadius={60}
+                  outerRadius={80}
+                  paddingAngle={5}
+                  dataKey="value"
+                  stroke="none"
+                >
+                  {symptomData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip content={<CustomTooltip />} />
+                <Legend
+                  verticalAlign="middle"
+                  align="right"
+                  layout="vertical"
+                  iconType="circle"
+                  wrapperStyle={{ fontSize: '12px', color: '#685D61' }}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+          ) : (
+            <p style={{ padding: 16, color: '#889BA6', textAlign: 'center', fontSize: 14 }}>Chưa ghi nhận triệu chứng nào. Hãy thêm dữ liệu hàng ngày!</p>
+          )}
         </div>
       </div>
 
     </div>
   )
 }
+
