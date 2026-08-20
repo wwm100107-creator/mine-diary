@@ -2,12 +2,14 @@ import React, { useState, useEffect, useMemo } from 'react'
 import PixelAvatar from './PixelAvatar'
 import {
   isUserAdmin,
+  isProtectedUser,
   fetchAllUsers,
   banUser,
   unbanUser,
   approveBanAppeal,
   rejectBanAppeal,
   resetUserPassword,
+  deleteUserAccount,
 } from '../lib/admin'
 import s from './AdminDashboard.module.css'
 
@@ -228,6 +230,33 @@ export default function AdminDashboard({ user, onBack }) {
     }
   }
 
+  // Handle Delete User Account (Strict protection for adminserver)
+  const handleDeleteUser = async (targetUser) => {
+    if (!targetUser) return
+    if (isProtectedUser(targetUser)) {
+      alert('👑 Tài khoản Quản trị viên tối cao (adminserver) là Bất tử, không thể bị xóa hoặc hạn chế!')
+      return
+    }
+
+    const confirmed = window.confirm(
+      `⚠️ CẢNH BÁO NGUY HIỂM:\nBạn có chắc chắn muốn XÓA VĨNH VIỄN tài khoản "${targetUser.displayName || targetUser.username || targetUser.id}" (#${targetUser.id}) không?\nHành động này không thể hoàn tác!`
+    )
+    if (!confirmed) return
+
+    setActionLoading(true)
+    try {
+      await deleteUserAccount(targetUser.id)
+      setDetailModalUser(null)
+      await loadData()
+      alert(`✓ Đã xóa vĩnh viễn tài khoản #${targetUser.id} thành công!`)
+    } catch (err) {
+      console.error('Delete user error:', err)
+      alert(`Lỗi khi xóa tài khoản: ${err.message}`)
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
   // Handle Password Reset by Admin
   const handleAdminResetPassword = async (e) => {
     e.preventDefault()
@@ -435,7 +464,11 @@ export default function AdminDashboard({ user, onBack }) {
 
                   {/* Column 4: Status */}
                   <td className={s.colStatus}>
-                    {u.isBanned ? (
+                    {isProtectedUser(u) ? (
+                      <span className={s.badgeImmune} title="Tài khoản Quản trị tối cao bất tử">
+                        👑 Bất Tử (Tối Cao)
+                      </span>
+                    ) : u.isBanned ? (
                       <div className={s.badgeBanned}>
                         <span className={s.bannedMainText}>⛔ Bị cấm ({formatBanUntil(u.banUntilDate)})</span>
                         {u.banReason && (
@@ -477,7 +510,11 @@ export default function AdminDashboard({ user, onBack }) {
 
                   {/* Column 6: Action (Centered) */}
                   <td className={s.colAction}>
-                    {u.isBanned ? (
+                    {isProtectedUser(u) ? (
+                      <span className={s.protectedShieldBadge} title="Tài khoản bất tử không thể bị xóa hoặc hạn chế">
+                        🛡️ Bất Khả Xâm Phạm
+                      </span>
+                    ) : u.isBanned ? (
                       <div className={s.actionBtnGroup}>
                         {u.appeal?.status === 'pending' && (
                           <button
@@ -500,22 +537,42 @@ export default function AdminDashboard({ user, onBack }) {
                         >
                           ✓ Mở Khóa
                         </button>
+                        <button
+                          type="button"
+                          className={s.deleteActionBtn}
+                          onClick={() => handleDeleteUser(u)}
+                          disabled={actionLoading}
+                          title="Xóa vĩnh viễn tài khoản này"
+                        >
+                          🗑️ Xóa
+                        </button>
                       </div>
                     ) : (
-                      <button
-                        type="button"
-                        className={s.banActionBtn}
-                        onClick={() => {
-                          setBanModalUser(u)
-                          setBanReason('')
-                          setBanDuration('7')
-                          setCustomDaysInput('14')
-                          setCustomDateTimeInput('')
-                        }}
-                        disabled={actionLoading || u.id === user?.id}
-                      >
-                        ⛔ Cấm
-                      </button>
+                      <div className={s.actionBtnGroup}>
+                        <button
+                          type="button"
+                          className={s.banActionBtn}
+                          onClick={() => {
+                            setBanModalUser(u)
+                            setBanReason('')
+                            setBanDuration('7')
+                            setCustomDaysInput('14')
+                            setCustomDateTimeInput('')
+                          }}
+                          disabled={actionLoading || u.id === user?.id}
+                        >
+                          ⛔ Cấm
+                        </button>
+                        <button
+                          type="button"
+                          className={s.deleteActionBtn}
+                          onClick={() => handleDeleteUser(u)}
+                          disabled={actionLoading}
+                          title="Xóa vĩnh viễn tài khoản này"
+                        >
+                          🗑️ Xóa
+                        </button>
+                      </div>
                     )}
                   </td>
                 </tr>
@@ -668,6 +725,32 @@ export default function AdminDashboard({ user, onBack }) {
                 </span>
               )}
             </div>
+
+            {/* Account Protection / Delete User Section */}
+            {isProtectedUser(detailModalUser) ? (
+              <div style={{ background: '#FFF9C4', border: '1.5px solid #FFB300', borderRadius: 8, padding: '10px 14px', marginTop: 14, color: '#B78103', fontSize: 12, fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 6 }}>
+                <span>👑</span> Tài khoản Quản trị tối cao (adminserver) là Bất tử. Được bảo vệ vĩnh viễn và không thể bị xóa hoặc hạn chế quyền!
+              </div>
+            ) : (
+              <div style={{ background: '#FFF5F5', border: '1.5px dashed #FEB2B2', borderRadius: 8, padding: '12px 14px', marginTop: 14, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div>
+                  <div style={{ fontSize: 12, fontWeight: 'bold', color: '#E53E3E' }}>
+                    🗑️ Xóa Vĩnh Viễn Tài Khoản
+                  </div>
+                  <div style={{ fontSize: 10, color: 'var(--color-ink-light)', marginTop: 2 }}>
+                    Xóa hoàn toàn tài khoản này khỏi cơ sở dữ liệu hệ thống.
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  className={s.deleteActionBtn}
+                  onClick={() => handleDeleteUser(detailModalUser)}
+                  disabled={actionLoading}
+                >
+                  Xác Nhận Xóa 🗑️
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}

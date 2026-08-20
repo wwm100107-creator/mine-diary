@@ -30,6 +30,16 @@ export function isUserAdmin(user) {
 }
 
 /**
+ * 1.1 Check if a user is permanently protected & immune from ban/delete/restriction
+ */
+export function isProtectedUser(userOrId) {
+  if (!userOrId) return false
+  const id = (typeof userOrId === 'string' ? userOrId : (userOrId.id || '')).toLowerCase()
+  const username = (typeof userOrId === 'object' ? (userOrId.username || '') : '').toLowerCase()
+  return id === 'adminserver' || username === 'adminserver' || Boolean(typeof userOrId === 'object' && (userOrId.isProtected || userOrId.isImmune))
+}
+
+/**
  * 2. Fetch all user accounts from Database
  */
 export async function fetchAllUsers() {
@@ -58,9 +68,14 @@ export async function fetchAllUsers() {
 
 /**
  * 3. Ban a user account (Supports Presets & Custom Duration / Exact Date-Time)
+ * Strictly immune for adminserver.
  * @param {{ userId: string, durationDays: number, customBanUntil?: string|Date, reason: string }}
  */
 export async function banUser({ userId, durationDays, customBanUntil, reason }) {
+  if (isProtectedUser(userId)) {
+    throw new Error('Tài khoản Quản trị viên tối cao (adminserver) là Bất tử, không thể bị khóa hoặc hạn chế!')
+  }
+
   let banUntil = null
 
   if (customBanUntil) {
@@ -79,6 +94,18 @@ export async function banUser({ userId, durationDays, customBanUntil, reason }) 
 
   await updateDoc(doc(db, 'users', userId), updateData)
   return updateData
+}
+
+/**
+ * 3.1 Delete a user account completely
+ * Strictly immune for adminserver.
+ */
+export async function deleteUserAccount(userId) {
+  if (isProtectedUser(userId)) {
+    throw new Error('Tài khoản Quản trị viên tối cao (adminserver) là Bất tử, không thể bị xóa!')
+  }
+  await deleteDoc(doc(db, 'users', userId))
+  return true
 }
 
 /**

@@ -48,6 +48,10 @@ async function generateUniqueUserId(cleanUsername) {
  */
 export async function verifyBanStatus(userDoc) {
   const data = userDoc.data()
+  // Adminserver is permanently immune from bans or restrictions
+  if (userDoc.id.toLowerCase() === ADMIN_USERNAME || (data.username || '').toLowerCase() === ADMIN_USERNAME) {
+    return { isBanned: false }
+  }
   if (!data.isBanned) return { isBanned: false }
 
   // Check if ban is temporary and has expired

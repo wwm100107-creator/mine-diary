@@ -520,6 +520,69 @@
   box-shadow: 1px 1px 0 #B71C1C;
 }
 
+.deleteActionBtn {
+  font-family: var(--font-pixel);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 6px 12px;
+  background: #FFF5F5;
+  border: 2px solid #FEB2B2;
+  border-radius: var(--radius-sm);
+  color: #E53E3E;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 #FEB2B2;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.deleteActionBtn:hover:not(:disabled) {
+  background: #E53E3E;
+  color: var(--color-white);
+  border-color: #9B2C2C;
+  transform: translateY(-2px);
+  box-shadow: 3px 3px 0 #9B2C2C;
+}
+
+.deleteActionBtn:active:not(:disabled) {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 #9B2C2C;
+}
+
+.badgeImmune {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  background: linear-gradient(135deg, #FFF9C4 0%, #FFE082 50%, #FFD54F 100%);
+  border: 1.5px solid #FFA000;
+  border-radius: var(--radius-sm);
+  color: #B78103;
+  font-family: var(--font-pixel);
+  font-size: 10px;
+  font-weight: bold;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  box-shadow: 1px 1px 0 #FFB300, 0 0 8px rgba(255, 215, 0, 0.4);
+}
+
+.protectedShieldBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  background: #F3E8FF;
+  border: 1.5px solid #C084FC;
+  border-radius: var(--radius-sm);
+  color: #7E22CE;
+  font-family: var(--font-pixel);
+  font-size: 10px;
+  font-weight: bold;
+  letter-spacing: 0.03em;
+  box-shadow: 1px 1px 0 #D8B4FE;
+  white-space: nowrap;
+}
+
 .banActionBtn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
