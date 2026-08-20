@@ -227,7 +227,7 @@
   40%, 100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
 }
 
-/* Layer 4: Dark Angel Goddesses / Valkyries */
+/* Layer 4: Dark Angel Goddesses / Valkyries with Wide Dynamic Motion */
 .godValkyrie {
   position: absolute;
   top: -8%;
@@ -235,18 +235,19 @@
   height: 72%;
   z-index: 14;
   filter: drop-shadow(0 0 8px #D946EF) drop-shadow(0 0 14px #FF0055);
-  animation: valkyrieHover 2.2s infinite alternate ease-in-out;
   will-change: transform;
 }
 
 .valkyrieLeft {
   left: -20%;
   transform-origin: right center;
+  animation: valkyrieHoverLeft 2.2s infinite ease-in-out;
 }
 
 .valkyrieRight {
   right: -20%;
   transform-origin: left center;
+  animation: valkyrieHoverRight 2.2s infinite ease-in-out;
 }
 
 .goddessSvg {
@@ -255,9 +256,30 @@
   overflow: visible;
 }
 
-@keyframes valkyrieHover {
-  0% { transform: rotate(0deg) scale(1); }
-  100% { transform: rotate(-3deg) scale(1.05); }
+@keyframes valkyrieHoverLeft {
+  0%, 100% {
+    transform: translateY(0) translateX(0) rotate(0deg) scale(1);
+  }
+  30% {
+    transform: translateY(-10px) translateX(-6px) rotate(-15deg) scale(1.18);
+    filter: drop-shadow(0 0 12px #FF0055) drop-shadow(0 0 22px #D946EF);
+  }
+  70% {
+    transform: translateY(4px) translateX(2px) rotate(6deg) scale(0.96);
+  }
+}
+
+@keyframes valkyrieHoverRight {
+  0%, 100% {
+    transform: translateY(0) translateX(0) rotate(0deg) scale(1);
+  }
+  30% {
+    transform: translateY(-10px) translateX(6px) rotate(15deg) scale(1.18);
+    filter: drop-shadow(0 0 12px #FF0055) drop-shadow(0 0 22px #D946EF);
+  }
+  70% {
+    transform: translateY(4px) translateX(-2px) rotate(-6deg) scale(0.96);
+  }
 }
 
 .goddessEye {
@@ -280,8 +302,18 @@
   height: 40%;
   z-index: 16;
   filter: drop-shadow(0 0 8px #FFD700) drop-shadow(0 0 14px #FF0055);
-  animation: vip8CrownBounce 1.8s infinite ease-in-out;
+  animation: godCrownBounce 2s infinite ease-in-out;
   will-change: transform;
+}
+
+@keyframes godCrownBounce {
+  0%, 100% {
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+  50% {
+    transform: translateX(-50%) translateY(-10px) scale(1.14);
+    filter: drop-shadow(0 0 16px #FFD700) drop-shadow(0 0 26px #FF0055);
+  }
 }
 
 .godRubyGem {
@@ -294,7 +326,7 @@
   100% { filter: drop-shadow(0 0 8px #FF0055) drop-shadow(0 0 12px #FFE600); transform: scale(1.15); }
 }
 
-/* Layer 6: Lower White Angel Wings */
+/* Layer 6: Lower White Angel Wings with Large Flapping Motion */
 .godLowerWings {
   position: absolute;
   bottom: 6%;
@@ -302,6 +334,18 @@
   height: 28px;
   z-index: 15;
   pointer-events: none;
+  animation: godWingsFlap 2.2s infinite ease-in-out;
+  will-change: transform;
+}
+
+@keyframes godWingsFlap {
+  0%, 100% {
+    transform: scale(1) translateY(0);
+  }
+  50% {
+    transform: scale(1.24) translateY(-7px);
+    filter: drop-shadow(0 0 14px #FFFFFF) drop-shadow(0 0 22px #FFB7C5);
+  }
 }
 
 .lowerWingsSvg {
@@ -321,6 +365,13 @@
   flex-direction: column;
   align-items: center;
   width: 92%;
+  animation: godBottomFloat 2s infinite alternate ease-in-out;
+  will-change: transform;
+}
+
+@keyframes godBottomFloat {
+  0% { transform: translateX(-50%) translateY(0) scale(1); }
+  100% { transform: translateX(-50%) translateY(6px) scale(1.08); }
 }
 
 .godInfernoFlames {
@@ -650,7 +701,7 @@
   animation: vip10Surge 2.2s infinite cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Layer 4: Epic Storm Dragon Heads */
+/* Layer 4: Epic Storm Dragon Heads with Fierce Hover Motion */
 .vip10DragonHead {
   position: absolute;
   top: -6%;
@@ -658,18 +709,19 @@
   height: 68%;
   z-index: 14;
   filter: drop-shadow(0 0 8px #00FFFF) drop-shadow(0 0 14px #0284C7);
-  animation: sssvipHeadHover 2s infinite alternate ease-in-out;
   will-change: transform;
 }
 
 .headLeft {
   left: -20%;
   transform-origin: right center;
+  animation: sssvipDragonHoverLeft 2s infinite ease-in-out;
 }
 
 .headRight {
   right: -20%;
   transform-origin: left center;
+  animation: sssvipDragonHoverRight 2s infinite ease-in-out;
 }
 
 .stormDragonSvg {
@@ -678,9 +730,30 @@
   overflow: visible;
 }
 
-@keyframes sssvipHeadHover {
-  0% { transform: rotate(0deg) scale(1); }
-  100% { transform: rotate(-3deg) scale(1.05); }
+@keyframes sssvipDragonHoverLeft {
+  0%, 100% {
+    transform: translateY(0) translateX(0) rotate(0deg) scale(1);
+  }
+  35% {
+    transform: translateY(-9px) translateX(-7px) rotate(-18deg) scale(1.22);
+    filter: drop-shadow(0 0 14px #00FFFF) drop-shadow(0 0 24px #0284C7);
+  }
+  70% {
+    transform: translateY(4px) translateX(2px) rotate(6deg) scale(0.95);
+  }
+}
+
+@keyframes sssvipDragonHoverRight {
+  0%, 100% {
+    transform: translateY(0) translateX(0) rotate(0deg) scale(1);
+  }
+  35% {
+    transform: translateY(-9px) translateX(7px) rotate(18deg) scale(1.22);
+    filter: drop-shadow(0 0 14px #00FFFF) drop-shadow(0 0 24px #0284C7);
+  }
+  70% {
+    transform: translateY(4px) translateX(-2px) rotate(-6deg) scale(0.95);
+  }
 }
 
 .dragonEyeStorm {
@@ -712,8 +785,18 @@
   height: 40%;
   z-index: 16;
   filter: drop-shadow(0 0 8px #00FFFF) drop-shadow(0 0 14px #FFD700);
-  animation: vip8CrownBounce 1.8s infinite ease-in-out;
+  animation: sssvipCrownBounce 2s infinite ease-in-out;
   will-change: transform;
+}
+
+@keyframes sssvipCrownBounce {
+  0%, 100% {
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+  50% {
+    transform: translateX(-50%) translateY(-10px) scale(1.14);
+    filter: drop-shadow(0 0 16px #00FFFF) drop-shadow(0 0 24px #FFD700);
+  }
 }
 
 .thunderCrownSvg {
@@ -749,6 +832,13 @@
   flex-direction: column;
   align-items: center;
   width: 92%;
+  animation: sssvipBottomFloat 2.2s infinite alternate ease-in-out;
+  will-change: transform;
+}
+
+@keyframes sssvipBottomFloat {
+  0% { transform: translateX(-50%) translateY(0) scale(1); }
+  100% { transform: translateX(-50%) translateY(5px) scale(1.06); }
 }
 
 .bottomClouds {
@@ -757,6 +847,13 @@
   margin-bottom: calc(var(--frame-size, 36px) * -0.12);
   z-index: 18;
   filter: drop-shadow(0 0 6px rgba(0, 255, 255, 0.85));
+  animation: sssvipCloudsDrift 3s infinite alternate ease-in-out;
+  will-change: transform;
+}
+
+@keyframes sssvipCloudsDrift {
+  0% { transform: scaleX(0.92) translateX(-4px); }
+  100% { transform: scaleX(1.12) translateX(4px); }
 }
 
 .cloudsSvg {
@@ -1030,7 +1127,7 @@
   will-change: transform;
 }
 
-/* Layer 4: Feathered Angelic Ice Wings */
+/* Layer 4: Feathered Angelic Ice Wings with Wide Flutter Motion */
 .vip9IceWing {
   position: absolute;
   top: 6%;
@@ -1038,18 +1135,19 @@
   height: 64%;
   z-index: 12;
   filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.95)) drop-shadow(0 0 14px rgba(138, 168, 248, 0.7));
-  animation: ssvipWingsFlutter 2.4s infinite alternate ease-in-out;
   will-change: transform;
 }
 
 .iceWingLeft {
   left: -16%;
   transform-origin: right center;
+  animation: ssvipWingsFlutterLeft 2.4s infinite ease-in-out;
 }
 
 .iceWingRight {
   right: -16%;
   transform-origin: left center;
+  animation: ssvipWingsFlutterRight 2.4s infinite ease-in-out;
 }
 
 .iceWingSvg {
@@ -1058,9 +1156,30 @@
   overflow: visible;
 }
 
-@keyframes ssvipWingsFlutter {
-  0% { transform: rotate(0deg) scale(1); }
-  100% { transform: rotate(-3deg) scale(1.05); }
+@keyframes ssvipWingsFlutterLeft {
+  0%, 100% {
+    transform: translateY(0) translateX(0) rotate(0deg) scale(1);
+  }
+  35% {
+    transform: translateY(-9px) translateX(-6px) rotate(-16deg) scale(1.2);
+    filter: drop-shadow(0 0 14px rgba(255, 255, 255, 1)) drop-shadow(0 0 24px rgba(138, 168, 248, 0.9));
+  }
+  70% {
+    transform: translateY(4px) translateX(2px) rotate(5deg) scale(0.96);
+  }
+}
+
+@keyframes ssvipWingsFlutterRight {
+  0%, 100% {
+    transform: translateY(0) translateX(0) rotate(0deg) scale(1);
+  }
+  35% {
+    transform: translateY(-9px) translateX(6px) rotate(16deg) scale(1.2);
+    filter: drop-shadow(0 0 14px rgba(255, 255, 255, 1)) drop-shadow(0 0 24px rgba(138, 168, 248, 0.9));
+  }
+  70% {
+    transform: translateY(4px) translateX(-2px) rotate(-5deg) scale(0.96);
+  }
 }
 
 .wingSparkle {
@@ -1083,8 +1202,18 @@
   height: 42%;
   z-index: 16;
   filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.95)) drop-shadow(0 0 14px rgba(125, 160, 250, 0.75));
-  animation: vip8CrownBounce 1.8s infinite ease-in-out;
+  animation: ssvipCrownBounce 2s infinite ease-in-out;
   will-change: transform;
+}
+
+@keyframes ssvipCrownBounce {
+  0%, 100% {
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+  50% {
+    transform: translateX(-50%) translateY(-9px) scale(1.12);
+    filter: drop-shadow(0 0 16px #FFFFFF) drop-shadow(0 0 22px rgba(125, 160, 250, 0.9));
+  }
 }
 
 .vip9IceGem {
@@ -1118,6 +1247,13 @@
   flex-direction: column;
   align-items: center;
   width: 92%;
+  animation: ssvipBottomFloat 2.2s infinite alternate ease-in-out;
+  will-change: transform;
+}
+
+@keyframes ssvipBottomFloat {
+  0% { transform: translateX(-50%) translateY(0) scale(1); }
+  100% { transform: translateX(-50%) translateY(5px) scale(1.06); }
 }
 
 .bottomFeatherWreath {
