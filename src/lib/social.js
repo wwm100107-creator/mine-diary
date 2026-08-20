@@ -225,6 +225,8 @@ export async function sendChatMessage(myId, targetId, text, options = {}) {
       status: 'pending',
       lastMessage: text.trim(),
       lastSenderId: myId,
+      lastMessageType: msgType,
+      isSystemMessage: isSystem,
       updatedAt: serverTimestamp(),
       createdAt: serverTimestamp(),
     })
@@ -233,6 +235,8 @@ export async function sendChatMessage(myId, targetId, text, options = {}) {
     await setDoc(chatDocRef, {
       lastMessage: text.trim(),
       lastSenderId: myId,
+      lastMessageType: msgType,
+      isSystemMessage: isSystem,
       updatedAt: serverTimestamp(),
     }, { merge: true })
   }
@@ -340,6 +344,8 @@ export function subscribeToUserChats(myId, callback) {
         initiatorId: data.initiatorId,
         lastMessage: data.lastMessage,
         lastSenderId: data.lastSenderId,
+        lastMessageType: data.lastMessageType || 'text',
+        isSystemMessage: data.isSystemMessage || false,
         updatedAt: data.updatedAt,
       })
     }

@@ -7,13 +7,14 @@ import HealthView from './components/HealthView'
 import PartnerCycleView from './components/PartnerCycleView'
 import AdminDashboard from './components/AdminDashboard'
 import ChatView from './components/ChatView'
+import PixelToastContainer from './components/PixelToast'
 import EasterEgg from './components/EasterEgg'
 import AuthLanding from './components/AuthLanding'
 import BannedScreen from './components/BannedScreen'
 import PixelAvatar from './components/PixelAvatar'
 import AvatarWithFrame from './components/AvatarWithFrame'
 import AvatarUploadModal from './components/AvatarUploadModal'
-import { upsertUser, getUser, uploadUserAvatar, subscribeToUserRelationships } from './lib/social'
+import { upsertUser, getUser, uploadUserAvatar, subscribeToUserRelationships, subscribeToUserChats } from './lib/social'
 import { isUserAdmin } from './lib/admin'
 import { getCurrentUser, saveSession, logoutUser, verifyBanStatus } from './lib/auth'
 import { loadMarkedDates, predictNextPeriod, toDateStr } from './utils/cycle'
@@ -178,6 +179,80 @@ export default function App() {
     } else {
       window.history.pushState({}, '', '/')
     }
+  }
+
+  // ── In-App Pixel Toast Notifications System ─────────────────────────────
+  const [toasts, setToasts] = useState([])
+  const initialChatsLoadedRef = useRef(false)
+  const lastSeenMsgsRef = useRef(new Map())
+
+  useEffect(() => {
+    if (!user?.id) {
+      setToasts([])
+      initialChatsLoadedRef.current = false
+      lastSeenMsgsRef.current.clear()
+      return
+    }
+
+    const unsubscribe = subscribeToUserChats(user.id, (chats) => {
+      if (!initialChatsLoadedRef.current) {
+        // Record current chat states on initial mount to avoid spam
+        chats.forEach((c) => {
+          const key = `${c.chatId}_${c.lastSenderId}_${c.lastMessage}`
+          lastSeenMsgsRef.current.set(c.chatId, key)
+        })
+        initialChatsLoadedRef.current = true
+        return
+      }
+
+      // On subsequent updates, check for new messages from others
+      chats.forEach((c) => {
+        if (!c.lastMessage || c.lastSenderId === user.id) return
+        const key = `${c.chatId}_${c.lastSenderId}_${c.lastMessage}`
+        const prevKey = lastSeenMsgsRef.current.get(c.chatId)
+
+        if (key !== prevKey) {
+          lastSeenMsgsRef.current.set(c.chatId, key)
+
+          const isCare = c.isSystemMessage || c.lastMessageType === 'care_reminder'
+          const newToast = {
+            id: `toast_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+            senderName: c.displayName || 'Người bạn',
+            avatar: c.avatar || 'bunny',
+            avatarFrame: c.avatarFrame || 'none',
+            text: c.lastMessage,
+            type: c.lastMessageType || (isCare ? 'care_reminder' : 'text'),
+            isSystemMessage: isCare,
+            partnerId: c.partnerId,
+            chat: c,
+            createdAt: Date.now(),
+          }
+
+          setToasts((prev) => [newToast, ...prev.slice(0, 3)])
+        }
+      })
+    })
+
+    return () => unsubscribe()
+  }, [user?.id])
+
+  const handleDismissToast = (toastId) => {
+    setToasts((prev) => prev.filter((t) => t.id !== toastId))
+  }
+
+  const handleToastClick = (toast) => {
+    switchTab('chat')
+    window.dispatchEvent(
+      new CustomEvent('minediary:open_chat', {
+        detail: {
+          partnerId: toast.partnerId,
+          displayName: toast.senderName,
+          avatar: toast.avatar,
+          avatarFrame: toast.avatarFrame,
+          status: toast.chat?.status || 'accepted',
+        },
+      })
+    )
   }
 
   // ── Background Service (Cron) for Notifications ──────────────────────────
@@ -495,6 +570,13 @@ export default function App() {
 
       {/* Author Dedication Easter Egg (Bottom Left) */}
       <EasterEgg />
+
+      {/* In-App Pixel Toast Notifications */}
+      <PixelToastContainer
+        toasts={toasts}
+        onDismiss={handleDismissToast}
+        onToastClick={handleToastClick}
+      />
 
       {/* Avatar Upload, Pixel Art & Theme Modal */}
       {isAvatarModalOpen && (

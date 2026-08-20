@@ -95,6 +95,24 @@ export default function ChatView({ user }) {
     return () => unsubscribe()
   }, [user?.id])
 
+  // 1.1 Listen to open chat event (from Toast Notification click)
+  useEffect(() => {
+    const handleOpenChatEvent = (e) => {
+      const p = e.detail
+      if (p && p.partnerId) {
+        setActivePartner({
+          id: p.partnerId,
+          displayName: p.displayName,
+          avatar: p.avatar,
+          avatarFrame: p.avatarFrame,
+          status: p.status || 'accepted',
+        })
+      }
+    }
+    window.addEventListener('minediary:open_chat', handleOpenChatEvent)
+    return () => window.removeEventListener('minediary:open_chat', handleOpenChatEvent)
+  }, [])
+
   // 2. Separate active chats vs pending requests
   const { activeChats, requestChats } = useMemo(() => {
     const local = getRecentChats(user?.id)
