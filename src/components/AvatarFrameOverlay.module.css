@@ -16,6 +16,297 @@
 }
 
 /* ============================================
+   FRAME 0: 👑 VIP 8 FIRE FRAME (Supreme Masterpiece)
+   ============================================ */
+.vip8Container {
+  position: absolute;
+  inset: -22%;
+  width: 144%;
+  height: 144%;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+}
+
+/* Layer 1: Blazing Fire Aura Glow (Hardware Accelerated) */
+.vip8FireAura {
+  position: absolute;
+  inset: 15%;
+  border-radius: inherit;
+  box-shadow: 
+    0 0 8px #FF1E00,
+    0 0 16px #FF6600,
+    0 0 26px #FFCC00,
+    inset 0 0 8px #FF3300;
+  animation: vip8FirePulse 1.2s infinite alternate ease-in-out;
+  will-change: box-shadow;
+  transform: translateZ(0);
+}
+
+@keyframes vip8FirePulse {
+  0% {
+    box-shadow: 
+      0 0 6px #FF1E00,
+      0 0 14px #FF6600,
+      0 0 22px #FFAA00,
+      inset 0 0 6px #FF3300;
+  }
+  50% {
+    box-shadow: 
+      0 0 12px #FF3300,
+      0 0 22px #FF9900,
+      0 0 34px #FFEA00,
+      inset 0 0 10px #FF5500;
+  }
+  100% {
+    box-shadow: 
+      0 0 10px #FF1E00,
+      0 0 18px #FF7700,
+      0 0 28px #FFD700,
+      inset 0 0 8px #FF4400;
+  }
+}
+
+/* Layer 2: Floating Fire Particle Sparks */
+.vip8Sparks {
+  position: absolute;
+  inset: 5%;
+  pointer-events: none;
+}
+
+.vip8Spark {
+  position: absolute;
+  font-size: 7px;
+  line-height: 1;
+  color: #FFD700;
+  text-shadow: 0 0 4px #FF5500;
+  animation: vip8SparkRise 1.6s infinite ease-in-out;
+  will-change: transform, opacity;
+}
+
+.s1 { top: 15%; left: 8%; color: #FF4500; animation-delay: 0s; }
+.s2 { top: 10%; right: 12%; color: #FFE600; font-size: 5px; animation-delay: 0.3s; }
+.s3 { bottom: 25%; left: 4%; color: #FFA500; animation-delay: 0.6s; }
+.s4 { bottom: 20%; right: 6%; color: #FF1E00; font-size: 6px; animation-delay: 0.9s; }
+.s5 { top: 45%; left: 2%; color: #FFD700; font-size: 6px; animation-delay: 1.2s; }
+.s6 { top: 40%; right: 2%; color: #FF6348; font-size: 5px; animation-delay: 0.45s; }
+
+@keyframes vip8SparkRise {
+  0% {
+    opacity: 0;
+    transform: scale(0.4) translateY(4px);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(1.3) translateY(-3px);
+  }
+  80% {
+    opacity: 0.8;
+    transform: scale(0.9) translateY(-8px);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.2) translateY(-14px);
+  }
+}
+
+/* Layer 3: Base Gold Border with Light Sweep */
+.vip8GoldBorder {
+  position: absolute;
+  inset: 15%;
+  border-radius: inherit;
+  border: 2.5px solid #FFD700;
+  box-shadow: 
+    0 0 0 1.5px #FFA500,
+    0 0 0 2.5px #8B0000,
+    inset 0 0 0 1.5px #FFF59D;
+  overflow: hidden;
+  z-index: 10;
+}
+
+.vip8ShineSweep {
+  position: absolute;
+  inset: -60%;
+  background: linear-gradient(
+    135deg,
+    transparent 35%,
+    rgba(255, 255, 255, 0.9) 50%,
+    transparent 65%
+  );
+  animation: vip8Shine 2.2s infinite cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+}
+
+@keyframes vip8Shine {
+  0% {
+    transform: translateX(-100%) translateY(-100%) rotate(45deg);
+  }
+  40%, 100% {
+    transform: translateX(100%) translateY(100%) rotate(45deg);
+  }
+}
+
+/* Layer 4: Dragon Wings / Flame Flares */
+.vip8DragonWing {
+  position: absolute;
+  top: 14%;
+  width: 36%;
+  height: 52%;
+  z-index: 11;
+  filter: drop-shadow(0 0 4px #FF3D00);
+}
+
+.wingLeft {
+  left: -8%;
+  transform-origin: right center;
+  animation: vip8WingLeft 2.4s infinite ease-in-out;
+}
+
+.wingRight {
+  right: -8%;
+  transform-origin: left center;
+  animation: vip8WingRight 2.4s infinite ease-in-out;
+}
+
+.dragonSvg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+@keyframes vip8WingLeft {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(-4deg) scale(1.05); }
+}
+
+@keyframes vip8WingRight {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(4deg) scale(1.05); }
+}
+
+/* Layer 5: Top Royal Crown with Pulsing Gem */
+.vip8Crown {
+  position: absolute;
+  top: -12%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 68%;
+  height: 38%;
+  z-index: 15;
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.4)) drop-shadow(0 0 6px #FF8800);
+  animation: vip8CrownBounce 1.8s infinite ease-in-out;
+  will-change: transform;
+}
+
+.crownSvg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.vip8Gem {
+  animation: vip8GemSparkle 1.2s infinite alternate ease-in-out;
+  transform-origin: 18px 12px;
+}
+
+@keyframes vip8CrownBounce {
+  0%, 100% {
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+  50% {
+    transform: translateX(-50%) translateY(-2px) scale(1.04);
+  }
+}
+
+@keyframes vip8GemSparkle {
+  0% {
+    filter: drop-shadow(0 0 2px #E056FD);
+    transform: scale(0.95);
+  }
+  100% {
+    filter: drop-shadow(0 0 8px #FF9FF3) drop-shadow(0 0 12px #9B59B6);
+    transform: scale(1.08);
+  }
+}
+
+/* Layer 6: Bottom VIP 8 Ribbon Banner */
+.vip8BottomBadge {
+  position: absolute;
+  bottom: -10%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 18;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 78%;
+}
+
+.clawLeft, .clawRight {
+  position: absolute;
+  top: -4px;
+  display: flex;
+  gap: 1px;
+  font-size: 5px;
+  line-height: 1;
+  color: #FFD700;
+  text-shadow: 0 0 2px #FF4500;
+  z-index: 19;
+}
+
+.clawLeft { left: 4px; }
+.clawRight { right: 4px; }
+
+.vip8Ribbon {
+  background: linear-gradient(135deg, #B71C1C 0%, #D32F2F 40%, #E53935 70%, #8B0000 100%);
+  border: 1.5px solid #FFD700;
+  border-radius: 3px;
+  box-shadow: 
+    0 0 6px #FF3D00,
+    0 2px 4px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 #FFA726;
+  padding: 1px 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.vip8Text {
+  font-family: var(--font-pixel);
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #FFF9C4;
+  text-shadow: 
+    0 0 3px #FFD700,
+    0 0 6px #FF4500,
+    0 0 10px #FF1E00;
+  animation: vip8TextGlow 1s infinite alternate ease-in-out;
+  white-space: nowrap;
+}
+
+@keyframes vip8TextGlow {
+  0% {
+    text-shadow: 
+      0 0 2px #FFD700,
+      0 0 5px #FF4500;
+    filter: brightness(1);
+  }
+  100% {
+    text-shadow: 
+      0 0 5px #FFE600,
+      0 0 10px #FF3D00,
+      0 0 16px #FF1E00;
+    filter: brightness(1.25);
+  }
+}
+
+/* ============================================
    FRAME 1: 🌈 Cầu Vồng Pixel (Rainbow Stepping)
    ============================================ */
 .rainbowBorder {
@@ -121,7 +412,7 @@
 }
 
 /* ============================================
-   FRAME 3: 🔥 Hào Quang Lửa / Cyber Aura
+   FRAME 3: ⚡ Hào Quang Lửa / Cyber Aura
    ============================================ */
 .flameAura {
   position: absolute;
