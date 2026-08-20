@@ -320,40 +320,40 @@ export function subscribeToUserChats(myId, callback) {
     where('participants', 'array-contains', myId)
   )
   return onSnapshot(q, async (snapshot) => {
-    const chats = []
-    for (const d of snapshot.docs) {
-      const data = d.data()
-      if (data.status === 'declined') continue // ignore declined
+    try {
+      const activeDocs = snapshot.docs.filter((d) => d.data()?.status !== 'declined')
+      const chatPromises = activeDocs.map(async (d) => {
+        const data = d.data()
+        const partnerId = data.participants?.find((p) => p !== myId)
+        if (!partnerId) return null
 
-      const partnerId = data.participants.find((p) => p !== myId)
-      if (!partnerId) continue
+        // Fetch partner profile (Skip if partner account was deleted)
+        const partnerDoc = await getUser(partnerId)
+        if (!partnerDoc) return null
 
-      // Fetch partner profile (Skip if partner account was deleted)
-      const partnerDoc = await getUser(partnerId)
-      if (!partnerDoc) continue
-
-      const partnerDisplayName = partnerDoc.displayName || partnerDoc.name || partnerId
-      const partnerAvatar = partnerDoc.avatar || 'bunny'
-      const partnerFrame = partnerDoc.avatarFrame || partnerDoc.frame || 'none'
-
-      chats.push({
-        chatId: d.id,
-        partnerId,
-        displayName: partnerDisplayName,
-        avatar: partnerAvatar,
-        avatarFrame: partnerFrame,
-        status: data.status, // 'pending' | 'accepted'
-        initiatorId: data.initiatorId,
-        lastMessage: data.lastMessage,
-        lastSenderId: data.lastSenderId,
-        lastMessageType: data.lastMessageType || 'text',
-        isSystemMessage: data.isSystemMessage || false,
-        updatedAt: data.updatedAt,
+        return {
+          chatId: d.id,
+          partnerId,
+          displayName: partnerDoc.displayName || partnerDoc.name || partnerId,
+          avatar: partnerDoc.avatar || 'bunny',
+          avatarFrame: partnerDoc.avatarFrame || partnerDoc.frame || 'none',
+          status: data.status, // 'pending' | 'accepted'
+          initiatorId: data.initiatorId,
+          lastMessage: data.lastMessage,
+          lastSenderId: data.lastSenderId,
+          lastMessageType: data.lastMessageType || 'text',
+          isSystemMessage: data.isSystemMessage || false,
+          updatedAt: data.updatedAt,
+        }
       })
+
+      const resolvedChats = await Promise.all(chatPromises)
+      callback(resolvedChats.filter(Boolean))
+    } catch (err) {
+      console.warn('[Social] Error processing chats snapshot:', err)
     }
-    callback(chats)
   }, (err) => {
-    console.error('User chats subscription error:', err)
+    console.warn('User chats subscription warning:', err)
   })
 }
 

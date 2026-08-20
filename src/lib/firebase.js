@@ -1,12 +1,7 @@
 // src/lib/firebase.js
-// Central Firebase init with Safe Offline Persistence + Storage
+// Central Firebase init with safe singleton instances (Deadlock-Free on Rapid Reloads)
 import { initializeApp, getApps, getApp } from 'firebase/app'
-import {
-  getFirestore,
-  initializeFirestore,
-  persistentLocalCache,
-  persistentMultipleTabManager,
-} from 'firebase/firestore'
+import { getFirestore } from 'firebase/firestore'
 import { getStorage } from 'firebase/storage'
 
 const firebaseConfig = {
@@ -21,22 +16,7 @@ const firebaseConfig = {
 // ponytail: Ensure singleton app instance across hot reloads & rapid F5
 export const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp()
 
-// ponytail: Safely initialize Firestore with persistent multi-tab cache,
-// falling back gracefully to getFirestore if IndexedDB is temporarily locked on rapid refresh
-let firestoreDb
-try {
-  firestoreDb = initializeFirestore(app, {
-    localCache: persistentLocalCache({
-      tabManager: persistentMultipleTabManager(),
-    }),
-  })
-} catch (err) {
-  try {
-    firestoreDb = getFirestore(app)
-  } catch (fallbackErr) {
-    console.warn('[Firebase] Fallback getFirestore:', fallbackErr)
-  }
-}
-
-export const db = firestoreDb || getFirestore(app)
+// ponytail: Standard rock-solid getFirestore avoids multi-tab IndexedDB lock freezes on rapid F5 reloads
+export const db = getFirestore(app)
 export const storage = getStorage(app)
+

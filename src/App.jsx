@@ -151,24 +151,30 @@ export default function App() {
   const tabRefs = useRef({})
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0, opacity: 0 })
 
-  useLayoutEffect(() => {
+  useEffect(() => {
+    let animId = null
     const updateIndicator = () => {
-      const activeEl = tabRefs.current[currentTab]
-      const navEl = navRef.current
-      if (activeEl && navEl) {
-        const navRect = navEl.getBoundingClientRect()
-        const activeRect = activeEl.getBoundingClientRect()
-        setIndicatorStyle({
-          left: activeRect.left - navRect.left,
-          width: activeRect.width,
-          opacity: 1,
-        })
-      }
+      animId = requestAnimationFrame(() => {
+        const activeEl = tabRefs.current[currentTab]
+        const navEl = navRef.current
+        if (activeEl && navEl) {
+          const navRect = navEl.getBoundingClientRect()
+          const activeRect = activeEl.getBoundingClientRect()
+          setIndicatorStyle({
+            left: activeRect.left - navRect.left,
+            width: activeRect.width,
+            opacity: 1,
+          })
+        }
+      })
     }
 
     updateIndicator()
     window.addEventListener('resize', updateIndicator)
-    return () => window.removeEventListener('resize', updateIndicator)
+    return () => {
+      if (animId) cancelAnimationFrame(animId)
+      window.removeEventListener('resize', updateIndicator)
+    }
   }, [currentTab, navTabs])
 
   // ── URL & History Listener ───────────────────────────────────────────────
@@ -299,48 +305,48 @@ export default function App() {
 
   // ── Background Service (Cron) for Notifications ──────────────────────────
   useEffect(() => {
-    if (!user) return
+    if (!user?.id) return
 
-    const checkNotifications = async () => {
-      if (!('Notification' in window)) return
-      if (Notification.permission !== 'granted') {
-        const perm = await Notification.requestPermission()
-        if (perm !== 'granted') return
-      }
+    const checkNotifications = () => {
+      try {
+        if (!('Notification' in window) || Notification.permission !== 'granted') return
 
-      const today = new Date()
-      const todayStr = toDateStr(today)
-      
-      // 1. Nhắc nhở sắp đến kỳ kinh (trước 2 ngày)
-      const lastPeriodNotif = localStorage.getItem(`minediary:notif:period:${user.id}`)
-      if (lastPeriodNotif !== todayStr) {
-        const marks = loadMarkedDates(user.id)
-        const prediction = predictNextPeriod(marks, user.id)
-        if (prediction && prediction.predictedStart) {
-          const diffDays = Math.round((prediction.predictedStart - today) / 86_400_000)
-          if (diffDays === 2) {
-            new Notification('Sắp đến kỳ kinh nguyệt 🌸', {
-              body: 'Kỳ kinh tiếp theo của bạn dự kiến sẽ bắt đầu trong 2 ngày nữa. Hãy chuẩn bị nhé!',
-            })
-            localStorage.setItem(`minediary:notif:period:${user.id}`, todayStr)
+        const today = new Date()
+        const todayStr = toDateStr(today)
+        
+        // 1. Nhắc nhở sắp đến kỳ kinh (trước 2 ngày)
+        const lastPeriodNotif = localStorage.getItem(`minediary:notif:period:${user.id}`)
+        if (lastPeriodNotif !== todayStr) {
+          const marks = loadMarkedDates(user.id)
+          const prediction = predictNextPeriod(marks, user.id)
+          if (prediction && prediction.predictedStart) {
+            const diffDays = Math.round((prediction.predictedStart - today) / 86_400_000)
+            if (diffDays === 2) {
+              new Notification('Sắp đến kỳ kinh nguyệt 🌸', {
+                body: 'Kỳ kinh tiếp theo của bạn dự kiến sẽ bắt đầu trong 2 ngày nữa. Hãy chuẩn bị nhé!',
+              })
+              localStorage.setItem(`minediary:notif:period:${user.id}`, todayStr)
+            }
           }
         }
-      }
 
-      // 2. Nhắc nhở uống thuốc hàng ngày
-      const lastPillNotif = localStorage.getItem(`minediary:notif:pill:${user.id}`)
-      if (lastPillNotif !== todayStr) {
-        new Notification('Đừng quên uống thuốc nhé! 💊', {
-          body: 'Đã đến giờ uống thuốc hàng ngày của bạn rồi đó.',
-        })
-        localStorage.setItem(`minediary:notif:pill:${user.id}`, todayStr)
+        // 2. Nhắc nhở uống thuốc hàng ngày
+        const lastPillNotif = localStorage.getItem(`minediary:notif:pill:${user.id}`)
+        if (lastPillNotif !== todayStr) {
+          new Notification('Đừng quên uống thuốc nhé! 💊', {
+            body: 'Đã đến giờ uống thuốc hàng ngày của bạn rồi đó.',
+          })
+          localStorage.setItem(`minediary:notif:pill:${user.id}`, todayStr)
+        }
+      } catch (e) {
+        console.warn('Background notification check warning:', e)
       }
     }
 
     checkNotifications()
     const interval = setInterval(checkNotifications, 3600_000)
     return () => clearInterval(interval)
-  }, [user])
+  }, [user?.id])
 
   // ── Google 1-Click Login ───────────────────────────────────────────────────
   const login = useGoogleLogin({
