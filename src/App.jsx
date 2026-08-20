@@ -50,6 +50,15 @@ export default function App() {
   const [partnerUser, setPartnerUser] = useState(null)
 
   useEffect(() => {
+    // Purge legacy recent_chats keys from localStorage
+    try {
+      Object.keys(localStorage).forEach((key) => {
+        if (key.startsWith('minediary:recent_chats')) {
+          localStorage.removeItem(key)
+        }
+      })
+    } catch (e) {}
+
     if (!user?.id) {
       setUserRelationships([])
       setPartnerUser(null)

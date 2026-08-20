@@ -538,39 +538,13 @@ export function subscribeToPartnerCycleData(partnerId, callback) {
   })
 }
 
-// ── Local recent chats cache (fast boot) ──────────────────────────────────────
+// ── Realtime Chats System (No stale localStorage caching) ──────────────────────
 
-const recentKey = (userId) => `minediary:recent_chats:${userId}`
-
-export function getRecentChats(userId) {
-  try {
-    const raw = localStorage.getItem(recentKey(userId))
-    return raw ? JSON.parse(raw) : []
-  } catch (e) {
-    return []
-  }
+export function getRecentChats() {
+  return []
 }
 
-export function saveRecentChat(userId, partner, status = 'accepted') {
-  if (!userId || !partner?.id) return
-  const current = getRecentChats(userId)
-  const filtered = current.filter((c) => c.id !== partner.id)
-  const updated = [
-    {
-      id: partner.id,
-      displayName: partner.displayName || partner.id,
-      avatar: partner.avatar || 'bunny',
-      avatarFrame: partner.avatarFrame || partner.frame || 'none',
-      status: status || 'accepted',
-      lastSeen: Date.now(),
-    },
-    ...filtered,
-  ].slice(0, 15) // Keep top 15
-
-  try {
-    localStorage.setItem(recentKey(userId), JSON.stringify(updated))
-  } catch (e) {
-    console.error('Save recent chat error:', e)
-  }
+export function saveRecentChat() {
+  // No-op: Realtime state strictly driven by Firestore database
 }
 
