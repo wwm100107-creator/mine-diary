@@ -5,7 +5,7 @@ export const AVATAR_FRAMES = [
   { id: 'none', name: 'Mặc định', icon: '🚫', desc: 'Không khung viền' },
   { id: 'god_cosmic', name: '🌌 GOD Sáng Thế', icon: '👑', desc: 'Cấp bậc Tối Thượng GOD Mode — Cực quang 6 cánh thiên thần & tinh vân vô cực' },
   { id: 'vip10_thunder', name: '⚡ VIP 10 Lôi Thần', icon: '⚡', desc: 'Hắc Long Lôi Thần — Sấm sét tím điện quang & ma lôi chớp giật' },
-  { id: 'vip9_frost', name: '❄️ VIP 9 Băng Long', icon: '❄️', desc: 'Băng Long Băng Hà — Tinh thể băng tuyết & kim cương ngọc bích cực hàn' },
+  { id: 'vip9_frost', name: '❄️ SSVIP Cánh Băng', icon: '❄️', desc: 'SSVIP Thiên Thần Băng Tuyết — Cánh thiên thần bạch kim & sương băng huyền ảo' },
   { id: 'vip8_fire', name: '🔥 SVIP Rồng Lửa', icon: '🔥', desc: 'SVIP Rồng vàng hoàng kim & hào quang lửa cháy bùng nổ' },
   { id: 'cyber_aura', name: '⚡ Hào Quang Lửa', icon: '✨', desc: 'Lửa vàng & điện quang chớp giật' },
   { id: 'rainbow', name: '🌈 Cầu Vồng Pixel', icon: '🌈', desc: 'Viền cầu vồng luân chuyển 8-bit' },
@@ -215,86 +215,121 @@ function AvatarFrameOverlayComponent({ frameId = 'none', size = 36 }) {
       )}
 
       {/* ══════════════════════════════════════════════════════════════════════
-         FRAME: ❄️ VIP 9 — BĂNG LONG THẦN KHÍ (FROST DRAGON CRYO MASTERPIECE)
+         FRAME: ❄️ SSVIP — THIÊN THẦN CÁNH BĂNG (FROST ANGELIC FEATHERED SSVIP)
          ══════════════════════════════════════════════════════════════════════ */}
       {frameId === 'vip9_frost' && (
         <div className={s.vip9Container}>
-          {/* Layer 1: Sub-Zero Cryo Frost Aura */}
+          {/* Layer 1: Ethereal Billowing Glacial Mist Aura (Sương Băng) */}
+          <div className={s.vip9MistAura} />
           <div className={s.vip9IceAura} />
 
-          {/* Layer 2: Floating Ice Crystals & Snowflakes */}
+          {/* Layer 2: Twinkling 4-Point Diamond Sparkles & Snowflakes */}
           <div className={s.vip9Sparks}>
-            <span className={`${s.vip9Crystal} ${s.c1}`}>❄</span>
+            <span className={`${s.vip9Crystal} ${s.c1}`}>✦</span>
             <span className={`${s.vip9Crystal} ${s.c2}`}>✧</span>
-            <span className={`${s.vip9Crystal} ${s.c3}`}>✦</span>
-            <span className={`${s.vip9Crystal} ${s.c4}`}>❄</span>
+            <span className={`${s.vip9Crystal} ${s.c3}`}>❄</span>
+            <span className={`${s.vip9Crystal} ${s.c4}`}>✦</span>
             <span className={`${s.vip9Crystal} ${s.c5}`}>✧</span>
+            <span className={`${s.vip9Crystal} ${s.c6}`}>✨</span>
+            <span className={`${s.vip9Crystal} ${s.c7}`}>✦</span>
+            <span className={`${s.vip9Crystal} ${s.c8}`}>✧</span>
           </div>
 
-          {/* Layer 3: Crystalline Platinum Border with Frost Sweep */}
+          {/* Layer 3: Crystalline Silver-Blue Border with Diamond Sweep */}
           <div className={s.vip9Border}>
             <div className={s.vip9FrostSweep} />
           </div>
 
-          {/* Layer 4: Left & Right Frost Dragon Wings */}
-          <div className={`${s.vip9DragonWing} ${s.wingLeft}`}>
-            <svg viewBox="0 0 24 32" className={s.dragonSvg}>
-              <path d="M24,2 C16,0 8,8 2,16 C-1,20 0,26 6,30 C12,34 18,28 20,22 C22,18 24,10 24,2 Z" fill="url(#vip9PlatGrad)" />
-              <path d="M22,6 C16,6 10,12 6,18 C4,21 6,24 10,26 C14,28 18,22 20,18 Z" fill="url(#vip9FrostGrad)" />
-              <circle cx="16" cy="12" r="2.5" fill="#E0F7FA" />
-              <circle cx="16" cy="12" r="1.2" fill="#00E5FF" />
+          {/* Layer 4: Grand Sweeping Feathered Angelic Ice Wings (Left & Right) */}
+          <div className={`${s.vip9IceWing} ${s.iceWingLeft}`}>
+            <svg viewBox="0 0 36 48" className={s.iceWingSvg}>
+              {/* Outer Primary Feathers */}
+              <path d="M36,4 C24,0 12,6 4,16 C-2,24 0,34 8,42 C18,48 28,40 32,32 C34,26 36,16 36,4 Z" fill="url(#ssvipWingGrad)" />
+              {/* Middle Layer Carved Feathers */}
+              <path d="M34,10 C24,8 14,14 8,22 C4,28 8,36 16,40 C22,42 28,34 32,26 Z" fill="url(#ssvipInnerGrad)" />
+              {/* Inner Diamond Highlights */}
+              <path d="M36,18 C28,16 20,20 16,28 C14,32 18,36 24,38 C28,38 32,32 34,26 Z" fill="url(#ssvipLightGrad)" />
+              {/* Diamond Star Accent */}
+              <polygon points="12,18 14,14 16,18 14,22" fill="#FFFFFF" className={s.wingSparkle} />
             </svg>
           </div>
-          <div className={`${s.vip9DragonWing} ${s.wingRight}`}>
-            <svg viewBox="0 0 24 32" className={s.dragonSvg}>
-              <path d="M0,2 C8,0 16,8 22,16 C25,20 24,26 18,30 C12,34 6,28 4,22 C2,18 0,10 0,2 Z" fill="url(#vip9PlatGrad)" />
-              <path d="M2,6 C8,6 14,12 18,18 C20,21 18,24 14,26 C10,28 6,22 4,18 Z" fill="url(#vip9FrostGrad)" />
-              <circle cx="8" cy="12" r="2.5" fill="#E0F7FA" />
-              <circle cx="8" cy="12" r="1.2" fill="#00E5FF" />
+          <div className={`${s.vip9IceWing} ${s.iceWingRight}`}>
+            <svg viewBox="0 0 36 48" className={s.iceWingSvg}>
+              {/* Outer Primary Feathers */}
+              <path d="M0,4 C12,0 24,6 32,16 C38,24 36,34 28,42 C18,48 8,40 4,32 C2,26 0,16 0,4 Z" fill="url(#ssvipWingGrad)" />
+              {/* Middle Layer Carved Feathers */}
+              <path d="M2,10 C12,8 22,14 28,22 C32,28 28,36 20,40 C14,42 8,34 4,26 Z" fill="url(#ssvipInnerGrad)" />
+              {/* Inner Diamond Highlights */}
+              <path d="M0,18 C8,16 16,20 20,28 C22,32 18,36 12,38 C8,38 4,32 2,26 Z" fill="url(#ssvipLightGrad)" />
+              {/* Diamond Star Accent */}
+              <polygon points="24,18 22,14 20,18 22,22" fill="#FFFFFF" className={s.wingSparkle} />
             </svg>
           </div>
 
-          {/* Layer 5: Top Frost Crown with Ice Diamond */}
+          {/* Layer 5: Top Imperial Diamond Crown with Mini Wings */}
           <div className={s.vip9Crown}>
-            <svg viewBox="0 0 36 22" className={s.crownSvg}>
+            <svg viewBox="0 0 44 26" className={s.crownSvg}>
               <defs>
-                <linearGradient id="vip9PlatGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <linearGradient id="ssvipWingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                   <stop offset="0%" stopColor="#FFFFFF" />
-                  <stop offset="35%" stopColor="#E0F7FA" />
-                  <stop offset="70%" stopColor="#80DEEA" />
-                  <stop offset="100%" stopColor="#0097A7" />
+                  <stop offset="30%" stopColor="#E8F4FD" />
+                  <stop offset="65%" stopColor="#CBE6FE" />
+                  <stop offset="100%" stopColor="#8AA8F8" />
                 </linearGradient>
-                <linearGradient id="vip9FrostGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                  <stop offset="0%" stopColor="#E0F7FA" />
-                  <stop offset="50%" stopColor="#00E5FF" />
-                  <stop offset="100%" stopColor="#005792" />
-                </linearGradient>
-                <radialGradient id="vip9DiamondGrad" cx="50%" cy="50%" r="50%">
+                <linearGradient id="ssvipInnerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                   <stop offset="0%" stopColor="#FFFFFF" />
-                  <stop offset="40%" stopColor="#B3E5FC" />
-                  <stop offset="80%" stopColor="#0288D1" />
-                  <stop offset="100%" stopColor="#01579B" />
+                  <stop offset="50%" stopColor="#DCE4FF" />
+                  <stop offset="100%" stopColor="#99C5FE" />
+                </linearGradient>
+                <linearGradient id="ssvipLightGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#FFFFFF" />
+                  <stop offset="100%" stopColor="#BCE0FD" />
+                </linearGradient>
+                <linearGradient id="ssvipCrownGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#FFFFFF" />
+                  <stop offset="40%" stopColor="#E1EFFF" />
+                  <stop offset="80%" stopColor="#ADC8FF" />
+                  <stop offset="100%" stopColor="#7DA0FA" />
+                </linearGradient>
+                <radialGradient id="ssvipDiamondGrad" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stopColor="#FFFFFF" />
+                  <stop offset="40%" stopColor="#E0F7FA" />
+                  <stop offset="80%" stopColor="#80DEEA" />
+                  <stop offset="100%" stopColor="#00BCD4" />
                 </radialGradient>
               </defs>
-              <path d="M4,20 L32,20 L34,16 L30,10 L24,16 L18,4 L12,16 L6,10 L2,16 Z" fill="url(#vip9PlatGrad)" stroke="#00838F" strokeWidth="1" />
-              <path d="M8,18 C8,12 28,12 28,18 Z" fill="url(#vip9FrostGrad)" />
-              <polygon points="18,7 23,12 18,17 13,12" fill="url(#vip9DiamondGrad)" stroke="#FFFFFF" strokeWidth="1" className={s.vip9IceGem} />
-              <circle cx="6" cy="10" r="1.6" fill="#00E5FF" stroke="#FFF" strokeWidth="0.5" />
-              <circle cx="18" cy="4" r="2.2" fill="#FFFFFF" stroke="#00E5FF" strokeWidth="0.8" />
-              <circle cx="30" cy="10" r="1.6" fill="#00E5FF" stroke="#FFF" strokeWidth="0.5" />
+              {/* Mini Wings flanking crown */}
+              <path d="M6,14 C12,6 18,10 19,16 C16,18 10,18 6,14 Z" fill="url(#ssvipWingGrad)" />
+              <path d="M38,14 C32,6 26,10 25,16 C28,18 34,18 38,14 Z" fill="url(#ssvipWingGrad)" />
+              {/* Platinum Base Arch & Spikes */}
+              <path d="M8,24 L36,24 L38,18 L32,10 L27,18 L22,2 L17,18 L12,10 L6,18 Z" fill="url(#ssvipCrownGrad)" stroke="#7DA0FA" strokeWidth="0.8" />
+              {/* Cross Finial at center top */}
+              <polygon points="22,0 23,3 26,3 23,5 24,8 22,6 20,8 21,5 18,3 21,3" fill="#FFFFFF" stroke="#ADC8FF" strokeWidth="0.5" className={s.crownCross} />
+              {/* Pearl/Diamond Row along base */}
+              <circle cx="12" cy="22" r="1.3" fill="#FFFFFF" stroke="#7DA0FA" strokeWidth="0.4" />
+              <circle cx="17" cy="22" r="1.3" fill="#FFFFFF" stroke="#7DA0FA" strokeWidth="0.4" />
+              <circle cx="22" cy="22" r="1.6" fill="#FFFFFF" stroke="#7DA0FA" strokeWidth="0.5" />
+              <circle cx="27" cy="22" r="1.3" fill="#FFFFFF" stroke="#7DA0FA" strokeWidth="0.4" />
+              <circle cx="32" cy="22" r="1.3" fill="#FFFFFF" stroke="#7DA0FA" strokeWidth="0.4" />
+              {/* Center Ice Diamond Gem */}
+              <polygon points="22,8 26,13 22,18 18,13" fill="url(#ssvipDiamondGrad)" stroke="#FFFFFF" strokeWidth="0.8" className={s.vip9IceGem} />
             </svg>
           </div>
 
-          {/* Layer 6: Bottom VIP 9 Frost Ribbon Banner */}
+          {/* Layer 6: Bottom Feathered Wreath & SSVIP Ribbon */}
           <div className={s.vip9BottomBadge}>
-            <div className={s.clawLeft}>
-              <span>▲</span><span>▲</span>
+            {/* Bottom Feathered Wings Spread */}
+            <div className={s.bottomFeatherWreath}>
+              <svg viewBox="0 0 48 18" className={s.bottomWreathSvg}>
+                <path d="M24,18 L27,12 L36,16 L42,10 L48,6 C40,8 34,14 24,14 C14,14 8,8 0,6 L6,10 L12,16 L21,12 Z" fill="url(#ssvipWingGrad)" />
+                {/* Center Ice Crystal Spike */}
+                <polygon points="24,4 27,11 24,18 21,11" fill="#FFFFFF" stroke="#80DEEA" strokeWidth="0.6" className={s.wreathCrystal} />
+              </svg>
             </div>
-            <div className={s.clawRight}>
-              <span>▲</span><span>▲</span>
-            </div>
+
+            {/* Frosted SSVIP Ribbon Banner */}
             <div className={s.vip9Ribbon}>
-              <span className={s.vip9Text}>VIP 9</span>
+              <span className={s.vip9Text}>SSVIP</span>
             </div>
           </div>
         </div>

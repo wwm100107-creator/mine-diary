@@ -470,13 +470,13 @@
 }
 
 /* ============================================
-   FRAME: ❄️ VIP 9 — BĂNG LONG THẦN KHÍ (FROST DRAGON CRYO)
+   FRAME: ❄️ SSVIP — THIÊN THẦN CÁNH BĂNG (FROST ANGELIC SSVIP)
    ============================================ */
 .vip9Container {
   position: absolute;
-  inset: -22%;
-  width: 144%;
-  height: 144%;
+  inset: -30%;
+  width: 160%;
+  height: 160%;
   pointer-events: none;
   display: flex;
   align-items: center;
@@ -484,72 +484,111 @@
   z-index: 20;
 }
 
+/* Layer 1: Ethereal Billowing Glacial Mist Aura (Sương Băng) */
+.vip9MistAura {
+  position: absolute;
+  inset: 4%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(255, 255, 255, 0.5) 0%,
+    rgba(203, 230, 254, 0.35) 40%,
+    rgba(138, 168, 248, 0.2) 65%,
+    transparent 85%
+  );
+  filter: blur(8px);
+  animation: ssvipMistDrift 2.8s infinite alternate ease-in-out;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+@keyframes ssvipMistDrift {
+  0% {
+    transform: scale(0.92) rotate(0deg);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.08) rotate(4deg);
+    opacity: 0.95;
+  }
+  100% {
+    transform: scale(1) rotate(-4deg);
+    opacity: 0.75;
+  }
+}
+
 .vip9IceAura {
   position: absolute;
-  inset: 15%;
+  inset: 18%;
   border-radius: inherit;
   box-shadow: 
-    0 0 8px #00F2FE,
-    0 0 16px #4FACFE,
-    0 0 28px #00C6FF,
-    inset 0 0 8px #E0F7FA;
-  animation: vip9IcePulse 1.4s infinite alternate ease-in-out;
+    0 0 10px rgba(255, 255, 255, 0.9),
+    0 0 20px rgba(173, 200, 255, 0.75),
+    0 0 35px rgba(125, 160, 250, 0.55),
+    inset 0 0 10px rgba(255, 255, 255, 0.85);
+  animation: ssvipIceGlow 1.6s infinite alternate ease-in-out;
   will-change: box-shadow;
 }
 
-@keyframes vip9IcePulse {
+@keyframes ssvipIceGlow {
   0% {
     box-shadow: 
-      0 0 6px #00F2FE,
-      0 0 14px #4FACFE,
-      0 0 22px #00C6FF,
-      inset 0 0 6px #B2EBF2;
+      0 0 8px rgba(255, 255, 255, 0.8),
+      0 0 16px rgba(173, 200, 255, 0.6),
+      0 0 26px rgba(125, 160, 250, 0.4),
+      inset 0 0 8px rgba(255, 255, 255, 0.7);
   }
   100% {
     box-shadow: 
-      0 0 12px #FFFFFF,
-      0 0 22px #00E5FF,
-      0 0 36px #00F2FE,
-      inset 0 0 10px #80DEEA;
+      0 0 16px #FFFFFF,
+      0 0 28px rgba(203, 230, 254, 0.9),
+      0 0 45px rgba(138, 168, 248, 0.8),
+      inset 0 0 14px #FFFFFF;
   }
 }
 
+/* Layer 2: Twinkling Diamond Sparkles */
 .vip9Sparks {
   position: absolute;
-  inset: 4%;
+  inset: 2%;
   pointer-events: none;
 }
 
 .vip9Crystal {
   position: absolute;
-  font-size: 8px;
+  font-size: 9px;
   line-height: 1;
-  color: #E0F7FA;
-  text-shadow: 0 0 5px #00E5FF;
-  animation: vip9SnowRise 1.8s infinite ease-in-out;
+  color: #FFFFFF;
+  text-shadow: 0 0 6px #8AA8F8, 0 0 10px #FFFFFF;
+  animation: ssvipDiamondTwinkle 1.5s infinite ease-in-out;
+  will-change: transform, opacity;
 }
 
-.c1 { top: 12%; left: 8%; font-size: 9px; animation-delay: 0s; }
-.c2 { top: 10%; right: 12%; font-size: 7px; color: #80DEEA; animation-delay: 0.4s; }
-.c3 { bottom: 24%; left: 4%; font-size: 8px; color: #00E5FF; animation-delay: 0.8s; }
-.c4 { bottom: 20%; right: 6%; font-size: 9px; animation-delay: 1.2s; }
-.c5 { top: 45%; left: 2%; font-size: 7px; color: #FFFFFF; animation-delay: 0.6s; }
+.c1 { top: 10%; left: 8%; font-size: 11px; animation-delay: 0s; }
+.c2 { top: 6%; right: 12%; font-size: 8px; color: #DCE4FF; animation-delay: 0.3s; }
+.c3 { bottom: 26%; left: 0%; font-size: 9px; color: #CBE6FE; animation-delay: 0.6s; }
+.c4 { bottom: 22%; right: 2%; font-size: 10px; animation-delay: 0.9s; }
+.c5 { top: 42%; left: -4%; font-size: 8px; color: #FFFFFF; animation-delay: 1.2s; }
+.c6 { top: 38%; right: -4%; font-size: 11px; color: #FFFFFF; animation-delay: 0.45s; }
+.c7 { top: 22%; left: 16%; font-size: 7px; color: #ADC8FF; animation-delay: 0.75s; }
+.c8 { top: 20%; right: 18%; font-size: 7px; color: #ADC8FF; animation-delay: 1.05s; }
 
-@keyframes vip9SnowRise {
-  0% { opacity: 0; transform: scale(0.4) translateY(4px) rotate(0deg); }
-  50% { opacity: 1; transform: scale(1.2) translateY(-4px) rotate(45deg); }
-  100% { opacity: 0; transform: scale(0.3) translateY(-12px) rotate(90deg); }
+@keyframes ssvipDiamondTwinkle {
+  0% { opacity: 0.2; transform: scale(0.4) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1.35) rotate(45deg); filter: drop-shadow(0 0 8px #FFF); }
+  100% { opacity: 0.2; transform: scale(0.4) rotate(90deg); }
 }
 
+/* Layer 3: Silver-Blue Crystal Border with Diamond Sweep */
 .vip9Border {
   position: absolute;
-  inset: 15%;
+  inset: 18%;
   border-radius: inherit;
   border: 2.5px solid #FFFFFF;
   box-shadow: 
-    0 0 0 1.5px #00E5FF,
-    0 0 0 2.5px #006064,
-    inset 0 0 0 1.5px #E0F7FA;
+    0 0 0 1.5px #CBE6FE,
+    0 0 0 3px #7DA0FA,
+    inset 0 0 0 1.5px #E8F4FD;
   overflow: hidden;
   z-index: 10;
 }
@@ -561,87 +600,164 @@
     135deg,
     transparent 35%,
     rgba(255, 255, 255, 0.95) 50%,
-    rgba(0, 229, 255, 0.85) 55%,
+    rgba(203, 230, 254, 0.9) 55%,
     transparent 65%
   );
   animation: vip8Shine 2.2s infinite cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
 }
 
-.vip9DragonWing {
+/* Layer 4: Feathered Angelic Ice Wings */
+.vip9IceWing {
   position: absolute;
-  top: 14%;
-  width: 36%;
-  height: 52%;
-  z-index: 11;
-  filter: drop-shadow(0 0 6px #00E5FF);
+  top: 6%;
+  width: 46%;
+  height: 64%;
+  z-index: 12;
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.95)) drop-shadow(0 0 14px rgba(138, 168, 248, 0.7));
+  animation: ssvipWingsFlutter 2.4s infinite alternate ease-in-out;
+  will-change: transform;
 }
 
+.iceWingLeft {
+  left: -16%;
+  transform-origin: right center;
+}
+
+.iceWingRight {
+  right: -16%;
+  transform-origin: left center;
+}
+
+.iceWingSvg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+@keyframes ssvipWingsFlutter {
+  0% { transform: rotate(0deg) scale(1); }
+  100% { transform: rotate(-3deg) scale(1.05); }
+}
+
+.wingSparkle {
+  animation: wingSparkleGlint 1.2s infinite alternate ease-in-out;
+  transform-origin: center;
+}
+
+@keyframes wingSparkleGlint {
+  0% { opacity: 0.4; transform: scale(0.6); }
+  100% { opacity: 1; transform: scale(1.3); filter: drop-shadow(0 0 4px #FFF); }
+}
+
+/* Layer 5: Top Imperial Diamond Crown with Mini Wings */
 .vip9Crown {
   position: absolute;
-  top: -12%;
+  top: -15%;
   left: 50%;
   transform: translateX(-50%);
-  width: 68%;
-  height: 38%;
-  z-index: 15;
-  filter: drop-shadow(0 0 8px #00E5FF) drop-shadow(0 0 12px #FFFFFF);
+  width: 78%;
+  height: 42%;
+  z-index: 16;
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.95)) drop-shadow(0 0 14px rgba(125, 160, 250, 0.75));
   animation: vip8CrownBounce 1.8s infinite ease-in-out;
+  will-change: transform;
 }
 
 .vip9IceGem {
   animation: vip9GemShimmer 1.2s infinite alternate ease-in-out;
-  transform-origin: 18px 12px;
+  transform-origin: 22px 13px;
 }
 
 @keyframes vip9GemShimmer {
-  0% { filter: drop-shadow(0 0 2px #00E5FF); transform: scale(0.95); }
-  100% { filter: drop-shadow(0 0 8px #FFFFFF) drop-shadow(0 0 12px #00F2FE); transform: scale(1.1); }
+  0% { filter: drop-shadow(0 0 2px #CBE6FE); transform: scale(0.95); }
+  100% { filter: drop-shadow(0 0 8px #FFFFFF) drop-shadow(0 0 12px #7DA0FA); transform: scale(1.12); }
 }
 
+.crownCross {
+  animation: crownCrossGlow 1.4s infinite alternate ease-in-out;
+  transform-origin: 22px 4px;
+}
+
+@keyframes crownCrossGlow {
+  0% { filter: drop-shadow(0 0 1px #FFF); }
+  100% { filter: drop-shadow(0 0 6px #FFFFFF) drop-shadow(0 0 10px #ADC8FF); }
+}
+
+/* Layer 6: Bottom Feathered Wreath & SSVIP Ribbon */
 .vip9BottomBadge {
   position: absolute;
-  bottom: -10%;
+  bottom: -11%;
   left: 50%;
   transform: translateX(-50%);
   z-index: 18;
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 78%;
+  width: 82%;
+}
+
+.bottomFeatherWreath {
+  width: 100%;
+  height: 20px;
+  margin-bottom: -8px;
+  z-index: 17;
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.85)) drop-shadow(0 0 10px rgba(138, 168, 248, 0.6));
+}
+
+.bottomWreathSvg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.wreathCrystal {
+  animation: wreathCrystalPulse 1.2s infinite alternate ease-in-out;
+  transform-origin: 24px 11px;
+}
+
+@keyframes wreathCrystalPulse {
+  0% { transform: scale(0.9); opacity: 0.8; }
+  100% { transform: scale(1.15); opacity: 1; filter: drop-shadow(0 0 6px #FFF); }
 }
 
 .vip9Ribbon {
-  background: linear-gradient(135deg, #003666 0%, #006699 40%, #0099CC 70%, #004C80 100%);
-  border: 1.5px solid #00E5FF;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, #DCE4FF 30%, #ADC8FF 65%, #7DA0FA 100%);
+  border: 1.5px solid #FFFFFF;
   border-radius: 3px;
   box-shadow: 
-    0 0 8px #00F2FE,
-    0 2px 4px rgba(0, 0, 0, 0.4),
-    inset 0 1px 0 #E0F7FA;
-  padding: 1px 6px;
+    0 0 10px rgba(125, 160, 250, 0.8),
+    0 2px 5px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 #FFFFFF;
+  padding: 1.5px 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
   box-sizing: border-box;
+  z-index: 19;
 }
 
 .vip9Text {
   font-family: var(--font-pixel);
-  font-size: 8px;
+  font-size: 8.5px;
   font-weight: 900;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  background: linear-gradient(180deg, #FFFFFF 0%, #E0F7FA 50%, #00E5FF 100%);
+  background: linear-gradient(180deg, #FFFFFF 0%, #E8F4FD 35%, #7DA0FA 70%, #4A6FD8 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: vip9TextGlitter 1.2s infinite alternate ease-in-out;
+  animation: ssvipTextGlint 1.2s infinite alternate ease-in-out;
   white-space: nowrap;
 }
 
-@keyframes vip9TextGlitter {
-  0% { filter: drop-shadow(0 0 2px #00E5FF) brightness(1); }
-  100% { filter: drop-shadow(0 0 6px #FFFFFF) drop-shadow(0 0 10px #00F2FE) brightness(1.3); }
+@keyframes ssvipTextGlint {
+  0% {
+    filter: drop-shadow(0 0 2px #7DA0FA) brightness(1);
+  }
+  100% {
+    filter: drop-shadow(0 0 6px #FFFFFF) drop-shadow(0 0 12px #ADC8FF) brightness(1.35);
+  }
 }
 
 /* ============================================
