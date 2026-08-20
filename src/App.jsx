@@ -22,6 +22,8 @@ import { canCheckInToday } from './lib/attendance'
 import { loadMarkedDates, predictNextPeriod, toDateStr } from './utils/cycle'
 import { applyTheme, getSavedTheme } from './utils/theme'
 import { playCuteTing } from './utils/sound'
+import { useSharedCycleStatus } from './hooks/useSharedCycleStatus'
+import { requestNotificationPermission } from './lib/push'
 import s from './App.module.css'
 
 export default function App() {
@@ -58,59 +60,21 @@ export default function App() {
     return 'diary'
   })
 
-  // ── Relationships & Partner Info for Dynamic Tab Navigation ───────────────
-  const [userRelationships, setUserRelationships] = useState([])
-  const [partnerUser, setPartnerUser] = useState(null)
+  // ── Global Real-time Shared Cycle Status for Navbar Synchronization ──────────
+  const { hasSharedCycleAccess, partnerUser } = useSharedCycleStatus(user)
 
+  // ── Web Push Notification (FCM) Permission & Token Registration ─────────
   useEffect(() => {
-    // Purge legacy recent_chats keys from localStorage
-    try {
-      Object.keys(localStorage).forEach((key) => {
-        if (key.startsWith('minediary:recent_chats')) {
-          localStorage.removeItem(key)
-        }
-      })
-    } catch (e) {}
-
-    if (!user?.id) {
-      setUserRelationships([])
-      setPartnerUser(null)
-      return
+    if (user?.id && 'Notification' in window) {
+      // If permission is already granted or requested, register SW & FCM token
+      if (Notification.permission === 'granted') {
+        requestNotificationPermission(user).catch(console.warn)
+      }
     }
-    const unsubscribe = subscribeToUserRelationships(user.id, (rels) => {
-      setUserRelationships(rels)
-    })
-    return () => unsubscribe()
   }, [user?.id])
 
-  const sharedCycleRel = useMemo(() => {
-    return userRelationships.find(
-      (r) => r.status === 'accepted' && Boolean(r.isCycleShared || r.shareCycleData)
-    )
-  }, [userRelationships])
-
-  const partnerId = useMemo(() => {
-    if (!sharedCycleRel) return null
-    return sharedCycleRel.participants.find((p) => p !== user?.id)
-  }, [sharedCycleRel, user?.id])
-
-  useEffect(() => {
-    if (!partnerId) {
-      setPartnerUser(null)
-      return
-    }
-    getUser(partnerId).then(setPartnerUser).catch(console.error)
-  }, [partnerId])
-
-  // ── Compute Allowed Navigation Tabs based on Gender & Cycle Sharing ────────
-  // Rules:
-  // 1. Nhật ký chung & Tin nhắn: Luôn luôn có.
-  // 2. Sức khỏe: Dành cho user Nữ.
-  // 3. Theo dõi chu kỳ: Bất kỳ user nào có mối quan hệ (accepted) với user Nữ có isCycleShared === true.
+  // ── Compute Allowed Navigation Tabs based on Gender & Real-time Cycle Sharing ──
   const isFemale = user?.gender === 'female' || !user?.gender
-  const hasFemaleCycleShared = Boolean(
-    sharedCycleRel && (partnerUser?.gender === 'female' || !partnerUser?.gender)
-  )
 
   const navTabs = useMemo(() => {
     const tabs = [
@@ -122,8 +86,8 @@ export default function App() {
       tabs.push({ id: 'health', label: 'Sức khỏe', icon: '🌸' })
     }
 
-    // Partner Cycle tab (Unlocked for ANY user when partner shared cycle data)
-    if (hasFemaleCycleShared) {
+    // Partner Cycle tab (Unlocked in Real-Time for ANY user when partner shared cycle data)
+    if (hasSharedCycleAccess) {
       tabs.push({ id: 'partner_cycle', label: 'Theo dõi chu kỳ', icon: '💖' })
     }
 
@@ -136,7 +100,7 @@ export default function App() {
     }
 
     return tabs
-  }, [isFemale, hasFemaleCycleShared, isAdmin])
+  }, [isFemale, hasSharedCycleAccess, isAdmin])
 
   // If current active tab is not in allowed tabs, automatically switch to 'diary'
   useEffect(() => {

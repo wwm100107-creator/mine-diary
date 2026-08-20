@@ -17,6 +17,7 @@ import {
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { db, storage } from './firebase'
 import { dataUrlToBlob } from '../utils/pixelArt'
+import { sendPushNotification } from './push'
 
 // ── User profile ──────────────────────────────────────────────────────────────
 
@@ -250,6 +251,25 @@ export async function sendChatMessage(myId, targetId, text, options = {}) {
     metadata: options.metadata || null,
     createdAt: serverTimestamp(),
   })
+
+  // 4. Trigger Native Web Push Notification (FCM) to recipient
+  try {
+    getUser(myId).then((senderUser) => {
+      const senderName = senderUser?.displayName || senderUser?.name || senderUser?.username || myId
+      sendPushNotification({
+        recipientUserId: targetId,
+        title: `${senderName} 💬`,
+        body: text.trim(),
+        icon: senderUser?.avatar || '/favicon.svg',
+        data: {
+          partnerId: myId,
+          type: msgType,
+        },
+      }).catch(() => {})
+    }).catch(() => {})
+  } catch (pushErr) {
+    console.warn('[Social] Push dispatch warning:', pushErr)
+  }
 }
 
 /**
