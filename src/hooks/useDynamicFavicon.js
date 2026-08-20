@@ -1,7 +1,7 @@
 /**
  * src/hooks/useDynamicFavicon.js
  * Dynamic Favicon Hook with Animated Wolf Icon for Admin & Gender-Themed Icons
- * Impeccable & Ponytail style: reactive, seamless browser tab favicon updates with fallback.
+ * Impeccable & Ponytail style: reactive, synchronous, rock-solid across all browsers.
  */
 
 import { useEffect } from 'react'
@@ -19,73 +19,79 @@ export function useDynamicFavicon(user) {
       user?.username === 'adminserver'
     )
 
-    let iconUrl = '/icon-split.svg'
+    let primaryIconUrl = '/icon-split.svg'
+    let shortcutIconUrl = '/favicon.svg'
+    let appleIconUrl = '/favicon.svg'
     let iconType = 'image/svg+xml'
 
     if (isAdmin) {
       // 1. Admin Account: Animated Pixel Wolf (Howling at crescent moon with smoke aura)
-      iconUrl = '/icon-wolf-animated.gif'
-      iconType = 'image/gif'
+      primaryIconUrl = '/icon-wolf-animated.svg'
+      shortcutIconUrl = '/icon-wolf-static.png'
+      appleIconUrl = '/icon-wolf-static.svg'
+      iconType = 'image/svg+xml'
     } else if (user?.gender === 'female') {
       // 2. Female User: Cute Pink Bunny
-      iconUrl = '/icon-bunny.svg'
+      primaryIconUrl = '/icon-bunny.svg'
+      shortcutIconUrl = '/icon-bunny.svg'
+      appleIconUrl = '/icon-bunny.svg'
       iconType = 'image/svg+xml'
     } else if (user?.gender === 'male') {
       // 3. Male User: Cute Blue Bear
-      iconUrl = '/icon-bear.svg'
+      primaryIconUrl = '/icon-bear.svg'
+      shortcutIconUrl = '/icon-bear.svg'
+      appleIconUrl = '/icon-bear.svg'
       iconType = 'image/svg+xml'
     } else {
       // 4. Guest / Unauthenticated: Split Half-Bunny Half-Bear
-      iconUrl = '/icon-split.svg'
+      primaryIconUrl = '/icon-split.svg'
+      shortcutIconUrl = '/icon-split.svg'
+      appleIconUrl = '/icon-split.svg'
       iconType = 'image/svg+xml'
     }
 
-    const setFavicon = (url, type) => {
-      let link = document.querySelector("link[rel~='icon']")
-      if (!link) {
-        link = document.createElement('link')
-        link.rel = 'icon'
-        document.head.appendChild(link)
-      }
-      link.type = type
-      link.href = url
-
-      // Also update apple-touch-icon if applicable
-      let appleLink = document.querySelector("link[rel='apple-touch-icon']")
-      if (appleLink) {
-        appleLink.href = url
-      }
-
-      // ── Update dynamic web app manifest for PWA installation ──
-      let manifestLink = document.querySelector("link[rel='manifest']")
-      if (!manifestLink) {
-        manifestLink = document.createElement('link')
-        manifestLink.rel = 'manifest'
-        document.head.appendChild(manifestLink)
-      }
-      const manifestParams = new URLSearchParams()
-      if (isAdmin) {
-        manifestParams.set('role', 'admin')
-        manifestParams.set('isAdmin', 'true')
-      } else if (user?.gender) {
-        manifestParams.set('gender', user.gender)
-      }
-      manifestLink.href = `/api/manifest?${manifestParams.toString()}`
+    // ── 1. Update Primary Favicon (<link rel="icon">) ──
+    let link = document.querySelector("link[rel='icon']")
+    if (!link) {
+      link = document.createElement('link')
+      link.rel = 'icon'
+      document.head.appendChild(link)
     }
+    link.type = iconType
+    link.href = primaryIconUrl
 
+    // ── 2. Update Shortcut Icon (<link rel="shortcut icon">) ──
+    let shortcut = document.querySelector("link[rel='shortcut icon']")
+    if (!shortcut) {
+      shortcut = document.createElement('link')
+      shortcut.rel = 'shortcut icon'
+      document.head.appendChild(shortcut)
+    }
+    shortcut.href = shortcutIconUrl
+
+    // ── 3. Update Apple Touch Icon (<link rel="apple-touch-icon">) ──
+    let appleLink = document.querySelector("link[rel='apple-touch-icon']")
+    if (!appleLink) {
+      appleLink = document.createElement('link')
+      appleLink.rel = 'apple-touch-icon'
+      document.head.appendChild(appleLink)
+    }
+    appleLink.href = appleIconUrl
+
+    // ── 4. Update Dynamic Web App Manifest for PWA Installation ──
+    let manifestLink = document.querySelector("link[rel='manifest']")
+    if (!manifestLink) {
+      manifestLink = document.createElement('link')
+      manifestLink.rel = 'manifest'
+      document.head.appendChild(manifestLink)
+    }
+    const manifestParams = new URLSearchParams()
     if (isAdmin) {
-      // Verify GIF support with image fallback to static PNG / SVG
-      const img = new Image()
-      img.onload = () => {
-        setFavicon('/icon-wolf-animated.gif', 'image/gif')
-      }
-      img.onerror = () => {
-        // Fallback to static PNG or SVG
-        setFavicon('/icon-wolf-static.png', 'image/png')
-      }
-      img.src = '/icon-wolf-animated.gif'
-    } else {
-      setFavicon(iconUrl, iconType)
+      manifestParams.set('role', 'admin')
+      manifestParams.set('isAdmin', 'true')
+    } else if (user?.gender) {
+      manifestParams.set('gender', user.gender)
     }
+    manifestLink.href = `/api/manifest?${manifestParams.toString()}`
   }, [user?.id, user?.gender, user?.role, user?.isAdmin])
 }

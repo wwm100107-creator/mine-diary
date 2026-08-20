@@ -173,6 +173,26 @@ export const AVATARS = [
         <rect x="11" y="15" width="2" height="2" fill="#3D2B35"/>
       </svg>
     `
+  },
+  {
+    id: 'wolf',
+    name: 'Sói Hoàng Gia',
+    accent: '#F59E0B',
+    bg: '#0F172A',
+    emoji: '🐺',
+    svg: `
+      <svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="2" y="2" width="20" height="20" rx="4" fill="#0F172A"/>
+        <polygon points="5,9 3,2 8,6" fill="#94A3B8"/>
+        <polygon points="19,9 21,2 16,6" fill="#94A3B8"/>
+        <polygon points="5,9 12,19 19,9 12,5" fill="#CBD5E1"/>
+        <polygon points="7,10 12,16 17,10" fill="#E2E8F0"/>
+        <circle cx="8" cy="11" r="1.5" fill="#EF4444"/>
+        <circle cx="16" cy="11" r="1.5" fill="#EF4444"/>
+        <polygon points="12,15 10,13 14,13" fill="#0F172A"/>
+        <path d="M9,4 L10.5,1.5 L12,3 L13.5,1.5 L15,4 Z" fill="#F59E0B"/>
+      </svg>
+    `
   }
 ]
 
