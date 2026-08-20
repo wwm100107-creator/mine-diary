@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useLayoutEffect } from 'react'
 import { useGoogleLogin } from '@react-oauth/google'
-import { doc, onSnapshot } from 'firebase/firestore'
+import { doc, onSnapshot, updateDoc } from 'firebase/firestore'
 import { db } from './lib/firebase'
 import DiaryView from './components/DiaryView'
 import HealthView from './components/HealthView'
@@ -15,6 +15,7 @@ import { upsertUser, getUser, uploadUserAvatar } from './lib/social'
 import { isUserAdmin } from './lib/admin'
 import { getCurrentUser, saveSession, logoutUser, verifyBanStatus } from './lib/auth'
 import { loadMarkedDates, predictNextPeriod, toDateStr } from './utils/cycle'
+import { applyTheme, getSavedTheme } from './utils/theme'
 import s from './App.module.css'
 
 export default function App() {
@@ -22,6 +23,12 @@ export default function App() {
   const [user, setUser] = useState(() => getCurrentUser())
   const [banErrorNotice, setBanErrorNotice] = useState('')
   const [banDetailsNotice, setBanDetailsNotice] = useState(null)
+
+  // Apply saved theme on boot & user change
+  useEffect(() => {
+    const themeToApply = user?.theme || getSavedTheme()
+    applyTheme(themeToApply)
+  }, [user?.id, user?.theme])
   const [currentTab, setCurrentTab] = useState(() => {
     if (typeof window !== 'undefined') {
       if (window.location.pathname === '/admin' || window.location.hash === '#admin') {
@@ -164,26 +171,47 @@ export default function App() {
     onError: err => console.error('Login failed:', err),
   })
 
-  // ── Avatar Upload Modal State ──────────────────────────────────────────
+  // ── Avatar Upload & Theme Modal State ─────────────────────────────────────
   const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false)
 
-  const handleUpdateAvatar = async (newAvatarData, newFrameId = 'none') => {
+  const handleUpdateAvatar = async (newAvatarData, newFrameId = 'none', newTheme = null) => {
     if (!user?.id) return
     try {
+      if (newTheme) {
+        applyTheme(newTheme)
+      }
       // 1. Optimistic UI update for instant feedback
-      const updatedUser = { ...user, avatar: newAvatarData, avatarFrame: newFrameId }
+      const updatedUser = {
+        ...user,
+        avatar: newAvatarData,
+        avatarFrame: newFrameId,
+        theme: newTheme || user.theme || getSavedTheme(),
+      }
       setUser(updatedUser)
       saveSession(updatedUser)
 
       // 2. Cloud Storage upload & Database sync
       const finalAvatarUrl = await uploadUserAvatar(user.id, newAvatarData, newFrameId)
+
+      // 3. Update theme in Firestore users collection
+      if (newTheme) {
+        updateDoc(doc(db, 'users', user.id), {
+          theme: newTheme,
+        }).catch(console.error)
+      }
+
       if (finalAvatarUrl && (finalAvatarUrl !== newAvatarData || user.avatarFrame !== newFrameId)) {
-        const persistedUser = { ...user, avatar: finalAvatarUrl, avatarFrame: newFrameId }
+        const persistedUser = {
+          ...user,
+          avatar: finalAvatarUrl,
+          avatarFrame: newFrameId,
+          theme: newTheme || user.theme || getSavedTheme(),
+        }
         setUser(persistedUser)
         saveSession(persistedUser)
       }
     } catch (err) {
-      console.error('Failed to update avatar and frame:', err)
+      console.error('Failed to update avatar, frame, and theme:', err)
     }
   }
 
@@ -399,11 +427,12 @@ export default function App() {
       {/* Author Dedication Easter Egg (Bottom Left) */}
       <EasterEgg />
 
-      {/* Avatar Upload & Pixel Art Modal */}
+      {/* Avatar Upload, Pixel Art & Theme Modal */}
       {isAvatarModalOpen && (
         <AvatarUploadModal
           currentAvatar={user.avatar || 'bunny'}
           currentFrame={user.avatarFrame || user.frame || 'none'}
+          currentTheme={user.theme || getSavedTheme()}
           onSave={handleUpdateAvatar}
           onClose={() => setIsAvatarModalOpen(false)}
         />

@@ -4,9 +4,10 @@ import PixelAvatar from './PixelAvatar'
 import AvatarFrameOverlay, { AVATAR_FRAMES } from './AvatarFrameOverlay'
 import { AVATARS } from '../utils/avatars'
 import { cropToSquare, generatePixelArt } from '../utils/pixelArt'
+import { THEME_PRESETS, applyTheme, getSavedTheme } from '../utils/theme'
 import s from './AvatarUploadModal.module.css'
 
-export default function AvatarUploadModal({ currentAvatar, currentFrame = 'none', onSave, onClose }) {
+export default function AvatarUploadModal({ currentAvatar, currentFrame = 'none', currentTheme = null, onSave, onClose }) {
   const [tab, setTab] = useState('upload') // 'upload' | 'preset'
   const [rawImage, setRawImage] = useState(null)
   const [originalPreview, setOriginalPreview] = useState(null)
@@ -17,6 +18,19 @@ export default function AvatarUploadModal({ currentAvatar, currentFrame = 'none'
   const [selectedFrame, setSelectedFrame] = useState(currentFrame || 'none')
   const [isProcessing, setIsProcessing] = useState(false)
   const [isDraggingOver, setIsDraggingOver] = useState(false)
+
+  // ── Theme State & Realtime Preview Engine ──
+  const initialThemeRef = useRef(currentTheme || getSavedTheme())
+  const [selectedThemeId, setSelectedThemeId] = useState(initialThemeRef.current?.id || 'strawberry')
+  const [customColors, setCustomColors] = useState(
+    initialThemeRef.current?.colors || {
+      bg: '#FFF8F2',
+      primary: '#FF8FAB',
+      text: '#3D2B35',
+      card: '#FFFFFF',
+    }
+  )
+  const [showCustomPicker, setShowCustomPicker] = useState(initialThemeRef.current?.id === 'custom')
 
   const fileInputRef = useRef(null)
 
@@ -76,6 +90,41 @@ export default function AvatarUploadModal({ currentAvatar, currentFrame = 'none'
     }
   }
 
+  // ── Realtime Theme Handlers ──
+  const handleSelectPresetTheme = (preset) => {
+    setSelectedThemeId(preset.id)
+    setShowCustomPicker(false)
+    setCustomColors(preset.colors)
+    applyTheme(preset)
+  }
+
+  const handleCustomColorChange = (key, hexValue) => {
+    const updated = { ...customColors, [key]: hexValue }
+    setCustomColors(updated)
+    setSelectedThemeId('custom')
+    applyTheme({
+      id: 'custom',
+      name: '🎨 Tự Phối Màu',
+      colors: updated,
+    })
+  }
+
+  const handleToggleCustom = () => {
+    setShowCustomPicker(true)
+    setSelectedThemeId('custom')
+    applyTheme({
+      id: 'custom',
+      name: '🎨 Tự Phối Màu',
+      colors: customColors,
+    })
+  }
+
+  // Close with revert if not saved
+  const handleCancel = () => {
+    applyTheme(initialThemeRef.current)
+    onClose()
+  }
+
   // Save handler
   const handleSave = () => {
     let finalAvatar = selectedPreset
@@ -86,22 +135,28 @@ export default function AvatarUploadModal({ currentAvatar, currentFrame = 'none'
         finalAvatar = originalPreview
       }
     }
-    onSave(finalAvatar, selectedFrame)
+
+    const finalTheme = selectedThemeId === 'custom'
+      ? { id: 'custom', name: '🎨 Tự Phối Màu', colors: customColors }
+      : THEME_PRESETS.find(p => p.id === selectedThemeId) || THEME_PRESETS[0]
+
+    applyTheme(finalTheme)
+    onSave(finalAvatar, selectedFrame, finalTheme)
     onClose()
   }
 
   if (typeof document === 'undefined') return null
 
   return createPortal(
-    <div className={s.modalOverlay} onClick={onClose} role="dialog" aria-modal="true" aria-label="Cập nhật avatar">
+    <div className={s.modalOverlay} onClick={handleCancel} role="dialog" aria-modal="true" aria-label="Cập nhật avatar & giao diện">
       <div className={s.modalCard} onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div className={s.header}>
           <div className={s.titleGroup}>
             <span className={s.titleIcon}>🎨</span>
-            <h3 className={s.title}>Cập Nhật Avatar & Khung Viền</h3>
+            <h3 className={s.title}>Cập Nhật Avatar & Giao Diện</h3>
           </div>
-          <button type="button" className={s.closeBtn} onClick={onClose} aria-label="Đóng">
+          <button type="button" className={s.closeBtn} onClick={handleCancel} aria-label="Đóng">
             ✕
           </button>
         </div>
@@ -284,7 +339,7 @@ export default function AvatarUploadModal({ currentAvatar, currentFrame = 'none'
             </div>
           )}
 
-          {/* ── 4. Animated Frame Selection Section (Horizontal Scroller) ── */}
+          {/* ── 3. Animated Frame Selection Section (Horizontal Scroller) ── */}
           <div className={s.frameSelectorSection}>
             <div className={s.frameSelectorHeader}>
               <span className={s.frameSelectorTitle}>✨ Chọn Khung Viền Pixel Động:</span>
@@ -321,11 +376,130 @@ export default function AvatarUploadModal({ currentAvatar, currentFrame = 'none'
               })}
             </div>
           </div>
+
+          {/* ── 4. Theme Palette & Colors Selection Section ── */}
+          <div className={s.themeSelectorSection}>
+            <div className={s.themeSelectorHeader}>
+              <div className={s.themeTitleGroup}>
+                <span className={s.themeIcon}>🎨</span>
+                <span className={s.themeSelectorTitle}>Màu Sắc Giao Diện (Theme):</span>
+              </div>
+              <span className={s.selectedThemeBadge}>
+                {selectedThemeId === 'custom'
+                  ? '🎨 Tự Phối Màu'
+                  : THEME_PRESETS.find((p) => p.id === selectedThemeId)?.name || '🍓 Dâu Tây'}
+              </span>
+            </div>
+
+            {/* Presets Grid */}
+            <div className={s.themePresetsGrid}>
+              {THEME_PRESETS.map((preset) => {
+                const isThemeActive = selectedThemeId === preset.id
+                return (
+                  <button
+                    key={preset.id}
+                    type="button"
+                    className={`${s.themePresetBtn} ${isThemeActive ? s.themeActive : ''}`}
+                    onClick={() => handleSelectPresetTheme(preset)}
+                    title={`${preset.name}: ${preset.desc}`}
+                  >
+                    <span
+                      className={s.themeColorCircle}
+                      style={{ background: preset.swatch }}
+                    />
+                    <span className={s.themePresetName}>{preset.name}</span>
+                    {isThemeActive && <span className={s.themeCheckMark}>✓</span>}
+                  </button>
+                )
+              })}
+
+              {/* Custom Mix Color Button */}
+              <button
+                type="button"
+                className={`${s.themePresetBtn} ${s.customMixBtn} ${selectedThemeId === 'custom' ? s.themeActive : ''}`}
+                onClick={handleToggleCustom}
+                title="Tự mix màu sắc giao diện theo ý thích"
+              >
+                <span className={`${s.themeColorCircle} ${s.customPaletteIcon}`}>
+                  🎨
+                </span>
+                <span className={s.themePresetName}>+ Tự Mix Màu</span>
+                {selectedThemeId === 'custom' && <span className={s.themeCheckMark}>✓</span>}
+              </button>
+            </div>
+
+            {/* Custom Color Pickers Panel (Revealed when Custom selected) */}
+            {showCustomPicker && (
+              <div className={s.customPickerBox}>
+                <div className={s.customPickerTitle}>
+                  <span>🎛️ Bảng Chọn Màu Trực Tiếp:</span>
+                  <span className={s.previewLiveBadge}>● Live Preview</span>
+                </div>
+                <div className={s.colorPickersGrid}>
+                  {/* Background Color */}
+                  <label className={s.pickerItem}>
+                    <span className={s.pickerLabel}>Màu Nền (Page BG):</span>
+                    <div className={s.pickerInputRow}>
+                      <input
+                        type="color"
+                        className={s.nativeColorPicker}
+                        value={customColors.bg}
+                        onChange={(e) => handleCustomColorChange('bg', e.target.value)}
+                      />
+                      <span className={s.hexValue}>{customColors.bg}</span>
+                    </div>
+                  </label>
+
+                  {/* Primary Accent Color */}
+                  <label className={s.pickerItem}>
+                    <span className={s.pickerLabel}>Màu Chính (Primary):</span>
+                    <div className={s.pickerInputRow}>
+                      <input
+                        type="color"
+                        className={s.nativeColorPicker}
+                        value={customColors.primary}
+                        onChange={(e) => handleCustomColorChange('primary', e.target.value)}
+                      />
+                      <span className={s.hexValue}>{customColors.primary}</span>
+                    </div>
+                  </label>
+
+                  {/* Text Color */}
+                  <label className={s.pickerItem}>
+                    <span className={s.pickerLabel}>Màu Chữ (Text / Ink):</span>
+                    <div className={s.pickerInputRow}>
+                      <input
+                        type="color"
+                        className={s.nativeColorPicker}
+                        value={customColors.text}
+                        onChange={(e) => handleCustomColorChange('text', e.target.value)}
+                      />
+                      <span className={s.hexValue}>{customColors.text}</span>
+                    </div>
+                  </label>
+
+                  {/* Card Color */}
+                  <label className={s.pickerItem}>
+                    <span className={s.pickerLabel}>Màu Khung Thẻ (Card):</span>
+                    <div className={s.pickerInputRow}>
+                      <input
+                        type="color"
+                        className={s.nativeColorPicker}
+                        value={customColors.card || '#FFFFFF'}
+                        onChange={(e) => handleCustomColorChange('card', e.target.value)}
+                      />
+                      <span className={s.hexValue}>{customColors.card || '#FFFFFF'}</span>
+                    </div>
+                  </label>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Footer Actions */}
         <div className={s.footer}>
-          <button type="button" className={s.cancelBtn} onClick={onClose}>
+          <button type="button" className={s.cancelBtn} onClick={handleCancel}>
             Hủy
           </button>
           <button
