@@ -36,6 +36,17 @@
   --color-border:       #F0D5E0;  /* Subtle border */
   --color-border-mid:   #E0B8CB;  /* Mid border */
 
+  /* ── Dynamic Theme Semantic Aliases ── */
+  --color-bg:           var(--color-cream);
+  --color-bg-dark:      var(--color-cream-dark);
+  --color-primary:      var(--color-pink-300);
+  --color-primary-hover:var(--color-pink-400);
+  --color-primary-dark: var(--color-pink-500);
+  --color-text:         var(--color-ink);
+  --color-text-soft:    var(--color-ink-soft);
+  --color-text-faint:   var(--color-ink-faint);
+  --color-card:         var(--color-white);
+
   /* ── Spacing (8px grid) ── */
   --space-1:  4px;
   --space-2:  8px;

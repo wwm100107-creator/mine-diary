@@ -133,6 +133,10 @@ export function applyTheme(themeConfig) {
   root.style.setProperty('--color-cream-dark', adjustColor(bg, -10))
   root.style.setProperty('--color-white', card)
 
+  root.style.setProperty('--color-bg', bg)
+  root.style.setProperty('--color-bg-dark', adjustColor(bg, -10))
+  root.style.setProperty('--color-card', card)
+
   root.style.setProperty('--color-pink-50', adjustColor(primary, 95))
   root.style.setProperty('--color-pink-100', primaryLighter)
   root.style.setProperty('--color-pink-200', primaryLight)
@@ -140,9 +144,17 @@ export function applyTheme(themeConfig) {
   root.style.setProperty('--color-pink-400', primary)
   root.style.setProperty('--color-pink-500', primaryDark)
 
+  root.style.setProperty('--color-primary', primary)
+  root.style.setProperty('--color-primary-hover', primary)
+  root.style.setProperty('--color-primary-dark', primaryDark)
+
   root.style.setProperty('--color-ink', text)
   root.style.setProperty('--color-ink-soft', textSoft)
   root.style.setProperty('--color-ink-faint', textFaint)
+
+  root.style.setProperty('--color-text', text)
+  root.style.setProperty('--color-text-soft', textSoft)
+  root.style.setProperty('--color-text-faint', textFaint)
 
   root.style.setProperty('--color-border', borderSubtle)
   root.style.setProperty('--color-border-mid', borderMid)

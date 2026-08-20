@@ -4,7 +4,11 @@ import { GoogleOAuthProvider } from '@react-oauth/google'
 import './styles/tokens.css'
 import './styles/typography.css'
 import './styles/animations.css'
+import { applyTheme, getSavedTheme } from './utils/theme'
 import App from './App.jsx'
+
+// ── Anti-FOUC: Synchronously apply saved theme before React mounts ──
+applyTheme(getSavedTheme())
 
 // ponytail: CLIENT_ID hardcode tạm, chuyển sang .env khi deploy
 const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID ?? 'PASTE_YOUR_CLIENT_ID_HERE'

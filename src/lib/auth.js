@@ -299,6 +299,7 @@ export async function loginUser({ usernameOrId, password }) {
     username: data.username || foundDoc.id,
     avatar: data.avatar || 'bunny',
     avatarFrame: data.avatarFrame || data.frame || 'none',
+    theme: data.theme || null,
     isAdmin: data.role === 'admin' || data.isAdmin === true || foundDoc.id.toLowerCase() === ADMIN_USERNAME,
     role: (data.role === 'admin' || foundDoc.id.toLowerCase() === ADMIN_USERNAME) ? 'admin' : 'user',
     email: data.email || '',
