@@ -1,17 +1,17 @@
 import React, { memo } from 'react'
 import PixelAvatar from './PixelAvatar'
 
+const SIZE_PRESETS = {
+  xs: 24,
+  sm: 32,
+  md: 40,
+  lg: 56,
+  xl: 96,
+}
+
 /**
  * AvatarWithFrame - Reusable Memoized Avatar Component with Animated Pixel Frames
- * Optimized to prevent unnecessary re-renders during high-frequency chat typing.
- *
- * Props:
- *  - avatarUrl / avatarId: string (preset ID like 'bunny' or Data URL / Image URL)
- *  - frameId: string ('rainbow' | 'sparkle_stars' | 'cyber_aura' | 'sakura_hearts' | 'none')
- *  - size: number (default 36)
- *  - border: boolean (default true)
- *  - className: string
- *  - style: CSSProperties
+ * Supports responsive scaling presets: 'xs' | 'sm' | 'md' | 'lg' | 'xl' or numeric size.
  */
 function AvatarWithFrameComponent({
   avatarUrl,
@@ -24,12 +24,17 @@ function AvatarWithFrameComponent({
 }) {
   const finalAvatar = avatarUrl || avatarId || 'bunny'
   const finalFrame = frameId || 'none'
+  const numericSize = typeof size === 'number' ? size : (SIZE_PRESETS[size] || 36)
+  const sizePreset = typeof size === 'string' && SIZE_PRESETS[size]
+    ? size
+    : (numericSize <= 36 ? 'sm' : numericSize <= 50 ? 'md' : 'lg')
 
   return (
     <PixelAvatar
       avatarId={finalAvatar}
       frameId={finalFrame}
-      size={size}
+      size={numericSize}
+      sizePreset={sizePreset}
       border={border}
       className={className}
       style={style}

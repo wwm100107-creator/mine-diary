@@ -13,18 +13,19 @@ export const AVATAR_FRAMES = [
   { id: 'sakura_hearts', name: '🌸 Trái Tim & Sakura', icon: '🌸', desc: 'Hoa anh đào & tim hồng nhịp đập' },
 ]
 
-function AvatarFrameOverlayComponent({ frameId = 'none', size = 36 }) {
+function AvatarFrameOverlayComponent({ frameId = 'none', size = 36, sizePreset }) {
   if (!frameId || frameId === 'none') return null
 
-  // Scale offset based on avatar size
-  const starSize = Math.max(6, Math.floor(size * 0.22))
-  const cornerOffset = -Math.floor(starSize * 0.35)
+  // Auto-determine scale preset: 'xs' -> 0.65, 'sm' -> 0.72, 'md'/'lg' -> 1.0
+  const activePreset = sizePreset || (size <= 36 ? 'sm' : size <= 50 ? 'md' : 'lg')
+  const scale = activePreset === 'xs' ? 0.65 : activePreset === 'sm' ? 0.72 : 1.0
 
   return (
     <div
-      className={`${s.frameOverlay} ${s[frameId] || ''}`}
+      className={`${s.frameOverlay} ${s[frameId] || ''} ${s[`size_${activePreset}`] || ''}`}
       style={{
         '--frame-size': `${size}px`,
+        '--frame-scale': scale,
       }}
       aria-hidden="true"
     >

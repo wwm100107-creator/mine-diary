@@ -334,7 +334,7 @@ export default function App() {
                 <AvatarWithFrame
                   avatarUrl={user.avatar || 'bunny'}
                   frameId={user.avatarFrame || user.frame || 'none'}
-                  size={34}
+                  size="sm"
                   border={false}
                 />
                 <button

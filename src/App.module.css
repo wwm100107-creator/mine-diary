@@ -19,7 +19,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 24px;
-  height: 64px;
+  height: 72px;
   flex-shrink: 0;
   background: linear-gradient(90deg,
     rgba(255, 208, 227, 0.85) 0%,
@@ -30,6 +30,7 @@
   position: relative;
   z-index: 10;
   box-sizing: border-box;
+  overflow: visible;
 }
 
 /* Top Row: Logo & User controls */
@@ -165,14 +166,16 @@
 .userProfileBadge {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 4px 12px;
-  background: rgba(255, 255, 255, 0.65);
+  gap: 16px;
+  padding: 6px 14px 6px 10px;
+  background: rgba(255, 255, 255, 0.75);
   border: 1.5px solid rgba(255, 143, 171, 0.45);
   border-radius: var(--radius-md);
   box-shadow: 2px 2px 0 rgba(255, 143, 171, 0.25);
   user-select: none;
   transition: all var(--transition-fast);
+  position: relative;
+  overflow: visible;
 }
 
 .userProfileBadge:hover {
@@ -188,7 +191,10 @@
   justify-content: center;
   cursor: pointer;
   border-radius: 6px;
-  margin: 2px 4px;
+  margin: 4px 12px 4px 6px;
+  flex-shrink: 0;
+  z-index: 2;
+  overflow: visible;
 }
 
 .avatarEditBtn {
@@ -209,7 +215,7 @@
   transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
   line-height: 1;
   padding: 0;
-  z-index: 3;
+  z-index: 5;
 }
 
 .avatarWrapper:hover .avatarEditBtn {
@@ -222,8 +228,10 @@
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  gap: 1px;
+  gap: 2px;
   line-height: 1.15;
+  position: relative;
+  z-index: 10;
 }
 
 .userDisplayName {
@@ -236,6 +244,9 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  position: relative;
+  z-index: 10;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.95);
 }
 
 .userUidText {
@@ -247,6 +258,8 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  position: relative;
+  z-index: 10;
 }
 
 .logoutBtn {
@@ -622,10 +635,11 @@
     display: flex;
     flex-direction: column;
     height: auto;
-    min-height: 104px;
-    padding: 8px 12px 8px;
+    min-height: 116px;
+    padding: 12px 14px 10px;
     gap: 8px;
     position: relative;
+    overflow: visible;
   }
 
   .headerTopRow {
@@ -633,6 +647,7 @@
     align-items: center;
     justify-content: space-between;
     width: 100%;
+    overflow: visible;
   }
 
   .headerNavRow {
@@ -680,23 +695,42 @@
   }
 
   .userProfileBadge {
-    padding: 3px 8px;
-    gap: 6px;
+    padding: 4px 10px 4px 6px;
+    gap: 10px;
+    overflow: visible;
+    position: relative;
+    z-index: 5;
+  }
+
+  .avatarWrapper {
+    margin: 2px 8px 2px 4px;
+    overflow: visible;
+  }
+
+  .userInfoColumn {
+    position: relative;
+    z-index: 10;
   }
 
   .userDisplayName {
     font-size: 11px;
     max-width: 90px;
+    position: relative;
+    z-index: 10;
   }
 
   .userUidText {
     font-size: 9px;
     max-width: 90px;
+    position: relative;
+    z-index: 10;
   }
 
   .logoutBtn {
     padding: 5px 8px;
     font-size: 10px;
+    position: relative;
+    z-index: 5;
   }
 
   /* Stack layout */
