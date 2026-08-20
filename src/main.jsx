@@ -16,11 +16,14 @@ if (typeof window !== 'undefined') {
   })
 }
 
-// ── Anti-SW Caching: Cleanly unregister any legacy service workers ──
+// ── Anti-SW Caching: Cleanly unregister any legacy service workers (Except FCM SW) ──
 if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
   navigator.serviceWorker.getRegistrations().then((registrations) => {
     for (const reg of registrations) {
-      reg.unregister()
+      const scriptUrl = reg.active ? reg.active.scriptURL : ''
+      if (!scriptUrl.includes('firebase-messaging-sw')) {
+        reg.unregister()
+      }
     }
   }).catch(() => {})
 }

@@ -15,17 +15,17 @@
     <meta name="apple-mobile-web-app-title" content="MineDiary" />
     <link rel="apple-touch-icon" href="/favicon.svg" />
 
-    <!-- Ponytail: Instant SW cleaner and chunk recovery -->
+    <!-- Ponytail: Instant SW cleaner and chunk recovery (Preserving Firebase Push SW) -->
     <script>
       (function() {
         if ('serviceWorker' in navigator) {
           navigator.serviceWorker.getRegistrations().then(function(regs) {
-            for (var i = 0; i < regs.length; i++) { regs[i].unregister(); }
-          }).catch(function() {});
-        }
-        if ('caches' in window) {
-          caches.keys().then(function(names) {
-            for (var i = 0; i < names.length; i++) { caches.delete(names[i]); }
+            for (var i = 0; i < regs.length; i++) {
+              var scriptUrl = regs[i].active ? regs[i].active.scriptURL : '';
+              if (!scriptUrl.includes('firebase-messaging-sw')) {
+                regs[i].unregister();
+              }
+            }
           }).catch(function() {});
         }
         window.addEventListener('vite:preloadError', function() {
