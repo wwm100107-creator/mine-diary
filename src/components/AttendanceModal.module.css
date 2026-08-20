@@ -389,3 +389,74 @@
   text-align: center;
   font-weight: bold;
 }
+
+/* ══════════════════════════════════════════════
+   📱 RESPONSIVE DESIGN (TABLET & IPHONE)
+   ══════════════════════════════════════════════ */
+@media (max-width: 640px) {
+  .modalOverlay {
+    padding: 8px;
+  }
+
+  .modalCard {
+    max-height: 94vh;
+    border-radius: var(--radius-md);
+  }
+
+  .modalHeader {
+    padding: 10px 14px;
+  }
+
+  .modalTitle {
+    font-size: 13px;
+  }
+
+  .modalSubtitle {
+    font-size: 10px;
+  }
+
+  .userStatusCard {
+    margin: 8px 10px 4px 10px;
+    padding: 8px 10px;
+    gap: 8px;
+  }
+
+  .userNameText {
+    font-size: 12px;
+  }
+
+  .streakValue {
+    font-size: 14px;
+  }
+
+  .gridContainer {
+    grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+    padding: 8px 10px;
+    gap: 8px;
+  }
+
+  .dayCard {
+    min-height: 94px;
+    padding: 6px;
+  }
+
+  .dayBadge {
+    font-size: 9px;
+    padding: 1px 4px;
+  }
+
+  .modalFooter {
+    padding: 10px 14px;
+  }
+
+  .claimActionBtn {
+    height: 40px;
+    font-size: 11px;
+  }
+
+  .alreadyCheckedInNotice {
+    padding: 8px 16px;
+    font-size: 11px;
+  }
+}
+

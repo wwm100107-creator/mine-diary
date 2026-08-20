@@ -869,3 +869,112 @@
   border-color: var(--color-pink-400);
   box-shadow: 2px 2px 0 var(--color-pink-200);
 }
+
+/* ══════════════════════════════════════════════
+   📱 RESPONSIVE DESIGN (LAPTOP, IPAD & IPHONE)
+   ══════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .landing {
+    padding: 20px 12px;
+  }
+
+  .authCard {
+    padding: 26px 20px;
+    gap: 16px;
+  }
+
+  .brandTitle {
+    font-size: 30px;
+  }
+}
+
+@media (max-width: 480px) {
+  .landing {
+    padding: 12px 8px;
+    min-height: 100dvh;
+    justify-content: flex-start;
+  }
+
+  .authCard {
+    width: 100%;
+    max-width: 100%;
+    padding: 20px 14px;
+    border-width: 2px;
+    border-radius: var(--radius-md);
+    box-shadow: 4px 4px 0 var(--color-pink-300);
+    gap: 14px;
+  }
+
+  .brandTitle {
+    font-size: 26px;
+  }
+
+  .brandSubtitle {
+    font-size: 11px;
+  }
+
+  .tabSwitch {
+    padding: 3px;
+  }
+
+  .tabBtn {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+
+  .inputGroup {
+    gap: 4px;
+  }
+
+  .inputLabel {
+    font-size: 10px;
+  }
+
+  .tagPreview {
+    font-size: 8px;
+    padding: 1px 4px;
+  }
+
+  .pixelInput {
+    height: 40px;
+    font-size: 13px;
+    padding: 0 10px 0 34px;
+  }
+
+  .genderSegmentGroup {
+    min-height: 46px;
+    padding: 3px;
+  }
+
+  .genderSegmentBtn {
+    padding: 6px 4px;
+    font-size: 11px;
+  }
+
+  .cycleHintNote {
+    font-size: 9px;
+  }
+
+  .avatarPickerCard {
+    padding: 8px 10px;
+    gap: 8px;
+  }
+
+  .avatarPickerTriggerBtn {
+    height: 34px;
+    padding: 0 10px;
+    font-size: 10px;
+  }
+
+  .submitBtn {
+    height: 42px;
+    font-size: 12px;
+  }
+
+  .googleBtn {
+    height: 40px;
+    font-size: 11px;
+    padding: 0 12px;
+  }
+}
+

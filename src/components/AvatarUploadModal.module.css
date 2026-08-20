@@ -1015,3 +1015,75 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* ══════════════════════════════════════════════
+   📱 RESPONSIVE DESIGN (TABLET & IPHONE)
+   ══════════════════════════════════════════════ */
+@media (max-width: 600px) {
+  .overlay {
+    padding: 8px;
+  }
+
+  .modal {
+    width: 96vw;
+    max-height: 94vh;
+    border-radius: var(--radius-md);
+  }
+
+  .header {
+    padding: 10px 14px;
+  }
+
+  .headerTitle {
+    font-size: 13px;
+  }
+
+  .tabsBar {
+    padding: 6px 12px;
+    gap: 6px;
+  }
+
+  .tabBtn {
+    padding: 6px 10px;
+    font-size: 10px;
+  }
+
+  .body {
+    padding: 12px 10px;
+    gap: 12px;
+  }
+
+  .dropzone {
+    padding: 16px 12px;
+    min-height: 120px;
+  }
+
+  .dropzoneText {
+    font-size: 12px;
+  }
+
+  .framesScrollRow {
+    gap: 8px;
+    padding-bottom: 6px;
+  }
+
+  .frameOptionCard {
+    min-width: 96px;
+    padding: 8px 6px;
+  }
+
+  .footer {
+    padding: 10px 12px;
+    gap: 8px;
+  }
+
+  .cancelBtn,
+  .saveBtn {
+    flex: 1;
+    padding: 8px 10px;
+    font-size: 10px;
+    text-align: center;
+    justify-content: center;
+  }
+}
+

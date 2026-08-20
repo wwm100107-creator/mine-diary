@@ -780,11 +780,30 @@
     z-index: 10;
   }
 
+  .attendanceHeaderBtn {
+    padding: 4px 8px;
+    font-size: 9px;
+    gap: 4px;
+  }
+
   .logoutBtn {
     padding: 5px 8px;
     font-size: 10px;
     position: relative;
     z-index: 5;
+  }
+
+  @media (max-width: 420px) {
+    .attendanceBtnText {
+      display: none;
+    }
+    .attendanceHeaderBtn {
+      padding: 5px 8px;
+    }
+    .userDisplayName,
+    .userUidText {
+      max-width: 70px;
+    }
   }
 
   /* Stack layout */
