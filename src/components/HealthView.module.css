@@ -59,6 +59,162 @@
   gap: 8px;
 }
 
+/* ── Prediction Algorithm Engine Switcher ── */
+.algorithmSwitcherCard {
+  background: var(--color-white);
+  border: 2.5px solid var(--color-border-mid);
+  border-radius: 16px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  box-shadow: 3px 3px 0 var(--color-pink-200);
+  transition: all 0.25s ease;
+  flex-wrap: wrap;
+}
+
+.cardModeStandard {
+  border-color: #81C784;
+  background: linear-gradient(135deg, #FFFFFF 0%, #F1F8E9 100%);
+  box-shadow: 3px 3px 0 #C8E6C9;
+}
+
+.cardModeAdvanced {
+  border-color: #BA68C8;
+  background: linear-gradient(135deg, #FFFFFF 0%, #F3E5F5 100%);
+  box-shadow: 3px 3px 0 #E1BEE7;
+}
+
+.algorithmInfoGroup {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 1;
+  min-width: 260px;
+}
+
+.algorithmIconWrap {
+  font-size: 28px;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: var(--color-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.06);
+  flex-shrink: 0;
+}
+
+.algorithmTextWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.algorithmTitleRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.algorithmTitle {
+  font-family: var(--font-pixel);
+  font-size: 14px;
+  letter-spacing: 0.03em;
+  color: var(--color-ink);
+  margin: 0;
+}
+
+.algorithmBadge {
+  font-family: var(--font-pixel);
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-weight: bold;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.badgeStandard {
+  background: #E8F5E9;
+  color: #2E7D32;
+  border: 1px solid #A5D6A7;
+}
+
+.badgeAi {
+  background: #F3E5F5;
+  color: #7B1FA2;
+  border: 1px solid #CE93D8;
+}
+
+.algorithmDesc {
+  font-size: 12px;
+  color: var(--color-ink-soft);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.modeNoticeBanner {
+  font-size: 11px;
+  color: #1B5E20;
+  font-weight: 600;
+  margin-top: 2px;
+  animation: fadeIn 0.3s ease;
+}
+
+.toggleContainer {
+  display: flex;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.05);
+  padding: 4px;
+  border-radius: 12px;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.toggleOptionBtn {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1.5px solid transparent;
+  font-family: var(--font-pixel);
+  font-size: 11px;
+  letter-spacing: 0.03em;
+  color: var(--color-ink-soft);
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  white-space: nowrap;
+}
+
+.toggleOptionBtn:hover:not(:disabled) {
+  color: var(--color-ink);
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.toggleActiveStandard {
+  background: #FFFFFF !important;
+  color: #2E7D32 !important;
+  font-weight: bold;
+  border-color: #81C784 !important;
+  box-shadow: 0 2px 6px rgba(46, 125, 50, 0.2), 1px 1px 0 #C8E6C9 !important;
+  transform: translateY(-1px);
+}
+
+.toggleActiveAdvanced {
+  background: #FFFFFF !important;
+  color: #7B1FA2 !important;
+  font-weight: bold;
+  border-color: #BA68C8 !important;
+  box-shadow: 0 2px 6px rgba(123, 31, 162, 0.2), 1px 1px 0 #E1BEE7 !important;
+  transform: translateY(-1px);
+}
+
 /* ── Mode Switcher (Bản Thân ⇄ Người Thương) ── */
 .modeSwitcher {
   display: flex;

@@ -584,3 +584,21 @@ export function saveRecentChat() {
   // No-op: Realtime state strictly driven by Firestore database
 }
 
+/**
+ * Update predictionMode for user ('standard' | 'advanced')
+ */
+export async function updateUserPredictionMode(userId, mode) {
+  if (!userId) return mode
+  const validMode = mode === 'advanced' ? 'advanced' : 'standard'
+  try {
+    await setDoc(doc(db, 'users', userId), {
+      predictionMode: validMode,
+      updatedAt: serverTimestamp(),
+    }, { merge: true })
+    return validMode
+  } catch (err) {
+    console.error('Error updating predictionMode:', err)
+    throw err
+  }
+}
+

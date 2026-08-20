@@ -10,6 +10,7 @@ import {
   syncUserCycleData,
   subscribeToUserRelationships,
   sendChatMessage,
+  updateUserPredictionMode,
 } from '../lib/social'
 import { usePartnerCycleData } from '../hooks/usePartnerCycleData'
 
@@ -27,6 +28,37 @@ export default function HealthView({ user }) {
   const [viewMode, setViewMode] = useState('self') // 'self' | 'partner'
   const [userRelationships, setUserRelationships] = useState([])
   const [sentToast, setSentToast] = useState('')
+
+  // ── Prediction Mode State ('standard' | 'advanced') ──
+  const [predictionMode, setPredictionMode] = useState(user?.predictionMode || 'standard')
+  const [isUpdatingMode, setIsUpdatingMode] = useState(false)
+  const [modeNotice, setModeNotice] = useState('')
+
+  useEffect(() => {
+    if (user?.predictionMode) {
+      setPredictionMode(user.predictionMode)
+    }
+  }, [user?.predictionMode])
+
+  const handleTogglePredictionMode = async (newMode) => {
+    if (newMode === predictionMode || isUpdatingMode || !user?.id) return
+    setIsUpdatingMode(true)
+    setPredictionMode(newMode)
+    setModeNotice('')
+    try {
+      await updateUserPredictionMode(user.id, newMode)
+      setModeNotice(
+        newMode === 'advanced'
+          ? '✨ Đã bật Chế độ AI Bayesian (Quét BBT, LH & Dịch nhầy)!'
+          : '🌿 Đã chuyển sang Chế độ Chu kỳ Chuẩn (Standard Days)!'
+      )
+      setTimeout(() => setModeNotice(''), 3000)
+    } catch (err) {
+      console.error('Failed to update predictionMode:', err)
+    } finally {
+      setIsUpdatingMode(false)
+    }
+  }
 
   // 1. Sync User's own cycle data to Firestore for partner sharing
   const allMarks = useMemo(() => loadMarkedDates(user?.id), [user?.id])
@@ -93,6 +125,59 @@ export default function HealthView({ user }) {
   return (
     <div className={s.healthView} role="main" aria-label="Sức khỏe Nữ giới">
       
+      {/* ── Top Prediction Algorithm Engine Switcher Card ── */}
+      <div className={`${s.algorithmSwitcherCard} ${predictionMode === 'advanced' ? s.cardModeAdvanced : s.cardModeStandard}`}>
+        <div className={s.algorithmInfoGroup}>
+          <div className={s.algorithmIconWrap}>
+            {predictionMode === 'advanced' ? '✨' : '🌿'}
+          </div>
+          <div className={s.algorithmTextWrap}>
+            <div className={s.algorithmTitleRow}>
+              <h3 className={s.algorithmTitle}>
+                Thuật Toán Dự Đoán: {predictionMode === 'advanced' ? 'Chuyên Sâu (AI Bayesian)' : 'Cơ Bản (Standard Days)'}
+              </h3>
+              <span className={`${s.algorithmBadge} ${predictionMode === 'advanced' ? s.badgeAi : s.badgeStandard}`}>
+                {predictionMode === 'advanced' ? '⚡ AI Đa Thông Số' : '🌱 Chu Kỳ Chuẩn'}
+              </span>
+            </div>
+            <p className={s.algorithmDesc}>
+              {predictionMode === 'advanced'
+                ? 'Quét sâu BBT (thân nhiệt), que thử LH và dịch nhầy để bẻ cong lịch rụng trứng & cửa sổ thụ thai chính xác nhất.'
+                : 'Tính toán chu kỳ trung bình thuần túy dựa trên lịch sử ngày dâu (O = Chu kỳ - 14 ngày).'}
+            </p>
+            {modeNotice && (
+              <div className={s.modeNoticeBanner}>
+                {modeNotice}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Tactile Toggle Pill */}
+        <div className={s.toggleContainer} role="radiogroup" aria-label="Chọn thuật toán dự đoán chu kỳ">
+          <button
+            type="button"
+            className={`${s.toggleOptionBtn} ${predictionMode === 'standard' ? s.toggleActiveStandard : ''}`}
+            onClick={() => handleTogglePredictionMode('standard')}
+            disabled={isUpdatingMode}
+            role="radio"
+            aria-checked={predictionMode === 'standard'}
+          >
+            <span>🌿</span> Cơ Bản
+          </button>
+          <button
+            type="button"
+            className={`${s.toggleOptionBtn} ${predictionMode === 'advanced' ? s.toggleActiveAdvanced : ''}`}
+            onClick={() => handleTogglePredictionMode('advanced')}
+            disabled={isUpdatingMode}
+            role="radio"
+            aria-checked={predictionMode === 'advanced'}
+          >
+            <span>✨</span> Chuyên Sâu (AI)
+          </button>
+        </div>
+      </div>
+
       {/* ── Mode Switcher (If partner relationship exists) ── */}
       {coupleRel && partnerUser && (
         <div className={s.modeSwitcher}>
