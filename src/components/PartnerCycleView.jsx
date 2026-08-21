@@ -223,15 +223,18 @@ export default function PartnerCycleView({ user }) {
           <FertilityBar prediction={prediction} />
 
           {/* ── 5. Bottom: Historical Charts (mirroring female's data from Firestore) ── */}
-          <div className={s.pixelCard}>
-            <h3 className={s.cardTitle}><span>📊</span> Thống Kê & Phân Tích Chu Kỳ</h3>
-            <HealthChart
-              userId={partnerId}
-              markedDates={partnerMarkedDates}
-              symptoms={partnerSymptoms}
-            />
+          <div className={s.bottomSection}>
+            <div className={s.pixelCard}>
+              <h2 className={s.cardTitle}><span>📊</span> Thống Kê &amp; Phân Tích</h2>
+              <HealthChart
+                userId={partnerId}
+                markedDates={partnerMarkedDates}
+                symptoms={partnerSymptoms}
+              />
+            </div>
           </div>
         </>
+
       ) : (
         /* Permission Locked Notice */
         <div className={s.pixelCard} style={{ textAlign: 'center', padding: 40 }}>
