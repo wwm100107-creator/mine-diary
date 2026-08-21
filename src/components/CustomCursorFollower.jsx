@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useState, useRef, useCallback } from 'react'
+import React, { memo, useEffect, useState, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import s from './CustomCursorFollower.module.css'
 
@@ -19,44 +19,71 @@ function CustomCursorFollower({ user, cursorTheme }) {
     targetY: -100,
     lerpX: -100,
     lerpY: -100,
+    lastX: -100,
+    lastY: -100,
+    targetAngle: 0,
+    lerpAngle: 0,
     isVisible: false,
+    speed: 0,
   })
 
-  // Ensure client-side portal mounting
+  // 1. Unconditionally inject global cursor: none !important style in document head
   useEffect(() => {
     setIsMounted(true)
+    let styleEl = document.getElementById('custom-cursor-hide-native')
+    if (!styleEl) {
+      styleEl = document.createElement('style')
+      styleEl.id = 'custom-cursor-hide-native'
+      styleEl.innerHTML = `
+        html, body, *, *::before, *::after {
+          cursor: none !important;
+        }
+      `
+      document.head.appendChild(styleEl)
+    }
+
     return () => {
-      document.documentElement.classList.remove('has-custom-cursor')
-      document.body.classList.remove('has-custom-cursor')
+      const existing = document.getElementById('custom-cursor-hide-native')
+      if (existing) existing.remove()
     }
   }, [])
 
-  // Mouse move, click, and hover tracking with high-performance rAF lerp
+  // 2. High-performance Mouse Movement & Angle Heading Tracking
   useEffect(() => {
     let rafId = null
 
     const handleMouseMove = (e) => {
       const { clientX, clientY } = e
-      posRef.current.targetX = clientX
-      posRef.current.targetY = clientY
+      const p = posRef.current
 
-      if (!posRef.current.isVisible) {
-        posRef.current.isVisible = true
-        posRef.current.lerpX = clientX
-        posRef.current.lerpY = clientY
-        
-        // Hide native cursor immediately upon detecting mouse movement
-        document.documentElement.classList.add('has-custom-cursor')
-        document.body.classList.add('has-custom-cursor')
+      // Calculate direction delta & movement speed
+      if (p.isVisible && p.lastX !== -100) {
+        const dx = clientX - p.lastX
+        const dy = clientY - p.lastY
+        const dist = Math.hypot(dx, dy)
+        p.speed = dist
 
-        if (rootRef.current) {
-          rootRef.current.style.opacity = '1'
+        // Calculate heading angle when mouse is moving
+        if (dist > 1.5) {
+          const rawDeg = Math.atan2(dy, dx) * (180 / Math.PI)
+          p.targetAngle = rawDeg
         }
       }
 
-      // Instant hardware GPU transform for sharp pointer core
-      if (coreRef.current) {
-        coreRef.current.style.transform = `translate3d(${clientX}px, ${clientY}px, 0) translate(-50%, -50%)`
+      p.lastX = clientX
+      p.lastY = clientY
+      p.targetX = clientX
+      p.targetY = clientY
+
+      if (!p.isVisible) {
+        p.isVisible = true
+        p.lerpX = clientX
+        p.lerpY = clientY
+        p.lastX = clientX
+        p.lastY = clientY
+        if (rootRef.current) {
+          rootRef.current.style.opacity = '1'
+        }
       }
     }
 
@@ -94,28 +121,30 @@ function CustomCursorFollower({ user, cursorTheme }) {
       if (rootRef.current) {
         rootRef.current.style.opacity = '0'
       }
-      document.documentElement.classList.remove('has-custom-cursor')
-      document.body.classList.remove('has-custom-cursor')
     }
 
-    const handleTouchStart = () => {
-      posRef.current.isVisible = false
-      if (rootRef.current) {
-        rootRef.current.style.opacity = '0'
-      }
-      document.documentElement.classList.remove('has-custom-cursor')
-      document.body.classList.remove('has-custom-cursor')
-    }
-
-    // Smooth lerp loop for follower ring
+    // High performance rAF loop for smooth trailing ring & directional angle rotation
     const loop = () => {
-      if (posRef.current.isVisible) {
-        const { targetX, targetY } = posRef.current
-        posRef.current.lerpX += (targetX - posRef.current.lerpX) * 0.35
-        posRef.current.lerpY += (targetY - posRef.current.lerpY) * 0.35
+      const p = posRef.current
+      if (p.isVisible) {
+        // Smooth position lerp
+        p.lerpX += (p.targetX - p.lerpX) * 0.35
+        p.lerpY += (p.targetY - p.lerpY) * 0.35
 
+        // Smooth angle lerp (shortest angular distance)
+        let diff = (p.targetAngle - p.lerpAngle) % 360
+        if (diff > 180) diff -= 360
+        if (diff < -180) diff += 360
+        p.lerpAngle += diff * 0.25
+
+        // Update follower ring position
         if (ringRef.current) {
-          ringRef.current.style.transform = `translate3d(${posRef.current.lerpX}px, ${posRef.current.lerpY}px, 0) translate(-50%, -50%)`
+          ringRef.current.style.transform = `translate3d(${p.lerpX}px, ${p.lerpY}px, 0) translate(-50%, -50%)`
+        }
+
+        // Update pointer core position and dynamic movement heading angle
+        if (coreRef.current) {
+          coreRef.current.style.transform = `translate3d(${p.targetX}px, ${p.targetY}px, 0) translate(-50%, -50%) rotate(${p.lerpAngle}deg)`
         }
       }
       rafId = requestAnimationFrame(loop)
@@ -126,7 +155,6 @@ function CustomCursorFollower({ user, cursorTheme }) {
     window.addEventListener('mouseup', handleMouseUp, { passive: true })
     window.addEventListener('mouseover', handleMouseOver, { passive: true })
     document.addEventListener('mouseleave', handleMouseLeave, { passive: true })
-    window.addEventListener('touchstart', handleTouchStart, { passive: true })
 
     rafId = requestAnimationFrame(loop)
 
@@ -136,7 +164,6 @@ function CustomCursorFollower({ user, cursorTheme }) {
       window.removeEventListener('mouseup', handleMouseUp)
       window.removeEventListener('mouseover', handleMouseOver)
       document.removeEventListener('mouseleave', handleMouseLeave)
-      window.removeEventListener('touchstart', handleTouchStart)
       if (rafId) cancelAnimationFrame(rafId)
     }
   }, [activeTheme])
@@ -263,19 +290,19 @@ function CustomCursorFollower({ user, cursorTheme }) {
         )}
       </div>
 
-      {/* 2. Instant Sharp Pointer Core (Direct Hardware Transform) */}
+      {/* 2. Instant Sharp Pointer Core (Dynamic Heading Direction) */}
       <div
         ref={coreRef}
         className={`${s.pointerCore} ${s[`core_${activeTheme}`] || s.core_default} ${isHovering ? s.coreHover : ''} ${isClicking ? s.coreClick : ''}`}
       >
-        {/* 🌈 Cầu Vồng Pixel (8-Bit Pixel Arrow) */}
+        {/* 🌈 Cầu Vồng Pixel (Directional 8-Bit Pixel Arrow pointing right by default) */}
         {activeTheme === 'rainbow' && (
-          <svg viewBox="0 0 16 16" className={s.pixelArrowSvg}>
+          <svg viewBox="0 0 24 24" className={s.directionalArrowSvg}>
             <path
-              d="M 0 0 L 0 14 L 4 10 L 7 16 L 9 15 L 6 9 L 11 9 Z"
+              d="M 22 12 L 8 4 L 11 10 L 2 10 L 2 14 L 11 14 L 8 20 Z"
               fill="#FFFFFF"
               stroke="#000000"
-              strokeWidth="1.2"
+              strokeWidth="1.6"
               strokeLinejoin="miter"
             />
           </svg>
@@ -283,9 +310,9 @@ function CustomCursorFollower({ user, cursorTheme }) {
 
         {/* 🌸 Trái Tim & Sakura (Delicate Pink Petal) */}
         {activeTheme === 'sakura_hearts' && (
-          <svg viewBox="0 0 20 20" className={s.sakuraPetalSvg}>
+          <svg viewBox="0 0 24 24" className={s.directionalArrowSvg}>
             <path
-              d="M 10 2 C 14 0, 19 5, 18 11 C 17 16, 12 19, 10 20 C 8 19, 3 16, 2 11 C 1 5, 6 0, 10 2 Z"
+              d="M 22 12 C 16 6, 8 4, 2 8 C 4 14, 8 20, 16 20 C 19 18, 22 14, 22 12 Z"
               fill="url(#sakuraPetalGrad)"
               stroke="#FF8FAB"
               strokeWidth="0.8"
@@ -319,18 +346,18 @@ function CustomCursorFollower({ user, cursorTheme }) {
           </svg>
         )}
 
-        {/* ⚡ Hào Quang Lửa (Flame & Lightning Spark) */}
+        {/* ⚡ Hào Quang Lửa (Directional Flame Dart) */}
         {activeTheme === 'cyber_aura' && (
-          <svg viewBox="0 0 20 24" className={s.flameSparkSvg}>
+          <svg viewBox="0 0 24 24" className={s.directionalArrowSvg}>
             <defs>
-              <linearGradient id="flameGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#FFEE55" />
-                <stop offset="40%" stopColor="#FF7700" />
-                <stop offset="100%" stopColor="#FF1100" />
+              <linearGradient id="flameGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#FF1100" />
+                <stop offset="50%" stopColor="#FF7700" />
+                <stop offset="100%" stopColor="#FFEE55" />
               </linearGradient>
             </defs>
             <polygon
-              points="11,0 2,13 9,13 7,24 18,9 11,9"
+              points="24,12 11,3 13,10 0,10 0,14 13,14 11,21"
               fill="url(#flameGrad)"
               stroke="#FFF9A6"
               strokeWidth="0.8"
@@ -350,79 +377,78 @@ function CustomCursorFollower({ user, cursorTheme }) {
               </linearGradient>
             </defs>
             <polygon
-              points="12,1 23,12 12,23 1,12"
+              points="22,12 12,3 2,12 12,21"
               fill="url(#emeraldGemGrad)"
               stroke="#FFD700"
               strokeWidth="1.2"
             />
             <polygon
-              points="12,5 19,12 12,19 5,12"
+              points="18,12 12,6 6,12 12,18"
               fill="#FFFFFF"
               opacity="0.35"
             />
           </svg>
         )}
 
-        {/* 🔥 6. SVIP Thánh Hỏa (Royal Golden Flame Arrow) */}
+        {/* 🔥 6. SVIP Thánh Hỏa (Directional Royal Golden Flame Arrow) */}
         {activeTheme === 'vip8_fire' && (
-          <svg viewBox="0 0 24 24" className={s.royalFlameArrowSvg}>
+          <svg viewBox="0 0 24 24" className={s.directionalArrowSvg}>
             <defs>
-              <linearGradient id="holyFireGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#FFF275" />
-                <stop offset="35%" stopColor="#FF7700" />
-                <stop offset="85%" stopColor="#DC2626" />
-                <stop offset="100%" stopColor="#7F1D1D" />
+              <linearGradient id="holyFireGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#7F1D1D" />
+                <stop offset="40%" stopColor="#DC2626" />
+                <stop offset="80%" stopColor="#FF7700" />
+                <stop offset="100%" stopColor="#FFF275" />
               </linearGradient>
             </defs>
             <path
-              d="M 2 2 L 10 22 L 13 14 L 21 17 L 22 14 L 14 11 L 22 3 Z"
+              d="M 23 12 L 7 3 L 11 10 L 0 10 L 0 14 L 11 14 L 7 21 Z"
               fill="url(#holyFireGrad)"
               stroke="#FFD700"
-              strokeWidth="1"
+              strokeWidth="1.2"
             />
           </svg>
         )}
 
-        {/* ❄️ 7. SSVIP Cánh Băng (Translucent Frost Crystal Spear) */}
+        {/* ❄️ 7. SSVIP Cánh Băng (Directional Frost Crystal Spear) */}
         {activeTheme === 'vip9_frost' && (
-          <svg viewBox="0 0 24 24" className={s.frostSpearSvg}>
+          <svg viewBox="0 0 24 24" className={s.directionalArrowSvg}>
             <defs>
-              <linearGradient id="frostIceGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#FFFFFF" />
-                <stop offset="40%" stopColor="#BAE6FD" />
-                <stop offset="80%" stopColor="#38BDF8" />
-                <stop offset="100%" stopColor="#0284C7" />
+              <linearGradient id="frostIceGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#0284C7" />
+                <stop offset="50%" stopColor="#38BDF8" />
+                <stop offset="90%" stopColor="#BAE6FD" />
+                <stop offset="100%" stopColor="#FFFFFF" />
               </linearGradient>
             </defs>
             <polygon
-              points="12,1 18,9 14,23 12,19 10,23 6,9"
+              points="24,12 14,5 16,10 0,11 0,13 16,14 14,19"
               fill="url(#frostIceGrad)"
               stroke="#E0F2FE"
               strokeWidth="0.8"
-              opacity="0.9"
             />
-            <line x1="12" y1="2" x2="12" y2="19" stroke="#FFFFFF" strokeWidth="1" />
+            <line x1="0" y1="12" x2="22" y2="12" stroke="#FFFFFF" strokeWidth="1" />
           </svg>
         )}
 
-        {/* ⚡ 8. SSSVIP Song Long (Teal Dragon Head Silhouette) */}
+        {/* ⚡ 8. SSSVIP Song Long (Directional Teal Dragon Head) */}
         {activeTheme === 'vip10_thunder' && (
-          <svg viewBox="0 0 26 26" className={s.tealDragonSvg}>
+          <svg viewBox="0 0 26 26" className={s.directionalArrowSvg}>
             <defs>
-              <linearGradient id="tealDragonGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#E0FFFF" />
-                <stop offset="40%" stopColor="#00FFFF" />
-                <stop offset="85%" stopColor="#0099B8" />
-                <stop offset="100%" stopColor="#004D5A" />
+              <linearGradient id="tealDragonGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#004D5A" />
+                <stop offset="40%" stopColor="#0099B8" />
+                <stop offset="80%" stopColor="#00FFFF" />
+                <stop offset="100%" stopColor="#E0FFFF" />
               </linearGradient>
             </defs>
             <path
-              d="M 2 20 C 6 16, 8 10, 14 6 C 16 2, 22 2, 24 6 C 22 10, 18 12, 22 18 C 18 16, 14 18, 10 24 C 6 22, 4 21, 2 20 Z"
+              d="M 24 13 C 18 8, 14 6, 8 2 C 10 7, 8 10, 2 12 C 8 14, 10 17, 8 22 C 14 18, 18 16, 24 13 Z"
               fill="url(#tealDragonGrad)"
               stroke="#00FFFF"
-              strokeWidth="1"
+              strokeWidth="1.2"
             />
-            <circle cx="16" cy="8" r="1.5" fill="#FFE57F" />
+            <circle cx="16" cy="11" r="1.5" fill="#FFE57F" />
           </svg>
         )}
 
@@ -447,25 +473,24 @@ function CustomCursorFollower({ user, cursorTheme }) {
           </svg>
         )}
 
-        {/* 🌈 10. Gundam Calibarn: Angular Cybernetic Chamfered Sleek Arrow */}
+        {/* 🌈 10. Gundam Calibarn: Directional Angular Cybernetic Arrow */}
         {activeTheme === 'gundam_calibarn' && (
-          <svg viewBox="0 0 24 24" className={s.calibarnCyberArrowSvg}>
+          <svg viewBox="0 0 24 24" className={s.directionalArrowSvg}>
             <defs>
-              <linearGradient id="calibarnArrowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#FFFFFF" />
-                <stop offset="60%" stopColor="#F8FAFC" />
-                <stop offset="100%" stopColor="#CBD5E1" />
+              <linearGradient id="calibarnArrowGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#64748B" />
+                <stop offset="50%" stopColor="#CBD5E1" />
+                <stop offset="100%" stopColor="#FFFFFF" />
               </linearGradient>
             </defs>
             <polygon
-              points="2,2 8,22 12,14 20,18 22,15 14,11 22,4"
+              points="23,12 11,3 14,10 0,10 0,14 14,14 11,21"
               fill="url(#calibarnArrowGrad)"
               stroke="#00F5D4"
               strokeWidth="1.2"
             />
-            {/* Permet Score 8 Accent Slit on Cursor */}
-            <line x1="6" y1="8" x2="12" y2="13" stroke="#FF0055" strokeWidth="1.2" />
-            <circle cx="12" cy="14" r="1.5" fill="#00FFFF" />
+            <line x1="6" y1="12" x2="18" y2="12" stroke="#FF0055" strokeWidth="1.4" />
+            <circle cx="18" cy="12" r="1.5" fill="#00FFFF" />
           </svg>
         )}
 
@@ -478,47 +503,42 @@ function CustomCursorFollower({ user, cursorTheme }) {
                 <stop offset="100%" stopColor="#E2E8F0" />
               </linearGradient>
             </defs>
-            {/* 4 Corner Crosshair Brackets */}
             <path d="M 4 9 L 4 4 L 9 4" stroke="#FFFFFF" strokeWidth="1.8" fill="none" strokeLinecap="square" />
             <path d="M 22 9 L 22 4 L 17 4" stroke="#FFFFFF" strokeWidth="1.8" fill="none" strokeLinecap="square" />
             <path d="M 4 17 L 4 22 L 9 22" stroke="#FFFFFF" strokeWidth="1.8" fill="none" strokeLinecap="square" />
             <path d="M 22 17 L 22 22 L 17 22" stroke="#FFFFFF" strokeWidth="1.8" fill="none" strokeLinecap="square" />
-            {/* Center Exposed Psycho-Frame Core */}
             <circle cx="13" cy="13" r="3" fill="#00FF88" stroke="#FFFFFF" strokeWidth="0.8" />
             <line x1="13" y1="7" x2="13" y2="19" stroke="#00FF88" strokeWidth="0.8" />
             <line x1="7" y1="13" x2="19" y2="13" stroke="#00FF88" strokeWidth="0.8" />
           </svg>
         )}
 
-        {/* 🪶 12. Wing Zero Custom: Armored Mechanical Angel Feather Blade */}
+        {/* 🪶 12. Wing Zero Custom: Directional Mechanical Angel Feather Blade */}
         {activeTheme === 'wing_zero_ew' && (
-          <svg viewBox="0 0 24 24" className={s.wingZeroBladeFeatherSvg}>
+          <svg viewBox="0 0 24 24" className={s.directionalArrowSvg}>
             <defs>
-              <linearGradient id="wzBladeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#FFFFFF" />
-                <stop offset="50%" stopColor="#BAE6FD" />
-                <stop offset="100%" stopColor="#1E40AF" />
+              <linearGradient id="wzBladeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#1E40AF" />
+                <stop offset="60%" stopColor="#BAE6FD" />
+                <stop offset="100%" stopColor="#FFFFFF" />
               </linearGradient>
             </defs>
             <path
-              d="M 2 2 C 10 4, 18 10, 22 22 C 14 18, 6 12, 2 2 Z"
+              d="M 23 12 C 16 5, 8 2, 0 6 C 6 12, 6 16, 0 20 C 8 22, 16 19, 23 12 Z"
               fill="url(#wzBladeGrad)"
               stroke="#60A5FA"
               strokeWidth="1"
             />
-            {/* Blade Spine */}
-            <line x1="2" y1="2" x2="20" y2="20" stroke="#FFD700" strokeWidth="0.8" />
-            <circle cx="6" cy="6" r="1.5" fill="#00FF88" />
+            <line x1="2" y1="12" x2="20" y2="12" stroke="#FFD700" strokeWidth="0.8" />
+            <circle cx="16" cy="12" r="1.5" fill="#00FF88" />
           </svg>
         )}
 
         {/* 🔴 13. Sazabi ver.Ka: Neo Zeon Crimson Red Target Lock Reticle */}
         {activeTheme === 'sazabi_verka' && (
           <svg viewBox="0 0 26 26" className={s.sazabiLockOnReticleSvg}>
-            {/* Outer Circular Lock-on Target */}
             <circle cx="13" cy="13" r="10" stroke="#FF1E27" strokeWidth="1.4" strokeDasharray="4 2" fill="none" />
             <path d="M 2 13 L 6 13 M 20 13 L 24 13 M 13 2 L 13 6 M 13 20 L 13 24" stroke="#FF1E27" strokeWidth="1.5" />
-            {/* Center Glowing Green Mono-Eye */}
             <circle cx="13" cy="13" r="2.8" fill="#00FF66" stroke="#FFE57F" strokeWidth="0.6" />
           </svg>
         )}

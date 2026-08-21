@@ -129,6 +129,14 @@
   height: 18px;
 }
 
+.directionalArrowSvg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.45));
+  will-change: transform;
+}
+
 .pixelArrowSvg {
   width: 100%;
   height: 100%;
@@ -136,6 +144,7 @@
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
   image-rendering: pixelated;
 }
+
 
 /* =======================================================
    2. THEME: 🌸 TRÁI TIM & SAKURA
