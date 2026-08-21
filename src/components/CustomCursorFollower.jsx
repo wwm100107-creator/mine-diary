@@ -4,11 +4,11 @@ import s from './CustomCursorFollower.module.css'
 
 function CustomCursorFollower({ user, cursorTheme }) {
   const activeTheme = cursorTheme || user?.avatarFrame || user?.frame || 'default'
-  
-  const [isFinePointer, setIsFinePointer] = useState(false)
+
   const [isHovering, setIsHovering] = useState(false)
   const [isClicking, setIsClicking] = useState(false)
   const [bursts, setBursts] = useState([])
+  const [isMounted, setIsMounted] = useState(false)
 
   const rootRef = useRef(null)
   const ringRef = useRef(null)
@@ -22,24 +22,17 @@ function CustomCursorFollower({ user, cursorTheme }) {
     isVisible: false,
   })
 
-  // Detect pointer: fine and toggle body cursor: none
+  // Ensure client-side portal mounting
   useEffect(() => {
-    if (typeof window === 'undefined') return
-    const fine = window.matchMedia('(pointer: fine)').matches
-    setIsFinePointer(fine)
-
-    if (fine) {
-      document.body.classList.add('has-custom-cursor')
-    }
+    setIsMounted(true)
     return () => {
+      document.documentElement.classList.remove('has-custom-cursor')
       document.body.classList.remove('has-custom-cursor')
     }
   }, [])
 
   // Mouse move, click, and hover tracking with high-performance rAF lerp
   useEffect(() => {
-    if (!isFinePointer) return
-
     let rafId = null
 
     const handleMouseMove = (e) => {
@@ -51,12 +44,17 @@ function CustomCursorFollower({ user, cursorTheme }) {
         posRef.current.isVisible = true
         posRef.current.lerpX = clientX
         posRef.current.lerpY = clientY
+        
+        // Hide native cursor immediately upon detecting mouse movement
+        document.documentElement.classList.add('has-custom-cursor')
+        document.body.classList.add('has-custom-cursor')
+
         if (rootRef.current) {
           rootRef.current.style.opacity = '1'
         }
       }
 
-      // Instant direct transform for the sharp pointer core
+      // Instant hardware GPU transform for sharp pointer core
       if (coreRef.current) {
         coreRef.current.style.transform = `translate3d(${clientX}px, ${clientY}px, 0) translate(-50%, -50%)`
       }
@@ -64,7 +62,7 @@ function CustomCursorFollower({ user, cursorTheme }) {
 
     const handleMouseDown = (e) => {
       setIsClicking(true)
-      
+
       // Spawn click burst at exact coordinates
       const id = Date.now() + Math.random()
       const newBurst = {
@@ -96,9 +94,20 @@ function CustomCursorFollower({ user, cursorTheme }) {
       if (rootRef.current) {
         rootRef.current.style.opacity = '0'
       }
+      document.documentElement.classList.remove('has-custom-cursor')
+      document.body.classList.remove('has-custom-cursor')
     }
 
-    // High performance rAF loop for smooth trailing ring
+    const handleTouchStart = () => {
+      posRef.current.isVisible = false
+      if (rootRef.current) {
+        rootRef.current.style.opacity = '0'
+      }
+      document.documentElement.classList.remove('has-custom-cursor')
+      document.body.classList.remove('has-custom-cursor')
+    }
+
+    // Smooth lerp loop for follower ring
     const loop = () => {
       if (posRef.current.isVisible) {
         const { targetX, targetY } = posRef.current
@@ -117,6 +126,7 @@ function CustomCursorFollower({ user, cursorTheme }) {
     window.addEventListener('mouseup', handleMouseUp, { passive: true })
     window.addEventListener('mouseover', handleMouseOver, { passive: true })
     document.addEventListener('mouseleave', handleMouseLeave, { passive: true })
+    window.addEventListener('touchstart', handleTouchStart, { passive: true })
 
     rafId = requestAnimationFrame(loop)
 
@@ -126,11 +136,12 @@ function CustomCursorFollower({ user, cursorTheme }) {
       window.removeEventListener('mouseup', handleMouseUp)
       window.removeEventListener('mouseover', handleMouseOver)
       document.removeEventListener('mouseleave', handleMouseLeave)
+      window.removeEventListener('touchstart', handleTouchStart)
       if (rafId) cancelAnimationFrame(rafId)
     }
-  }, [isFinePointer, activeTheme])
+  }, [activeTheme])
 
-  if (!isFinePointer || typeof document === 'undefined') return null
+  if (!isMounted || typeof document === 'undefined') return null
 
   const content = (
     <div
