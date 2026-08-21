@@ -556,23 +556,68 @@
   font-weight: 700;
 }
 
+/* ── Arrow Navigation Wrapper ── */
+.arrowNavWrap {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.arrowNavBtn {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  background: var(--color-white);
+  border: 1.5px solid var(--color-border-mid);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  line-height: 1;
+  color: var(--color-ink-soft);
+  cursor: pointer;
+  box-shadow: 1px 1px 0 var(--color-pink-100);
+  transition: all 0.15s ease;
+  user-select: none;
+  pointer-events: all;
+}
+
+.arrowNavBtn:hover {
+  background: #FFE8F0;
+  border-color: var(--color-pink-400);
+  color: var(--color-pink-500);
+  transform: scale(1.08);
+  box-shadow: 2px 2px 0 var(--color-pink-200);
+}
+
+.arrowNavBtn:active {
+  transform: scale(0.94);
+  background: var(--color-pink-200);
+}
+
+/* Larger variant for the frame cards row */
+.arrowNavBtnLg {
+  width: 34px;
+  height: 34px;
+  font-size: 22px;
+  align-self: center;
+}
+
 /* ── Frame Collection Categories Selector ── */
 .frameCollectionTabsRow {
   display: flex;
   align-items: center;
   gap: 6px;
   overflow-x: auto;
-  padding: 2px 2px 6px;
+  padding: 2px 2px 4px;
   -webkit-overflow-scrolling: touch;
+  flex: 1;
+  scrollbar-width: none; /* Firefox */
 }
 
 .frameCollectionTabsRow::-webkit-scrollbar {
-  height: 4px;
-}
-
-.frameCollectionTabsRow::-webkit-scrollbar-thumb {
-  background: var(--color-pink-200);
-  border-radius: 999px;
+  height: 0; /* hidden — arrow buttons handle navigation */
 }
 
 .collectionTabBtn {
@@ -655,15 +700,12 @@
   overflow-y: visible;
   padding: 24px 14px 22px;
   -webkit-overflow-scrolling: touch;
+  flex: 1;
+  scrollbar-width: none; /* Firefox */
 }
 
 .framesScrollRow::-webkit-scrollbar {
-  height: 5px;
-}
-
-.framesScrollRow::-webkit-scrollbar-thumb {
-  background: var(--color-pink-200);
-  border-radius: 999px;
+  height: 0; /* hidden — arrow buttons handle navigation */
 }
 
 .frameOptionCard {

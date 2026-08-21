@@ -56,6 +56,8 @@ export default function AvatarUploadModal({
   const [showCustomPicker, setShowCustomPicker] = useState(initialThemeRef.current?.id === 'custom')
 
   const fileInputRef = useRef(null)
+  const collectionTabsRef = useRef(null)  // ponytail: scrollBy instead of state for arrow nav
+  const framesRowRef = useRef(null)
 
   // When rawImage or pixelDensity changes, generate previews
   useEffect(() => {
@@ -371,28 +373,42 @@ export default function AvatarUploadModal({
               </span>
             </div>
 
-            {/* Frame Collections / Theme Category Tabs */}
-            <div className={s.frameCollectionTabsRow} role="tablist" aria-label="Bộ sưu tập khung viền">
-              {FRAME_COLLECTIONS.map((col) => {
-                const isActive = selectedFrameCollection === col.id
-                const frameCount = col.id === 'all'
-                  ? AVATAR_FRAMES.length
-                  : AVATAR_FRAMES.filter((f) => f.category === col.id).length
+            {/* Frame Collections / Theme Category Tabs — Arrow Nav */}
+            <div className={s.arrowNavWrap}>
+              <button
+                type="button"
+                className={s.arrowNavBtn}
+                aria-label="Cuộn trái"
+                onClick={() => collectionTabsRef.current?.scrollBy({ left: -160, behavior: 'smooth' })}
+              >‹</button>
+              <div ref={collectionTabsRef} className={s.frameCollectionTabsRow} role="tablist" aria-label="Bộ sưu tập khung viền">
+                {FRAME_COLLECTIONS.map((col) => {
+                  const isActive = selectedFrameCollection === col.id
+                  const frameCount = col.id === 'all'
+                    ? AVATAR_FRAMES.length
+                    : AVATAR_FRAMES.filter((f) => f.category === col.id).length
 
-                return (
-                  <button
-                    key={col.id}
-                    type="button"
-                    className={`${s.collectionTabBtn} ${isActive ? s.collectionTabActive : ''}`}
-                    onClick={() => setSelectedFrameCollection(col.id)}
-                    role="tab"
-                    aria-selected={isActive}
-                  >
-                    <span>{col.name}</span>
-                    <span className={s.collectionCountBadge}>{frameCount}</span>
-                  </button>
-                )
-              })}
+                  return (
+                    <button
+                      key={col.id}
+                      type="button"
+                      className={`${s.collectionTabBtn} ${isActive ? s.collectionTabActive : ''}`}
+                      onClick={() => setSelectedFrameCollection(col.id)}
+                      role="tab"
+                      aria-selected={isActive}
+                    >
+                      <span>{col.name}</span>
+                      <span className={s.collectionCountBadge}>{frameCount}</span>
+                    </button>
+                  )
+                })}
+              </div>
+              <button
+                type="button"
+                className={s.arrowNavBtn}
+                aria-label="Cuộn phải"
+                onClick={() => collectionTabsRef.current?.scrollBy({ left: 160, behavior: 'smooth' })}
+              >›</button>
             </div>
 
             {/* Active Collection Description */}
@@ -413,54 +429,68 @@ export default function AvatarUploadModal({
               </div>
             )}
 
-            <div className={s.framesScrollRow}>
-              {(selectedFrameCollection === 'all'
-                ? AVATAR_FRAMES
-                : AVATAR_FRAMES.filter((f) => f.id === 'none' || f.category === selectedFrameCollection)
-              ).map((frame) => {
-                const isFrameActive = selectedFrame === frame.id
-                const isUnlocked = isFrameUnlocked(frame.id, currentUser)
-                const reqInfo = getFrameRequirementInfo(frame.id)
+            <div className={s.arrowNavWrap}>
+              <button
+                type="button"
+                className={`${s.arrowNavBtn} ${s.arrowNavBtnLg}`}
+                aria-label="Khung trước"
+                onClick={() => framesRowRef.current?.scrollBy({ left: -310, behavior: 'smooth' })}
+              >‹</button>
+              <div ref={framesRowRef} className={s.framesScrollRow}>
+                {(selectedFrameCollection === 'all'
+                  ? AVATAR_FRAMES
+                  : AVATAR_FRAMES.filter((f) => f.id === 'none' || f.category === selectedFrameCollection)
+                ).map((frame) => {
+                  const isFrameActive = selectedFrame === frame.id
+                  const isUnlocked = isFrameUnlocked(frame.id, currentUser)
+                  const reqInfo = getFrameRequirementInfo(frame.id)
 
-                return (
-                  <button
-                    key={frame.id}
-                    type="button"
-                    className={`${s.frameOptionCard} ${isFrameActive ? s.frameActive : ''} ${!isUnlocked ? s.frameLocked : ''}`}
-                    onClick={() => {
-                      if (!isUnlocked) {
-                        setVipWarning(
-                          isRegistration
-                            ? `Khung "${frame.name}" bị khóa! Hãy hoàn tất đăng ký tài khoản và điểm danh ${reqInfo?.reqDays} ngày để mở khóa cấp ${reqInfo?.badge || reqInfo?.name}! 🔒`
-                            : `Khung "${frame.name}" đang bị khóa! Cần đạt quyền hạn ${reqInfo?.badge || reqInfo?.name} (Điểm danh ${reqInfo?.reqDays} ngày) hoặc được Admin cấp quyền để mở khóa! ✨`
-                        )
-                        return
-                      }
-                      setVipWarning('')
-                      setSelectedFrame(frame.id)
-                    }}
-                    title={!isUnlocked ? `[BỊ KHÓA] Yêu cầu ${reqInfo?.badge || reqInfo?.name}` : `${frame.name} (${frame.desc})`}
-                  >
-                    {!isUnlocked && (
-                      <div className={s.lockOverlayBadge}>
-                        <span>🔒</span> {reqInfo?.badge || reqInfo?.shortName || 'VIP'}
+                  return (
+                    <button
+                      key={frame.id}
+                      type="button"
+                      className={`${s.frameOptionCard} ${isFrameActive ? s.frameActive : ''} ${!isUnlocked ? s.frameLocked : ''}`}
+                      onClick={() => {
+                        if (!isUnlocked) {
+                          setVipWarning(
+                            isRegistration
+                              ? `Khung "${frame.name}" bị khóa! Hãy hoàn tất đăng ký tài khoản và điểm danh ${reqInfo?.reqDays} ngày để mở khóa cấp ${reqInfo?.badge || reqInfo?.name}! 🔒`
+                              : `Khung "${frame.name}" đang bị khóa! Cần đạt quyền hạn ${reqInfo?.badge || reqInfo?.name} (Điểm danh ${reqInfo?.reqDays} ngày) hoặc được Admin cấp quyền để mở khóa! ✨`
+                          )
+                          return
+                        }
+                        setVipWarning('')
+                        setSelectedFrame(frame.id)
+                      }}
+                      title={!isUnlocked ? `[BỊ KHÓA] Yêu cầu ${reqInfo?.badge || reqInfo?.name}` : `${frame.name} (${frame.desc})`}
+                    >
+                      {!isUnlocked && (
+                        <div className={s.lockOverlayBadge}>
+                          <span>🔒</span> {reqInfo?.badge || reqInfo?.shortName || 'VIP'}
+                        </div>
+                      )}
+                      <div className={s.miniFramePreview}>
+                        <PixelAvatar
+                          avatarId={rawImage ? (avatarChoice === 'pixel' ? pixelatedPreview : originalPreview) : (selectedPreset || currentAvatar || 'bunny')}
+                          size={40}
+                          border={false}
+                          frameId={frame.id}
+                        />
                       </div>
-                    )}
-                    <div className={s.miniFramePreview}>
-                      <PixelAvatar
-                        avatarId={rawImage ? (avatarChoice === 'pixel' ? pixelatedPreview : originalPreview) : (selectedPreset || currentAvatar || 'bunny')}
-                        size={40}
-                        border={false}
-                        frameId={frame.id}
-                      />
-                    </div>
-                    <span className={s.frameCardName}>
-                      {frame.name}
-                    </span>
-                    {isFrameActive && <span className={s.frameCheckBadge}>✓</span>}
-                  </button>
-                )
-              })}
+                      <span className={s.frameCardName}>
+                        {frame.name}
+                      </span>
+                      {isFrameActive && <span className={s.frameCheckBadge}>✓</span>}
+                    </button>
+                  )
+                })}
+              </div>
+              <button
+                type="button"
+                className={`${s.arrowNavBtn} ${s.arrowNavBtnLg}`}
+                aria-label="Khung tiếp theo"
+                onClick={() => framesRowRef.current?.scrollBy({ left: 310, behavior: 'smooth' })}
+              >›</button>
             </div>
           </div>
 
