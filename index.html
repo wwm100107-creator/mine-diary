@@ -10,19 +10,21 @@
     <link rel="manifest" href="/manifest.json" />
     <meta name="theme-color" content="#FFB7C5" />
 
+    <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="MineDiary" />
+    <meta name="apple-touch-fullscreen" content="yes" />
     <link rel="apple-touch-icon" href="/favicon.svg" />
 
-    <!-- Ponytail: Instant SW cleaner and chunk recovery (Preserving Firebase Push SW) -->
+    <!-- Ponytail: Safe SW maintenance (Preserves Firebase & Web Push SWs) -->
     <script>
       (function() {
         if ('serviceWorker' in navigator) {
           navigator.serviceWorker.getRegistrations().then(function(regs) {
             for (var i = 0; i < regs.length; i++) {
               var scriptUrl = regs[i].active ? regs[i].active.scriptURL : '';
-              if (!scriptUrl.includes('firebase-messaging-sw')) {
+              if (!scriptUrl.includes('firebase-messaging-sw') && !scriptUrl.includes('sw.js')) {
                 regs[i].unregister();
               }
             }

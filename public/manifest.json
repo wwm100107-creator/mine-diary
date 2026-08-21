@@ -1,12 +1,16 @@
 {
+  "id": "minediary-pwa-app",
   "name": "Mine Diary - Nhật Ký & Chu Kỳ Pixel",
   "short_name": "MineDiary",
   "description": "Nhật ký cá nhân và theo dõi chu kỳ dễ thương phong cách cute pixel",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
   "background_color": "#FFF8F2",
   "theme_color": "#FFB7C5",
   "orientation": "portrait-primary",
+  "categories": ["lifestyle", "productivity", "utilities"],
   "icons": [
     {
       "src": "/favicon.svg",

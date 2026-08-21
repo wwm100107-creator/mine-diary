@@ -1,6 +1,7 @@
 /**
  * src/lib/push.js
  * Firebase Cloud Messaging (FCM) & Web Push Notification Client Service
+ * Supports iOS 16.4+ (Standalone PWA) and Android Background OS Notifications
  * Ponytail style: minimal native registration, resilient fallback, fast token dispatch.
  */
 
@@ -11,24 +12,42 @@ import { db, firebaseConfig, getFirebaseMessaging } from './firebase'
 const VAPID_KEY = import.meta.env.VITE_FIREBASE_VAPID_KEY || ''
 
 /**
- * Request Notification Permission and register FCM Token in Database
- * @param {Object} user - Logged in user object
- * @returns {Promise<string|null>} FCM Token if granted, null otherwise
+ * Check if Web Push is supported on the current platform
  */
-export async function requestNotificationPermission(user) {
-  if (typeof window === 'undefined' || !('Notification' in window) || !('serviceWorker' in navigator)) {
-    console.warn('[Push] Push notifications not supported in this browser.')
+export function isPushSupported() {
+  if (typeof window === 'undefined') return false
+  return 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window
+}
+
+/**
+ * Get current notification permission state ('granted' | 'denied' | 'default' | 'unsupported')
+ */
+export function getPushPermissionState() {
+  if (typeof window === 'undefined' || !('Notification' in window)) return 'unsupported'
+  return Notification.permission
+}
+
+/**
+ * Request Notification Permission and register Push / FCM Token in Database (users/${user.id})
+ * MUST be invoked directly upon a user gesture (e.g. button click) for iOS / Safari compatibility.
+ * @param {Object} user - Logged in user object
+ * @returns {Promise<string|null>} Push Token if granted, null otherwise
+ */
+export async function requestPushPermission(user) {
+  if (!isPushSupported()) {
+    console.warn('[Push] Web Push is not supported in this browser/device context.')
     return null
   }
 
   try {
+    // 1. Request OS permission (User gesture required)
     const permission = await Notification.requestPermission()
     if (permission !== 'granted') {
-      console.log('[Push] Notification permission denied or dismissed.')
+      console.log('[Push] Notification permission not granted:', permission)
       return null
     }
 
-    // Register firebase-messaging-sw with Firebase config query parameters
+    // 2. Register Service Worker with Firebase parameters
     const swUrl = new URL('/firebase-messaging-sw.js', window.location.origin)
     Object.entries(firebaseConfig).forEach(([key, val]) => {
       if (val) swUrl.searchParams.set(key, val)
@@ -38,34 +57,74 @@ export async function requestNotificationPermission(user) {
       scope: '/',
     })
 
+    // Wait for Service Worker to be active
+    await navigator.serviceWorker.ready
+
+    let finalToken = null
+
+    // 3. Attempt FCM Token registration
     const messaging = await getFirebaseMessaging()
-    if (!messaging) {
-      console.warn('[Push] Firebase Messaging not supported on this platform.')
-      return null
+    if (messaging) {
+      const tokenOptions = { serviceWorkerRegistration: registration }
+      if (VAPID_KEY) {
+        tokenOptions.vapidKey = VAPID_KEY
+      }
+      try {
+        finalToken = await getToken(messaging, tokenOptions)
+      } catch (fcmErr) {
+        console.warn('[Push] getToken via FCM warning, trying PushManager fallback:', fcmErr)
+      }
     }
 
-    const tokenOptions = { serviceWorkerRegistration: registration }
-    if (VAPID_KEY) {
-      tokenOptions.vapidKey = VAPID_KEY
+    // 4. Fallback to native PushManager subscription if FCM token unavailable
+    let rawSubscription = null
+    if (!finalToken && registration.pushManager && VAPID_KEY) {
+      try {
+        const sub = await registration.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: VAPID_KEY,
+        })
+        if (sub) {
+          rawSubscription = sub.toJSON()
+          finalToken = sub.endpoint
+        }
+      } catch (subErr) {
+        console.warn('[Push] Native pushManager.subscribe error:', subErr)
+      }
     }
 
-    const token = await getToken(messaging, tokenOptions)
-    if (token && user?.id) {
-      // Save FCM Token into User's record in Database
-      await updateDoc(doc(db, 'users', user.id), {
-        fcmToken: token,
-        fcmUpdatedAt: serverTimestamp(),
-      })
-      localStorage.setItem(`minediary:fcm_token:${user.id}`, token)
-      console.log('[Push] FCM Token successfully saved:', token.slice(0, 15) + '...')
-      return token
+    // 5. Persist Push Token into User record in Firestore Database
+    if (finalToken && user?.id) {
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+      const isAndroid = /Android/i.test(navigator.userAgent)
+
+      const updatePayload = {
+        pushToken: finalToken,
+        fcmToken: finalToken,
+        pushEnabled: true,
+        pushPlatform: isIOS ? 'ios' : isAndroid ? 'android' : 'web',
+        pushUpdatedAt: serverTimestamp(),
+      }
+
+      if (rawSubscription) {
+        updatePayload.pushSubscription = JSON.stringify(rawSubscription)
+      }
+
+      await updateDoc(doc(db, 'users', user.id), updatePayload)
+      localStorage.setItem(`minediary:push_token:${user.id}`, finalToken)
+      localStorage.setItem(`minediary:fcm_token:${user.id}`, finalToken)
+      console.log('[Push] Push Token successfully saved to Database:', finalToken.slice(0, 18) + '...')
+      return finalToken
     }
   } catch (err) {
-    console.warn('[Push] Error requesting FCM push permission:', err)
+    console.warn('[Push] Error in requestPushPermission:', err)
   }
 
   return null
 }
+
+// Backward compatibility alias
+export const requestNotificationPermission = requestPushPermission
 
 /**
  * Send Push Notification to a recipient user when a new message is sent
@@ -80,20 +139,20 @@ export async function sendPushNotification({ recipientUserId, title, body, icon 
   if (!recipientUserId) return
 
   try {
-    // 1. Fetch recipient's FCM token from Firestore
+    // 1. Fetch recipient's push token from Firestore
     const userDoc = await getDoc(doc(db, 'users', recipientUserId))
     if (!userDoc.exists()) return
 
     const recipientData = userDoc.data()
-    const fcmToken = recipientData.fcmToken
-    if (!fcmToken) return
+    const targetToken = recipientData.pushToken || recipientData.fcmToken
+    if (!targetToken) return
 
     // 2. Dispatch to Serverless / API push trigger
     await fetch('/api/send-push', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        token: fcmToken,
+        token: targetToken,
         title: title || 'Mine Diary 🌸',
         body: body || 'Bạn có tin nhắn mới!',
         icon: icon || recipientData.avatar || '/favicon.svg',
