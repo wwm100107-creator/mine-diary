@@ -131,16 +131,26 @@ export default function AdminDashboard({ user, onUpdateUser, onBack }) {
 
   // Filtered users list
   const filteredUsers = useMemo(() => {
-    return users.filter((u) => {
-      const matchSearch =
-        u.id.toLowerCase().includes(search.toLowerCase()) ||
-        (u.displayName && u.displayName.toLowerCase().includes(search.toLowerCase())) ||
-        (u.username && u.username.toLowerCase().includes(search.toLowerCase()))
+    const queryTerm = (search || '').trim().toLowerCase().replace(/^#/, '')
 
-      if (!matchSearch) return false
+    return users.filter((u) => {
+      if (queryTerm) {
+        const uid = (u.id || u.uid || '').toLowerCase()
+        const displayName = (u.displayName || u.name || '').toLowerCase()
+        const username = (u.username || '').toLowerCase()
+        const email = (u.email || '').toLowerCase()
+
+        const matchSearch =
+          uid.includes(queryTerm) ||
+          displayName.includes(queryTerm) ||
+          username.includes(queryTerm) ||
+          email.includes(queryTerm)
+
+        if (!matchSearch) return false
+      }
 
       if (statusFilter === 'active') return !u.isBanned
-      if (statusFilter === 'banned') return u.isBanned
+      if (statusFilter === 'banned') return Boolean(u.isBanned)
       if (statusFilter === 'appeals') return u.appeal?.status === 'pending'
       return true
     })
