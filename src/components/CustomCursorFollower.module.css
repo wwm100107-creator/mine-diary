@@ -18,8 +18,8 @@
   position: absolute;
   top: 0;
   left: 0;
-  width: 30px;
-  height: 30px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   pointer-events: none;
   transition: width 0.18s ease-out, height 0.18s ease-out, background 0.18s ease-out, border-color 0.18s ease-out, opacity 0.18s ease-out;
@@ -30,8 +30,8 @@
 }
 
 .ringHover {
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   transform-origin: center center;
 }
 
@@ -46,9 +46,8 @@
   position: absolute;
   top: 0;
   left: 0;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
+  width: 16px;
+  height: 16px;
   pointer-events: none;
   transition: transform 0.1s ease-out, opacity 0.15s ease-out;
   display: flex;
@@ -58,11 +57,11 @@
 }
 
 .coreHover {
-  transform: scale(1.35);
+  transform: scale(1.4) !important;
 }
 
 .coreClick {
-  transform: scale(0.7);
+  transform: scale(0.7) !important;
 }
 
 /* ── DEFAULT THEME (Cute Pixel Diamond & Soft Pink Halo) ── */
@@ -73,11 +72,207 @@
 }
 
 .core_default {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
   background: #FF5E7E;
   box-shadow: 0 0 6px #FF5E7E;
 }
 
-/* ── 🌌 GOD NỮ THẦN ── */
+/* =======================================================
+   1. THEME: 🌈 CẦU VỒNG PIXEL (8-Bit Pixel Arrow & Spectrum)
+   ======================================================= */
+.rainbow {
+  border: 2px solid transparent;
+  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(255, 0, 85, 0.2), rgba(0, 242, 254, 0.2));
+  box-shadow: 0 0 12px rgba(0, 242, 254, 0.6), 0 0 20px rgba(255, 0, 85, 0.4);
+  animation: rainbowBorderCycle 2.5s infinite linear;
+}
+
+@keyframes rainbowBorderCycle {
+  0% { box-shadow: 0 0 12px #FF0055, 0 0 20px #FFE600; }
+  33% { box-shadow: 0 0 12px #00FF66, 0 0 20px #00F2FE; }
+  66% { box-shadow: 0 0 12px #B000FF, 0 0 20px #FF00AA; }
+  100% { box-shadow: 0 0 12px #FF0055, 0 0 20px #FFE600; }
+}
+
+.rainbowTrailStream {
+  position: absolute;
+  inset: -6px;
+  border-radius: 6px;
+  background: linear-gradient(
+    90deg,
+    #FF0055,
+    #FF7700,
+    #FFE600,
+    #00FF66,
+    #00F2FE,
+    #B000FF,
+    #FF0055
+  );
+  background-size: 200% 200%;
+  animation: rainbowStreamSlide 1.5s infinite linear;
+  opacity: 0.55;
+  filter: blur(4px);
+}
+
+@keyframes rainbowStreamSlide {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+.core_rainbow {
+  width: 18px;
+  height: 18px;
+}
+
+.pixelArrowSvg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+  image-rendering: pixelated;
+}
+
+/* =======================================================
+   2. THEME: 🌸 TRÁI TIM & SAKURA (Cherry Blossom Petal & Mist)
+   ======================================================= */
+.sakura_hearts {
+  border: 1.5px solid #FF8FAB;
+  box-shadow: 0 0 12px #FF5E7E, 0 0 24px rgba(255, 208, 227, 0.8);
+  background: radial-gradient(circle, rgba(255, 143, 171, 0.3) 0%, rgba(255, 208, 227, 0.1) 100%);
+  animation: sakuraPulse 2.6s infinite alternate ease-in-out;
+}
+
+@keyframes sakuraPulse {
+  0% { transform: scale(0.95); opacity: 0.8; }
+  100% { transform: scale(1.08); opacity: 1; box-shadow: 0 0 18px #FF5E7E, 0 0 30px #FFB7C5; }
+}
+
+.sakuraMistWrap {
+  position: absolute;
+  inset: -10px;
+  pointer-events: none;
+}
+
+.floatingHeart {
+  position: absolute;
+  color: #FF5E7E;
+  font-size: 10px;
+  line-height: 1;
+  text-shadow: 0 0 4px #FF8FAB, 0 0 8px #FFFFFF;
+  animation: floatHeartAnim 2s infinite ease-in-out;
+  will-change: transform, opacity;
+}
+
+.fh1 { top: -4px; right: -2px; animation-delay: 0s; }
+.fh2 { bottom: -2px; left: -4px; animation-delay: 1s; font-size: 8px; }
+
+@keyframes floatHeartAnim {
+  0%, 100% { transform: translateY(0) scale(0.8); opacity: 0.4; }
+  50% { transform: translateY(-8px) scale(1.2); opacity: 1; }
+}
+
+.core_sakura_hearts {
+  width: 20px;
+  height: 20px;
+  transform: rotate(-15deg);
+}
+
+.sakuraPetalSvg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter: drop-shadow(0 2px 6px rgba(255, 94, 126, 0.6));
+}
+
+/* =======================================================
+   3. THEME: ✨ NGÔI SAO LẤP LÁNH (Sharp 4-Point Gold Star)
+   ======================================================= */
+.sparkle_stars {
+  border: 1.5px solid #FFD700;
+  box-shadow: 0 0 14px #FFD700, 0 0 24px rgba(255, 235, 59, 0.6);
+  background: radial-gradient(circle, rgba(255, 215, 0, 0.25) 0%, rgba(255, 145, 0, 0.1) 100%);
+  animation: starHaloTwinkle 2s infinite alternate ease-in-out;
+}
+
+@keyframes starHaloTwinkle {
+  0% { transform: scale(0.94); box-shadow: 0 0 10px #FFD700; }
+  100% { transform: scale(1.06); box-shadow: 0 0 20px #FFF9A6, 0 0 32px #FF9100; }
+}
+
+.shootingStarTrail {
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 249, 166, 0.4) 0%, transparent 70%);
+  filter: drop-shadow(0 0 6px #FFD700);
+}
+
+.core_sparkle_stars {
+  width: 22px;
+  height: 22px;
+  animation: sparkleStarSpin 8s infinite linear;
+}
+
+@keyframes sparkleStarSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.sparkleStarSvg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter: drop-shadow(0 0 6px #FFD700) drop-shadow(0 0 10px #FFF9A6);
+}
+
+/* =======================================================
+   4. THEME: ⚡ HÀO QUANG LỬA (Flame Ember & Lightning Arc)
+   ======================================================= */
+.cyber_aura, .vip8_fire {
+  border: 1.5px solid #FF5500;
+  box-shadow: 0 0 14px #FF3300, 0 0 26px rgba(255, 204, 0, 0.7);
+  background: radial-gradient(circle, rgba(255, 69, 0, 0.25) 0%, rgba(255, 215, 0, 0.1) 100%);
+  animation: flameAuraBurn 1.6s infinite alternate ease-in-out;
+}
+
+@keyframes flameAuraBurn {
+  0% { transform: scale(0.95); box-shadow: 0 0 10px #FF3300, 0 0 20px #FF7700; }
+  100% { transform: scale(1.08); box-shadow: 0 0 22px #FF1100, 0 0 35px #FFCC00; }
+}
+
+.lightningArcTrail {
+  position: absolute;
+  inset: -6px;
+  border: 1px dashed #FFEE55;
+  border-radius: 50%;
+  animation: lightningArcFlicker 0.4s infinite alternate;
+}
+
+@keyframes lightningArcFlicker {
+  0% { opacity: 0.3; transform: rotate(0deg) scale(0.9); }
+  50% { opacity: 1; transform: rotate(180deg) scale(1.1); }
+  100% { opacity: 0.5; transform: rotate(360deg) scale(1); }
+}
+
+.core_cyber_aura, .core_vip8_fire {
+  width: 18px;
+  height: 22px;
+  transform: rotate(-10deg);
+}
+
+.flameSparkSvg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter: drop-shadow(0 0 6px #FF5500) drop-shadow(0 0 12px #FFEE55);
+}
+
+/* =======================================================
+   OTHER MECHA & VIP THEMES
+   ======================================================= */
 .god_cosmic {
   border: 1.5px solid #FF0055;
   box-shadow: 0 0 12px #FF0055, 0 0 20px #00F2FE;
@@ -101,7 +296,6 @@
   text-shadow: 0 0 6px #FFE600, 0 0 12px #FF0055;
 }
 
-/* ── 🔴 MSN-04 SAZABI VER.KA ── */
 .sazabi_verka {
   border: 1.5px solid #FF1E27;
   box-shadow: 0 0 10px rgba(255, 30, 39, 0.7), inset 0 0 6px rgba(255, 30, 39, 0.3);
@@ -121,10 +315,6 @@
   100% { transform: rotate(360deg); }
 }
 
-.core_sazabi_verka {
-  background: transparent;
-}
-
 .sazabiMonoEyeDot {
   width: 6px;
   height: 6px;
@@ -133,7 +323,6 @@
   box-shadow: 0 0 6px #00FF66, 0 0 12px #00FF88;
 }
 
-/* ── 🌈 GUNDAM CALIBARN ── */
 .gundam_calibarn {
   border: 1.5px solid #FFFFFF;
   box-shadow: 0 0 12px rgba(0, 242, 254, 0.8), 0 0 20px rgba(176, 0, 255, 0.5);
@@ -155,10 +344,6 @@
   100% { filter: hue-rotate(360deg); }
 }
 
-.core_gundam_calibarn {
-  background: transparent;
-}
-
 .calibarnCoreDiamond {
   width: 7px;
   height: 7px;
@@ -167,7 +352,6 @@
   transform: rotate(45deg);
 }
 
-/* ── 🦄 FULL ARMOR UNICORN (AWAKENED) ── */
 .unicorn_awakened {
   border: 1.5px solid #00FF88;
   box-shadow: 0 0 14px rgba(0, 255, 136, 0.8), inset 0 0 8px rgba(0, 255, 136, 0.4);
@@ -180,10 +364,6 @@
   100% { transform: scale(1.08); box-shadow: 0 0 20px #00FFA3, 0 0 30px #00E676; }
 }
 
-.core_unicorn_awakened {
-  background: transparent;
-}
-
 .unicornCoreV {
   width: 6px;
   height: 6px;
@@ -192,15 +372,10 @@
   clip-path: polygon(50% 0%, 100% 100%, 50% 75%, 0% 100%);
 }
 
-/* ── 🪶 WING ZERO CUSTOM ── */
 .wing_zero_ew {
   border: 1.5px solid #3B82F6;
   box-shadow: 0 0 12px rgba(59, 130, 246, 0.7), 0 0 20px rgba(255, 255, 255, 0.6);
   background: rgba(11, 37, 89, 0.15);
-}
-
-.core_wing_zero_ew {
-  background: transparent;
 }
 
 .wingZeroCoreOrb {
@@ -211,16 +386,11 @@
   box-shadow: 0 0 6px #00FF88, 0 0 12px #3B82F6;
 }
 
-/* ── 🌿 HOÀNG GIA LỤC BẢO (EMERALD ROYAL) ── */
 .emerald_royal {
   border: 1.5px solid #FFD700;
   box-shadow: 0 0 12px #00FFA3, inset 0 0 6px rgba(0, 201, 136, 0.4);
   background: rgba(2, 44, 34, 0.2);
   clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
-}
-
-.core_emerald_royal {
-  background: transparent;
 }
 
 .emeraldCoreGem {
@@ -231,17 +401,10 @@
   clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
 }
 
-/* ── ⚡ SSSVIP SONG LONG & SVIP THÁNH HỎA ── */
 .vip10_thunder {
   border: 1.5px solid #00FFFF;
   box-shadow: 0 0 12px #00FFFF, 0 0 20px #9900FF;
   background: rgba(0, 242, 254, 0.12);
-}
-
-.vip8_fire, .cyber_aura {
-  border: 1.5px solid #FF5500;
-  box-shadow: 0 0 12px #FF3300, 0 0 20px #FFCC00;
-  background: rgba(255, 69, 0, 0.15);
 }
 
 .vip9_frost {
@@ -250,8 +413,192 @@
   background: rgba(56, 189, 248, 0.12);
 }
 
-.sakura_hearts {
-  border: 1.5px solid #FF8FAB;
-  box-shadow: 0 0 10px #FF5E7E, 0 0 18px #FFD0E3;
-  background: rgba(255, 143, 171, 0.15);
+/* =======================================================
+   CLICK BURST PARTICLES & RIPPLES (SPAWNED ON MOUSEDOWN)
+   ======================================================= */
+.clickBurstWrap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 1000000;
+}
+
+/* 🌈 1. Rainbow Pixel Explosion (5 square blocks) */
+.burstRainbow {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.rainbowPixel {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 1px;
+  animation: rainbowPixelFly 0.65s cubic-bezier(0.1, 0.8, 0.2, 1) forwards;
+  will-change: transform, opacity;
+}
+
+.rp1 { background: #FF0055; box-shadow: 0 0 6px #FF0055; --tx: -24px; --ty: -20px; animation-delay: 0s; }
+.rp2 { background: #FFE600; box-shadow: 0 0 6px #FFE600; --tx: 22px; --ty: -22px; animation-delay: 0.02s; }
+.rp3 { background: #00FF66; box-shadow: 0 0 6px #00FF66; --tx: -26px; --ty: 18px; animation-delay: 0.04s; }
+.rp4 { background: #00F2FE; box-shadow: 0 0 6px #00F2FE; --tx: 24px; --ty: 18px; animation-delay: 0.03s; }
+.rp5 { background: #B000FF; box-shadow: 0 0 6px #B000FF; --tx: 0px; --ty: -32px; animation-delay: 0.01s; }
+
+@keyframes rainbowPixelFly {
+  0% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--tx), var(--ty)) scale(0.2) rotate(180deg);
+    opacity: 0;
+  }
+}
+
+/* 🌸 2. Sakura Bloom & Falling Petals Burst */
+.burstSakura {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.sakuraMainBloom {
+  position: absolute;
+  top: -12px;
+  left: -12px;
+  font-size: 24px;
+  line-height: 1;
+  animation: sakuraBloomCenter 0.7s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+  will-change: transform, opacity;
+}
+
+@keyframes sakuraBloomCenter {
+  0% { transform: scale(0.2) rotate(0deg); opacity: 1; }
+  50% { transform: scale(1.4) rotate(45deg); opacity: 0.9; }
+  100% { transform: scale(1.8) rotate(90deg); opacity: 0; }
+}
+
+.sakuraFlyPetal {
+  position: absolute;
+  font-size: 14px;
+  line-height: 1;
+  animation: sakuraPetalFly 0.85s cubic-bezier(0.2, 0.8, 0.3, 1) forwards;
+  will-change: transform, opacity;
+}
+
+.sp1 { --stx: -26px; --sty: -18px; --sr: -45deg; }
+.sp2 { --stx: 24px; --sty: -20px; --sr: 60deg; }
+.sp3 { --stx: -20px; --sty: 26px; --sr: -90deg; }
+.sp4 { --stx: 22px; --sty: 24px; --sr: 120deg; }
+
+@keyframes sakuraPetalFly {
+  0% { transform: translate(0, 0) scale(0.6) rotate(0deg); opacity: 1; }
+  100% { transform: translate(var(--stx), var(--sty)) scale(1.1) rotate(var(--sr)); opacity: 0; }
+}
+
+/* ✨ 3. Sparkle Glint Flash & Mini Twinkle Stars Burst */
+.burstSparkle {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.sparkleGlintCross {
+  position: absolute;
+  top: -16px;
+  left: -16px;
+  width: 32px;
+  height: 32px;
+  background: radial-gradient(circle, #FFFFFF 10%, #FFD700 40%, transparent 70%);
+  animation: sparkleGlintFlash 0.5s ease-out forwards;
+  filter: drop-shadow(0 0 8px #FFD700);
+}
+
+@keyframes sparkleGlintFlash {
+  0% { transform: scale(0.2) rotate(0deg); opacity: 1; }
+  50% { transform: scale(1.6) rotate(45deg); opacity: 1; }
+  100% { transform: scale(2.2) rotate(90deg); opacity: 0; }
+}
+
+.burstMiniStar {
+  position: absolute;
+  color: #FFF9A6;
+  font-size: 16px;
+  line-height: 1;
+  text-shadow: 0 0 6px #FFD700, 0 0 12px #FF9100;
+  animation: miniStarBurst 0.75s cubic-bezier(0.1, 0.8, 0.2, 1) forwards;
+  will-change: transform, opacity;
+}
+
+.ms1 { --mtx: 0px; --mty: -32px; }
+.ms2 { --mtx: -28px; --mty: 20px; font-size: 13px; color: #FFD700; }
+.ms3 { --mtx: 28px; --mty: 20px; font-size: 14px; }
+
+@keyframes miniStarBurst {
+  0% { transform: translate(0, 0) scale(0.4) rotate(0deg); opacity: 1; }
+  100% { transform: translate(var(--mtx), var(--mty)) scale(1.2) rotate(180deg); opacity: 0; }
+}
+
+/* ⚡ 4. Shockwave & Lightning Electric Flash */
+.burstFlame {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.flameShockwave {
+  position: absolute;
+  top: -20px;
+  left: -20px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid #FF5500;
+  box-shadow: 0 0 14px #FF3300, inset 0 0 10px #FFEE55;
+  animation: shockwaveExpand 0.6s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+}
+
+@keyframes shockwaveExpand {
+  0% { transform: scale(0.2); opacity: 1; border-width: 3px; }
+  100% { transform: scale(2.4); opacity: 0; border-width: 1px; }
+}
+
+.flameEmber {
+  position: absolute;
+  color: #FFEE55;
+  font-size: 16px;
+  line-height: 1;
+  text-shadow: 0 0 6px #FF5500, 0 0 12px #FF1100;
+  animation: emberFly 0.65s ease-out forwards;
+  will-change: transform, opacity;
+}
+
+.fe1 { --etx: -28px; --ety: -24px; }
+.fe2 { --etx: 28px; --ety: -24px; }
+.fe3 { --etx: -28px; --ety: 24px; }
+.fe4 { --etx: 28px; --ety: 24px; }
+
+@keyframes emberFly {
+  0% { transform: translate(0, 0) scale(0.8) rotate(0deg); opacity: 1; }
+  100% { transform: translate(var(--etx), var(--ety)) scale(1.3) rotate(45deg); opacity: 0; }
+}
+
+/* Default Click Ripple */
+.defaultClickRipple {
+  position: absolute;
+  top: -15px;
+  left: -15px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 143, 171, 0.85);
+  box-shadow: 0 0 10px rgba(255, 94, 126, 0.6);
+  animation: defaultRippleAnim 0.5s ease-out forwards;
+}
+
+@keyframes defaultRippleAnim {
+  0% { transform: scale(0.3); opacity: 1; }
+  100% { transform: scale(2.2); opacity: 0; }
 }
