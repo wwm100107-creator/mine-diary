@@ -23,6 +23,8 @@ export const AVATAR_FRAMES = [
   { id: 'sazabi_verka', name: '🔴 Sazabi ver.Ka', icon: '🤖', category: 'mecha', desc: 'MSN-04 Sazabi ver.Ka — Giáp đỏ Crimson Neo Zeon, mắt Mono-eye radar quét liên tục, giáp vai Funnel & động cơ phản lực nhiệt hạch' },
   { id: 'gundam_calibarn', name: '🌈 Gundam Calibarn', icon: '🤖', category: 'mecha', desc: 'X-EX01 Gundam Calibarn (Permet Score 8) — Giáp trắng tinh khôi, sừng V-fin sắc bén, rãnh Permet 7 màu phát quang & luồng hạt Data Storm' },
   { id: 'unicorn_awakened', name: '🦄 Unicorn Awakened', icon: '🤖', category: 'mecha', desc: 'RX-0 Full Armor Unicorn (Awakened Mode) — Giáp trắng tuyết phân tách, sừng V-fin Destroy vàng rực, khung tâm linh Psycho-Frame lục quang hô hấp & tinh thể phát sáng' },
+  { id: 'wing_zero_ew', name: '🪶 Wing Zero Custom', icon: '🤖', category: 'mecha', desc: 'XXXG-00W0 Wing Zero Custom (Endless Waltz) — Cánh thiên thần cơ khí vỗ nhịp lơ lửng, lõi Zero System lục quang phát sáng & hiệu ứng lông vũ rơi' },
+
 
 
   // ── 🌿 BỘ SƯU TẬP PHÉP THUẬT & KỲ ẢO (FANTASY & MAGIC) ──
@@ -1452,7 +1454,249 @@ function AvatarFrameOverlayComponent({ frameId = 'none', size = 36, sizePreset }
         </div>
       )}
 
+      {/* ══════════════════════════════════════════════════════════════════════
+         FRAME: 🪶 XXXG-00W0 WING GUNDAM ZERO CUSTOM (ENDLESS WALTZ)
+         ══════════════════════════════════════════════════════════════════════ */}
+      {frameId === 'wing_zero_ew' && (
+        <div className={s.wingZeroContainer}>
+          {/* Layer 1: Celestial Blue & Pure White Radiant Halo */}
+          <div className={s.wingZeroAura} />
+          <div className={s.wingZeroInnerBorderGlow} />
+
+          {/* Layer 2: Falling Angel Feathers Drifting from Top to Bottom */}
+          <div className={s.wingZeroFallingFeathers}>
+            <div className={`${s.fallingFeather} ${s.ff1}`}>
+              <svg viewBox="0 0 20 30" className={s.featherSvg} fill="none">
+                <path d="M 10 0 C 18 8, 20 20, 10 30 C 0 20, 2 8, 10 0 Z" fill="rgba(255,255,255,0.9)" stroke="#93C5FD" strokeWidth="0.5" />
+                <line x1="10" y1="2" x2="10" y2="28" stroke="#60A5FA" strokeWidth="0.6" />
+              </svg>
+            </div>
+            <div className={`${s.fallingFeather} ${s.ff2}`}>
+              <svg viewBox="0 0 20 30" className={s.featherSvg} fill="none">
+                <path d="M 10 0 C 18 8, 20 20, 10 30 C 0 20, 2 8, 10 0 Z" fill="rgba(255,255,255,0.85)" stroke="#93C5FD" strokeWidth="0.5" />
+                <line x1="10" y1="2" x2="10" y2="28" stroke="#60A5FA" strokeWidth="0.6" />
+              </svg>
+            </div>
+            <div className={`${s.fallingFeather} ${s.ff3}`}>
+              <svg viewBox="0 0 20 30" className={s.featherSvg} fill="none">
+                <path d="M 10 0 C 18 8, 20 20, 10 30 C 0 20, 2 8, 10 0 Z" fill="rgba(255,255,255,0.9)" stroke="#93C5FD" strokeWidth="0.5" />
+                <line x1="10" y1="2" x2="10" y2="28" stroke="#60A5FA" strokeWidth="0.6" />
+              </svg>
+            </div>
+            <div className={`${s.fallingFeather} ${s.ff4}`}>
+              <svg viewBox="0 0 20 30" className={s.featherSvg} fill="none">
+                <path d="M 10 0 C 18 8, 20 20, 10 30 C 0 20, 2 8, 10 0 Z" fill="rgba(255,255,255,0.8)" stroke="#93C5FD" strokeWidth="0.5" />
+                <line x1="10" y1="2" x2="10" y2="28" stroke="#60A5FA" strokeWidth="0.6" />
+              </svg>
+            </div>
+            <div className={`${s.fallingFeather} ${s.ff5}`}>
+              <svg viewBox="0 0 20 30" className={s.featherSvg} fill="none">
+                <path d="M 10 0 C 18 8, 20 20, 10 30 C 0 20, 2 8, 10 0 Z" fill="rgba(255,255,255,0.95)" stroke="#93C5FD" strokeWidth="0.5" />
+                <line x1="10" y1="2" x2="10" y2="28" stroke="#60A5FA" strokeWidth="0.6" />
+              </svg>
+            </div>
+          </div>
+
+          {/* Layer 3: Main Cobalt Blue, Crimson Red & Pure White Armored Chassis */}
+          <div className={s.wingZeroChassisFrame}>
+            <div className={s.wingZeroGlint} />
+            <div className={s.wingZeroDecals}>
+              <span className={s.wzDecalL}>XXXG-00W0</span>
+              <span className={s.wzDecalR}>EW</span>
+            </div>
+          </div>
+
+          {/* Layer 4: Flanking Multi-Layer Mechanical Angel Wings (Hovering Flap Motion) */}
+          <div className={s.wingZeroWingsWrap}>
+            {/* Left Mechanical Angel Wing Cluster */}
+            <div className={`${s.wingZeroWingGroup} ${s.wingLeft}`}>
+              <svg viewBox="0 0 60 80" className={s.wingSvg} fill="none">
+                <defs>
+                  <linearGradient id="wzWhiteWing" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#FFFFFF" />
+                    <stop offset="65%" stopColor="#F0F9FF" />
+                    <stop offset="100%" stopColor="#BAE6FD" />
+                  </linearGradient>
+                  <linearGradient id="wzBlueTrim" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#3B82F6" />
+                    <stop offset="100%" stopColor="#1E40AF" />
+                  </linearGradient>
+                </defs>
+
+                {/* Primary Feather Tier 1 (Outer Long Curve) */}
+                <path
+                  d="M 55 70 C 35 65, 8 45, 2 20 C 15 28, 35 48, 55 58 Z"
+                  fill="url(#wzWhiteWing)"
+                  stroke="#93C5FD"
+                  strokeWidth="0.8"
+                />
+                {/* Primary Feather Tier 2 */}
+                <path
+                  d="M 55 58 C 30 50, 10 32, 8 10 C 22 18, 40 38, 55 46 Z"
+                  fill="url(#wzWhiteWing)"
+                  stroke="#93C5FD"
+                  strokeWidth="0.8"
+                />
+                {/* Primary Feather Tier 3 (Upper Wing Tip) */}
+                <path
+                  d="M 55 46 C 35 36, 18 18, 16 0 C 28 8, 45 26, 55 35 Z"
+                  fill="url(#wzWhiteWing)"
+                  stroke="#93C5FD"
+                  strokeWidth="0.8"
+                />
+
+                {/* Inner Mechanical Feather Plate & Blue/Gold Trim */}
+                <path
+                  d="M 55 65 C 40 60, 25 50, 20 36 C 30 40, 45 52, 55 55 Z"
+                  fill="url(#wzBlueTrim)"
+                  stroke="#FFD700"
+                  strokeWidth="0.6"
+                />
+              </svg>
+            </div>
+
+            {/* Right Mechanical Angel Wing Cluster */}
+            <div className={`${s.wingZeroWingGroup} ${s.wingRight}`}>
+              <svg viewBox="0 0 60 80" className={s.wingSvg} fill="none">
+                {/* Primary Feather Tier 1 (Outer Long Curve) */}
+                <path
+                  d="M 5 70 C 25 65, 52 45, 58 20 C 45 28, 25 48, 5 58 Z"
+                  fill="url(#wzWhiteWing)"
+                  stroke="#93C5FD"
+                  strokeWidth="0.8"
+                />
+                {/* Primary Feather Tier 2 */}
+                <path
+                  d="M 5 58 C 30 50, 50 32, 52 10 C 38 18, 20 38, 5 46 Z"
+                  fill="url(#wzWhiteWing)"
+                  stroke="#93C5FD"
+                  strokeWidth="0.8"
+                />
+                {/* Primary Feather Tier 3 (Upper Wing Tip) */}
+                <path
+                  d="M 5 46 C 25 36, 42 18, 44 0 C 32 8, 15 26, 5 35 Z"
+                  fill="url(#wzWhiteWing)"
+                  stroke="#93C5FD"
+                  strokeWidth="0.8"
+                />
+
+                {/* Inner Mechanical Feather Plate & Blue/Gold Trim */}
+                <path
+                  d="M 5 65 C 20 60, 35 50, 40 36 C 30 40, 15 52, 5 55 Z"
+                  fill="url(#wzBlueTrim)"
+                  stroke="#FFD700"
+                  strokeWidth="0.6"
+                />
+              </svg>
+            </div>
+          </div>
+
+          {/* Layer 5: Đỉnh khung (Classic Wing Zero Gold & White V-Fin with Forehead Cyan Camera) */}
+          <div className={s.wingZeroHeadCrest}>
+            <svg viewBox="0 0 120 54" className={s.wingZeroHeadSvg} fill="none">
+              <defs>
+                <linearGradient id="wzGoldFin" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#FFF785" />
+                  <stop offset="50%" stopColor="#FFD700" />
+                  <stop offset="100%" stopColor="#D97706" />
+                </linearGradient>
+                <linearGradient id="wzCobaltHead" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#2563EB" />
+                  <stop offset="100%" stopColor="#0B2559" />
+                </linearGradient>
+              </defs>
+
+              {/* Classic Sharp Gold V-Fin Antenna */}
+              <polygon points="60,26 92,6 86,18 64,28" fill="url(#wzGoldFin)" stroke="#FFE066" strokeWidth="0.8" />
+              <polygon points="60,26 28,6 34,18 56,28" fill="url(#wzGoldFin)" stroke="#FFE066" strokeWidth="0.8" />
+              
+              {/* Central White Forehead Horn Accent */}
+              <polygon points="60,14 65,26 60,24 55,26" fill="#FFFFFF" stroke="#CBD5E1" strokeWidth="0.6" />
+
+              {/* Head Shell Armor (Cobalt Blue & Crimson Red Accents) */}
+              <path
+                d="M 44 42 L 52 26 L 60 22 L 68 26 L 76 42 L 60 38 Z"
+                fill="url(#wzCobaltHead)"
+                stroke="#DC2626"
+                strokeWidth="1"
+              />
+
+              {/* Main Cyan Sensor Camera */}
+              <rect x="56" y="22" width="8" height="3" rx="0.8" fill="#00F5D4" stroke="#FFFFFF" strokeWidth="0.6" className={s.wzSensorGlow} />
+            </svg>
+          </div>
+
+          {/* Layer 6: Mép dưới (Zero System Orb - Lõi Năng Lượng Xanh Lá Lồi 3D) */}
+          <div className={s.wingZeroBottomPlaque}>
+            <svg viewBox="0 0 120 40" className={s.wingZeroBottomSvg} fill="none">
+              <defs>
+                <radialGradient id="zeroSystemOrbGrad" cx="40%" cy="35%" r="65%">
+                  <stop offset="0%" stopColor="#E6FFF2" />
+                  <stop offset="25%" stopColor="#00FF88" />
+                  <stop offset="65%" stopColor="#00A859" />
+                  <stop offset="100%" stopColor="#02381C" />
+                </radialGradient>
+                <filter id="zeroOrbGlow" x="-40%" y="-40%" width="180%" height="180%">
+                  <feGaussianBlur stdDeviation="3" result="blur" />
+                  <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                </filter>
+              </defs>
+
+              {/* Crimson Red & Cobalt Blue Lower Armor Plaque */}
+              <polygon
+                points="22,12 98,12 110,32 60,38 10,32"
+                fill="#0B2559"
+                stroke="#DC2626"
+                strokeWidth="1.6"
+              />
+              <polygon
+                points="28,15 92,15 100,28 60,34 20,28"
+                fill="#FFFFFF"
+                stroke="#FFD700"
+                strokeWidth="0.8"
+              />
+              
+              {/* Text: ZERO SYSTEM */}
+              <text
+                x="60"
+                y="24"
+                textAnchor="middle"
+                fontSize="5"
+                fontFamily="'1FTV-VIP-Festigan', monospace"
+                fontWeight="900"
+                fill="#0B2559"
+                letterSpacing="1.2"
+              >
+                ZERO SYSTEM
+              </text>
+
+              {/* Outer Hexagonal Bezel for Zero System Orb (Red & Gold) */}
+              <polygon
+                points="60,20 69,25 69,35 60,40 51,35 51,25"
+                fill="#DC2626"
+                stroke="#FFD700"
+                strokeWidth="1.2"
+              />
+              <circle cx="60" cy="30" r="7.5" fill="#0B2559" stroke="#FFD700" strokeWidth="0.8" />
+
+              {/* 3D Glowing Convex Green Zero System Orb */}
+              <circle
+                cx="60"
+                cy="30"
+                r="6"
+                fill="url(#zeroSystemOrbGrad)"
+                filter="url(#zeroOrbGlow)"
+                className={s.zeroOrbPulse}
+              />
+              {/* Specular Highlight Reflection */}
+              <ellipse cx="58" cy="28" rx="2" ry="1.2" fill="#FFFFFF" opacity="0.9" />
+            </svg>
+          </div>
+        </div>
+      )}
+
       {/* ── Standard Frames ── */}
+
 
 
 

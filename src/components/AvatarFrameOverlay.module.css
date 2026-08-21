@@ -3027,6 +3027,306 @@
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.45));
 }
 
+/* ============================================
+   FRAME: 🪶 XXXG-00W0 WING GUNDAM ZERO CUSTOM (ENDLESS WALTZ)
+   ============================================ */
+.wingZeroContainer {
+  position: absolute;
+  inset: -34%;
+  width: 168%;
+  height: 168%;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  transform: scale(var(--frame-scale, 1));
+  transform-origin: center center;
+  overflow: visible;
+}
+
+/* Layer 1: Celestial Blue & Pure White Radiant Halo */
+.wingZeroAura {
+  position: absolute;
+  inset: 14%;
+  border-radius: 50%;
+  box-shadow: 
+    0 0 14px #3B82F6,
+    0 0 28px #60A5FA,
+    0 0 45px rgba(59, 130, 246, 0.5),
+    0 0 65px rgba(255, 255, 255, 0.45);
+  animation: wingZeroAuraPulse 3s infinite alternate ease-in-out;
+  pointer-events: none;
+  will-change: box-shadow, transform;
+}
+
+@keyframes wingZeroAuraPulse {
+  0% {
+    transform: scale(0.96);
+    opacity: 0.8;
+    box-shadow: 
+      0 0 10px #2563EB,
+      0 0 20px #60A5FA,
+      0 0 32px rgba(59, 130, 246, 0.45),
+      0 0 48px rgba(255, 255, 255, 0.3);
+  }
+  100% {
+    transform: scale(1.05);
+    opacity: 1;
+    box-shadow: 
+      0 0 18px #60A5FA,
+      0 0 36px #93C5FD,
+      0 0 55px rgba(96, 165, 250, 0.7),
+      0 0 75px rgba(255, 255, 255, 0.6);
+  }
+}
+
+.wingZeroInnerBorderGlow {
+  position: absolute;
+  inset: 17%;
+  border-radius: 10px;
+  border: 1.5px solid rgba(96, 165, 250, 0.85);
+  box-shadow: inset 0 0 10px rgba(59, 130, 246, 0.4), 0 0 8px rgba(255, 255, 255, 0.8);
+  pointer-events: none;
+}
+
+/* Layer 2: Falling Feathers Drifting Downwards */
+.wingZeroFallingFeathers {
+  position: absolute;
+  inset: -10% 0 -20% 0;
+  pointer-events: none;
+  z-index: 1025;
+  overflow: hidden;
+}
+
+.fallingFeather {
+  position: absolute;
+  width: 14px;
+  height: 22px;
+  animation: wingZeroFeatherDrop 3.5s infinite linear;
+  will-change: transform, opacity;
+}
+
+.featherSvg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 2px 4px rgba(59, 130, 246, 0.3));
+}
+
+.ff1 { left: 12%; animation-delay: 0s; animation-duration: 3.2s; }
+.ff2 { left: 32%; animation-delay: 1.4s; animation-duration: 3.8s; }
+.ff3 { right: 28%; animation-delay: 0.7s; animation-duration: 3.4s; }
+.ff4 { right: 10%; animation-delay: 2.1s; animation-duration: 4s; }
+.ff5 { left: 48%; animation-delay: 2.8s; animation-duration: 3.6s; }
+
+@keyframes wingZeroFeatherDrop {
+  0% {
+    top: -15%;
+    transform: translateX(0) rotate(0deg) scale(0.6);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.9;
+  }
+  50% {
+    transform: translateX(12px) rotate(45deg) scale(1);
+    opacity: 0.85;
+  }
+  85% {
+    opacity: 0.8;
+  }
+  100% {
+    top: 110%;
+    transform: translateX(-8px) rotate(90deg) scale(0.7);
+    opacity: 0;
+  }
+}
+
+/* Layer 3: Main Cobalt Blue, Crimson Red & Pure White Armored Chassis */
+.wingZeroChassisFrame {
+  position: absolute;
+  inset: 16%;
+  border-radius: 8px;
+  border: 2px solid #0B2559;
+  box-shadow: 
+    0 0 0 1.5px #DC2626,
+    0 0 12px rgba(59, 130, 246, 0.6),
+    inset 0 0 6px rgba(255, 255, 255, 0.5);
+  background: transparent;
+  pointer-events: none;
+  z-index: 1002;
+  overflow: hidden;
+}
+
+.wingZeroGlint {
+  position: absolute;
+  top: -80%;
+  left: -80%;
+  width: 260%;
+  height: 260%;
+  background: linear-gradient(
+    135deg,
+    transparent 0%,
+    transparent 42%,
+    rgba(255, 255, 255, 0.95) 50%,
+    transparent 58%,
+    transparent 100%
+  );
+  animation: wingZeroGlintSweep 3.4s infinite cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+}
+
+@keyframes wingZeroGlintSweep {
+  0% { transform: translateX(-100%) translateY(-100%) rotate(25deg); }
+  25%, 100% { transform: translateX(100%) translateY(100%) rotate(25deg); }
+}
+
+.wingZeroDecals {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 3px 5px;
+  font-family: monospace;
+  font-size: 7px;
+  font-weight: 900;
+  color: #1E40AF;
+  opacity: 0.95;
+  letter-spacing: 0.4px;
+}
+
+/* Layer 4: Flanking Multi-Layer Mechanical Angel Wings (Hovering Flap Motion) */
+.wingZeroWingsWrap {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1008;
+}
+
+.wingZeroWingGroup {
+  position: absolute;
+  top: 6%;
+  width: 44%;
+  height: 68%;
+  will-change: transform;
+}
+
+.wingLeft {
+  left: -12%;
+  transform-origin: 90% 70%;
+  animation: wingZeroHoverLeft 3.2s infinite ease-in-out;
+}
+
+.wingRight {
+  right: -12%;
+  transform-origin: 10% 70%;
+  animation: wingZeroHoverRight 3.2s infinite ease-in-out;
+}
+
+@keyframes wingZeroHoverLeft {
+  0%, 100% {
+    transform: rotate(0deg) translateY(0);
+  }
+  50% {
+    transform: rotate(-6deg) translateY(-3px);
+  }
+}
+
+@keyframes wingZeroHoverRight {
+  0%, 100% {
+    transform: rotate(0deg) translateY(0);
+  }
+  50% {
+    transform: rotate(6deg) translateY(-3px);
+  }
+}
+
+.wingSvg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter: drop-shadow(0 4px 8px rgba(11, 37, 89, 0.35));
+}
+
+/* Layer 5: Đỉnh khung (Classic Wing Zero Gold & White V-Fin) */
+.wingZeroHeadCrest {
+  position: absolute;
+  top: -15%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120%;
+  height: 56%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1015;
+  pointer-events: none;
+  animation: wingZeroHeadHover 2.8s infinite ease-in-out;
+  will-change: transform;
+}
+
+@keyframes wingZeroHeadHover {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-2px); }
+}
+
+.wingZeroHeadSvg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
+}
+
+.wzSensorGlow {
+  filter: drop-shadow(0 0 3px #00F5D4) drop-shadow(0 0 6px #00FFFF);
+}
+
+/* Layer 6: Mép dưới (Zero System Orb - Lõi Năng Lượng Xanh Lá Lồi 3D) */
+.wingZeroBottomPlaque {
+  position: absolute;
+  bottom: -9%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 118%;
+  height: 42%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1020;
+  pointer-events: none;
+  animation: wingZeroBottomHover 3s infinite ease-in-out;
+  will-change: transform;
+}
+
+@keyframes wingZeroBottomHover {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(2px); }
+}
+
+.wingZeroBottomSvg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
+}
+
+.zeroOrbPulse {
+  animation: zeroOrbPulseAnim 1.5s infinite alternate ease-in-out;
+}
+
+@keyframes zeroOrbPulseAnim {
+  0% {
+    filter: drop-shadow(0 0 4px #00FF88) drop-shadow(0 0 8px #00FF66);
+    opacity: 0.85;
+  }
+  100% {
+    filter: drop-shadow(0 0 8px #00FFA3) drop-shadow(0 0 16px #00FF88) drop-shadow(0 0 24px #00E676);
+    opacity: 1;
+  }
+}
+
+
 
 
 
