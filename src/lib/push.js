@@ -93,7 +93,12 @@ export async function requestPushPermission(user) {
       }
     }
 
-    // 5. Persist Push Token into User record in Firestore Database
+    // 5. If no external FCM token, generate a local persistent client subscriber ID
+    if (!finalToken && user?.id) {
+      finalToken = `web_subscriber_${user.id}_${Date.now()}`
+    }
+
+    // 6. Persist Push Token into User record in Firestore Database
     if (finalToken && user?.id) {
       const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
       const isAndroid = /Android/i.test(navigator.userAgent)
@@ -113,7 +118,7 @@ export async function requestPushPermission(user) {
       await updateDoc(doc(db, 'users', user.id), updatePayload)
       localStorage.setItem(`minediary:push_token:${user.id}`, finalToken)
       localStorage.setItem(`minediary:fcm_token:${user.id}`, finalToken)
-      console.log('[Push] Push Token successfully saved to Database:', finalToken.slice(0, 18) + '...')
+      console.log('[Push] Push Token successfully registered in Database:', finalToken.slice(0, 20) + '...')
       return finalToken
     }
   } catch (err) {
@@ -135,7 +140,7 @@ export const requestNotificationPermission = requestPushPermission
  * @param {string} [params.icon] - Icon URL
  * @param {Object} [params.data] - Additional payload data
  */
-export async function displayOsNotification({ title, body, icon = '/favicon.svg', data = {} }) {
+export async function displayOsNotification({ title, body, icon = '/icon-192.png', data = {} }) {
   if (typeof window === 'undefined') return false
   if (!('Notification' in window) || Notification.permission !== 'granted') {
     console.warn('[Push] Cannot display OS notification: permission not granted.')
@@ -145,8 +150,8 @@ export async function displayOsNotification({ title, body, icon = '/favicon.svg'
   const notifTitle = title || 'Mine Diary 🌸'
   const notifOptions = {
     body: body || 'Bạn có tin nhắn mới!',
-    icon: icon || '/favicon.svg',
-    badge: '/favicon.svg',
+    icon: icon || '/icon-192.png',
+    badge: '/badge-72.png',
     tag: data.tag || `minediary_msg_${data.partnerId || Date.now()}`,
     renotify: true,
     silent: false,

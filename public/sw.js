@@ -10,8 +10,8 @@ try {
     const title = 'Mine Diary 🌸'
     const options = {
       body: event.data.text() || 'Bạn có tin nhắn mới!',
-      icon: '/favicon.svg',
-      badge: '/favicon.svg',
+      icon: '/icon-192.png',
+      badge: '/badge-72.png',
       tag: 'minediary-push',
       renotify: true,
       silent: false,

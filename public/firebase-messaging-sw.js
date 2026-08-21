@@ -36,8 +36,8 @@ try {
       const title = payload.notification?.title || payload.data?.title || 'Mine Diary 🌸'
       const options = {
         body: payload.notification?.body || payload.data?.body || 'Bạn có thông báo mới!',
-        icon: payload.notification?.icon || payload.data?.icon || '/favicon.svg',
-        badge: '/favicon.svg',
+        icon: payload.notification?.icon || payload.data?.icon || '/icon-192.png',
+        badge: '/badge-72.png',
         tag: payload.data?.tag || 'minediary-push',
         renotify: true,
         silent: false,
@@ -61,8 +61,8 @@ self.addEventListener('push', (event) => {
   let title = 'Mine Diary 🌸'
   let options = {
     body: 'Bạn có tin nhắn mới!',
-    icon: '/favicon.svg',
-    badge: '/favicon.svg',
+    icon: '/icon-192.png',
+    badge: '/badge-72.png',
     tag: 'minediary-push',
     renotify: true,
     silent: false,

@@ -20,7 +20,7 @@ export default function NotificationPermissionModal({ user, onClose, onPermissio
         displayOsNotification({
           title: 'Mine Diary 🌸',
           body: 'Đã kích hoạt thông báo thành công! Bạn sẽ nhận được tin nhắn và lời nhắc chu kỳ ngay tại đây ✨',
-          icon: '/favicon.svg',
+          icon: '/icon-192.png',
           data: { url: '/#chat' },
         }).catch(console.warn)
 
