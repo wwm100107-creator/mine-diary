@@ -522,13 +522,16 @@
 .frameSelectorSection {
   margin-top: 16px;
   padding: 14px 12px;
-  background: var(--color-white);
-  border: 2px solid var(--color-pink-200);
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1.5px solid rgba(255, 180, 210, 0.5);
   border-radius: var(--radius-lg);
-  box-shadow: 2px 2px 0 var(--color-pink-100);
+  box-shadow: 2px 2px 0 rgba(255, 182, 215, 0.3);
   display: flex;
   flex-direction: column;
   gap: 10px;
+  overflow: visible; /* allow frame glows to extend outside section boundary */
 }
 
 .frameSelectorHeader {
@@ -698,7 +701,7 @@
   gap: 16px;
   overflow-x: auto;
   overflow-y: visible;
-  padding: 24px 14px 22px;
+  padding: 40px 16px 36px; /* generous vertical padding so frame glows have breathing room */
   -webkit-overflow-scrolling: touch;
   flex: 1;
   scrollbar-width: none; /* Firefox */
@@ -715,40 +718,44 @@
   align-items: center;
   justify-content: space-between;
   padding: 20px 10px 12px;
-  background: #FFFFFF;
-  border: 2px solid var(--color-border);
+  /* Glass card — glow effects bleed through instead of hitting a solid wall */
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: none;
+  outline: 1.5px solid rgba(200, 180, 195, 0.45);
+  outline-offset: 0px;
   border-radius: var(--radius-lg);
   cursor: pointer;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.05);
-  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255,255,255,0.9);
+  transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
   min-width: 140px;
   width: 140px;
   min-height: 148px;
   flex-shrink: 0;
-  outline: none;
   overflow: visible;
   z-index: 1;
 }
 
 .frameOptionCard:hover {
-  transform: translateY(-3px);
-  border-color: var(--color-pink-400);
-  background: #FFF8FA;
-  box-shadow: 0 6px 14px rgba(255, 143, 171, 0.25);
-  z-index: 5;
+  transform: translateY(-4px);
+  background: rgba(255, 248, 250, 0.88);
+  outline-color: rgba(255, 143, 171, 0.6);
+  box-shadow: 0 8px 20px rgba(255, 143, 171, 0.22), inset 0 1px 0 rgba(255,255,255,0.9);
+  z-index: 10;
 }
 
 .frameOptionCard.frameActive {
-  background: #FFF0F5;
-  border: 2px solid var(--color-pink-500);
-  box-shadow: 0 6px 16px rgba(255, 143, 171, 0.38);
-  transform: translateY(-3px) scale(1.03);
-  z-index: 6;
+  background: rgba(255, 240, 245, 0.9);
+  outline: 2px solid var(--color-pink-500);
+  box-shadow: 0 8px 24px rgba(255, 94, 126, 0.3), 0 0 0 4px rgba(255, 143, 171, 0.12), inset 0 1px 0 rgba(255,255,255,0.95);
+  transform: translateY(-4px) scale(1.04);
+  z-index: 20; /* well above neighbors so active glow is never clipped by sibling cards */
 }
 
 .frameOptionCard.frameLocked {
-  background: #FFFFFF !important;
-  border-color: #CBD5E1 !important;
+  background: rgba(255, 255, 255, 0.6) !important;
+  outline-color: #CBD5E1 !important;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05) !important;
   cursor: pointer;
   position: relative;
@@ -756,7 +763,7 @@
 
 .frameOptionCard.frameLocked:hover {
   transform: translateY(-2px) !important;
-  border-color: #94A3B8 !important;
+  outline-color: #94A3B8 !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
 }
 
