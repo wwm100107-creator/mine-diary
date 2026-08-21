@@ -454,20 +454,27 @@
 }
 
 .chatHeader {
-  padding: 12px 18px;
+  padding: 10px 16px;
   background: linear-gradient(135deg, #FFE8F0 0%, #FFD0E3 50%, #EDE0F7 100%);
   border-bottom: 2px solid var(--color-border);
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 8px;
   min-height: 60px;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: visible;
+  position: relative;
 }
 
 .chatHeaderLeft {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+  flex: 1;
   min-width: 0;
+  overflow: visible;
 }
 
 .mobileBackBtn {
@@ -481,6 +488,8 @@
   color: var(--color-pink-500);
   cursor: pointer;
   box-shadow: 1px 1px 0 var(--color-pink-200);
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .avatarPair {
@@ -595,23 +604,72 @@
 .headerPartnerDetails {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
   position: relative;
   z-index: 10;
-  margin-left: 8px;
+  margin-left: 6px;
+  flex: 1;
+  min-width: 0;
+  overflow: visible;
 }
 
 .headerPartnerName {
   font-family: var(--font-pixel);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
   color: var(--color-ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100px;
+}
+
+.headerPartnerUidRow {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  position: relative;
 }
 
 .headerPartnerUid {
   font-family: var(--font-pixel);
   font-size: 10px;
   color: var(--color-ink-soft);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 70px;
+}
+
+.headerMoreBtn {
+  font-family: var(--font-pixel);
+  font-size: 8px;
+  letter-spacing: 0.05em;
+  padding: 1px 4px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid var(--color-border-mid);
+  border-radius: 4px;
+  color: var(--color-pink-500);
+  cursor: pointer;
+  box-shadow: 1px 1px 0 var(--color-pink-200);
+  transition: all 0.15s ease;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.headerMoreBtn:hover {
+  background: var(--color-pink-100);
+  border-color: var(--color-pink-400);
+  transform: translateY(-1px);
+}
+
+.chatHeaderRight {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .onlineBadge {
@@ -623,7 +681,137 @@
   padding: 3px 8px;
   border-radius: 999px;
   box-shadow: 1px 1px 0 var(--color-mint-200);
+  white-space: nowrap;
+  flex-shrink: 0;
 }
+
+/* ── UID Popup Card attached directly below 3-dots button ── */
+.uidPopupCard {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.98);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 2px solid #FF8FAB;
+  border-radius: 12px;
+  padding: 10px 12px;
+  box-shadow: 0 8px 24px rgba(255, 143, 171, 0.35), 3px 3px 0 #FFB7C5;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 190px;
+  animation: popupFadeIn 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes popupFadeIn {
+  from { opacity: 0; transform: translateY(-4px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.uidPopupHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--font-pixel);
+  font-size: 10px;
+  color: #D81B60;
+  border-bottom: 1.5px dashed #FFB7C5;
+  padding-bottom: 4px;
+}
+
+.uidPopupCloseBtn {
+  background: none;
+  border: none;
+  font-size: 11px;
+  color: var(--color-ink-soft);
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+}
+
+.uidPopupCloseBtn:hover {
+  color: #D81B60;
+}
+
+.uidPopupBody {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.uidPopupRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  font-size: 11px;
+}
+
+.uidPopupLabel {
+  font-family: var(--font-pixel);
+  font-size: 9px;
+  color: var(--color-ink-light);
+}
+
+.uidPopupName {
+  font-family: var(--font-pixel);
+  font-size: 11px;
+  color: var(--color-ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.uidPopupCode {
+  font-family: monospace;
+  font-size: 11px;
+  background: #FFF0F5;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid #FFC8DD;
+  color: #D81B60;
+  user-select: all;
+}
+
+.uidCopyBtn {
+  font-family: var(--font-pixel);
+  font-size: 9px;
+  background: #FF8FAB;
+  border: 1px solid #D81B60;
+  border-radius: 4px;
+  padding: 2px 6px;
+  color: #FFF;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.uidCopyBtn:hover {
+  background: #FF5E7E;
+  transform: translateY(-1px);
+}
+
+@media (min-width: 640px) {
+  .headerPartnerName {
+    max-width: 160px;
+    font-size: 14px;
+  }
+  .headerPartnerUid {
+    max-width: 110px;
+  }
+}
+
+@media (min-width: 768px) {
+  .headerPartnerName {
+    max-width: 220px;
+  }
+  .headerPartnerUid {
+    max-width: 150px;
+  }
+}
+
 
 /* Message Scroll Area */
 .messageArea {
@@ -887,6 +1075,8 @@
   cursor: pointer;
   box-shadow: 1px 1px 0 #FFB7C5;
   transition: all 0.15s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .relationshipBadge:hover {
@@ -907,7 +1097,10 @@
   color: #FF5E7E;
   cursor: pointer;
   transition: all 0.15s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
+
 
 .setRelBtn:hover {
   background: #FFF0F5;

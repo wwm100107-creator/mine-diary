@@ -40,8 +40,28 @@ export default function ChatView({ user }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [copied, setCopied] = useState(false)
+  const [isUidPopupOpen, setIsUidPopupOpen] = useState(false)
+  const [uidCopied, setUidCopied] = useState(false)
+  const uidPopupRef = useRef(null)
+
+  // Close UID popup on outside click
+  useEffect(() => {
+    if (!isUidPopupOpen) return
+    const handleClickOutside = (e) => {
+      if (uidPopupRef.current && !uidPopupRef.current.contains(e.target)) {
+        setIsUidPopupOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    document.addEventListener('touchstart', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener('touchstart', handleClickOutside)
+    }
+  }, [isUidPopupOpen])
 
   // Relationship States
+
   const [relationship, setRelationship] = useState(null)
   const [isSetRelModalOpen, setIsSetRelModalOpen] = useState(false)
   const [relType, setRelType] = useState('couple')
@@ -717,18 +737,86 @@ export default function ChatView({ user }) {
                     )
                   })()}
 
-                  {/* Partner Info */}
-                  <div className={s.headerPartnerDetails}>
-                    <div className={s.headerPartnerName}>{activePartner.displayName}</div>
-                    <div className={s.headerPartnerUid}>#{activePartner.id}</div>
+                  {/* Partner Info: Group [Tên + UID + 3-dots popup] */}
+                  <div className={`${s.headerPartnerDetails} flex-1 min-w-0 overflow-hidden flex flex-col`}>
+                    <div
+                      className={`${s.headerPartnerName} truncate overflow-hidden max-w-[100px] sm:max-w-[160px] md:max-w-[220px]`}
+                      title={activePartner.displayName}
+                    >
+                      {activePartner.displayName}
+                    </div>
+
+                    <div className={`${s.headerPartnerUidRow} flex items-center gap-1 min-w-0`}>
+                      <div
+                        className={`${s.headerPartnerUid} truncate overflow-hidden max-w-[70px] sm:max-w-[110px]`}
+                        title={`UID: #${activePartner.id}`}
+                      >
+                        #{activePartner.id}
+                      </div>
+
+                      {/* 3-Dots More Info Trigger */}
+                      <div className="relative inline-flex items-center" ref={uidPopupRef}>
+                        <button
+                          type="button"
+                          className={`${s.headerMoreBtn} px-1 py-0.5 text-[8px] font-bold rounded flex-shrink-0 cursor-pointer`}
+                          onClick={() => setIsUidPopupOpen((prev) => !prev)}
+                          title="Xem đầy đủ UID và thông tin"
+                          aria-label="Xem đầy đủ thông tin UID"
+                        >
+                          •••
+                        </button>
+
+                        {/* Pop-up Card attached directly below/right of 3-dots */}
+                        {isUidPopupOpen && (
+                          <div className={s.uidPopupCard} role="dialog" aria-label="Thông tin người dùng">
+                            <div className={s.uidPopupHeader}>
+                              <span>👤 Thông Tin Đối Phương</span>
+                              <button
+                                type="button"
+                                className={s.uidPopupCloseBtn}
+                                onClick={() => setIsUidPopupOpen(false)}
+                                title="Đóng"
+                              >
+                                ✕
+                              </button>
+                            </div>
+                            <div className={s.uidPopupBody}>
+                              <div className={s.uidPopupRow}>
+                                <span className={s.uidPopupLabel}>Tên:</span>
+                                <strong className={s.uidPopupName} title={activePartner.displayName}>
+                                  {activePartner.displayName}
+                                </strong>
+                              </div>
+                              <div className={s.uidPopupRow}>
+                                <span className={s.uidPopupLabel}>UID:</span>
+                                <code className={s.uidPopupCode}>#{activePartner.id}</code>
+                                <button
+                                  type="button"
+                                  className={s.uidCopyBtn}
+                                  onClick={() => {
+                                    navigator.clipboard?.writeText(activePartner.id)
+                                    setUidCopied(true)
+                                    setTimeout(() => setUidCopied(false), 2000)
+                                  }}
+                                  title="Sao chép UID"
+                                >
+                                  {uidCopied ? '✓ Đã chép' : '📋 Chép'}
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                <div className={s.chatHeaderRight}>
+                {/* Right Badges Group: [Nút Cặp đôi + Nút Hoạt động] */}
+                <div className={`${s.chatHeaderRight} flex items-center gap-1.5 sm:gap-2 flex-shrink-0 whitespace-nowrap`}>
                   {/* Relationship Status Badge or Set Button */}
                   {relationship?.status === 'accepted' ? (
                     <div
-                      className={s.relationshipBadge}
+                      className={`${s.relationshipBadge} whitespace-nowrap flex-shrink-0`}
                       title={`Mối quan hệ: ${relationship.customName}`}
                       onClick={() => setIsSetRelModalOpen(true)}
                     >
@@ -738,7 +826,7 @@ export default function ChatView({ user }) {
                   ) : (
                     <button
                       type="button"
-                      className={s.setRelBtn}
+                      className={`${s.setRelBtn} whitespace-nowrap flex-shrink-0`}
                       onClick={() => {
                         setRelType('couple')
                         setCustomRelName('')
@@ -750,9 +838,10 @@ export default function ChatView({ user }) {
                       <span>💖</span> Set Quan Hệ
                     </button>
                   )}
-                  <span className={s.onlineBadge}>● Hoạt động</span>
+                  <span className={`${s.onlineBadge} whitespace-nowrap flex-shrink-0`}>● Hoạt động</span>
                 </div>
               </div>
+
 
               {/* Relationship Pending Request / Cancellation Request Action Banner */}
               {relationship?.status === 'pending' && (
