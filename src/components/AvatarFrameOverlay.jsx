@@ -4,6 +4,7 @@ import s from './AvatarFrameOverlay.module.css'
 export const FRAME_COLLECTIONS = [
   { id: 'all', name: '✨ Tất Cả', icon: '✨', desc: 'Duyệt tất cả các khung avatar' },
   { id: 'vip', name: '👑 Chủ Đề VIP', icon: '👑', desc: 'Bộ sưu tập Hoàng Gia & Độc Quyền: GOD, SSSVIP, SSVIP, SVIP, Hào Quang Lửa' },
+  { id: 'mecha', name: '🤖 Cơ Khí & Mecha', icon: '🤖', desc: 'Bộ sưu tập Mobile Suit & Chiến Giáp: Sazabi ver.Ka, Cyber Mech...' },
   { id: 'fantasy', name: '🌿 Phép Thuật & Kỳ Ảo', icon: '🌿', desc: 'Bộ sưu tập Thần Thoại: Hoàng Gia Lục Bảo, Sakura Hearts...' },
   { id: 'classic', name: '🎨 Cổ Điển & Dễ Thương', icon: '🌸', desc: 'Bộ sưu tập Pixel Retro: Cầu Vồng, Ngôi Sao Lấp Lánh...' },
 ]
@@ -18,6 +19,9 @@ export const AVATAR_FRAMES = [
   { id: 'vip8_fire', name: '🔥 SVIP Thánh Hỏa', icon: '🔥', category: 'vip', desc: 'SVIP Cánh thiên thần trắng, vương miện hoàng gia & hào quang lửa' },
   { id: 'cyber_aura', name: '⚡ Hào Quang Lửa', icon: '✨', category: 'vip', desc: 'Lửa vàng & điện quang chớp giật' },
 
+  // ── 🤖 BỘ SƯU TẬP CƠ KHÍ & MECHA (GUNDAM & MECHA) ──
+  { id: 'sazabi_verka', name: '🔴 Sazabi ver.Ka', icon: '🤖', category: 'mecha', desc: 'MSN-04 Sazabi ver.Ka — Giáp đỏ Crimson Neo Zeon, mắt Mono-eye radar quét liên tục, giáp vai Funnel & động cơ phản lực nhiệt hạch' },
+
   // ── 🌿 BỘ SƯU TẬP PHÉP THUẬT & KỲ ẢO (FANTASY & MAGIC) ──
   { id: 'emerald_royal', name: '🌿 Hoàng Gia Lục Bảo', icon: '💎', category: 'fantasy', desc: 'Emerald Royal & Elven Magic — Hào quang ngọc bích, viền vàng ánh kim, vương miện ngọc thạch & dải băng hoàng gia Elven' },
   { id: 'sakura_hearts', name: '🌸 Trái Tim & Sakura', icon: '🌸', category: 'fantasy', desc: 'Hoa anh đào & tim hồng nhịp đập' },
@@ -26,6 +30,7 @@ export const AVATAR_FRAMES = [
   { id: 'sparkle_stars', name: '✨ Ngôi Sao Lấp Lánh', icon: '⭐', category: 'classic', desc: 'Sao pixel nhấp nháy 4 góc' },
   { id: 'rainbow', name: '🌈 Cầu Vồng Pixel', icon: '🌈', category: 'classic', desc: 'Viền cầu vồng luân chuyển 8-bit' },
 ]
+
 
 
 
@@ -923,7 +928,172 @@ function AvatarFrameOverlayComponent({ frameId = 'none', size = 36, sizePreset }
         </div>
       )}
 
+      {/* ══════════════════════════════════════════════════════════════════════
+         FRAME: 🔴 MSN-04 SAZABI VER.KA — NEO ZEON COMMANDER MOBILE SUIT
+         ══════════════════════════════════════════════════════════════════════ */}
+      {frameId === 'sazabi_verka' && (
+        <div className={s.sazabiContainer}>
+          {/* Layer 1: Thruster Exhaust Fire Jet Plumes & Space Dust Particles */}
+          <div className={s.sazabiBottomThrusters}>
+            <div className={`${s.sazabiJetFlame} ${s.jetLeft}`} />
+            <div className={`${s.sazabiJetFlame} ${s.jetCenter}`} />
+            <div className={`${s.sazabiJetFlame} ${s.jetRight}`} />
+            <div className={s.sazabiJetAuraGlow} />
+          </div>
+
+          {/* Layer 2: Thermal Spark Particles (Space Combat Dust) */}
+          <div className={s.sazabiParticles}>
+            <span className={`${s.sazabiSpark} ${s.sp1}`}>•</span>
+            <span className={`${s.sazabiSpark} ${s.sp2}`}>✦</span>
+            <span className={`${s.sazabiSpark} ${s.sp3}`}>•</span>
+            <span className={`${s.sazabiSpark} ${s.sp4}`}>✦</span>
+            <span className={`${s.sazabiSpark} ${s.sp5}`}>•</span>
+            <span className={`${s.sazabiSpark} ${s.sp6}`}>✦</span>
+          </div>
+
+          {/* Layer 3: Main Armored Chassis with Polygon/Clip-path & Gold/Black Trim */}
+          <div className={s.sazabiMainArmorFrame}>
+            <div className={s.sazabiArmorGleam} />
+            <div className={s.sazabiCautionDecals}>
+              <span className={s.sazabiDecalLeft}>04</span>
+              <span className={s.sazabiDecalRight}>CA</span>
+            </div>
+          </div>
+
+          {/* Layer 4: Flanking Shoulder Armor, Open Heat Vents & Funnel Pods (Left & Right) */}
+          <div className={s.sazabiShouldersWrap}>
+            {/* Left Shoulder Armor */}
+            <div className={`${s.sazabiShoulder} ${s.shoulderLeft}`}>
+              <svg viewBox="0 0 50 60" className={s.shoulderSvg} fill="none">
+                <defs>
+                  <linearGradient id="sazabiCrimsonL" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#FF1E27" />
+                    <stop offset="40%" stopColor="#C00000" />
+                    <stop offset="85%" stopColor="#7A0000" />
+                    <stop offset="100%" stopColor="#4A0000" />
+                  </linearGradient>
+                </defs>
+                {/* Outward Flared Angular Shoulder Armor Plate */}
+                <polygon points="50,10 8,16 0,38 20,58 50,45" fill="url(#sazabiCrimsonL)" stroke="#FFD700" strokeWidth="1.2" />
+                <polygon points="45,16 12,21 5,36 20,50 45,41" fill="#1C1C22" stroke="#FF1E27" strokeWidth="0.8" />
+                {/* Glowing Heat Dissipation Exhaust Vents */}
+                <rect x="10" y="24" width="28" height="4" rx="1" fill="#FFCC00" className={s.sazabiHeatVentGlow} />
+                <rect x="14" y="32" width="22" height="4" rx="1" fill="#FF6600" className={s.sazabiHeatVentGlow} />
+                {/* Gold Funnel Rack Indicator */}
+                <circle cx="28" cy="18" r="2.5" fill="#FFD700" />
+                <circle cx="38" cy="17" r="2.5" fill="#FFD700" />
+              </svg>
+            </div>
+
+            {/* Right Shoulder Armor */}
+            <div className={`${s.sazabiShoulder} ${s.shoulderRight}`}>
+              <svg viewBox="0 0 50 60" className={s.shoulderSvg} fill="none">
+                <defs>
+                  <linearGradient id="sazabiCrimsonR" x1="100%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stopColor="#FF1E27" />
+                    <stop offset="40%" stopColor="#C00000" />
+                    <stop offset="85%" stopColor="#7A0000" />
+                    <stop offset="100%" stopColor="#4A0000" />
+                  </linearGradient>
+                </defs>
+                {/* Outward Flared Angular Shoulder Armor Plate */}
+                <polygon points="0,10 42,16 50,38 30,58 0,45" fill="url(#sazabiCrimsonR)" stroke="#FFD700" strokeWidth="1.2" />
+                <polygon points="5,16 38,21 45,36 30,50 5,41" fill="#1C1C22" stroke="#FF1E27" strokeWidth="0.8" />
+                {/* Glowing Heat Dissipation Exhaust Vents */}
+                <rect x="12" y="24" width="28" height="4" rx="1" fill="#FFCC00" className={s.sazabiHeatVentGlow} />
+                <rect x="14" y="32" width="22" height="4" rx="1" fill="#FF6600" className={s.sazabiHeatVentGlow} />
+                {/* Gold Funnel Rack Indicator */}
+                <circle cx="22" cy="18" r="2.5" fill="#FFD700" />
+                <circle cx="12" cy="17" r="2.5" fill="#FFD700" />
+              </svg>
+            </div>
+          </div>
+
+          {/* Layer 5: Đỉnh khung (Mono-eye Head & Helmet Crest with Animated Scanning Mono-eye) */}
+          <div className={s.sazabiHeadCrest}>
+            <svg viewBox="0 0 120 54" className={s.sazabiHeadSvg} fill="none">
+              <defs>
+                <linearGradient id="sazabiHeadGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#FF333A" />
+                  <stop offset="40%" stopColor="#B30006" />
+                  <stop offset="100%" stopColor="#570003" />
+                </linearGradient>
+                <linearGradient id="sazabiAntennaGold" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#FFF275" />
+                  <stop offset="50%" stopColor="#FFD700" />
+                  <stop offset="100%" stopColor="#B45309" />
+                </linearGradient>
+              </defs>
+
+              {/* Neo Zeon Long Commander V-Antenna / Golden Horn */}
+              <polygon points="60,0 64,22 60,20 56,22" fill="url(#sazabiAntennaGold)" stroke="#FFE066" strokeWidth="0.8" />
+              <polygon points="60,12 82,18 64,24" fill="url(#sazabiAntennaGold)" stroke="#FFE066" strokeWidth="0.6" />
+              <polygon points="60,12 38,18 56,24" fill="url(#sazabiAntennaGold)" stroke="#FFE066" strokeWidth="0.6" />
+
+              {/* Sazabi Armored Forehead Helmet */}
+              <path
+                d="M 32 36 L 46 22 L 60 16 L 74 22 L 88 36 L 78 44 L 60 40 L 42 44 Z"
+                fill="url(#sazabiHeadGrad)"
+                stroke="#FFD700"
+                strokeWidth="1.2"
+              />
+
+              {/* Horizontal Visor Slit (Black Glass) */}
+              <path
+                d="M 44 32 L 60 28 L 76 32 L 72 38 L 60 36 L 48 38 Z"
+                fill="#0A0A0D"
+                stroke="#222"
+                strokeWidth="0.8"
+              />
+            </svg>
+
+            {/* Glowing Emerald Green Mono-Eye Sweeping Left-Right Inside Visor */}
+            <div className={s.sazabiMonoEyeVisorTrack}>
+              <div className={s.sazabiMonoEyeLens}>
+                <div className={s.sazabiMonoEyeFlare} />
+              </div>
+            </div>
+          </div>
+
+          {/* Layer 6: Đáy khung (Bottom Heavy Waist Armor / Mega Particle Cannon Plaque) */}
+          <div className={s.sazabiBottomPlaque}>
+            <svg viewBox="0 0 120 32" className={s.sazabiBottomSvg} fill="none">
+              <polygon
+                points="18,4 102,4 112,24 60,32 8,24"
+                fill="#151518"
+                stroke="#FF1E27"
+                strokeWidth="1.5"
+              />
+              <polygon
+                points="24,7 96,7 104,22 60,28 16,22"
+                fill="url(#sazabiHeadGrad)"
+                stroke="#FFD700"
+                strokeWidth="0.8"
+              />
+              {/* Abdominal Mega Particle Cannon Emitter (Center Circle) */}
+              <circle cx="60" cy="16" r="5" fill="#1C1C22" stroke="#FFCC00" strokeWidth="1.2" />
+              <circle cx="60" cy="16" r="2.5" fill="#FF3B30" className={s.sazabiCannonCoreGlow} />
+              
+              {/* Decal Text: NEO ZEON MSN-04 */}
+              <text
+                x="60"
+                y="11"
+                textAnchor="middle"
+                fontSize="5"
+                fontFamily="'1FTV-VIP-Festigan', monospace"
+                fontWeight="900"
+                fill="#FFD700"
+                letterSpacing="1"
+              >
+                NEO ZEON
+              </text>
+            </svg>
+          </div>
+        </div>
+      )}
+
       {/* ── Standard Frames ── */}
+
 
       {frameId === 'rainbow' && <div className={s.rainbowBorder} />}
 
