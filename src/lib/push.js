@@ -63,13 +63,8 @@ export async function requestPushPermission(user) {
       return null
     }
 
-    // 2. Register Service Worker with Firebase parameters
-    const swUrl = new URL('/firebase-messaging-sw.js', window.location.origin)
-    Object.entries(firebaseConfig).forEach(([key, val]) => {
-      if (val) swUrl.searchParams.set(key, val)
-    })
-
-    const registration = await navigator.serviceWorker.register(swUrl.pathname + swUrl.search, {
+    // 2. Register standard Service Worker cleanly
+    const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js', {
       scope: '/',
     })
 
@@ -79,7 +74,7 @@ export async function requestPushPermission(user) {
     let finalToken = null
     const vapid = await getVapidKey()
 
-    // 3. Attempt FCM Token registration
+    // 3. Attempt FCM Token registration with Google FCM gateway
     const messaging = await getFirebaseMessaging()
     if (messaging) {
       const tokenOptions = { serviceWorkerRegistration: registration }
@@ -88,6 +83,7 @@ export async function requestPushPermission(user) {
       }
       try {
         finalToken = await getToken(messaging, tokenOptions)
+        console.log('[Push] Real Google FCM Token received:', finalToken ? finalToken.slice(0, 20) + '...' : 'null')
       } catch (fcmErr) {
         console.warn('[Push] getToken via FCM warning, trying PushManager fallback:', fcmErr)
       }
@@ -121,8 +117,8 @@ export async function requestPushPermission(user) {
       const isAndroid = /Android/i.test(navigator.userAgent)
 
       const updatePayload = {
-        pushToken: finalToken,
         fcmToken: finalToken,
+        pushToken: finalToken,
         pushEnabled: true,
         pushPlatform: isIOS ? 'ios' : isAndroid ? 'android' : 'web',
         pushUpdatedAt: serverTimestamp(),
@@ -133,9 +129,9 @@ export async function requestPushPermission(user) {
       }
 
       await updateDoc(doc(db, 'users', user.id), updatePayload)
-      localStorage.setItem(`minediary:push_token:${user.id}`, finalToken)
       localStorage.setItem(`minediary:fcm_token:${user.id}`, finalToken)
-      console.log('[Push] Push Token successfully registered in Database:', finalToken.slice(0, 20) + '...')
+      localStorage.setItem(`minediary:push_token:${user.id}`, finalToken)
+      console.log('[Push] Token successfully saved to Firestore:', finalToken.slice(0, 22) + '...')
       return finalToken
     }
   } catch (err) {
@@ -235,7 +231,7 @@ export async function sendPushNotification({ recipientUserId, title, body, icon 
     if (!userDoc.exists()) return
 
     const recipientData = userDoc.data()
-    const targetToken = recipientData.pushToken || recipientData.fcmToken
+    const targetToken = recipientData.fcmToken || recipientData.pushToken
     if (!targetToken) return
 
     // 2. Dispatch to Serverless / API push trigger
@@ -246,7 +242,7 @@ export async function sendPushNotification({ recipientUserId, title, body, icon 
         token: targetToken,
         title: title || 'Mine Diary 🌸',
         body: body || 'Bạn có tin nhắn mới!',
-        icon: icon || recipientData.avatar || '/favicon.svg',
+        icon: '/icon-192.png',
         data: {
           url: '/#chat',
           partnerId: data.partnerId || '',
