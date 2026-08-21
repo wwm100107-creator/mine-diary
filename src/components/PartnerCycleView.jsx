@@ -46,8 +46,10 @@ export default function PartnerCycleView({ user }) {
     hasPermission,
     partnerUser,
     prediction,
+    markedDates: partnerMarkedDates,
     loading,
   } = usePartnerCycleData(user.id, partnerId)
+
 
   // 3. Send Care Message to 1-on-1 Chat
   const handleSendLoveMessage = async (textToSend) => {
@@ -150,7 +152,13 @@ export default function PartnerCycleView({ user }) {
               <h3 className={s.cardTitle}>
                 <span>📅</span> Lịch Chu Kỳ (Chế độ xem)
               </h3>
-              <Calendar userId={partnerId} readOnly={true} />
+              <Calendar
+                userId={partnerId}
+                gender="female"
+                markedDates={partnerMarkedDates}
+                readOnly={true}
+              />
+
             </div>
 
             {/* Right: Care Messages & Love Textarea */}
