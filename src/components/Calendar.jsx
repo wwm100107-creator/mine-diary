@@ -703,13 +703,13 @@ export default function Calendar({ userId, mode = 'standard', gender = 'female',
             <span className={s.trayLabel}>Khay Icon:</span>
             
             <div className={s.trayItems}>
-              {/* Default Icons — period icons (🍓❌) hidden when showCycle is false (Diary tab or male) */}
+              {/* Default Icons — period icons (🍓❌) hidden for MALE only; Diary tab female still needs them to mark manually */}
               {[
-                { icon: '🍓', title: 'Kinh nguyệt (Bắt đầu)', cycleOnly: true },
-                { icon: '❌', title: 'Kết thúc kinh',          cycleOnly: true },
-                { icon: '🎂', title: 'Sinh nhật / Kỷ niệm',   cycleOnly: false },
+                { icon: '🍓', title: 'Kinh nguyệt (Bắt đầu)', maleHide: true },
+                { icon: '❌', title: 'Kết thúc kinh',          maleHide: true },
+                { icon: '🎂', title: 'Sinh nhật / Kỷ niệm',   maleHide: false },
               ]
-                .filter(({ cycleOnly }) => !cycleOnly || showCycle)
+                .filter(({ maleHide }) => !maleHide || !isMale)
                 .map(({ icon, title }) => (
                   <button
                     key={icon}
@@ -724,6 +724,7 @@ export default function Calendar({ userId, mode = 'standard', gender = 'female',
                     {icon}
                   </button>
                 ))}
+
 
 
 
