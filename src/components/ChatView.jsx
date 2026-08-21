@@ -740,7 +740,7 @@ export default function ChatView({ user }) {
                   {/* Partner Info: Group [Tên + UID + 3-dots popup] */}
                   <div className={`${s.headerPartnerDetails} flex-1 min-w-0 overflow-hidden flex flex-col`}>
                     <div
-                      className={`${s.headerPartnerName} truncate overflow-hidden max-w-[100px] sm:max-w-[160px] md:max-w-[220px]`}
+                      className={`${s.headerPartnerName} truncate min-w-0`}
                       title={activePartner.displayName}
                     >
                       {activePartner.displayName}
@@ -748,7 +748,7 @@ export default function ChatView({ user }) {
 
                     <div className={`${s.headerPartnerUidRow} flex items-center gap-1 min-w-0`}>
                       <div
-                        className={`${s.headerPartnerUid} truncate overflow-hidden max-w-[70px] sm:max-w-[110px]`}
+                        className={`${s.headerPartnerUid} truncate min-w-0`}
                         title={`UID: #${activePartner.id}`}
                       >
                         #{activePartner.id}
