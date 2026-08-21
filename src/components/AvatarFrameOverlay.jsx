@@ -1,18 +1,32 @@
 import React, { memo } from 'react'
 import s from './AvatarFrameOverlay.module.css'
 
-export const AVATAR_FRAMES = [
-  { id: 'none', name: 'Mặc định', icon: '🚫', desc: 'Không khung viền' },
-  { id: 'god_cosmic', name: '🌌 GOD Nữ Thần', icon: '👑', desc: 'Cấp bậc Tối Thượng GOD Mode — Song Nữ Thần Valkyrie, lửa địa ngục & lôi quang 7 màu nhấp nháy' },
-  { id: 'emerald_royal', name: '🌿 Hoàng Gia Lục Bảo', icon: '💎', desc: 'Emerald Royal & Elven Magic — Hào quang ngọc bích, viền vàng ánh kim, vương miện ngọc thạch & dải băng hoàng gia Elven' },
-  { id: 'vip10_thunder', name: '⚡ SSSVIP Song Long', icon: '⚡', desc: 'SSSVIP Song Long Lôi Thần — Đầu rồng phong lôi, sấm sét liên tục & điện quang chớp giật' },
-  { id: 'vip9_frost', name: '❄️ SSVIP Cánh Băng', icon: '❄️', desc: 'SSVIP Thiên Thần Băng Tuyết — Cánh thiên thần bạch kim & sương băng huyền ảo' },
-  { id: 'vip8_fire', name: '🔥 SVIP Thánh Hỏa', icon: '🔥', desc: 'SVIP Cánh thiên thần trắng, vương miện hoàng gia & hào quang lửa' },
-  { id: 'cyber_aura', name: '⚡ Hào Quang Lửa', icon: '✨', desc: 'Lửa vàng & điện quang chớp giật' },
-  { id: 'rainbow', name: '🌈 Cầu Vồng Pixel', icon: '🌈', desc: 'Viền cầu vồng luân chuyển 8-bit' },
-  { id: 'sparkle_stars', name: '✨ Ngôi Sao Lấp Lánh', icon: '⭐', desc: 'Sao pixel nhấp nháy 4 góc' },
-  { id: 'sakura_hearts', name: '🌸 Trái Tim & Sakura', icon: '🌸', desc: 'Hoa anh đào & tim hồng nhịp đập' },
+export const FRAME_COLLECTIONS = [
+  { id: 'all', name: '✨ Tất Cả', icon: '✨', desc: 'Duyệt tất cả các khung avatar' },
+  { id: 'vip', name: '👑 Chủ Đề VIP', icon: '👑', desc: 'Bộ sưu tập Hoàng Gia & Độc Quyền: GOD, SSSVIP, SSVIP, SVIP, Hào Quang Lửa' },
+  { id: 'fantasy', name: '🌿 Phép Thuật & Kỳ Ảo', icon: '🌿', desc: 'Bộ sưu tập Thần Thoại: Hoàng Gia Lục Bảo, Sakura Hearts...' },
+  { id: 'classic', name: '🎨 Cổ Điển & Dễ Thương', icon: '🌸', desc: 'Bộ sưu tập Pixel Retro: Cầu Vồng, Ngôi Sao Lấp Lánh...' },
 ]
+
+export const AVATAR_FRAMES = [
+  { id: 'none', name: 'Mặc định', icon: '🚫', category: 'all', desc: 'Không khung viền' },
+
+  // ── 👑 BỘ SƯU TẬP CHỦ ĐỀ VIP (VIP COLLECTION) ──
+  { id: 'god_cosmic', name: '🌌 GOD Nữ Thần', icon: '👑', category: 'vip', desc: 'Cấp bậc Tối Thượng GOD Mode — Song Nữ Thần Valkyrie, lửa địa ngục & lôi quang 7 màu nhấp nháy' },
+  { id: 'vip10_thunder', name: '⚡ SSSVIP Song Long', icon: '⚡', category: 'vip', desc: 'SSSVIP Song Long Lôi Thần — Đầu rồng phong lôi, sấm sét liên tục & điện quang chớp giật' },
+  { id: 'vip9_frost', name: '❄️ SSVIP Cánh Băng', icon: '❄️', category: 'vip', desc: 'SSVIP Thiên Thần Băng Tuyết — Cánh thiên thần bạch kim & sương băng huyền ảo' },
+  { id: 'vip8_fire', name: '🔥 SVIP Thánh Hỏa', icon: '🔥', category: 'vip', desc: 'SVIP Cánh thiên thần trắng, vương miện hoàng gia & hào quang lửa' },
+  { id: 'cyber_aura', name: '⚡ Hào Quang Lửa', icon: '✨', category: 'vip', desc: 'Lửa vàng & điện quang chớp giật' },
+
+  // ── 🌿 BỘ SƯU TẬP PHÉP THUẬT & KỲ ẢO (FANTASY & MAGIC) ──
+  { id: 'emerald_royal', name: '🌿 Hoàng Gia Lục Bảo', icon: '💎', category: 'fantasy', desc: 'Emerald Royal & Elven Magic — Hào quang ngọc bích, viền vàng ánh kim, vương miện ngọc thạch & dải băng hoàng gia Elven' },
+  { id: 'sakura_hearts', name: '🌸 Trái Tim & Sakura', icon: '🌸', category: 'fantasy', desc: 'Hoa anh đào & tim hồng nhịp đập' },
+
+  // ── 🎨 BỘ SƯU TẬP CỔ ĐIỂN & DỄ THƯƠNG (CLASSIC & CUTE) ──
+  { id: 'sparkle_stars', name: '✨ Ngôi Sao Lấp Lánh', icon: '⭐', category: 'classic', desc: 'Sao pixel nhấp nháy 4 góc' },
+  { id: 'rainbow', name: '🌈 Cầu Vồng Pixel', icon: '🌈', category: 'classic', desc: 'Viền cầu vồng luân chuyển 8-bit' },
+]
+
 
 
 function AvatarFrameOverlayComponent({ frameId = 'none', size = 36, sizePreset }) {

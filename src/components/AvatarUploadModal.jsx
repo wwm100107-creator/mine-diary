@@ -1,7 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect, useMemo } from 'react'
 import { createPortal } from 'react-dom'
 import PixelAvatar from './PixelAvatar'
-import AvatarFrameOverlay, { AVATAR_FRAMES } from './AvatarFrameOverlay'
+import AvatarFrameOverlay, { AVATAR_FRAMES, FRAME_COLLECTIONS } from './AvatarFrameOverlay'
 import { AVATARS } from '../utils/avatars'
 import { cropToSquare, generatePixelArt } from '../utils/pixelArt'
 import { THEME_PRESETS, applyTheme, getSavedTheme } from '../utils/theme'
@@ -29,9 +29,11 @@ export default function AvatarUploadModal({
   const [pixelDensity, setPixelDensity] = useState(40) // 32 | 40 | 48
   const [selectedPreset, setSelectedPreset] = useState(currentAvatar || 'bunny')
   const [selectedFrame, setSelectedFrame] = useState(currentFrame || 'none')
+  const [selectedFrameCollection, setSelectedFrameCollection] = useState('all')
   const [vipWarning, setVipWarning] = useState('')
   const [isProcessing, setIsProcessing] = useState(false)
   const [isDraggingOver, setIsDraggingOver] = useState(false)
+
 
   // ── Theme State & Realtime Preview Engine ──
   const resolvedInitialTheme =
@@ -360,7 +362,7 @@ export default function AvatarUploadModal({
             </div>
           )}
 
-          {/* ── 3. Animated Frame Selection Section (Horizontal Scroller) ── */}
+          {/* ── 3. Animated Frame Selection Section (Grouped by Themed Collections) ── */}
           <div className={s.frameSelectorSection}>
             <div className={s.frameSelectorHeader}>
               <span className={s.frameSelectorTitle}>✨ Chọn Khung Viền Pixel Động:</span>
@@ -369,6 +371,42 @@ export default function AvatarUploadModal({
               </span>
             </div>
 
+            {/* Frame Collections / Theme Category Tabs */}
+            <div className={s.frameCollectionTabsRow} role="tablist" aria-label="Bộ sưu tập khung viền">
+              {FRAME_COLLECTIONS.map((col) => {
+                const isActive = selectedFrameCollection === col.id
+                const frameCount = col.id === 'all'
+                  ? AVATAR_FRAMES.length
+                  : AVATAR_FRAMES.filter((f) => f.category === col.id).length
+
+                return (
+                  <button
+                    key={col.id}
+                    type="button"
+                    className={`${s.collectionTabBtn} ${isActive ? s.collectionTabActive : ''}`}
+                    onClick={() => setSelectedFrameCollection(col.id)}
+                    role="tab"
+                    aria-selected={isActive}
+                  >
+                    <span>{col.name}</span>
+                    <span className={s.collectionCountBadge}>{frameCount}</span>
+                  </button>
+                )
+              })}
+            </div>
+
+            {/* Active Collection Description */}
+            {selectedFrameCollection !== 'all' && (
+              <div className={s.collectionDescBanner}>
+                <span className={s.collectionDescIcon}>
+                  {FRAME_COLLECTIONS.find((c) => c.id === selectedFrameCollection)?.icon || '✨'}
+                </span>
+                <span className={s.collectionDescText}>
+                  {FRAME_COLLECTIONS.find((c) => c.id === selectedFrameCollection)?.desc}
+                </span>
+              </div>
+            )}
+
             {vipWarning && (
               <div className={s.vipWarningBanner}>
                 <span>🔒</span> {vipWarning}
@@ -376,7 +414,10 @@ export default function AvatarUploadModal({
             )}
 
             <div className={s.framesScrollRow}>
-              {AVATAR_FRAMES.map((frame) => {
+              {(selectedFrameCollection === 'all'
+                ? AVATAR_FRAMES
+                : AVATAR_FRAMES.filter((f) => f.id === 'none' || f.category === selectedFrameCollection)
+              ).map((frame) => {
                 const isFrameActive = selectedFrame === frame.id
                 const isUnlocked = isFrameUnlocked(frame.id, currentUser)
                 const reqInfo = getFrameRequirementInfo(frame.id)
@@ -422,6 +463,7 @@ export default function AvatarUploadModal({
               })}
             </div>
           </div>
+
 
           {/* ── 4. Theme Palette & Colors Selection Section ── */}
           <div className={s.themeSelectorSection}>
