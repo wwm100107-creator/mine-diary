@@ -9,7 +9,8 @@ import { getToken, onMessage } from 'firebase/messaging'
 import { doc, getDoc, updateDoc, serverTimestamp } from 'firebase/firestore'
 import { db, firebaseConfig, getFirebaseMessaging } from './firebase'
 
-let cachedVapidKey = import.meta.env.VITE_FIREBASE_VAPID_KEY || ''
+const DEFAULT_VAPID_KEY = 'BMNxA2L6sAzbarsShztGY_ka3YiBO2mCCBtKPfxsdLSR4E2jaZF1TUQHlkkveZ41kNApaeq7Ar1XnzehMNdWGlQ'
+let cachedVapidKey = import.meta.env.VITE_FIREBASE_VAPID_KEY || DEFAULT_VAPID_KEY
 
 /**
  * Dynamically resolve Web Push VAPID key from Firestore or environment
@@ -23,7 +24,7 @@ export async function getVapidKey() {
       return cachedVapidKey
     }
   } catch (e) {}
-  return ''
+  return DEFAULT_VAPID_KEY
 }
 
 /**
