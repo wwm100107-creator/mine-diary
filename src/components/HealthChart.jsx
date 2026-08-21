@@ -114,7 +114,7 @@ export default function HealthChart({ userId, markedDates: markedDatesProp = nul
         </h3>
         <div className={s.chartContainer}>
           {cycleData.length > 0 ? (
-            <ResponsiveContainer width="100%" height={210}>
+            <ResponsiveContainer width="100%" height={210} minWidth={100} minHeight={180}>
               <BarChart data={cycleData} margin={{ top: 15, right: 15, left: -20, bottom: 0 }} maxBarSize={48}>
                 <defs>
                   <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
@@ -123,7 +123,7 @@ export default function HealthChart({ userId, markedDates: markedDatesProp = nul
                   </linearGradient>
                 </defs>
                 <XAxis dataKey="month" tick={{ fill: '#889BA6', fontSize: 12, fontFamily: 'monospace' }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fill: '#889BA6', fontSize: 12 }} axisLine={false} tickLine={false} domain={[0, 'dataMax + 5']} />
+                <YAxis tick={{ fill: '#889BA6', fontSize: 12 }} axisLine={false} tickLine={false} domain={[0, 'auto']} />
                 <Tooltip cursor={{ fill: 'rgba(255, 183, 197, 0.15)' }} content={<CustomTooltip />} />
                 <Bar dataKey="length" fill="url(#barGradient)" stroke="#FF5E7E" strokeWidth={1.5} radius={[6, 6, 0, 0]} barSize={36} />
               </BarChart>
@@ -145,12 +145,14 @@ export default function HealthChart({ userId, markedDates: markedDatesProp = nul
         </h3>
         <div className={s.chartContainer}>
           {symptomData.length > 0 ? (
-            <ResponsiveContainer width="100%" height={230}>
-              <PieChart>
+            <ResponsiveContainer width="100%" height={230} minWidth={100} minHeight={180}>
+              <PieChart margin={{ top: 10, right: 10, bottom: 10, left: 10 }}>
                 <Pie
                   data={symptomData}
-                  innerRadius={55}
-                  outerRadius={78}
+                  cx="40%"
+                  cy="50%"
+                  innerRadius={50}
+                  outerRadius={75}
                   paddingAngle={4}
                   dataKey="value"
                   stroke="#FFF"
@@ -173,6 +175,7 @@ export default function HealthChart({ userId, markedDates: markedDatesProp = nul
           ) : (
             <div className={s.emptyStateWrap}>
               <span className={s.emptyStateIcon}>🌸</span>
+
               <p className={s.emptyStateText}>Chưa có ghi chép triệu chứng</p>
               <p className={s.emptyStateSub}>Khi có dữ liệu triệu chứng (lượng máu, tâm trạng, đau bụng...), biểu đồ tròn phân tích sẽ tự động hiển thị tại đây.</p>
             </div>

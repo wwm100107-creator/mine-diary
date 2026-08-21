@@ -31,11 +31,12 @@
   border-radius: 12px;
   padding: 16px 16px 12px 0;
   min-height: 220px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 100%;
+  display: block;
   box-sizing: border-box;
+  overflow: hidden;
 }
+
 
 .emptyStateWrap {
   display: flex;
