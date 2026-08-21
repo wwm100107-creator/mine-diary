@@ -79,6 +79,21 @@ export default async function handler(req, res) {
       const accessToken = await getGoogleAccessToken(clientEmail, privateKey)
       const fcmV1Url = `https://fcm.googleapis.com/v1/projects/${projectId}/messages:send`
 
+      // Format strict string-only data map for Google FCM v1
+      const stringData = {
+        title: String(title || 'Mine Diary 🌸'),
+        body: String(body || 'Bạn có tin nhắn mới!'),
+        icon: String(icon || '/icon-192.png'),
+        url: String(data?.url || '/#chat'),
+      }
+      if (data && typeof data === 'object') {
+        for (const [k, v] of Object.entries(data)) {
+          if (v !== undefined && v !== null) {
+            stringData[k] = typeof v === 'object' ? JSON.stringify(v) : String(v)
+          }
+        }
+      }
+
       const fcmResponse = await fetch(fcmV1Url, {
         method: 'POST',
         headers: {
@@ -92,24 +107,9 @@ export default async function handler(req, res) {
               title: title || 'Mine Diary 🌸',
               body: body || 'Bạn có tin nhắn mới!',
             },
-            data: {
-              title: title || 'Mine Diary 🌸',
-              body: body || 'Bạn có tin nhắn mới!',
-              icon: icon || '/icon-192.png',
-              url: '/#chat',
-              ...(data || {}),
-            },
+            data: stringData,
             android: {
               priority: 'high',
-              notification: {
-                title: title || 'Mine Diary 🌸',
-                body: body || 'Bạn có tin nhắn mới!',
-                icon: '/icon-192.png',
-                sound: 'default',
-                click_action: '/#chat',
-                priority: 'max',
-                visibility: 'public',
-              },
             },
             webpush: {
               headers: {
@@ -131,6 +131,11 @@ export default async function handler(req, res) {
       })
 
       const fcmResult = await fcmResponse.json()
+      if (!fcmResponse.ok) {
+        console.error('[API send-push] FCM v1 rejected with status', fcmResponse.status, fcmResult)
+        return res.status(fcmResponse.status).json({ success: false, gateway: 'fcm_v1', error: fcmResult })
+      }
+
       return res.status(200).json({ success: true, gateway: 'fcm_v1', result: fcmResult })
     } catch (err) {
       console.error('[API send-push] FCM v1 Dispatch Error:', err)
