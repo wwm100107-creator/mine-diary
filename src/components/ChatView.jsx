@@ -683,8 +683,9 @@ export default function ChatView({ user }) {
                   {(() => {
                     const userFrame = user.avatarFrame || user.frame || 'none'
                     const partnerFrame = activePartner.avatarFrame || activePartner.frame || 'none'
-                    const isWideUser = ['god_cosmic', 'vip10_thunder', 'vip9_frost', 'vip8_fire', 'cyber_aura', 'sakura_hearts', 'emerald_royal', 'sazabi_verka', 'gundam_calibarn'].includes(userFrame)
-                    const isWidePartner = ['god_cosmic', 'vip10_thunder', 'vip9_frost', 'vip8_fire', 'cyber_aura', 'sakura_hearts', 'emerald_royal', 'sazabi_verka', 'gundam_calibarn'].includes(partnerFrame)
+                    const isWideUser = ['god_cosmic', 'vip10_thunder', 'vip9_frost', 'vip8_fire', 'cyber_aura', 'sakura_hearts', 'emerald_royal', 'sazabi_verka', 'gundam_calibarn', 'unicorn_awakened'].includes(userFrame)
+                    const isWidePartner = ['god_cosmic', 'vip10_thunder', 'vip9_frost', 'vip8_fire', 'cyber_aura', 'sakura_hearts', 'emerald_royal', 'sazabi_verka', 'gundam_calibarn', 'unicorn_awakened'].includes(partnerFrame)
+
 
 
 

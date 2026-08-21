@@ -22,6 +22,8 @@ export const AVATAR_FRAMES = [
   // ── 🤖 BỘ SƯU TẬP CƠ KHÍ & MECHA (GUNDAM & MECHA) ──
   { id: 'sazabi_verka', name: '🔴 Sazabi ver.Ka', icon: '🤖', category: 'mecha', desc: 'MSN-04 Sazabi ver.Ka — Giáp đỏ Crimson Neo Zeon, mắt Mono-eye radar quét liên tục, giáp vai Funnel & động cơ phản lực nhiệt hạch' },
   { id: 'gundam_calibarn', name: '🌈 Gundam Calibarn', icon: '🤖', category: 'mecha', desc: 'X-EX01 Gundam Calibarn (Permet Score 8) — Giáp trắng tinh khôi, sừng V-fin sắc bén, rãnh Permet 7 màu phát quang & luồng hạt Data Storm' },
+  { id: 'unicorn_awakened', name: '🦄 Unicorn Awakened', icon: '🤖', category: 'mecha', desc: 'RX-0 Full Armor Unicorn (Awakened Mode) — Giáp trắng tuyết phân tách, sừng V-fin Destroy vàng rực, khung tâm linh Psycho-Frame lục quang hô hấp & tinh thể phát sáng' },
+
 
   // ── 🌿 BỘ SƯU TẬP PHÉP THUẬT & KỲ ẢO (FANTASY & MAGIC) ──
   { id: 'emerald_royal', name: '🌿 Hoàng Gia Lục Bảo', icon: '💎', category: 'fantasy', desc: 'Emerald Royal & Elven Magic — Hào quang ngọc bích, viền vàng ánh kim, vương miện ngọc thạch & dải băng hoàng gia Elven' },
@@ -1272,7 +1274,186 @@ function AvatarFrameOverlayComponent({ frameId = 'none', size = 36, sizePreset }
         </div>
       )}
 
+      {/* ══════════════════════════════════════════════════════════════════════
+         FRAME: 🦄 RX-0 FULL ARMOR UNICORN VER.KA (AWAKENED PSYCHO-FRAME)
+         ══════════════════════════════════════════════════════════════════════ */}
+      {frameId === 'unicorn_awakened' && (
+        <div className={s.unicornContainer}>
+          {/* Layer 1: Psycho-Field Awakened Green Radiant Aura (Resonance Breathing) */}
+          <div className={s.unicornPsychoAura} />
+          <div className={s.unicornInnerFieldGlow} />
+
+          {/* Layer 2: Psycho-Frame Crystal Shards / Floating Green Dust Particles */}
+          <div className={s.unicornCrystals}>
+            <span className={`${s.unicornShard} ${s.uc1}`}>✦</span>
+            <span className={`${s.unicornShard} ${s.uc2}`}>◆</span>
+            <span className={`${s.unicornShard} ${s.uc3}`}>✧</span>
+            <span className={`${s.unicornShard} ${s.uc4}`}>✦</span>
+            <span className={`${s.unicornShard} ${s.uc5}`}>■</span>
+            <span className={`${s.unicornShard} ${s.uc6}`}>◆</span>
+            <span className={`${s.unicornShard} ${s.uc7}`}>✦</span>
+            <span className={`${s.unicornShard} ${s.uc8}`}>✧</span>
+          </div>
+
+          {/* Layer 3: Layered Divided Snow-White Armor Panels with Exposed Green Psycho-Frame Gaps */}
+          <div className={s.unicornChassisFrame}>
+            {/* Exposed Glowing Green Psycho-Frame Under-Chassis */}
+            <div className={s.unicornPsychoUnderglow} />
+            
+            {/* Segmented Snow White Armor Corner & Edge Plates */}
+            <div className={`${s.armorPlate} ${s.plateTL}`} />
+            <div className={`${s.armorPlate} ${s.plateTR}`} />
+            <div className={`${s.armorPlate} ${s.plateBL}`} />
+            <div className={`${s.armorPlate} ${s.plateBR}`} />
+            <div className={`${s.armorPlate} ${s.plateTop}`} />
+            <div className={`${s.armorPlate} ${s.plateBottom}`} />
+
+            {/* Specular Pure White Armor Gleam */}
+            <div className={s.unicornArmorGleam} />
+
+            {/* Decal Marks: RX-0 UNICORN / PSYCHO-FRAME */}
+            <div className={s.unicornDecals}>
+              <span className={s.uDecalLeft}>RX-0</span>
+              <span className={s.uDecalRight}>AWAKENED</span>
+            </div>
+          </div>
+
+          {/* Layer 4: Flanking Armed Armor DE / Shield & Beam Gatling Arrays (Left & Right) */}
+          <div className={s.unicornShieldsWrap}>
+            {/* Left Full Armor Shield */}
+            <div className={`${s.unicornShield} ${s.shieldLeft}`}>
+              <svg viewBox="0 0 50 64" className={s.unicornShieldSvg} fill="none">
+                <defs>
+                  <linearGradient id="unicornWhiteGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#FFFFFF" />
+                    <stop offset="60%" stopColor="#F1F5F9" />
+                    <stop offset="100%" stopColor="#CBD5E1" />
+                  </linearGradient>
+                  <linearGradient id="psychoGreenGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stopColor="#E6FFF2" />
+                    <stop offset="30%" stopColor="#00FF88" />
+                    <stop offset="70%" stopColor="#00E676" />
+                    <stop offset="100%" stopColor="#00B050" />
+                  </linearGradient>
+                </defs>
+                {/* Full Armor Armed Armor DE Silhouette */}
+                <polygon points="46,6 16,14 0,36 18,58 46,48" fill="url(#unicornWhiteGrad)" stroke="#E2E8F0" strokeWidth="1" />
+                <polygon points="40,12 20,18 8,34 20,50 40,44" fill="#0F172A" stroke="#334155" strokeWidth="0.8" />
+                {/* Exposed Cross-Shaped Psycho-Frame Core */}
+                <polygon points="34,16 26,22 14,34 26,44 34,38" fill="url(#psychoGreenGrad)" className={s.psychoSvgPulse} />
+                <line x1="20" y1="24" x2="30" y2="40" stroke="#FFFFFF" strokeWidth="1.2" opacity="0.95" />
+                {/* Beam Gatling Barrel Tips */}
+                <rect x="2" y="38" width="6" height="14" rx="1" fill="#1E293B" stroke="#64748B" strokeWidth="0.5" />
+                <rect x="10" y="44" width="6" height="14" rx="1" fill="#1E293B" stroke="#64748B" strokeWidth="0.5" />
+              </svg>
+            </div>
+
+            {/* Right Full Armor Shield */}
+            <div className={`${s.unicornShield} ${s.shieldRight}`}>
+              <svg viewBox="0 0 50 64" className={s.unicornShieldSvg} fill="none">
+                {/* Full Armor Armed Armor DE Silhouette */}
+                <polygon points="4,6 34,14 50,36 32,58 4,48" fill="url(#unicornWhiteGrad)" stroke="#E2E8F0" strokeWidth="1" />
+                <polygon points="10,12 30,18 42,34 30,50 10,44" fill="#0F172A" stroke="#334155" strokeWidth="0.8" />
+                {/* Exposed Cross-Shaped Psycho-Frame Core */}
+                <polygon points="16,16 24,22 36,34 24,44 16,38" fill="url(#psychoGreenGrad)" className={s.psychoSvgPulse} />
+                <line x1="30" y1="24" x2="20" y2="40" stroke="#FFFFFF" strokeWidth="1.2" opacity="0.95" />
+                {/* Beam Gatling Barrel Tips */}
+                <rect x="42" y="38" width="6" height="14" rx="1" fill="#1E293B" stroke="#64748B" strokeWidth="0.5" />
+                <rect x="34" y="44" width="6" height="14" rx="1" fill="#1E293B" stroke="#64748B" strokeWidth="0.5" />
+              </svg>
+            </div>
+          </div>
+
+          {/* Layer 5: Đỉnh khung (Fully Opened Destroy Mode Golden V-Fin & Psycho-Frame Head Crest) */}
+          <div className={s.unicornHeadCrest}>
+            <svg viewBox="0 0 120 54" className={s.unicornHeadSvg} fill="none">
+              <defs>
+                <linearGradient id="unicornVFinGold" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#FFF9A6" />
+                  <stop offset="40%" stopColor="#FFD700" />
+                  <stop offset="85%" stopColor="#F59E0B" />
+                  <stop offset="100%" stopColor="#B45309" />
+                </linearGradient>
+                <filter id="psychoGreenGlow" x="-30%" y="-30%" width="160%" height="160%">
+                  <feGaussianBlur stdDeviation="2.5" result="blur" />
+                  <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                </filter>
+              </defs>
+
+              {/* Fully Split V-Fin in Destroy Mode (Wide Sharp Golden Horns) */}
+              <polygon points="60,30 96,2 88,18 64,32" fill="url(#unicornVFinGold)" stroke="#FFE066" strokeWidth="1" />
+              <polygon points="60,30 24,2 32,18 56,32" fill="url(#unicornVFinGold)" stroke="#FFE066" strokeWidth="1" />
+              
+              {/* Inner V-Fin Golden Prisms */}
+              <polygon points="60,30 82,10 76,18 62,32" fill="#FFF275" stroke="#FFD700" strokeWidth="0.6" />
+              <polygon points="60,30 38,10 44,18 58,32" fill="#FFF275" stroke="#FFD700" strokeWidth="0.6" />
+
+              {/* Central White Forehead Armor Crest */}
+              <polygon points="54,44 56,22 60,18 64,22 66,44 60,40" fill="url(#unicornWhiteGrad)" stroke="#E2E8F0" strokeWidth="0.8" />
+
+              {/* Central Glowing Green Psycho-Frame Forehead & Eye Visor */}
+              <polygon
+                points="56,32 60,26 64,32 60,36"
+                fill="url(#psychoGreenGrad)"
+                filter="url(#psychoGreenGlow)"
+                className={s.psychoSvgPulse}
+              />
+              <rect
+                x="56"
+                y="36"
+                width="8"
+                height="3"
+                rx="0.8"
+                fill="#00FF88"
+                filter="url(#psychoGreenGlow)"
+                className={s.psychoSvgPulse}
+              />
+            </svg>
+          </div>
+
+          {/* Layer 6: Đáy khung (Lower Waist Armor / Armed Armor Plaque) */}
+          <div className={s.unicornBottomPlaque}>
+            <svg viewBox="0 0 120 32" className={s.unicornBottomSvg} fill="none">
+              {/* Angular White Armor Plaque */}
+              <polygon
+                points="20,4 100,4 110,22 60,30 10,22"
+                fill="#0F172A"
+                stroke="#E2E8F0"
+                strokeWidth="1.4"
+              />
+              {/* Exposed Green Psycho-Frame Chevron Channel */}
+              <polygon
+                points="24,8 96,8 104,18 60,26 16,18"
+                fill="url(#psychoGreenGrad)"
+                className={s.psychoSvgPulse}
+              />
+              <polygon
+                points="28,10 92,10 98,16 60,22 22,16"
+                fill="#FFFFFF"
+                stroke="#CBD5E1"
+                strokeWidth="0.6"
+              />
+              
+              {/* Central Text: UNICORN */}
+              <text
+                x="60"
+                y="17"
+                textAnchor="middle"
+                fontSize="6"
+                fontFamily="'1FTV-VIP-Festigan', 'Courier New', monospace"
+                fontWeight="900"
+                fill="#0F172A"
+                letterSpacing="1.2"
+              >
+                UNICORN
+              </text>
+            </svg>
+          </div>
+        </div>
+      )}
+
       {/* ── Standard Frames ── */}
+
 
 
 
