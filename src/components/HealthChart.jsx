@@ -109,37 +109,52 @@ export default function HealthChart({ userId, markedDates: markedDatesProp = nul
 
       {/* Cycle Length Chart */}
       <div className={s.chartBlock}>
-        <h3 className={s.chartTitle}>Độ dài chu kỳ ({cycleData.length || 0} chu kỳ gần nhất)</h3>
+        <h3 className={s.chartTitle}>
+          <span>📊</span> Độ dài chu kỳ ({cycleData.length || 0} chu kỳ gần nhất)
+        </h3>
         <div className={s.chartContainer}>
           {cycleData.length > 0 ? (
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={cycleData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+            <ResponsiveContainer width="100%" height={210}>
+              <BarChart data={cycleData} margin={{ top: 15, right: 15, left: -20, bottom: 0 }} maxBarSize={48}>
+                <defs>
+                  <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#FF8FAB" stopOpacity={1} />
+                    <stop offset="100%" stopColor="#FFC8DD" stopOpacity={0.85} />
+                  </linearGradient>
+                </defs>
                 <XAxis dataKey="month" tick={{ fill: '#889BA6', fontSize: 12, fontFamily: 'monospace' }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fill: '#889BA6', fontSize: 12 }} axisLine={false} tickLine={false} />
-                <Tooltip cursor={{ fill: '#FFF0F5' }} content={<CustomTooltip />} />
-                <Bar dataKey="length" fill="#FFB7C5" radius={[4, 4, 0, 0]} />
+                <YAxis tick={{ fill: '#889BA6', fontSize: 12 }} axisLine={false} tickLine={false} domain={[0, 'dataMax + 5']} />
+                <Tooltip cursor={{ fill: 'rgba(255, 183, 197, 0.15)' }} content={<CustomTooltip />} />
+                <Bar dataKey="length" fill="url(#barGradient)" stroke="#FF5E7E" strokeWidth={1.5} radius={[6, 6, 0, 0]} barSize={36} />
               </BarChart>
             </ResponsiveContainer>
           ) : (
-            <p style={{ padding: 16, color: '#889BA6', textAlign: 'center', fontSize: 14 }}>Chưa đủ dữ liệu chu kỳ. Hãy nhập thêm các ngày đèn đỏ!</p>
+            <div className={s.emptyStateWrap}>
+              <span className={s.emptyStateIcon}>📅</span>
+              <p className={s.emptyStateText}>Chưa đủ dữ liệu chu kỳ</p>
+              <p className={s.emptyStateSub}>Hãy đánh dấu thêm các ngày đèn đỏ 🍓 trên lịch để hệ thống tự động tính toán biểu đồ!</p>
+            </div>
           )}
         </div>
       </div>
 
       {/* Symptoms Pie Chart */}
       <div className={s.chartBlock}>
-        <h3 className={s.chartTitle}>Tần suất triệu chứng</h3>
+        <h3 className={s.chartTitle}>
+          <span>📝</span> Tần suất triệu chứng &amp; Sức khỏe
+        </h3>
         <div className={s.chartContainer}>
           {symptomData.length > 0 ? (
-            <ResponsiveContainer width="100%" height={220}>
+            <ResponsiveContainer width="100%" height={230}>
               <PieChart>
                 <Pie
                   data={symptomData}
-                  innerRadius={60}
-                  outerRadius={80}
-                  paddingAngle={5}
+                  innerRadius={55}
+                  outerRadius={78}
+                  paddingAngle={4}
                   dataKey="value"
-                  stroke="none"
+                  stroke="#FFF"
+                  strokeWidth={2}
                 >
                   {symptomData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
@@ -151,12 +166,16 @@ export default function HealthChart({ userId, markedDates: markedDatesProp = nul
                   align="right"
                   layout="vertical"
                   iconType="circle"
-                  wrapperStyle={{ fontSize: '12px', color: '#685D61' }}
+                  wrapperStyle={{ fontSize: '11px', color: '#685D61', maxHeight: '180px', overflowY: 'auto' }}
                 />
               </PieChart>
             </ResponsiveContainer>
           ) : (
-            <p style={{ padding: 16, color: '#889BA6', textAlign: 'center', fontSize: 14 }}>Chưa ghi nhận triệu chứng nào. Hãy thêm dữ liệu hàng ngày!</p>
+            <div className={s.emptyStateWrap}>
+              <span className={s.emptyStateIcon}>🌸</span>
+              <p className={s.emptyStateText}>Chưa có ghi chép triệu chứng</p>
+              <p className={s.emptyStateSub}>Khi có dữ liệu triệu chứng (lượng máu, tâm trạng, đau bụng...), biểu đồ tròn phân tích sẽ tự động hiển thị tại đây.</p>
+            </div>
           )}
         </div>
       </div>
@@ -164,4 +183,5 @@ export default function HealthChart({ userId, markedDates: markedDatesProp = nul
     </div>
   )
 }
+
 
