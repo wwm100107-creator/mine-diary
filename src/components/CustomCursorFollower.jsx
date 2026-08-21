@@ -500,11 +500,24 @@ function CustomCursorFollower({ user, cursorTheme }) {
           </div>
         )}
 
-        {/* 🪶 12. Wing Zero Custom (Angelic Halo Glow) */}
+        {/* 🪶 12. Wing Zero Custom (Angelic Halo Glow & Pure White Mini Feather) */}
         {activeTheme === 'wing_zero_ew' && (
           <div className={s.wingZeroAngelHaloTrail}>
             <div className={s.angelHaloRing} />
-            <span className={`${s.haloFeatherSpark} ${s.hfs1}`}>🪶</span>
+            <div className={`${s.haloFeatherSpark} ${s.hfs1}`}>
+              <svg viewBox="0 0 20 30" className={s.haloWhiteFeatherSvg} fill="none">
+                <path
+                  d="M 10 0 C 18 8, 20 20, 10 30 C 0 20, 2 8, 10 0 Z"
+                  fill="rgba(255,255,255,0.95)"
+                  stroke="#93C5FD"
+                  strokeWidth="0.8"
+                />
+                <line x1="10" y1="2" x2="10" y2="28" stroke="#38BDF8" strokeWidth="0.8" />
+                <path d="M 10 9 L 16 13 M 10 15 L 17 19 M 10 21 L 15 25" stroke="#BAE6FD" strokeWidth="0.5" />
+                <path d="M 10 9 L 4 13 M 10 15 L 3 19 M 10 21 L 5 25" stroke="#BAE6FD" strokeWidth="0.5" />
+              </svg>
+            </div>
+            <span className={s.haloGlintSpark}>✦</span>
           </div>
         )}
 
