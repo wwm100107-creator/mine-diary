@@ -6,22 +6,10 @@
 /* ── Google Fonts ── */
 @import url('https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@400;600;700&family=Dancing+Script:wght@400;500;600;700&family=Caveat:wght@400;500;700&display=swap');
 
-/* ── 1FTV VIP Festigan (local font — đặt file vào assets/fonts/) ── */
-/* Thay đường dẫn src nếu bạn có file font thật */
-@font-face {
-  font-family: 'Festigan';
-  src: url('../assets/fonts/1FTV-VIP-Festigan.woff2') format('woff2'),
-       url('../assets/fonts/1FTV-VIP-Festigan.woff')  format('woff'),
-       url('../assets/fonts/1FTV-VIP-Festigan.ttf')   format('truetype');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-/* Fallback stack khi chưa có file font Festigan */
+/* Fallback font stack */
 :root {
-  --font-pixel:    'Festigan', 'Bangers', 'Impact', cursive;
-  --font-diary:    'Festigan', 'Dancing Script', 'Caveat', cursive;
+  --font-pixel:    'Bangers', 'Impact', cursive;
+  --font-diary:    'Dancing Script', 'Caveat', cursive;
   --font-ui:       'Nunito', system-ui, -apple-system, sans-serif;
 
   --font-size-xs:  10px;

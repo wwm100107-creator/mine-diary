@@ -16,15 +16,17 @@ if (typeof window !== 'undefined') {
   })
 }
 
-// ── PWA & Web Push: Register background service worker ──
+// ── PWA & Web Push: Register background service worker after load ──
 if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/firebase-messaging-sw.js', { scope: '/' })
-    .then((reg) => {
-      console.log('[PWA] Push Service Worker active with scope:', reg.scope)
-    })
-    .catch((err) => {
-      console.warn('[PWA] Service Worker registration warning:', err)
-    })
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/firebase-messaging-sw.js', { scope: '/' })
+      .then((reg) => {
+        console.log('[PWA] Push Service Worker active with scope:', reg.scope)
+      })
+      .catch((err) => {
+        console.warn('[PWA] Service Worker registration warning:', err)
+      })
+  })
 }
 
 // ── Anti-FOUC: Synchronously apply saved theme before React mounts ──
