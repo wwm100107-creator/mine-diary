@@ -139,13 +139,54 @@ function ClickBurstsLayer({ bursts }) {
             </div>
           )}
 
-          {/* 🪶 12. Wing Zero Custom: 3 Falling Mechanical Feathers */}
+          {/* 🪶 12. Wing Zero Custom: Pure White Mechanical Angel Feathers & Zero System Glint */}
           {b.theme === 'wing_zero_ew' && (
             <div className={s.burstWingZero}>
               <div className={s.angelFeatherFlash} />
-              <span className={`${s.dropFeather} ${s.df1}`}>🪶</span>
-              <span className={`${s.dropFeather} ${s.df2}`}>🪶</span>
-              <span className={`${s.dropFeather} ${s.df3}`}>🪶</span>
+              <div className={s.zeroSystemGreenOrb} />
+              
+              {/* 5 Falling Pure White Mechanical Feathers (SVG Vector Matching Avatar Frame) */}
+              <div className={`${s.wzFeatherItem} ${s.wzf1}`}>
+                <svg viewBox="0 0 20 30" className={s.wzFeatherSvg} fill="none">
+                  <path d="M 10 0 C 18 8, 20 20, 10 30 C 0 20, 2 8, 10 0 Z" fill="rgba(255,255,255,0.95)" stroke="#93C5FD" strokeWidth="0.8" />
+                  <line x1="10" y1="2" x2="10" y2="28" stroke="#38BDF8" strokeWidth="0.8" />
+                  <path d="M 10 9 L 16 13 M 10 15 L 17 19 M 10 21 L 15 25" stroke="#BAE6FD" strokeWidth="0.5" />
+                  <path d="M 10 9 L 4 13 M 10 15 L 3 19 M 10 21 L 5 25" stroke="#BAE6FD" strokeWidth="0.5" />
+                </svg>
+              </div>
+              <div className={`${s.wzFeatherItem} ${s.wzf2}`}>
+                <svg viewBox="0 0 20 30" className={s.wzFeatherSvg} fill="none">
+                  <path d="M 10 0 C 18 8, 20 20, 10 30 C 0 20, 2 8, 10 0 Z" fill="rgba(255,255,255,0.95)" stroke="#93C5FD" strokeWidth="0.8" />
+                  <line x1="10" y1="2" x2="10" y2="28" stroke="#38BDF8" strokeWidth="0.8" />
+                  <path d="M 10 9 L 16 13 M 10 15 L 17 19 M 10 21 L 15 25" stroke="#BAE6FD" strokeWidth="0.5" />
+                  <path d="M 10 9 L 4 13 M 10 15 L 3 19 M 10 21 L 5 25" stroke="#BAE6FD" strokeWidth="0.5" />
+                </svg>
+              </div>
+              <div className={`${s.wzFeatherItem} ${s.wzf3}`}>
+                <svg viewBox="0 0 20 30" className={s.wzFeatherSvg} fill="none">
+                  <path d="M 10 0 C 18 8, 20 20, 10 30 C 0 20, 2 8, 10 0 Z" fill="rgba(255,255,255,0.95)" stroke="#93C5FD" strokeWidth="0.8" />
+                  <line x1="10" y1="2" x2="10" y2="28" stroke="#38BDF8" strokeWidth="0.8" />
+                  <path d="M 10 9 L 16 13 M 10 15 L 17 19 M 10 21 L 15 25" stroke="#BAE6FD" strokeWidth="0.5" />
+                  <path d="M 10 9 L 4 13 M 10 15 L 3 19 M 10 21 L 5 25" stroke="#BAE6FD" strokeWidth="0.5" />
+                </svg>
+              </div>
+              <div className={`${s.wzFeatherItem} ${s.wzf4}`}>
+                <svg viewBox="0 0 20 30" className={s.wzFeatherSvg} fill="none">
+                  <path d="M 10 0 C 18 8, 20 20, 10 30 C 0 20, 2 8, 10 0 Z" fill="rgba(255,255,255,0.9)" stroke="#93C5FD" strokeWidth="0.75" />
+                  <line x1="10" y1="2" x2="10" y2="28" stroke="#38BDF8" strokeWidth="0.75" />
+                </svg>
+              </div>
+              <div className={`${s.wzFeatherItem} ${s.wzf5}`}>
+                <svg viewBox="0 0 20 30" className={s.wzFeatherSvg} fill="none">
+                  <path d="M 10 0 C 18 8, 20 20, 10 30 C 0 20, 2 8, 10 0 Z" fill="rgba(255,255,255,0.9)" stroke="#93C5FD" strokeWidth="0.75" />
+                  <line x1="10" y1="2" x2="10" y2="28" stroke="#38BDF8" strokeWidth="0.75" />
+                </svg>
+              </div>
+
+              {/* Sparkle Glints */}
+              <span className={`${s.wzSparkle} ${s.wzs1}`}>✦</span>
+              <span className={`${s.wzSparkle} ${s.wzs2}`}>✧</span>
+              <span className={`${s.wzSparkle} ${s.wzs3}`}>✦</span>
             </div>
           )}
 

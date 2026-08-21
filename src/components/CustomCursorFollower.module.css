@@ -1322,46 +1322,152 @@
 }
 
 /* =======================================================
-   12. 🪶 WING ZERO CUSTOM: Falling Mechanical Feathers
+   12. 🪶 WING ZERO CUSTOM: Falling White Mechanical Feathers & Zero System Flash
    ======================================================= */
 .burstWingZero {
   position: absolute;
   top: 0;
   left: 0;
+  pointer-events: none;
 }
 
 .angelFeatherFlash {
   position: absolute;
-  top: -18px;
-  left: -18px;
-  width: 36px;
-  height: 36px;
+  top: -24px;
+  left: -24px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
-  background: radial-gradient(circle, #FFFFFF 20%, #60A5FA 60%, transparent 80%);
-  animation: featherFlashAnim 0.5s ease-out forwards;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.95) 15%, rgba(56, 189, 248, 0.6) 45%, rgba(30, 64, 175, 0.2) 70%, transparent 85%);
+  box-shadow: 0 0 20px #38BDF8, 0 0 35px #60A5FA;
+  animation: angelHaloShockwave 0.55s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
 }
 
-@keyframes featherFlashAnim {
+@keyframes angelHaloShockwave {
   0% { transform: scale(0.2); opacity: 1; }
-  100% { transform: scale(2.2); opacity: 0; }
+  60% { transform: scale(2.0); opacity: 0.8; }
+  100% { transform: scale(3.0); opacity: 0; }
 }
 
-.dropFeather {
+.zeroSystemGreenOrb {
   position: absolute;
-  font-size: 18px;
-  filter: drop-shadow(0 0 6px #60A5FA);
-  animation: dropFeatherFall 0.85s cubic-bezier(0.2, 0.8, 0.3, 1) forwards;
-  will-change: transform, opacity;
+  top: -6px;
+  left: -6px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #10B981;
+  box-shadow: 0 0 12px #34D399, 0 0 20px #059669;
+  animation: zeroOrbPop 0.45s ease-out forwards;
 }
 
-.df1 { --wfx: -20px; --wfy: 32px; --wfr: 45deg; animation-delay: 0s; }
-.df2 { --wfx: 20px; --wfy: 36px; --wfr: -45deg; animation-delay: 0.08s; }
-.df3 { --wfx: 0px; --wfy: 42px; --wfr: 15deg; animation-delay: 0.15s; font-size: 22px; }
+@keyframes zeroOrbPop {
+  0% { transform: scale(0.3); opacity: 1; }
+  50% { transform: scale(1.6); opacity: 1; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
 
-@keyframes dropFeatherFall {
-  0% { transform: translate(0, 0) scale(0.6) rotate(0deg); opacity: 1; }
-  50% { transform: translate(calc(var(--wfx) * 0.5), calc(var(--wfy) * 0.4)) scale(1.2) rotate(var(--wfr)); opacity: 0.9; }
-  100% { transform: translate(var(--wfx), var(--wfy)) scale(0.9) rotate(calc(var(--wfr) * 2)); opacity: 0; }
+.wzFeatherItem {
+  position: absolute;
+  top: -12px;
+  left: -8px;
+  width: 18px;
+  height: 26px;
+  filter: drop-shadow(0 2px 6px rgba(56, 189, 248, 0.65)) drop-shadow(0 0 10px rgba(255, 255, 255, 0.8));
+  will-change: transform, opacity;
+  animation: wzFeatherDrift 0.9s cubic-bezier(0.2, 0.8, 0.3, 1) forwards;
+  pointer-events: none;
+}
+
+.wzFeatherSvg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* 5 individual trajectory variants for realistic fluttering */
+.wzf1 {
+  --wfx: -28px;
+  --wfy: 38px;
+  --wfr: 35deg;
+  animation-delay: 0s;
+  width: 18px;
+  height: 27px;
+}
+
+.wzf2 {
+  --wfx: 28px;
+  --wfy: 42px;
+  --wfr: -40deg;
+  animation-delay: 0.06s;
+  width: 19px;
+  height: 28px;
+}
+
+.wzf3 {
+  --wfx: 2px;
+  --wfy: 50px;
+  --wfr: 18deg;
+  animation-delay: 0.12s;
+  width: 22px;
+  height: 32px;
+}
+
+.wzf4 {
+  --wfx: -42px;
+  --wfy: 48px;
+  --wfr: -55deg;
+  animation-delay: 0.08s;
+  width: 14px;
+  height: 20px;
+}
+
+.wzf5 {
+  --wfx: 44px;
+  --wfy: 52px;
+  --wfr: 50deg;
+  animation-delay: 0.15s;
+  width: 14px;
+  height: 20px;
+}
+
+@keyframes wzFeatherDrift {
+  0% {
+    transform: translate(0, 0) scale(0.4) rotate(0deg);
+    opacity: 1;
+  }
+  35% {
+    transform: translate(calc(var(--wfx) * 0.45), calc(var(--wfy) * 0.35 - 8px)) scale(1.15) rotate(var(--wfr));
+    opacity: 0.95;
+  }
+  70% {
+    transform: translate(calc(var(--wfx) * 0.8), calc(var(--wfy) * 0.7)) scale(1.0) rotate(calc(var(--wfr) * 1.5));
+    opacity: 0.75;
+  }
+  100% {
+    transform: translate(var(--wfx), var(--wfy)) scale(0.85) rotate(calc(var(--wfr) * 2));
+    opacity: 0;
+  }
+}
+
+/* Angel Sparkle particles */
+.wzSparkle {
+  position: absolute;
+  font-size: 11px;
+  color: #FFFFFF;
+  text-shadow: 0 0 6px #38BDF8, 0 0 12px #93C5FD;
+  pointer-events: none;
+  animation: wzSparkleFly 0.7s ease-out forwards;
+}
+
+.wzs1 { --spx: -24px; --spy: -16px; animation-delay: 0s; }
+.wzs2 { --spx: 26px; --spy: -14px; animation-delay: 0.08s; }
+.wzs3 { --spx: 0px; --spy: -26px; animation-delay: 0.14s; font-size: 13px; color: #34D399; }
+
+@keyframes wzSparkleFly {
+  0% { transform: translate(0, 0) scale(0.3); opacity: 1; }
+  50% { transform: translate(var(--spx), var(--spy)) scale(1.2); opacity: 1; }
+  100% { transform: translate(calc(var(--spx) * 1.4), calc(var(--spy) * 1.4)) scale(0.4); opacity: 0; }
 }
 
 /* =======================================================
