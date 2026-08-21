@@ -5,7 +5,7 @@
 
 import {
   collection, doc, getDoc, getDocs, updateDoc, setDoc, deleteDoc,
-  serverTimestamp, Timestamp, orderBy, query, where,
+  serverTimestamp, Timestamp, orderBy, query, where, onSnapshot,
 } from 'firebase/firestore'
 import { db } from './firebase'
 import { VIP_TIERS } from '../utils/vipTiers'
@@ -64,6 +64,48 @@ export async function fetchAllUsers() {
       banUntilDate: d.data().banUntil?.toDate ? d.data().banUntil.toDate() : (d.data().banUntil ? new Date(d.data().banUntil) : null),
       appealDate: d.data().appeal?.submittedAt?.toDate ? d.data().appeal.submittedAt.toDate() : null,
     }))
+  }
+}
+
+/**
+ * 2.1 Real-time live listener for all accounts
+ */
+export function subscribeToAllUsers(callback, onError) {
+  try {
+    const q = query(collection(db, 'users'), orderBy('createdAt', 'desc'))
+    return onSnapshot(
+      q,
+      (snap) => {
+        const users = snap.docs.map((d) => ({
+          id: d.id,
+          ...d.data(),
+          createdAtDate: d.data().createdAt?.toDate ? d.data().createdAt.toDate() : null,
+          banUntilDate: d.data().banUntil?.toDate ? d.data().banUntil.toDate() : (d.data().banUntil ? new Date(d.data().banUntil) : null),
+          appealDate: d.data().appeal?.submittedAt?.toDate ? d.data().appeal.submittedAt.toDate() : null,
+        }))
+        callback(users)
+      },
+      (err) => {
+        console.warn('subscribeToAllUsers ordered query fallback:', err)
+        return onSnapshot(
+          collection(db, 'users'),
+          (snap) => {
+            const users = snap.docs.map((d) => ({
+              id: d.id,
+              ...d.data(),
+              createdAtDate: d.data().createdAt?.toDate ? d.data().createdAt.toDate() : null,
+              banUntilDate: d.data().banUntil?.toDate ? d.data().banUntil.toDate() : (d.data().banUntil ? new Date(d.data().banUntil) : null),
+              appealDate: d.data().appeal?.submittedAt?.toDate ? d.data().appeal.submittedAt.toDate() : null,
+            }))
+            callback(users)
+          },
+          onError
+        )
+      }
+    )
+  } catch (err) {
+    if (onError) onError(err)
+    return () => {}
   }
 }
 

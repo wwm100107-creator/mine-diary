@@ -4,6 +4,7 @@ import {
   isUserAdmin,
   isProtectedUser,
   fetchAllUsers,
+  subscribeToAllUsers,
   banUser,
   unbanUser,
   approveBanAppeal,
@@ -102,10 +103,21 @@ export default function AdminDashboard({ user, onUpdateUser, onBack }) {
     }
   }
 
+  // Real-time live synchronization of all app accounts
   useEffect(() => {
-    if (isAdmin) {
-      loadData()
-    }
+    if (!isAdmin) return
+    setLoading(true)
+    const unsub = subscribeToAllUsers(
+      (data) => {
+        setUsers(data)
+        setLoading(false)
+      },
+      (err) => {
+        console.error('Realtime users subscription fallback to loadData:', err)
+        loadData()
+      }
+    )
+    return () => unsub?.()
   }, [isAdmin])
 
   // Metrics computation
@@ -502,10 +514,15 @@ export default function AdminDashboard({ user, onUpdateUser, onBack }) {
             ) : (
               filteredUsers.map((u) => (
                 <tr key={u.id} className={s.userRow}>
-                  {/* Column 1: Avatar (Centered) */}
+                  {/* Column 1: Avatar (Centered with Dynamic Frame) */}
                   <td className={s.colAvatar}>
                     <div className={s.avatarWrapper}>
-                      <PixelAvatar avatarId={u.avatar || 'bunny'} size={36} />
+                      <PixelAvatar
+                        avatarId={u.avatar || 'bunny'}
+                        frameId={u.avatarFrame || u.frame || (u.vipTier === 'god' ? 'god_cosmic' : u.vipTier === 'sssvip' ? 'vip10_thunder' : u.vipTier === 'ssvip' ? 'vip9_frost' : u.vipTier === 'svip' ? 'vip8_fire' : 'none')}
+                        size={36}
+                        border={false}
+                      />
                     </div>
                   </td>
 
@@ -731,7 +748,12 @@ export default function AdminDashboard({ user, onUpdateUser, onBack }) {
 
             {/* Target user preview */}
             <div className={s.targetUserBox}>
-              <PixelAvatar avatarId={detailModalUser.avatar || 'bunny'} size={44} />
+              <PixelAvatar
+                avatarId={detailModalUser.avatar || 'bunny'}
+                frameId={detailModalUser.avatarFrame || detailModalUser.frame || (detailModalUser.vipTier === 'god' ? 'god_cosmic' : detailModalUser.vipTier === 'sssvip' ? 'vip10_thunder' : detailModalUser.vipTier === 'ssvip' ? 'vip9_frost' : detailModalUser.vipTier === 'svip' ? 'vip8_fire' : 'none')}
+                size={48}
+                border={false}
+              />
               <div>
                 <strong style={{ fontSize: 14, color: 'var(--color-ink)' }}>
                   {detailModalUser.displayName || detailModalUser.id}
@@ -751,6 +773,30 @@ export default function AdminDashboard({ user, onUpdateUser, onBack }) {
               <div className={s.detailRow}>
                 <span className={s.detailKey}>Email Liên Kết:</span>
                 <span className={s.detailVal}>{detailModalUser.email || 'Chưa thiết lập'}</span>
+              </div>
+              <div className={s.detailRow}>
+                <span className={s.detailKey}>Giới Tính:</span>
+                <span className={s.detailVal}>
+                  {detailModalUser.gender === 'male' ? '👦 Nam' : detailModalUser.gender === 'female' ? '👧 Nữ' : 'Chưa thiết lập'}
+                </span>
+              </div>
+              <div className={s.detailRow}>
+                <span className={s.detailKey}>Khung Avatar:</span>
+                <span className={s.detailVal}>
+                  {detailModalUser.avatarFrame || detailModalUser.frame || 'Mặc định'}
+                </span>
+              </div>
+              <div className={s.detailRow}>
+                <span className={s.detailKey}>Chuỗi Điểm Danh:</span>
+                <span className={s.detailVal}>
+                  🔥 {detailModalUser.attendanceStreak || detailModalUser.streak || 0} ngày
+                </span>
+              </div>
+              <div className={s.detailRow}>
+                <span className={s.detailKey}>Chia Sẻ Chu Kỳ:</span>
+                <span className={s.detailVal}>
+                  {detailModalUser.isCycleShared ? '🟢 Đang kết nối cặp đôi' : '🔒 Riêng tư'}
+                </span>
               </div>
               <div className={s.detailRow}>
                 <span className={s.detailKey}>Ngày Đăng Ký:</span>
