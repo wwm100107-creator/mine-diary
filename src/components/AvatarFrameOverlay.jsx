@@ -3,9 +3,9 @@ import s from './AvatarFrameOverlay.module.css'
 
 export const FRAME_COLLECTIONS = [
   { id: 'all', name: '✨ Tất Cả', icon: '✨', desc: 'Duyệt tất cả các khung avatar' },
-  { id: 'vip', name: '👑 Chủ Đề VIP', icon: '👑', desc: 'Bộ sưu tập Hoàng Gia & Độc Quyền: GOD, SSSVIP, SSVIP, SVIP, Hào Quang Lửa' },
+  { id: 'vip', name: '👑 Chủ Đề VIP', icon: '👑', desc: 'Bộ sưu tập Hoàng Gia & Độc Quyền: GOD, SSSVIP, SSVIP, SVIP' },
   { id: 'mecha', name: '🤖 Cơ Khí & Mecha', icon: '🤖', desc: 'Bộ sưu tập Mobile Suit & Chiến Giáp: Sazabi ver.Ka, Cyber Mech...' },
-  { id: 'fantasy', name: '🌿 Phép Thuật & Kỳ Ảo', icon: '🌿', desc: 'Bộ sưu tập Thần Thoại: Hoàng Gia Lục Bảo, Sakura Hearts...' },
+  { id: 'fantasy', name: '🌿 Phép Thuật & Kỳ Ảo', icon: '🌿', desc: 'Bộ sưu tập Thần Thoại: Hào Quang Lửa, Hoàng Gia Lục Bảo, Sakura Hearts...' },
   { id: 'classic', name: '🎨 Cổ Điển & Dễ Thương', icon: '🌸', desc: 'Bộ sưu tập Pixel Retro: Cầu Vồng, Ngôi Sao Lấp Lánh...' },
 ]
 
@@ -17,7 +17,6 @@ export const AVATAR_FRAMES = [
   { id: 'vip10_thunder', name: '⚡ SSSVIP Song Long', icon: '⚡', category: 'vip', desc: 'SSSVIP Song Long Lôi Thần — Đầu rồng phong lôi, sấm sét liên tục & điện quang chớp giật' },
   { id: 'vip9_frost', name: '❄️ SSVIP Cánh Băng', icon: '❄️', category: 'vip', desc: 'SSVIP Thiên Thần Băng Tuyết — Cánh thiên thần bạch kim & sương băng huyền ảo' },
   { id: 'vip8_fire', name: '🔥 SVIP Thánh Hỏa', icon: '🔥', category: 'vip', desc: 'SVIP Cánh thiên thần trắng, vương miện hoàng gia & hào quang lửa' },
-  { id: 'cyber_aura', name: '⚡ Hào Quang Lửa', icon: '✨', category: 'vip', desc: 'Lửa vàng & điện quang chớp giật' },
 
   // ── 🤖 BỘ SƯU TẬP CƠ KHÍ & MECHA (GUNDAM & MECHA) ──
   { id: 'sazabi_verka', name: '🔴 Sazabi ver.Ka', icon: '🤖', category: 'mecha', desc: 'MSN-04 Sazabi ver.Ka — Giáp đỏ Crimson Neo Zeon, mắt Mono-eye radar quét liên tục, giáp vai Funnel & động cơ phản lực nhiệt hạch' },
@@ -28,6 +27,7 @@ export const AVATAR_FRAMES = [
 
 
   // ── 🌿 BỘ SƯU TẬP PHÉP THUẬT & KỲ ẢO (FANTASY & MAGIC) ──
+  { id: 'cyber_aura', name: '⚡ Hào Quang Lửa', icon: '🔥', category: 'fantasy', desc: 'Lửa vàng & điện quang chớp giật' },
   { id: 'emerald_royal', name: '🌿 Hoàng Gia Lục Bảo', icon: '💎', category: 'fantasy', desc: 'Emerald Royal & Elven Magic — Hào quang ngọc bích, viền vàng ánh kim, vương miện ngọc thạch & dải băng hoàng gia Elven' },
   { id: 'sakura_hearts', name: '🌸 Trái Tim & Sakura', icon: '🌸', category: 'fantasy', desc: 'Hoa anh đào & tim hồng nhịp đập' },
 
