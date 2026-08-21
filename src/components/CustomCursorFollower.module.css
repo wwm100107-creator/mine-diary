@@ -1,0 +1,257 @@
+/* ============================================
+   CUSTOM CURSOR FOLLOWER & THEME POINTERS
+   ============================================ */
+
+.cursorRoot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 999999;
+  overflow: hidden;
+}
+
+/* 1. Trailing Follower Ring */
+.followerRing {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  pointer-events: none;
+  transition: width 0.18s ease-out, height 0.18s ease-out, background 0.18s ease-out, border-color 0.18s ease-out, opacity 0.18s ease-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  will-change: transform;
+}
+
+.ringHover {
+  width: 44px;
+  height: 44px;
+  transform-origin: center center;
+}
+
+.ringClick {
+  width: 24px;
+  height: 24px;
+  transform-origin: center center;
+}
+
+/* 2. Instant Sharp Core Pointer */
+.pointerCore {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  pointer-events: none;
+  transition: transform 0.1s ease-out, opacity 0.15s ease-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  will-change: transform;
+}
+
+.coreHover {
+  transform: scale(1.35);
+}
+
+.coreClick {
+  transform: scale(0.7);
+}
+
+/* ── DEFAULT THEME (Cute Pixel Diamond & Soft Pink Halo) ── */
+.default {
+  border: 1.5px solid rgba(255, 143, 171, 0.75);
+  box-shadow: 0 0 10px rgba(255, 143, 171, 0.4);
+  background: rgba(255, 208, 227, 0.15);
+}
+
+.core_default {
+  background: #FF5E7E;
+  box-shadow: 0 0 6px #FF5E7E;
+}
+
+/* ── 🌌 GOD NỮ THẦN ── */
+.god_cosmic {
+  border: 1.5px solid #FF0055;
+  box-shadow: 0 0 12px #FF0055, 0 0 20px #00F2FE;
+  background: radial-gradient(circle, rgba(255, 215, 0, 0.2) 0%, rgba(255, 0, 85, 0.1) 100%);
+  animation: godCursorAura 2s infinite linear;
+}
+
+@keyframes godCursorAura {
+  0% { border-color: #FF0055; box-shadow: 0 0 10px #FF0055, 0 0 20px #FFE600; }
+  33% { border-color: #FFE600; box-shadow: 0 0 10px #FFE600, 0 0 20px #00FF66; }
+  66% { border-color: #00F2FE; box-shadow: 0 0 10px #00F2FE, 0 0 20px #B000FF; }
+  100% { border-color: #FF0055; box-shadow: 0 0 10px #FF0055, 0 0 20px #FFE600; }
+}
+
+.core_god_cosmic {
+  width: 14px;
+  height: 14px;
+  color: #FFF275;
+  font-size: 14px;
+  line-height: 1;
+  text-shadow: 0 0 6px #FFE600, 0 0 12px #FF0055;
+}
+
+/* ── 🔴 MSN-04 SAZABI VER.KA ── */
+.sazabi_verka {
+  border: 1.5px solid #FF1E27;
+  box-shadow: 0 0 10px rgba(255, 30, 39, 0.7), inset 0 0 6px rgba(255, 30, 39, 0.3);
+  background: rgba(17, 17, 20, 0.2);
+  border-radius: 4px;
+}
+
+.mechaReticleRing {
+  position: absolute;
+  inset: -4px;
+  border: 1px dashed rgba(255, 215, 0, 0.6);
+  animation: reticleSpin 6s infinite linear;
+}
+
+@keyframes reticleSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.core_sazabi_verka {
+  background: transparent;
+}
+
+.sazabiMonoEyeDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #00FF66;
+  box-shadow: 0 0 6px #00FF66, 0 0 12px #00FF88;
+}
+
+/* ── 🌈 GUNDAM CALIBARN ── */
+.gundam_calibarn {
+  border: 1.5px solid #FFFFFF;
+  box-shadow: 0 0 12px rgba(0, 242, 254, 0.8), 0 0 20px rgba(176, 0, 255, 0.5);
+  background: rgba(255, 255, 255, 0.1);
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+}
+
+.permetRing {
+  position: absolute;
+  inset: 2px;
+  background: linear-gradient(135deg, #FF0055, #FFE600, #00FF66, #00F2FE, #B000FF);
+  opacity: 0.45;
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  animation: permetCursorFlow 2s infinite linear;
+}
+
+@keyframes permetCursorFlow {
+  0% { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(360deg); }
+}
+
+.core_gundam_calibarn {
+  background: transparent;
+}
+
+.calibarnCoreDiamond {
+  width: 7px;
+  height: 7px;
+  background: #00F5D4;
+  box-shadow: 0 0 6px #00F5D4, 0 0 12px #FFFFFF;
+  transform: rotate(45deg);
+}
+
+/* ── 🦄 FULL ARMOR UNICORN (AWAKENED) ── */
+.unicorn_awakened {
+  border: 1.5px solid #00FF88;
+  box-shadow: 0 0 14px rgba(0, 255, 136, 0.8), inset 0 0 8px rgba(0, 255, 136, 0.4);
+  background: rgba(255, 255, 255, 0.15);
+  animation: psychoCursorPulse 2s infinite alternate ease-in-out;
+}
+
+@keyframes psychoCursorPulse {
+  0% { transform: scale(0.95); box-shadow: 0 0 8px #00FF88; }
+  100% { transform: scale(1.08); box-shadow: 0 0 20px #00FFA3, 0 0 30px #00E676; }
+}
+
+.core_unicorn_awakened {
+  background: transparent;
+}
+
+.unicornCoreV {
+  width: 6px;
+  height: 6px;
+  background: #FFD700;
+  box-shadow: 0 0 6px #FFD700, 0 0 10px #00FF88;
+  clip-path: polygon(50% 0%, 100% 100%, 50% 75%, 0% 100%);
+}
+
+/* ── 🪶 WING ZERO CUSTOM ── */
+.wing_zero_ew {
+  border: 1.5px solid #3B82F6;
+  box-shadow: 0 0 12px rgba(59, 130, 246, 0.7), 0 0 20px rgba(255, 255, 255, 0.6);
+  background: rgba(11, 37, 89, 0.15);
+}
+
+.core_wing_zero_ew {
+  background: transparent;
+}
+
+.wingZeroCoreOrb {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #E6FFF2 0%, #00FF88 45%, #00A859 100%);
+  box-shadow: 0 0 6px #00FF88, 0 0 12px #3B82F6;
+}
+
+/* ── 🌿 HOÀNG GIA LỤC BẢO (EMERALD ROYAL) ── */
+.emerald_royal {
+  border: 1.5px solid #FFD700;
+  box-shadow: 0 0 12px #00FFA3, inset 0 0 6px rgba(0, 201, 136, 0.4);
+  background: rgba(2, 44, 34, 0.2);
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+}
+
+.core_emerald_royal {
+  background: transparent;
+}
+
+.emeraldCoreGem {
+  width: 7px;
+  height: 7px;
+  background: #00F5D4;
+  box-shadow: 0 0 6px #00FFA3, 0 0 12px #FFD700;
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+}
+
+/* ── ⚡ SSSVIP SONG LONG & SVIP THÁNH HỎA ── */
+.vip10_thunder {
+  border: 1.5px solid #00FFFF;
+  box-shadow: 0 0 12px #00FFFF, 0 0 20px #9900FF;
+  background: rgba(0, 242, 254, 0.12);
+}
+
+.vip8_fire, .cyber_aura {
+  border: 1.5px solid #FF5500;
+  box-shadow: 0 0 12px #FF3300, 0 0 20px #FFCC00;
+  background: rgba(255, 69, 0, 0.15);
+}
+
+.vip9_frost {
+  border: 1.5px solid #E0F2FE;
+  box-shadow: 0 0 12px #38BDF8, 0 0 20px #BAE6FD;
+  background: rgba(56, 189, 248, 0.12);
+}
+
+.sakura_hearts {
+  border: 1.5px solid #FF8FAB;
+  box-shadow: 0 0 10px #FF5E7E, 0 0 18px #FFD0E3;
+  background: rgba(255, 143, 171, 0.15);
+}

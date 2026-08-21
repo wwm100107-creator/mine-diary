@@ -25,8 +25,10 @@ import { applyTheme, getSavedTheme } from './utils/theme'
 import { playCuteTing } from './utils/sound'
 import { useSharedCycleStatus } from './hooks/useSharedCycleStatus'
 import { useDynamicFavicon } from './hooks/useDynamicFavicon'
+import CustomCursorFollower from './components/CustomCursorFollower'
 import { requestNotificationPermission } from './lib/push'
 import s from './App.module.css'
+
 
 
 export default function App() {
@@ -724,6 +726,10 @@ export default function App() {
           }}
         />
       )}
+
+      {/* Global Custom Mouse Follower (Syncs with user's Avatar Frame & Mecha Themes) */}
+      <CustomCursorFollower user={user} />
     </div>
   )
 }
+
