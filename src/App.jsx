@@ -16,17 +16,18 @@ import AvatarWithFrame from './components/AvatarWithFrame'
 import AvatarUploadModal from './components/AvatarUploadModal'
 import AttendanceModal from './components/AttendanceModal'
 import NotificationPermissionModal from './components/NotificationPermissionModal'
-import { upsertUser, getUser, uploadUserAvatar, subscribeToUserRelationships, subscribeToUserChats } from './lib/social'
+import { upsertUser, getUser, uploadUserAvatar, subscribeToUserRelationships, subscribeToUserChats, syncUserCycleData } from './lib/social'
 import { isUserAdmin } from './lib/admin'
 import { getCurrentUser, saveSession, logoutUser, verifyBanStatus } from './lib/auth'
 import { canCheckInToday } from './lib/attendance'
-import { loadMarkedDates, predictNextPeriod, toDateStr } from './utils/cycle'
+import { loadMarkedDates, predictNextPeriod, toDateStr, getCustomTrayIcons, loadAllUserSymptoms, loadAllDayIcons } from './utils/cycle'
 import { applyTheme, getSavedTheme } from './utils/theme'
 import { playCuteTing } from './utils/sound'
 import { useSharedCycleStatus } from './hooks/useSharedCycleStatus'
 import { useDynamicFavicon } from './hooks/useDynamicFavicon'
 import { requestNotificationPermission } from './lib/push'
 import s from './App.module.css'
+
 
 export default function App() {
   // Session initialization
@@ -92,6 +93,32 @@ export default function App() {
       }
     }
   }, [user?.id])
+
+  // ── Auto-sync Female Cycle & Symptoms to Firestore on boot & updates ──
+  useEffect(() => {
+    if (!user?.id || user?.gender === 'male') return
+
+    const sync = () => {
+      try {
+        const markedDates = loadMarkedDates(user.id)
+        const customIcons = getCustomTrayIcons(user.id)
+        const symptoms = loadAllUserSymptoms(user.id)
+        const dayIconMap = loadAllDayIcons(user.id)
+        syncUserCycleData(user.id, {
+          markedDates,
+          customIcons,
+          symptoms,
+          dayIconMap,
+        })
+      } catch (err) {
+        console.warn('Error auto-syncing cycle data:', err)
+      }
+    }
+    sync()
+    window.addEventListener('minediary:cycle_updated', sync)
+    return () => window.removeEventListener('minediary:cycle_updated', sync)
+  }, [user?.id, user?.gender])
+
 
   // ── Compute Allowed Navigation Tabs based on Gender & Real-time Cycle Sharing ──
   const isFemale = user?.gender === 'female' || !user?.gender

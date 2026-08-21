@@ -7,11 +7,28 @@ import s from './HealthChart.module.css'
 import { loadMarkedDates, loadAllUserSymptoms, predictNextPeriod } from '../utils/cycle'
 
 const SYMPTOM_COLORS = {
+  // Physical
   cramps:   { label: 'Đau bụng',  color: '#FF8FAB' },
   fatigue:  { label: 'Mệt mỏi',  color: '#CDB4DB' },
   acne:     { label: 'Nổi mụn',  color: '#FFC8DD' },
   headache: { label: 'Đau đầu',  color: '#BDE0FE' },
   backache: { label: 'Đau lưng', color: '#B5EAD7' },
+  // Flow
+  light:    { label: 'Kinh ít',   color: '#A0C4FF' },
+  medium:   { label: 'Kinh vừa',  color: '#FFB7C5' },
+  heavy:    { label: 'Kinh nhiều', color: '#FF6B6B' },
+  // Mood
+  happy:     { label: 'Vui vẻ',   color: '#FFF275' },
+  sad:       { label: 'Buồn bã',  color: '#9BF6FF' },
+  angry:     { label: 'Cáu gắt',  color: '#FF70A6' },
+  sensitive: { label: 'Nhạy cảm', color: '#FFD6A5' },
+  // Advanced AI
+  dry:       { label: 'Dịch khô', color: '#E2ECE9' },
+  sticky:    { label: 'Dịch dính', color: '#DFE7FD' },
+  creamy:    { label: 'Dịch kem', color: '#FDE2E4' },
+  eggwhite:  { label: 'Lòng trắng trứng', color: '#FFD166' },
+  positive:  { label: 'LH (+)',  color: '#06D6A0' },
+  peak:      { label: 'LH Peak', color: '#EF476F' },
 }
 
 const CustomTooltip = ({ active, payload }) => {
@@ -47,15 +64,33 @@ export default function HealthChart({ userId, markedDates: markedDatesProp = nul
     })
   }, [userId, markedDatesProp])
 
-  // ── Compute symptom frequency from REAL data (Firestore prop or localStorage) ──
+  // ── Compute symptom & health log frequency from REAL data (Firestore prop or localStorage) ──
   const symptomData = useMemo(() => {
     // Partner view: symptomsProp is { [dateStr]: { physical: [], ... } } from Firestore
     const logs = symptomsProp !== null ? symptomsProp : loadAllUserSymptoms(userId)
     const counts = {}
-    for (const entry of Object.values(logs)) {
-      if (!Array.isArray(entry?.physical)) continue
-      for (const sym of entry.physical) {
-        counts[sym] = (counts[sym] || 0) + 1
+    for (const entry of Object.values(logs || {})) {
+      if (!entry) continue
+      // 1. Physical symptoms
+      if (Array.isArray(entry.physical)) {
+        for (const sym of entry.physical) {
+          if (sym) counts[sym] = (counts[sym] || 0) + 1
+        }
+      }
+      // 2. Flow
+      if (entry.flow) {
+        counts[entry.flow] = (counts[entry.flow] || 0) + 1
+      }
+      // 3. Mood
+      if (entry.mood) {
+        counts[entry.mood] = (counts[entry.mood] || 0) + 1
+      }
+      // 4. Mucus & LH
+      if (entry.discharge) {
+        counts[entry.discharge] = (counts[entry.discharge] || 0) + 1
+      }
+      if (entry.lhTest && entry.lhTest !== 'negative') {
+        counts[entry.lhTest] = (counts[entry.lhTest] || 0) + 1
       }
     }
     return Object.entries(counts)
@@ -66,6 +101,7 @@ export default function HealthChart({ userId, markedDates: markedDatesProp = nul
       }))
       .sort((a, b) => b.value - a.value)
   }, [userId, symptomsProp])
+
 
 
   return (
