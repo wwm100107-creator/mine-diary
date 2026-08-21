@@ -31,6 +31,7 @@ export default function PixelAvatar({
     height: numericSize,
     flexShrink: 0,
     overflow: 'visible',
+    zIndex: 10,
     ...style,
   }
 
@@ -52,8 +53,11 @@ export default function PixelAvatar({
           justifyContent: 'center',
           padding: isCustomImage ? 0 : Math.max(2, Math.floor(numericSize * 0.08)),
           overflow: 'hidden',
+          position: 'relative',
+          zIndex: 1,
         }}
       >
+
         {isCustomImage ? (
           <img
             src={avatarId}

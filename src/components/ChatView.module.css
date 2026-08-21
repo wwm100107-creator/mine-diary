@@ -528,7 +528,7 @@
   min-height: 36px;
   flex-shrink: 0;
   overflow: visible;
-  z-index: 2;
+  z-index: 30;
 }
 
 .avatarSlot.wideSlot {
@@ -538,12 +538,13 @@
 
 .relLinkWrap {
   position: relative;
-  z-index: 35; /* Always prominently float above avatar frame wings, dragons, and auras */
+  z-index: 35;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
 }
+
 
 .relLinkCenterBtn {
   background: rgba(255, 255, 255, 0.96);
