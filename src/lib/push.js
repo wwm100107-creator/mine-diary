@@ -9,7 +9,22 @@ import { getToken, onMessage } from 'firebase/messaging'
 import { doc, getDoc, updateDoc, serverTimestamp } from 'firebase/firestore'
 import { db, firebaseConfig, getFirebaseMessaging } from './firebase'
 
-const VAPID_KEY = import.meta.env.VITE_FIREBASE_VAPID_KEY || ''
+let cachedVapidKey = import.meta.env.VITE_FIREBASE_VAPID_KEY || ''
+
+/**
+ * Dynamically resolve Web Push VAPID key from Firestore or environment
+ */
+export async function getVapidKey() {
+  if (cachedVapidKey) return cachedVapidKey
+  try {
+    const snap = await getDoc(doc(db, 'system_settings', 'push_config'))
+    if (snap.exists() && snap.data().vapidKey) {
+      cachedVapidKey = snap.data().vapidKey.trim()
+      return cachedVapidKey
+    }
+  } catch (e) {}
+  return ''
+}
 
 /**
  * Check if Web Push is supported on the current platform
@@ -61,13 +76,14 @@ export async function requestPushPermission(user) {
     await navigator.serviceWorker.ready
 
     let finalToken = null
+    const vapid = await getVapidKey()
 
     // 3. Attempt FCM Token registration
     const messaging = await getFirebaseMessaging()
     if (messaging) {
       const tokenOptions = { serviceWorkerRegistration: registration }
-      if (VAPID_KEY) {
-        tokenOptions.vapidKey = VAPID_KEY
+      if (vapid) {
+        tokenOptions.vapidKey = vapid
       }
       try {
         finalToken = await getToken(messaging, tokenOptions)
@@ -78,11 +94,11 @@ export async function requestPushPermission(user) {
 
     // 4. Fallback to native PushManager subscription if FCM token unavailable
     let rawSubscription = null
-    if (!finalToken && registration.pushManager && VAPID_KEY) {
+    if (!finalToken && registration.pushManager && vapid) {
       try {
         const sub = await registration.pushManager.subscribe({
           userVisibleOnly: true,
-          applicationServerKey: VAPID_KEY,
+          applicationServerKey: vapid,
         })
         if (sub) {
           rawSubscription = sub.toJSON()
