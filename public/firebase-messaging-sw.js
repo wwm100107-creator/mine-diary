@@ -40,11 +40,12 @@ try {
         badge: '/favicon.svg',
         tag: payload.data?.tag || 'minediary-push',
         renotify: true,
+        silent: false,
         data: {
           url: payload.data?.url || payload.fcmOptions?.link || '/#chat',
           ...payload.data,
         },
-        vibrate: [200, 100, 200],
+        vibrate: [200, 100, 200, 100, 250, 100, 300],
       }
       self.registration.showNotification(title, options)
     })
@@ -64,8 +65,9 @@ self.addEventListener('push', (event) => {
     badge: '/favicon.svg',
     tag: 'minediary-push',
     renotify: true,
+    silent: false,
     data: { url: '/#chat' },
-    vibrate: [200, 100, 200],
+    vibrate: [200, 100, 200, 100, 250, 100, 300],
   }
 
   try {

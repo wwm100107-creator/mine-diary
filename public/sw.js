@@ -14,8 +14,9 @@ try {
       badge: '/favicon.svg',
       tag: 'minediary-push',
       renotify: true,
+      silent: false,
       data: { url: '/#chat' },
-      vibrate: [200, 100, 200],
+      vibrate: [200, 100, 200, 100, 250, 100, 300],
     }
     event.waitUntil(self.registration.showNotification(title, options))
   })

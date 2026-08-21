@@ -1,0 +1,307 @@
+/* src/components/IosInstallBottomSheet.module.css */
+/* Cute Pixel Glass Bottom Sheet for iOS Safari Add to Home Screen Onboarding */
+
+.sheetContainer {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  pointer-events: none;
+  animation: fadeIn 0.25s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.sheetBackdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(45, 27, 34, 0.4);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  pointer-events: auto;
+}
+
+.sheetCard {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+  background: rgba(255, 250, 252, 0.96);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 3px solid #FF8FAB;
+  border-left: 2px solid #FFCCD7;
+  border-right: 2px solid #FFCCD7;
+  border-bottom: none;
+  border-top-left-radius: 28px;
+  border-top-right-radius: 28px;
+  box-shadow: 0 -12px 36px rgba(255, 143, 171, 0.35),
+              0 -4px 16px rgba(0, 0, 0, 0.08);
+  padding: 16px 20px 24px;
+  box-sizing: border-box;
+  pointer-events: auto;
+  animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.topBarIndicator {
+  width: 44px;
+  height: 5px;
+  background: #FFB7C5;
+  border-radius: 999px;
+  margin: 0 auto 12px;
+}
+
+.closeBtn {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #FFEBF0;
+  border: 1px solid #FFCCD7;
+  color: #8C737C;
+  font-size: 14px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.closeBtn:hover {
+  background: #FFCCD7;
+  color: #5C4B51;
+}
+
+.contentWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Header Row with Mascot */
+.headerRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.mascotBadge {
+  position: relative;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #FFF0F5 0%, #FFE4EC 100%);
+  border: 2px solid #FF8FAB;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(255, 143, 171, 0.3);
+  flex-shrink: 0;
+}
+
+.mascotEmoji {
+  font-size: 26px;
+  animation: mascotWiggle 2s infinite ease-in-out;
+}
+
+@keyframes mascotWiggle {
+  0%, 100% { transform: rotate(0); }
+  25% { transform: rotate(-8deg); }
+  75% { transform: rotate(8deg); }
+}
+
+.sparkleBadge {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  font-size: 14px;
+}
+
+.headerText {
+  flex: 1;
+  padding-right: 28px;
+}
+
+.title {
+  font-family: var(--font-pixel, monospace);
+  font-size: 15px;
+  color: #FF5E7E;
+  margin: 0 0 4px;
+  letter-spacing: 0.02em;
+}
+
+.subtitle {
+  font-family: var(--font-ui, sans-serif);
+  font-size: 12px;
+  line-height: 1.45;
+  color: #5C4B51;
+  margin: 0;
+}
+
+/* 2-Step Grid */
+.stepsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.stepCard {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #FFFFFF;
+  border: 1.5px solid #FFD6E0;
+  border-radius: 16px;
+  padding: 10px 12px;
+  box-shadow: 0 2px 8px rgba(255, 143, 171, 0.12);
+}
+
+.stepNumberBadge {
+  position: absolute;
+  top: -6px;
+  left: 10px;
+  background: #FF5E7E;
+  color: #FFFFFF;
+  font-family: var(--font-pixel, monospace);
+  font-size: 10px;
+  font-weight: bold;
+  padding: 1px 6px;
+  border-radius: 999px;
+  box-shadow: 0 2px 4px rgba(255, 94, 126, 0.3);
+}
+
+.stepIconBox {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: #FFF0F5;
+  border: 1px solid #FFB7C5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.safariShareIcon {
+  width: 20px;
+  height: 20px;
+  stroke: #007AFF;
+  animation: pulseShare 2s infinite ease-in-out;
+}
+
+@keyframes pulseShare {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+.addPlusEmoji {
+  font-size: 18px;
+}
+
+.stepInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: left;
+}
+
+.stepAction {
+  font-family: var(--font-ui, sans-serif);
+  font-size: 11.5px;
+  color: #2D1B22;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.stepAction strong {
+  color: #FF5E7E;
+}
+
+.stepHint {
+  font-size: 10px;
+  color: #8C737C;
+}
+
+/* Bottom Action Row */
+.bottomRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 4px;
+}
+
+.pointingArrowWrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  color: #FF5E7E;
+  font-weight: 600;
+}
+
+.bounceArrow {
+  font-size: 18px;
+  animation: arrowBounce 1s infinite alternate ease-in-out;
+}
+
+@keyframes arrowBounce {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(5px); }
+}
+
+.arrowText {
+  font-size: 11px;
+}
+
+.gotItBtn {
+  background: linear-gradient(135deg, #FF8FAB 0%, #FF5E7E 100%);
+  border: none;
+  border-radius: 12px;
+  color: #FFFFFF;
+  padding: 10px 18px;
+  font-family: var(--font-pixel, monospace);
+  font-size: 11.5px;
+  font-weight: bold;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(255, 94, 126, 0.4);
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.gotItBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255, 94, 126, 0.5);
+}
+
+.gotItBtn:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 420px) {
+  .stepsGrid {
+    grid-template-columns: 1fr;
+  }
+  .headerText {
+    padding-right: 20px;
+  }
+}

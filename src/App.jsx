@@ -25,6 +25,8 @@ import { applyTheme, getSavedTheme } from './utils/theme'
 import { playCuteTing } from './utils/sound'
 import { useSharedCycleStatus } from './hooks/useSharedCycleStatus'
 import { useDynamicFavicon } from './hooks/useDynamicFavicon'
+import { usePwaInstallState } from './hooks/usePwaInstallState'
+import IosInstallBottomSheet from './components/IosInstallBottomSheet'
 import CustomCursorFollower from './components/CustomCursorFollower'
 import { requestNotificationPermission } from './lib/push'
 import s from './App.module.css'
@@ -36,6 +38,9 @@ export default function App() {
   const [user, setUser] = useState(() => getCurrentUser())
   const isAdmin = isUserAdmin(user)
 
+  // ── PWA & Web Push Detection ──
+  const { isIOS, isStandalone, permission } = usePwaInstallState()
+
   // ── Dynamic Animated Favicon (Wolf for Admin, Bunny/Bear for Users, Split for Guest) ──
   useDynamicFavicon(user)
 
@@ -43,18 +48,29 @@ export default function App() {
   const [isNotifModalOpen, setIsNotifModalOpen] = useState(false)
   const hasAutoOpenedAttendanceRef = useRef(false)
 
-  // Cute Prompt for Push Notification Permission if not yet decided
+  // Cute Prompt for Push Notification Permission:
+  // 1. If in Standalone mode (Added to Home Screen) and permission !== 'granted' -> Prioritize prompt
+  // 2. Or if regular browser with default permission and not dismissed
   useEffect(() => {
     if (typeof window !== 'undefined' && user?.id && 'Notification' in window) {
       const dismissed = sessionStorage.getItem('minediary:dismiss_notif_modal')
+      
+      // If user launched from Home Screen (Standalone), prompt quickly
+      if (isStandalone && Notification.permission !== 'granted') {
+        const timer = setTimeout(() => {
+          setIsNotifModalOpen(true)
+        }, 800)
+        return () => clearTimeout(timer)
+      }
+
       if (Notification.permission === 'default' && !dismissed) {
         const timer = setTimeout(() => {
           setIsNotifModalOpen(true)
-        }, 1500)
+        }, 1800)
         return () => clearTimeout(timer)
       }
     }
-  }, [user?.id])
+  }, [user?.id, isStandalone])
 
   // Auto-prompt attendance modal on first boot/login if today is unclaimed (Regular Users only)
   useEffect(() => {
@@ -726,6 +742,9 @@ export default function App() {
           }}
         />
       )}
+
+      {/* iOS Safari Add to Home Screen Onboarding Bottom Sheet */}
+      <IosInstallBottomSheet isIOS={isIOS} isStandalone={isStandalone} />
 
       {/* Global Custom Mouse Follower (Syncs with user's Avatar Frame & Mecha Themes) */}
       <CustomCursorFollower user={user} />
