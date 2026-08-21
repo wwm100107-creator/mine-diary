@@ -3,25 +3,26 @@
    ============================================ */
 
 .cursorRoot {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  pointer-events: none;
-  z-index: 999999;
-  overflow: hidden;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  pointer-events: none !important;
+  z-index: 999999 !important;
+  overflow: hidden !important;
+  transition: opacity 0.15s ease-out;
 }
 
 /* 1. Trailing Follower Ring */
 .followerRing {
-  position: absolute;
-  top: 0;
-  left: 0;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  pointer-events: none;
+  pointer-events: none !important;
   transition: width 0.18s ease-out, height 0.18s ease-out, background 0.18s ease-out, border-color 0.18s ease-out, opacity 0.18s ease-out;
   display: flex;
   align-items: center;
@@ -43,18 +44,19 @@
 
 /* 2. Instant Sharp Core Pointer */
 .pointerCore {
-  position: absolute;
-  top: 0;
-  left: 0;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
   width: 20px;
   height: 20px;
-  pointer-events: none;
+  pointer-events: none !important;
   transition: transform 0.1s ease-out, opacity 0.15s ease-out;
   display: flex;
   align-items: center;
   justify-content: center;
   will-change: transform;
 }
+
 
 .coreHover {
   transform: scale(1.35) !important;
@@ -817,12 +819,13 @@
    CLICK BURST PARTICLES (SPAWNED ON MOUSEDOWN)
    ======================================================= */
 .clickBurstWrap {
-  position: absolute;
-  top: 0;
-  left: 0;
-  pointer-events: none;
-  z-index: 1000000;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  pointer-events: none !important;
+  z-index: 1000000 !important;
 }
+
 
 /* 🌈 1. Rainbow Pixel Burst */
 .burstRainbow {

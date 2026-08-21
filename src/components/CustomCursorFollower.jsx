@@ -1,56 +1,148 @@
-import React, { memo, useEffect, useState, useCallback } from 'react'
-import { useMousePosition } from '../hooks/useMousePosition'
+import React, { memo, useEffect, useState, useRef, useCallback } from 'react'
+import { createPortal } from 'react-dom'
 import s from './CustomCursorFollower.module.css'
 
 function CustomCursorFollower({ user, cursorTheme }) {
-  const mouse = useMousePosition()
   const activeTheme = cursorTheme || user?.avatarFrame || user?.frame || 'default'
+  
+  const [isFinePointer, setIsFinePointer] = useState(false)
+  const [isHovering, setIsHovering] = useState(false)
+  const [isClicking, setIsClicking] = useState(false)
   const [bursts, setBursts] = useState([])
 
-  // Hide native cursor on desktop body when custom cursor is active
+  const rootRef = useRef(null)
+  const ringRef = useRef(null)
+  const coreRef = useRef(null)
+
+  const posRef = useRef({
+    targetX: -100,
+    targetY: -100,
+    lerpX: -100,
+    lerpY: -100,
+    isVisible: false,
+  })
+
+  // Detect pointer: fine and toggle body cursor: none
   useEffect(() => {
-    if (mouse.isFinePointer) {
+    if (typeof window === 'undefined') return
+    const fine = window.matchMedia('(pointer: fine)').matches
+    setIsFinePointer(fine)
+
+    if (fine) {
       document.body.classList.add('has-custom-cursor')
     }
     return () => {
       document.body.classList.remove('has-custom-cursor')
     }
-  }, [mouse.isFinePointer])
+  }, [])
 
-  // Spawn click burst at exact click position
-  const handleGlobalMouseDown = useCallback((e) => {
-    if (!window.matchMedia('(pointer: fine)').matches) return
-    const id = Date.now() + Math.random()
-    const newBurst = {
-      id,
-      x: e.clientX,
-      y: e.clientY,
-      theme: activeTheme,
-    }
-    setBursts((prev) => [...prev.slice(-8), newBurst])
-
-    setTimeout(() => {
-      setBursts((prev) => prev.filter((b) => b.id !== id))
-    }, 1000)
-  }, [activeTheme])
-
+  // Mouse move, click, and hover tracking with high-performance rAF lerp
   useEffect(() => {
-    window.addEventListener('mousedown', handleGlobalMouseDown, { passive: true })
-    return () => window.removeEventListener('mousedown', handleGlobalMouseDown)
-  }, [handleGlobalMouseDown])
+    if (!isFinePointer) return
 
-  if (!mouse.isFinePointer || !mouse.visible) return null
+    let rafId = null
 
-  const { x, y, rawX, rawY, clicking, hovering } = mouse
+    const handleMouseMove = (e) => {
+      const { clientX, clientY } = e
+      posRef.current.targetX = clientX
+      posRef.current.targetY = clientY
 
-  return (
-    <div className={s.cursorRoot} aria-hidden="true">
+      if (!posRef.current.isVisible) {
+        posRef.current.isVisible = true
+        posRef.current.lerpX = clientX
+        posRef.current.lerpY = clientY
+        if (rootRef.current) {
+          rootRef.current.style.opacity = '1'
+        }
+      }
+
+      // Instant direct transform for the sharp pointer core
+      if (coreRef.current) {
+        coreRef.current.style.transform = `translate3d(${clientX}px, ${clientY}px, 0) translate(-50%, -50%)`
+      }
+    }
+
+    const handleMouseDown = (e) => {
+      setIsClicking(true)
+      
+      // Spawn click burst at exact coordinates
+      const id = Date.now() + Math.random()
+      const newBurst = {
+        id,
+        x: e.clientX,
+        y: e.clientY,
+        theme: activeTheme,
+      }
+      setBursts((prev) => [...prev.slice(-8), newBurst])
+      setTimeout(() => {
+        setBursts((prev) => prev.filter((b) => b.id !== id))
+      }, 1000)
+    }
+
+    const handleMouseUp = () => {
+      setIsClicking(false)
+    }
+
+    const handleMouseOver = (e) => {
+      const target = e.target
+      const isInteractive = target?.closest(
+        'button, a, input, textarea, select, [role="button"], [tabindex="0"], label, .clickable'
+      )
+      setIsHovering(!!isInteractive)
+    }
+
+    const handleMouseLeave = () => {
+      posRef.current.isVisible = false
+      if (rootRef.current) {
+        rootRef.current.style.opacity = '0'
+      }
+    }
+
+    // High performance rAF loop for smooth trailing ring
+    const loop = () => {
+      if (posRef.current.isVisible) {
+        const { targetX, targetY } = posRef.current
+        posRef.current.lerpX += (targetX - posRef.current.lerpX) * 0.35
+        posRef.current.lerpY += (targetY - posRef.current.lerpY) * 0.35
+
+        if (ringRef.current) {
+          ringRef.current.style.transform = `translate3d(${posRef.current.lerpX}px, ${posRef.current.lerpY}px, 0) translate(-50%, -50%)`
+        }
+      }
+      rafId = requestAnimationFrame(loop)
+    }
+
+    window.addEventListener('mousemove', handleMouseMove, { passive: true })
+    window.addEventListener('mousedown', handleMouseDown, { passive: true })
+    window.addEventListener('mouseup', handleMouseUp, { passive: true })
+    window.addEventListener('mouseover', handleMouseOver, { passive: true })
+    document.addEventListener('mouseleave', handleMouseLeave, { passive: true })
+
+    rafId = requestAnimationFrame(loop)
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove)
+      window.removeEventListener('mousedown', handleMouseDown)
+      window.removeEventListener('mouseup', handleMouseUp)
+      window.removeEventListener('mouseover', handleMouseOver)
+      document.removeEventListener('mouseleave', handleMouseLeave)
+      if (rafId) cancelAnimationFrame(rafId)
+    }
+  }, [isFinePointer, activeTheme])
+
+  if (!isFinePointer || typeof document === 'undefined') return null
+
+  const content = (
+    <div
+      ref={rootRef}
+      className={s.cursorRoot}
+      style={{ opacity: 0 }}
+      aria-hidden="true"
+    >
       {/* 1. Trailing Follower Ring / Theme Halo (Smooth Lerp Position) */}
       <div
-        className={`${s.followerRing} ${s[activeTheme] || s.default} ${hovering ? s.ringHover : ''} ${clicking ? s.ringClick : ''}`}
-        style={{
-          transform: `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%)`,
-        }}
+        ref={ringRef}
+        className={`${s.followerRing} ${s[activeTheme] || s.default} ${isHovering ? s.ringHover : ''} ${isClicking ? s.ringClick : ''}`}
       >
         {/* 🌈 Rainbow Pixel Trail */}
         {activeTheme === 'rainbow' && (
@@ -160,12 +252,10 @@ function CustomCursorFollower({ user, cursorTheme }) {
         )}
       </div>
 
-      {/* 2. Instant Sharp Pointer Dot / Core Reticle (Raw Instant Coordinates) */}
+      {/* 2. Instant Sharp Pointer Core (Direct Hardware Transform) */}
       <div
-        className={`${s.pointerCore} ${s[`core_${activeTheme}`] || s.core_default} ${hovering ? s.coreHover : ''} ${clicking ? s.coreClick : ''}`}
-        style={{
-          transform: `translate3d(${rawX}px, ${rawY}px, 0) translate(-50%, -50%)`,
-        }}
+        ref={coreRef}
+        className={`${s.pointerCore} ${s[`core_${activeTheme}`] || s.core_default} ${isHovering ? s.coreHover : ''} ${isClicking ? s.coreClick : ''}`}
       >
         {/* 🌈 Cầu Vồng Pixel (8-Bit Pixel Arrow) */}
         {activeTheme === 'rainbow' && (
@@ -423,7 +513,7 @@ function CustomCursorFollower({ user, cursorTheme }) {
         )}
       </div>
 
-      {/* 3. Click Burst Particle Effects (Spawned at click coordinates) */}
+      {/* 3. Click Burst Particle Effects (Spawned at exact clientX / clientY) */}
       {bursts.map((b) => (
         <div
           key={b.id}
@@ -597,6 +687,8 @@ function CustomCursorFollower({ user, cursorTheme }) {
       ))}
     </div>
   )
+
+  return createPortal(content, document.body)
 }
 
 export default memo(CustomCursorFollower)
