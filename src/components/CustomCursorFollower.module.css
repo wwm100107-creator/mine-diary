@@ -14,7 +14,7 @@
   transition: opacity 0.15s ease-out;
 }
 
-/* 1. Trailing Follower Ring */
+/* 1. Trailing Follower Ring (Transform ONLY controlled by JS rAF) */
 .followerRing {
   position: fixed !important;
   top: 0 !important;
@@ -23,7 +23,7 @@
   height: 32px;
   border-radius: 50%;
   pointer-events: none !important;
-  transition: width 0.18s ease-out, height 0.18s ease-out, background 0.18s ease-out, border-color 0.18s ease-out, opacity 0.18s ease-out;
+  transition: width 0.18s ease-out, height 0.18s ease-out, background 0.18s ease-out, border-color 0.18s ease-out;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -31,39 +31,27 @@
 }
 
 .ringHover {
-  width: 48px;
-  height: 48px;
-  transform-origin: center center;
+  width: 48px !important;
+  height: 48px !important;
 }
 
 .ringClick {
-  width: 24px;
-  height: 24px;
-  transform-origin: center center;
+  width: 22px !important;
+  height: 22px !important;
 }
 
-/* 2. Instant Sharp Core Pointer */
+/* 2. Instant Sharp Core Pointer (Transform ONLY controlled by JS rAF) */
 .pointerCore {
   position: fixed !important;
   top: 0 !important;
   left: 0 !important;
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   pointer-events: none !important;
-  transition: transform 0.1s ease-out, opacity 0.15s ease-out;
   display: flex;
   align-items: center;
   justify-content: center;
   will-change: transform;
-}
-
-
-.coreHover {
-  transform: scale(1.35) !important;
-}
-
-.coreClick {
-  transform: scale(0.7) !important;
 }
 
 /* ── DEFAULT THEME ── */
@@ -74,11 +62,21 @@
 }
 
 .core_default {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   background: #FF5E7E;
-  box-shadow: 0 0 6px #FF5E7E;
+  box-shadow: 0 0 8px #FF5E7E;
+}
+
+/* Common directional SVG styling */
+.directionalArrowSvg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.45));
+  will-change: transform;
+  pointer-events: none;
 }
 
 /* =======================================================
@@ -125,26 +123,9 @@
 }
 
 .core_rainbow {
-  width: 18px;
-  height: 18px;
+  width: 22px;
+  height: 22px;
 }
-
-.directionalArrowSvg {
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.45));
-  will-change: transform;
-}
-
-.pixelArrowSvg {
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
-  image-rendering: pixelated;
-}
-
 
 /* =======================================================
    2. THEME: 🌸 TRÁI TIM & SAKURA
@@ -157,8 +138,8 @@
 }
 
 @keyframes sakuraPulse {
-  0% { transform: scale(0.95); opacity: 0.8; }
-  100% { transform: scale(1.08); opacity: 1; box-shadow: 0 0 18px #FF5E7E, 0 0 30px #FFB7C5; }
+  0% { opacity: 0.8; box-shadow: 0 0 10px #FF5E7E, 0 0 16px #FFB7C5; }
+  100% { opacity: 1; box-shadow: 0 0 20px #FF5E7E, 0 0 32px #FFB7C5; }
 }
 
 .sakuraMistWrap {
@@ -186,16 +167,8 @@
 }
 
 .core_sakura_hearts {
-  width: 20px;
-  height: 20px;
-  transform: rotate(-15deg);
-}
-
-.sakuraPetalSvg {
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-  filter: drop-shadow(0 2px 6px rgba(255, 94, 126, 0.6));
+  width: 22px;
+  height: 22px;
 }
 
 /* =======================================================
@@ -209,8 +182,8 @@
 }
 
 @keyframes starHaloTwinkle {
-  0% { transform: scale(0.94); box-shadow: 0 0 10px #FFD700; }
-  100% { transform: scale(1.06); box-shadow: 0 0 20px #FFF9A6, 0 0 32px #FF9100; }
+  0% { box-shadow: 0 0 10px #FFD700; }
+  100% { box-shadow: 0 0 22px #FFF9A6, 0 0 36px #FF9100; }
 }
 
 .shootingStarTrail {
@@ -224,12 +197,6 @@
 .core_sparkle_stars {
   width: 22px;
   height: 22px;
-  animation: sparkleStarSpin 8s infinite linear;
-}
-
-@keyframes sparkleStarSpin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
 }
 
 .sparkleStarSvg {
@@ -250,8 +217,8 @@
 }
 
 @keyframes flameAuraBurn {
-  0% { transform: scale(0.95); box-shadow: 0 0 10px #FF3300, 0 0 20px #FF7700; }
-  100% { transform: scale(1.08); box-shadow: 0 0 22px #FF1100, 0 0 35px #FFCC00; }
+  0% { box-shadow: 0 0 10px #FF3300, 0 0 20px #FF7700; }
+  100% { box-shadow: 0 0 24px #FF1100, 0 0 38px #FFCC00; }
 }
 
 .lightningArcTrail {
@@ -263,22 +230,14 @@
 }
 
 @keyframes lightningArcFlicker {
-  0% { opacity: 0.3; transform: rotate(0deg) scale(0.9); }
-  50% { opacity: 1; transform: rotate(180deg) scale(1.1); }
-  100% { opacity: 0.5; transform: rotate(360deg) scale(1); }
+  0% { opacity: 0.3; transform: rotate(0deg); }
+  50% { opacity: 1; transform: rotate(180deg); }
+  100% { opacity: 0.5; transform: rotate(360deg); }
 }
 
 .core_cyber_aura {
-  width: 18px;
+  width: 22px;
   height: 22px;
-  transform: rotate(-10deg);
-}
-
-.flameSparkSvg {
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-  filter: drop-shadow(0 0 6px #FF5500) drop-shadow(0 0 12px #FFEE55);
 }
 
 /* =======================================================
@@ -293,8 +252,8 @@
 }
 
 @keyframes emeraldGemBreathe {
-  0% { transform: scale(0.95); box-shadow: 0 0 10px #00FFA3; }
-  100% { transform: scale(1.08); box-shadow: 0 0 20px #00FFA3, 0 0 32px #FFD700; }
+  0% { box-shadow: 0 0 10px #00FFA3; }
+  100% { box-shadow: 0 0 22px #00FFA3, 0 0 34px #FFD700; }
 }
 
 .fairyDustTrail {
@@ -322,8 +281,8 @@
 }
 
 .core_emerald_royal {
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
 }
 
 .emeraldRhombusSvg {
@@ -344,8 +303,8 @@
 }
 
 @keyframes holyFireFlicker {
-  0% { transform: scale(0.95); box-shadow: 0 0 12px #FF3B30, 0 0 20px #FF9500; }
-  100% { transform: scale(1.1); box-shadow: 0 0 24px #FF1100, 0 0 36px #FFEE55; }
+  0% { box-shadow: 0 0 12px #FF3B30, 0 0 20px #FF9500; }
+  100% { box-shadow: 0 0 24px #FF1100, 0 0 38px #FFEE55; }
 }
 
 .holyFireTrail {
@@ -374,16 +333,8 @@
 }
 
 .core_vip8_fire {
-  width: 22px;
-  height: 22px;
-  transform: rotate(-15deg);
-}
-
-.royalFlameArrowSvg {
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-  filter: drop-shadow(0 0 8px #FF3B30) drop-shadow(0 0 14px #FFD700);
+  width: 24px;
+  height: 24px;
 }
 
 /* =======================================================
@@ -397,8 +348,8 @@
 }
 
 @keyframes frostMistPulse {
-  0% { transform: scale(0.95); opacity: 0.8; }
-  100% { transform: scale(1.08); opacity: 1; box-shadow: 0 0 20px #38BDF8, 0 0 32px #E0F2FE; }
+  0% { opacity: 0.8; box-shadow: 0 0 12px #38BDF8; }
+  100% { opacity: 1; box-shadow: 0 0 22px #38BDF8, 0 0 34px #E0F2FE; }
 }
 
 .frostBreathTrail {
@@ -427,16 +378,8 @@
 }
 
 .core_vip9_frost {
-  width: 22px;
-  height: 22px;
-  transform: rotate(-25deg);
-}
-
-.frostSpearSvg {
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-  filter: drop-shadow(0 0 6px #38BDF8) drop-shadow(0 0 10px #FFFFFF);
+  width: 24px;
+  height: 24px;
 }
 
 /* =======================================================
@@ -450,8 +393,8 @@
 }
 
 @keyframes songLongPulse {
-  0% { transform: scale(0.96); box-shadow: 0 0 12px #00FFFF; }
-  100% { transform: scale(1.08); box-shadow: 0 0 24px #00E5FF, 0 0 38px #9900FF; }
+  0% { box-shadow: 0 0 12px #00FFFF; }
+  100% { box-shadow: 0 0 24px #00E5FF, 0 0 38px #9900FF; }
 }
 
 .dragonTailTrail {
@@ -469,9 +412,9 @@
 }
 
 @keyframes dragonTailTwist {
-  0% { transform: rotate(0deg) scale(0.9); opacity: 0.4; }
-  50% { transform: rotate(180deg) scale(1.15); opacity: 0.9; }
-  100% { transform: rotate(360deg) scale(0.9); opacity: 0.4; }
+  0% { transform: rotate(0deg); opacity: 0.4; }
+  50% { transform: rotate(180deg); opacity: 0.9; }
+  100% { transform: rotate(360deg); opacity: 0.4; }
 }
 
 .dragonLightning {
@@ -487,21 +430,13 @@
 .dl2 { bottom: -8px; left: 0; animation-delay: 0.25s; }
 
 @keyframes dragonLightningFlick {
-  0% { opacity: 0.2; transform: scale(0.8); }
-  100% { opacity: 1; transform: scale(1.3); }
+  0% { opacity: 0.2; }
+  100% { opacity: 1; }
 }
 
 .core_vip10_thunder {
-  width: 24px;
-  height: 24px;
-  transform: rotate(-15deg);
-}
-
-.tealDragonSvg {
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-  filter: drop-shadow(0 0 8px #00FFFF) drop-shadow(0 0 14px #007799);
+  width: 26px;
+  height: 26px;
 }
 
 /* =======================================================
@@ -511,13 +446,12 @@
   border: 1.5px solid #FF0077;
   box-shadow: 0 0 16px #FF0077, 0 0 32px #00F2FE, 0 0 45px #FFE600;
   background: radial-gradient(circle, rgba(255, 0, 119, 0.25) 0%, rgba(176, 0, 255, 0.2) 50%, rgba(0, 242, 254, 0.1) 100%);
-  animation: godCosmicAuraSpin 3s infinite linear;
+  animation: godCosmicGlow 2.4s infinite alternate ease-in-out;
 }
 
-@keyframes godCosmicAuraSpin {
-  0% { transform: rotate(0deg) scale(0.96); box-shadow: 0 0 14px #FF0077, 0 0 28px #FFE600; }
-  50% { transform: rotate(180deg) scale(1.06); box-shadow: 0 0 20px #00F2FE, 0 0 36px #B000FF; }
-  100% { transform: rotate(360deg) scale(0.96); box-shadow: 0 0 14px #FF0077, 0 0 28px #FFE600; }
+@keyframes godCosmicGlow {
+  0% { box-shadow: 0 0 14px #FF0077, 0 0 26px #FFE600; }
+  100% { box-shadow: 0 0 24px #00F2FE, 0 0 40px #B000FF; }
 }
 
 .godGalaxySwirl {
@@ -557,14 +491,8 @@
 }
 
 .core_god_cosmic {
-  width: 24px;
-  height: 24px;
-  animation: godCorePulse 2s infinite alternate ease-in-out;
-}
-
-@keyframes godCorePulse {
-  0% { transform: scale(0.9); }
-  100% { transform: scale(1.15); }
+  width: 26px;
+  height: 26px;
 }
 
 .godNorthStarSvg {
@@ -610,22 +538,14 @@
 .ps4 { bottom: 20%; right: -6px; width: 2px; height: 10px; }
 
 @keyframes permetDashFlow {
-  0% { opacity: 0.3; transform: scaleX(0.7); }
-  50% { opacity: 1; transform: scaleX(1.3); }
-  100% { opacity: 0.3; transform: scaleX(0.7); }
+  0% { opacity: 0.3; }
+  50% { opacity: 1; }
+  100% { opacity: 0.3; }
 }
 
 .core_gundam_calibarn {
   width: 24px;
   height: 24px;
-  transform: rotate(-15deg);
-}
-
-.calibarnCyberArrowSvg {
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-  filter: drop-shadow(0 0 8px #00F2FE) drop-shadow(0 0 12px #FFFFFF);
 }
 
 /* =======================================================
@@ -639,8 +559,8 @@
 }
 
 @keyframes unicornPsychoBreatheCursor {
-  0% { transform: scale(0.94); box-shadow: 0 0 10px #00FF88, 0 0 20px #00FF66; }
-  100% { transform: scale(1.1); box-shadow: 0 0 24px #00FFA3, 0 0 40px #00E676; }
+  0% { box-shadow: 0 0 10px #00FF88, 0 0 20px #00FF66; }
+  100% { box-shadow: 0 0 24px #00FFA3, 0 0 40px #00E676; }
 }
 
 .unicornPsychoBreathingTrail {
@@ -701,8 +621,8 @@
 }
 
 @keyframes wingZeroHaloFloat {
-  0% { transform: scale(0.95); box-shadow: 0 0 12px #2563EB; }
-  100% { transform: scale(1.08); box-shadow: 0 0 22px #60A5FA, 0 0 35px #BAE6FD; }
+  0% { box-shadow: 0 0 12px #2563EB; }
+  100% { box-shadow: 0 0 24px #60A5FA, 0 0 36px #BAE6FD; }
 }
 
 .wingZeroAngelHaloTrail {
@@ -743,14 +663,6 @@
 .core_wing_zero_ew {
   width: 24px;
   height: 24px;
-  transform: rotate(-25deg);
-}
-
-.wingZeroBladeFeatherSvg {
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-  filter: drop-shadow(0 0 8px #60A5FA) drop-shadow(0 0 12px #FFFFFF);
 }
 
 /* =======================================================
@@ -765,8 +677,8 @@
 }
 
 @keyframes sazabiReticlePulse {
-  0% { transform: scale(0.95); box-shadow: 0 0 10px #FF1E27; }
-  100% { transform: scale(1.08); box-shadow: 0 0 20px #FF1E27, 0 0 32px #FFCC00; }
+  0% { box-shadow: 0 0 10px #FF1E27; }
+  100% { box-shadow: 0 0 22px #FF1E27, 0 0 34px #FFCC00; }
 }
 
 .sazabiThrusterJetTrail {
@@ -834,7 +746,6 @@
   pointer-events: none !important;
   z-index: 1000000 !important;
 }
-
 
 /* 🌈 1. Rainbow Pixel Burst */
 .burstRainbow {
