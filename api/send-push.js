@@ -103,10 +103,6 @@ export default async function handler(req, res) {
         body: JSON.stringify({
           message: {
             token,
-            notification: {
-              title: title || 'Mine Diary 🌸',
-              body: body || 'Bạn có tin nhắn mới!',
-            },
             data: stringData,
             android: {
               priority: 'high',
@@ -118,8 +114,10 @@ export default async function handler(req, res) {
               notification: {
                 title: title || 'Mine Diary 🌸',
                 body: body || 'Bạn có tin nhắn mới!',
-                icon: icon || '/icon-192.png',
+                icon: '/icon-192.png',
                 badge: '/badge-72.png',
+                tag: `chat_${data?.partnerId || 'default'}`,
+                renotify: true,
                 vibrate: [200, 100, 200, 100, 250, 100, 300],
               },
               fcm_options: {
