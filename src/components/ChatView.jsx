@@ -593,11 +593,13 @@ export default function ChatView({ user }) {
                       role="button"
                       tabIndex={0}
                     >
-                      <AvatarWithFrame
-                        avatarUrl={partner.avatar || 'bunny'}
-                        frameId={partner.avatarFrame || partner.frame || 'none'}
-                        size={40}
-                      />
+                      <div className={s.chatItemAvatarWrap}>
+                        <AvatarWithFrame
+                          avatarUrl={partner.avatar || 'bunny'}
+                          frameId={partner.avatarFrame || partner.frame || 'none'}
+                          size={38}
+                        />
+                      </div>
                       <div className={s.chatItemContent}>
                         <div className={s.chatItemTop}>
                           <span className={s.chatItemName}>{partner.displayName}</span>
@@ -632,11 +634,13 @@ export default function ChatView({ user }) {
                       role="button"
                       tabIndex={0}
                     >
-                      <AvatarWithFrame
-                        avatarUrl={partner.avatar || 'bunny'}
-                        frameId={partner.avatarFrame || partner.frame || 'none'}
-                        size={40}
-                      />
+                      <div className={s.chatItemAvatarWrap}>
+                        <AvatarWithFrame
+                          avatarUrl={partner.avatar || 'bunny'}
+                          frameId={partner.avatarFrame || partner.frame || 'none'}
+                          size={38}
+                        />
+                      </div>
                       <div className={s.chatItemContent}>
                         <div className={s.chatItemTop}>
                           <span className={s.chatItemName}>{partner.displayName}</span>

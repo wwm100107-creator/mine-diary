@@ -7,13 +7,14 @@
   position: absolute;
   inset: -3px;
   pointer-events: none;
-  z-index: 50;
+  z-index: 999;
   border-radius: inherit;
   overflow: visible;
   display: flex;
   align-items: center;
   justify-content: center;
 }
+
 
 
 /* ============================================
