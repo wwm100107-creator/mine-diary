@@ -47,6 +47,7 @@ export default function PartnerCycleView({ user }) {
     partnerUser,
     prediction,
     markedDates: partnerMarkedDates,
+    symptoms: partnerSymptoms,
     loading,
   } = usePartnerCycleData(user.id, partnerId)
 
@@ -215,10 +216,14 @@ export default function PartnerCycleView({ user }) {
           {/* ── 4. Middle: Fertility Strip ── */}
           <FertilityBar prediction={prediction} />
 
-          {/* ── 5. Bottom: Historical Charts ── */}
+          {/* ── 5. Bottom: Historical Charts (mirroring female's data from Firestore) ── */}
           <div className={s.pixelCard}>
             <h3 className={s.cardTitle}><span>📊</span> Thống Kê & Phân Tích Chu Kỳ</h3>
-            <HealthChart userId={partnerId} />
+            <HealthChart
+              userId={partnerId}
+              markedDates={partnerMarkedDates}
+              symptoms={partnerSymptoms}
+            />
           </div>
         </>
       ) : (

@@ -28,10 +28,13 @@ const CustomTooltip = ({ active, payload }) => {
   return null
 }
 
-export default function HealthChart({ userId }) {
+// markedDates: override localStorage (used for partner view from Firestore)
+// symptoms: override localStorage (used for partner view from Firestore)
+export default function HealthChart({ userId, markedDates: markedDatesProp = null, symptoms: symptomsProp = null }) {
 
   const cycleData = useMemo(() => {
-    const marks = loadMarkedDates(userId)
+    // Use prop override (Firestore) when available, else read localStorage
+    const marks = markedDatesProp !== null ? markedDatesProp : loadMarkedDates(userId)
     const prediction = predictNextPeriod(marks)
     if (!prediction || !prediction.cycles) return []
     const recent = prediction.cycles.slice(-6)
@@ -42,11 +45,12 @@ export default function HealthChart({ userId }) {
         length: c.cycleLength || prediction.cycleLength
       }
     })
-  }, [userId])
+  }, [userId, markedDatesProp])
 
-  // ── Compute symptom frequency from REAL localStorage logs ──
+  // ── Compute symptom frequency from REAL data (Firestore prop or localStorage) ──
   const symptomData = useMemo(() => {
-    const logs = loadAllUserSymptoms(userId)
+    // Partner view: symptomsProp is { [dateStr]: { physical: [], ... } } from Firestore
+    const logs = symptomsProp !== null ? symptomsProp : loadAllUserSymptoms(userId)
     const counts = {}
     for (const entry of Object.values(logs)) {
       if (!Array.isArray(entry?.physical)) continue
@@ -61,7 +65,8 @@ export default function HealthChart({ userId }) {
         color: SYMPTOM_COLORS[id]?.color || '#CDB4DB',
       }))
       .sort((a, b) => b.value - a.value)
-  }, [userId])
+  }, [userId, symptomsProp])
+
 
   return (
     <div className={s.chartWrap}>

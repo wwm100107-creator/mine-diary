@@ -5,7 +5,8 @@ import SymptomCards from './SymptomCards'
 import HealthChart from './HealthChart'
 import FertilityBar from './FertilityBar'
 import AvatarWithFrame from './AvatarWithFrame'
-import { today, loadMarkedDates, getCustomTrayIcons } from '../utils/cycle'
+import { today, loadMarkedDates, getCustomTrayIcons, loadAllUserSymptoms } from '../utils/cycle'
+
 import { useCycleCalendar } from '../hooks/useCycleCalendar'
 import {
   syncUserCycleData,
@@ -77,11 +78,14 @@ export default function HealthView({ user }) {
   useEffect(() => {
     if (!user?.id) return
     const customIcons = getCustomTrayIcons(user.id)
+    const symptoms = loadAllUserSymptoms(user.id)
     syncUserCycleData(user.id, {
       markedDates: allMarks,
       customIcons,
+      symptoms,
     })
   }, [user?.id, allMarks])
+
 
   // 2. Subscribe to relationships to find partner
   useEffect(() => {
