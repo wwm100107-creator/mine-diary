@@ -298,14 +298,14 @@ export default function App() {
           playCuteTing()
 
           const isCare = c.isSystemMessage || c.lastMessageType === 'care_reminder'
-          const senderName = c.displayName || 'Người bạn'
+          const senderName = c.lastSenderName || c.displayName || 'Người bạn'
 
           // 📲 OS-Level Notification (Bắn thẳng ra Màn hình khóa & Thanh thông báo hệ thống nếu đang ở ngoài phòng chat hoặc app đang ẩn/tắt)
           if (!isCurrentChatOpen) {
             displayOsNotification({
               title: `${senderName} 💬`,
               body: c.lastMessage,
-              icon: '/favicon.svg',
+              icon: '/icon-192.png',
               data: {
                 partnerId: c.partnerId,
                 tag: `chat_${c.chatId}`,

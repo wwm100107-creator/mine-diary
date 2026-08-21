@@ -217,6 +217,26 @@ export async function sendChatMessage(myId, targetId, text, options = {}) {
   const isSystem = options.isSystemMessage || false
   const msgType = options.type || (isSystem ? 'system' : 'text')
 
+  let senderUser = null
+  try {
+    senderUser = await getUser(myId)
+  } catch (e) {}
+
+  const senderName = senderUser?.displayName || senderUser?.name || senderUser?.username || myId
+  const senderAvatar = senderUser?.avatar || 'bunny'
+  const senderFrame = senderUser?.avatarFrame || senderUser?.frame || 'none'
+
+  const chatPayload = {
+    lastMessage: text.trim(),
+    lastSenderId: myId,
+    lastSenderName: senderName,
+    lastSenderAvatar: senderAvatar,
+    lastSenderFrame: senderFrame,
+    lastMessageType: msgType,
+    isSystemMessage: isSystem,
+    updatedAt: serverTimestamp(),
+  }
+
   if (!snap.exists()) {
     // 1. First message: Create room with status 'pending' & initiatorId
     await setDoc(chatDocRef, {
@@ -224,27 +244,20 @@ export async function sendChatMessage(myId, targetId, text, options = {}) {
       participants: [myId, targetId],
       initiatorId: myId,
       status: 'pending',
-      lastMessage: text.trim(),
-      lastSenderId: myId,
-      lastMessageType: msgType,
-      isSystemMessage: isSystem,
-      updatedAt: serverTimestamp(),
       createdAt: serverTimestamp(),
+      ...chatPayload,
     })
   } else {
-    // 2. Subsequent message: Update last message
-    await setDoc(chatDocRef, {
-      lastMessage: text.trim(),
-      lastSenderId: myId,
-      lastMessageType: msgType,
-      isSystemMessage: isSystem,
-      updatedAt: serverTimestamp(),
-    }, { merge: true })
+    // 2. Subsequent message: Update last message and sender metadata
+    await setDoc(chatDocRef, chatPayload, { merge: true })
   }
 
   // 3. Add message sub-document
   await addDoc(collection(db, 'chats', cId, 'messages'), {
     senderId: myId,
+    senderName,
+    senderAvatar,
+    senderFrame,
     text: text.trim(),
     isSystemMessage: isSystem,
     type: msgType,
@@ -254,18 +267,15 @@ export async function sendChatMessage(myId, targetId, text, options = {}) {
 
   // 4. Trigger Native Web Push Notification (FCM) to recipient
   try {
-    getUser(myId).then((senderUser) => {
-      const senderName = senderUser?.displayName || senderUser?.name || senderUser?.username || myId
-      sendPushNotification({
-        recipientUserId: targetId,
-        title: `${senderName} 💬`,
-        body: text.trim(),
-        icon: senderUser?.avatar || '/favicon.svg',
-        data: {
-          partnerId: myId,
-          type: msgType,
-        },
-      }).catch(() => {})
+    sendPushNotification({
+      recipientUserId: targetId,
+      title: `${senderName} 💬`,
+      body: text.trim(),
+      icon: '/icon-192.png',
+      data: {
+        partnerId: myId,
+        type: msgType,
+      },
     }).catch(() => {})
   } catch (pushErr) {
     console.warn('[Social] Push dispatch warning:', pushErr)
@@ -332,6 +342,7 @@ export function subscribeToChatRoom(myId, targetId, callback) {
 
 /**
  * Subscribe to all chats involving the current user (inbox realtime listener)
+ * High performance zero-latency synchronous mapping with asynchronous background profile enrichment.
  */
 export function subscribeToUserChats(myId, callback) {
   if (!myId) return () => {}
@@ -339,36 +350,47 @@ export function subscribeToUserChats(myId, callback) {
     collection(db, 'chats'),
     where('participants', 'array-contains', myId)
   )
-  return onSnapshot(q, async (snapshot) => {
+  return onSnapshot(q, (snapshot) => {
     try {
       const activeDocs = snapshot.docs.filter((d) => d.data()?.status !== 'declined')
-      const chatPromises = activeDocs.map(async (d) => {
+      const chats = activeDocs.map((d) => {
         const data = d.data()
-        const partnerId = data.participants?.find((p) => p !== myId)
-        if (!partnerId) return null
-
-        // Fetch partner profile (Skip if partner account was deleted)
-        const partnerDoc = await getUser(partnerId)
-        if (!partnerDoc) return null
-
+        const partnerId = data.participants?.find((p) => p !== myId) || ''
         return {
           chatId: d.id,
           partnerId,
-          displayName: partnerDoc.displayName || partnerDoc.name || partnerId,
-          avatar: partnerDoc.avatar || 'bunny',
-          avatarFrame: partnerDoc.avatarFrame || partnerDoc.frame || 'none',
+          displayName: data.lastSenderId === partnerId ? (data.lastSenderName || partnerId) : partnerId,
+          avatar: data.lastSenderId === partnerId ? (data.lastSenderAvatar || 'bunny') : 'bunny',
+          avatarFrame: data.lastSenderId === partnerId ? (data.lastSenderFrame || 'none') : 'none',
           status: data.status, // 'pending' | 'accepted'
           initiatorId: data.initiatorId,
           lastMessage: data.lastMessage,
           lastSenderId: data.lastSenderId,
+          lastSenderName: data.lastSenderName || '',
           lastMessageType: data.lastMessageType || 'text',
           isSystemMessage: data.isSystemMessage || false,
           updatedAt: data.updatedAt,
         }
       })
 
-      const resolvedChats = await Promise.all(chatPromises)
-      callback(resolvedChats.filter(Boolean))
+      // Immediately callback synchronously with zero latency!
+      callback(chats)
+
+      // Background enrichment of full partner profiles (async cache fill without blocking)
+      Promise.all(chats.map(async (c) => {
+        if (!c.partnerId) return c
+        try {
+          const partnerDoc = await getUser(c.partnerId)
+          if (partnerDoc) {
+            c.displayName = partnerDoc.displayName || partnerDoc.name || c.partnerId
+            c.avatar = partnerDoc.avatar || c.avatar || 'bunny'
+            c.avatarFrame = partnerDoc.avatarFrame || partnerDoc.frame || c.avatarFrame || 'none'
+          }
+        } catch (e) {}
+        return c
+      })).then((enriched) => {
+        callback(enriched)
+      }).catch(() => {})
     } catch (err) {
       console.warn('[Social] Error processing chats snapshot:', err)
     }
