@@ -94,7 +94,8 @@ export default function DiaryView({ user }) {
     <>
       {/* Calendar slide panel */}
       <div className={`${s.calendarPanel} ${calShrunk ? s.shrunk : ''}`}>
-        <Calendar userId={user.id} onDateSelect={handleDateSelect} />
+        <Calendar userId={user.id} gender={user?.gender || 'female'} showCyclePrediction={false} onDateSelect={handleDateSelect} />
+
       </div>
 
       {/* Compact floating mini-calendar pill button */}

@@ -62,8 +62,10 @@ function buildGrid(year, month) {
   return days
 }
 
-export default function Calendar({ userId, mode = 'standard', gender = 'female', onDateSelect, className, readOnly = false }) {
+export default function Calendar({ userId, mode = 'standard', gender = 'female', showCyclePrediction = true, onDateSelect, className, readOnly = false }) {
   const isMale = gender === 'male'
+  // showCyclePrediction=false: strip used in Diary tab — no period/fertile UI regardless of gender
+  const showCycle = showCyclePrediction && !isMale
 
   const now = new Date()
   const [view, setView] = useState({ year: now.getFullYear(), month: now.getMonth() })
@@ -572,18 +574,16 @@ export default function Calendar({ userId, mode = 'standard', gender = 'female',
           const cls = [
             s.day,
             isToday ? s.isToday : '',
-            // Male: no period prediction styling
-            !isMale && isPred ? s.predicted : '',
-            // Advanced AI: apply level class; Standard: plain fertileSet tint (female only)
-            !isMale && aiLevel === 'peak' ? s.fertileAiPeak :
-            !isMale && aiLevel === 'high' ? s.fertileAiHigh :
-            !isMale && aiLevel === 'low'  ? s.fertileAiLow  :
-            !isMale && isFertile          ? s.fertile        : '',
+            // showCycle = showCyclePrediction && !isMale — both Diary tab and male get no cycle styling
+            showCycle && isPred ? s.predicted : '',
+            showCycle && aiLevel === 'peak' ? s.fertileAiPeak :
+            showCycle && aiLevel === 'high' ? s.fertileAiHigh :
+            showCycle && aiLevel === 'low'  ? s.fertileAiLow  :
+            showCycle && isFertile          ? s.fertile        : '',
             isHovered ? s.isHovered : '',
             isActive ? s.activeDay : '',
             isDropTarget ? s.dragOver : '',
           ].join(' ')
-
 
           return (
             <div
@@ -605,8 +605,8 @@ export default function Calendar({ userId, mode = 'standard', gender = 'female',
               <div className={s.dayInner}>
                 <span className={s.dayNumber}>{cell.date.getDate()}</span>
 
-                {/* 1. Predicted Period: Grayscale Strawberry 🍓 (female only) */}
-                {!isMale && isPred && dayIcons.length === 0 && (
+                {/* 1. Predicted Period: Grayscale Strawberry 🍓 (Health tab & female only) */}
+                {showCycle && isPred && dayIcons.length === 0 && (
                   <span
                     className={s.predictedStrawberry}
                     title="Dự đoán chu kỳ (Dâu tây mờ)"
@@ -618,8 +618,8 @@ export default function Calendar({ userId, mode = 'standard', gender = 'female',
                   </span>
                 )}
 
-                {/* 2. Ovulation Flower Indicator (female only) */}
-                {!isMale && isOvulation && (
+                {/* 2. Ovulation Flower Indicator (Health tab & female only) */}
+                {showCycle && isOvulation && (
                   <span
                     className={s.ovulationIcon}
                     title="Ngày rụng trứng"
@@ -703,13 +703,13 @@ export default function Calendar({ userId, mode = 'standard', gender = 'female',
             <span className={s.trayLabel}>Khay Icon:</span>
             
             <div className={s.trayItems}>
-              {/* Default Icons — period icons (🍓❌) hidden for male */}
+              {/* Default Icons — period icons (🍓❌) hidden when showCycle is false (Diary tab or male) */}
               {[
-                { icon: '🍓', title: 'Kinh nguyệt (Bắt đầu)', femaleOnly: true },
-                { icon: '❌', title: 'Kết thúc kinh',          femaleOnly: true },
-                { icon: '🎂', title: 'Sinh nhật / Kỷ niệm',   femaleOnly: false },
+                { icon: '🍓', title: 'Kinh nguyệt (Bắt đầu)', cycleOnly: true },
+                { icon: '❌', title: 'Kết thúc kinh',          cycleOnly: true },
+                { icon: '🎂', title: 'Sinh nhật / Kỷ niệm',   cycleOnly: false },
               ]
-                .filter(({ femaleOnly }) => !femaleOnly || !isMale)
+                .filter(({ cycleOnly }) => !cycleOnly || showCycle)
                 .map(({ icon, title }) => (
                   <button
                     key={icon}
@@ -724,6 +724,7 @@ export default function Calendar({ userId, mode = 'standard', gender = 'female',
                     {icon}
                   </button>
                 ))}
+
 
 
               {/* Custom Added Icons */}
