@@ -10,7 +10,7 @@
   height: 100vh !important;
   pointer-events: none !important;
   z-index: 999999 !important;
-  overflow: hidden !important;
+  /* overflow: hidden removed — click burst elements are position:fixed and should not be clipped at edges */
   transition: opacity 0.15s ease-out;
 }
 

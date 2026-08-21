@@ -679,7 +679,7 @@ export default function App() {
         {currentTab === 'health' && <HealthView user={user} />}
         {currentTab === 'partner_cycle' && <PartnerCycleView user={user} />}
         {currentTab === 'chat' && <ChatView user={user} />}
-        {currentTab === 'admin' && isAdmin && <AdminDashboard />}
+        {currentTab === 'admin' && isAdmin && <AdminDashboard user={user} />}
       </main>
 
       {/* Author Dedication Easter Egg (Bottom Left) */}

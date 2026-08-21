@@ -189,6 +189,7 @@ function CustomCursorFollower({ user, cursorTheme }) {
   const activeTheme = cursorTheme || user?.avatarFrame || user?.frame || 'default'
 
   const [bursts, setBursts] = useState([])
+  const burstTimersRef = useRef([]) // ponytail: collect timeouts for cleanup, avoids setState-after-unmount
   const [isMounted, setIsMounted] = useState(false)
 
   const rootRef = useRef(null)
@@ -275,9 +276,11 @@ function CustomCursorFollower({ user, cursorTheme }) {
         theme: activeTheme,
       }
       setBursts((prev) => [...prev.slice(-8), newBurst])
-      setTimeout(() => {
+      const tid = setTimeout(() => {
         setBursts((prev) => prev.filter((b) => b.id !== id))
+        burstTimersRef.current = burstTimersRef.current.filter((t) => t !== tid)
       }, 1000)
+      burstTimersRef.current.push(tid)
     }
 
     const handleMouseUp = () => {
@@ -346,6 +349,9 @@ function CustomCursorFollower({ user, cursorTheme }) {
       window.removeEventListener('mouseover', handleMouseOver)
       document.removeEventListener('mouseleave', handleMouseLeave)
       if (rafId) cancelAnimationFrame(rafId)
+      // Clear all pending burst-removal timers to prevent setState-after-unmount/re-mount
+      burstTimersRef.current.forEach(clearTimeout)
+      burstTimersRef.current = []
     }
   }, [activeTheme])
 
