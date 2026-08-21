@@ -21,6 +21,7 @@ export const AVATAR_FRAMES = [
 
   // ── 🤖 BỘ SƯU TẬP CƠ KHÍ & MECHA (GUNDAM & MECHA) ──
   { id: 'sazabi_verka', name: '🔴 Sazabi ver.Ka', icon: '🤖', category: 'mecha', desc: 'MSN-04 Sazabi ver.Ka — Giáp đỏ Crimson Neo Zeon, mắt Mono-eye radar quét liên tục, giáp vai Funnel & động cơ phản lực nhiệt hạch' },
+  { id: 'gundam_calibarn', name: '🌈 Gundam Calibarn', icon: '🤖', category: 'mecha', desc: 'X-EX01 Gundam Calibarn (Permet Score 8) — Giáp trắng tinh khôi, sừng V-fin sắc bén, rãnh Permet 7 màu phát quang & luồng hạt Data Storm' },
 
   // ── 🌿 BỘ SƯU TẬP PHÉP THUẬT & KỲ ẢO (FANTASY & MAGIC) ──
   { id: 'emerald_royal', name: '🌿 Hoàng Gia Lục Bảo', icon: '💎', category: 'fantasy', desc: 'Emerald Royal & Elven Magic — Hào quang ngọc bích, viền vàng ánh kim, vương miện ngọc thạch & dải băng hoàng gia Elven' },
@@ -1092,7 +1093,187 @@ function AvatarFrameOverlayComponent({ frameId = 'none', size = 36, sizePreset }
         </div>
       )}
 
+      {/* ══════════════════════════════════════════════════════════════════════
+         FRAME: 🌈 X-EX01 GUNDAM CALIBARN — PERMET SCORE 8 (RAINBOW PERMET)
+         ══════════════════════════════════════════════════════════════════════ */}
+      {frameId === 'gundam_calibarn' && (
+        <div className={s.calibarnContainer}>
+          {/* Layer 1: Data Storm / Permet Score 8 Rainbow Field Aura */}
+          <div className={s.calibarnRainbowAura} />
+          <div className={s.calibarnPureWhiteHalo} />
+
+          {/* Layer 2: GUND-Format Data Stream Particles (Square Pixels & Diamond Sparks) */}
+          <div className={s.calibarnDataStorm}>
+            <span className={`${s.calibarnPixel} ${s.cp1}`}>■</span>
+            <span className={`${s.calibarnPixel} ${s.cp2}`}>▪</span>
+            <span className={`${s.calibarnPixel} ${s.cp3}`}>✦</span>
+            <span className={`${s.calibarnPixel} ${s.cp4}`}>■</span>
+            <span className={`${s.calibarnPixel} ${s.cp5}`}>▪</span>
+            <span className={`${s.calibarnPixel} ${s.cp6}`}>✧</span>
+            <span className={`${s.calibarnPixel} ${s.cp7}`}>■</span>
+            <span className={`${s.calibarnPixel} ${s.cp8}`}>✦</span>
+          </div>
+
+          {/* Layer 3: Main Sleek White Armor Frame with Glowing Rainbow Permet Slits */}
+          <div className={s.calibarnArmorChassis}>
+            {/* Rainbow Permet Score 8 Running Channels (Left & Right) */}
+            <div className={`${s.permetChannel} ${s.permetLeft}`} />
+            <div className={`${s.permetChannel} ${s.permetRight}`} />
+            <div className={`${s.permetChannel} ${s.permetTop}`} />
+            <div className={`${s.permetChannel} ${s.permetBottom}`} />
+            
+            {/* White Armor Glisten & Specular Sheen */}
+            <div className={s.calibarnArmorSheen} />
+            
+            {/* Decal Marks: GUNDAM CALIBARN / SCORE 8 */}
+            <div className={s.calibarnDecals}>
+              <span className={s.decalLeft}>SCORE 8</span>
+              <span className={s.decalRight}>X-EX01</span>
+            </div>
+          </div>
+
+          {/* Layer 4: Flanking Sleek Shoulder Armor with Rainbow Permet Slits (Left & Right) */}
+          <div className={s.calibarnShouldersWrap}>
+            {/* Left Sleek Winglet Armor */}
+            <div className={`${s.calibarnShoulder} ${s.calibarnShoulderLeft}`}>
+              <svg viewBox="0 0 45 60" className={s.calibarnShoulderSvg} fill="none">
+                <defs>
+                  <linearGradient id="calibarnWhiteGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#FFFFFF" />
+                    <stop offset="60%" stopColor="#F1F5F9" />
+                    <stop offset="100%" stopColor="#CBD5E1" />
+                  </linearGradient>
+                  <linearGradient id="calibarnRainbowSvg" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stopColor="#FF0055" />
+                    <stop offset="25%" stopColor="#FF7700" />
+                    <stop offset="50%" stopColor="#00FF66" />
+                    <stop offset="75%" stopColor="#00F2FE" />
+                    <stop offset="100%" stopColor="#B000FF" />
+                  </linearGradient>
+                </defs>
+                {/* Sleek Angular Pure White Armor Fin */}
+                <polygon points="45,8 10,18 0,38 22,54 45,44" fill="url(#calibarnWhiteGrad)" stroke="#E2E8F0" strokeWidth="1" />
+                <polygon points="42,14 15,22 8,36 22,48 42,40" fill="#0F172A" stroke="#94A3B8" strokeWidth="0.6" />
+                {/* Rainbow Permet Score 8 Glowing Slits */}
+                <polygon points="36,18 18,24 14,32 24,42 36,36" fill="url(#calibarnRainbowSvg)" className={s.calibarnPermetSvgGlow} />
+                <line x1="16" y1="26" x2="32" y2="20" stroke="#FFFFFF" strokeWidth="1" opacity="0.9" />
+              </svg>
+            </div>
+
+            {/* Right Sleek Winglet Armor */}
+            <div className={`${s.calibarnShoulder} ${s.calibarnShoulderRight}`}>
+              <svg viewBox="0 0 45 60" className={s.calibarnShoulderSvg} fill="none">
+                {/* Sleek Angular Pure White Armor Fin */}
+                <polygon points="0,8 35,18 45,38 23,54 0,44" fill="url(#calibarnWhiteGrad)" stroke="#E2E8F0" strokeWidth="1" />
+                <polygon points="3,14 30,22 37,36 23,48 3,40" fill="#0F172A" stroke="#94A3B8" strokeWidth="0.6" />
+                {/* Rainbow Permet Score 8 Glowing Slits */}
+                <polygon points="9,18 27,24 31,32 21,42 9,36" fill="url(#calibarnRainbowSvg)" className={s.calibarnPermetSvgGlow} />
+                <line x1="29" y1="26" x2="13" y2="20" stroke="#FFFFFF" strokeWidth="1" opacity="0.9" />
+              </svg>
+            </div>
+          </div>
+
+          {/* Layer 5: Đỉnh khung (V-fin & Main Cyan Sensor with Rainbow Shell Unit) */}
+          <div className={s.calibarnHeadCrest}>
+            <svg viewBox="0 0 120 54" className={s.calibarnHeadSvg} fill="none">
+              <defs>
+                <linearGradient id="calibarnVFinGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#FFFFFF" />
+                  <stop offset="70%" stopColor="#F8FAFC" />
+                  <stop offset="100%" stopColor="#E2E8F0" />
+                </linearGradient>
+                <linearGradient id="calibarnGoldAccent" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#FFF275" />
+                  <stop offset="50%" stopColor="#FFD700" />
+                  <stop offset="100%" stopColor="#FFA500" />
+                </linearGradient>
+                <filter id="calibarnCyanGlow" x="-30%" y="-30%" width="160%" height="160%">
+                  <feGaussianBlur stdDeviation="2" result="blur" />
+                  <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                </filter>
+              </defs>
+
+              {/* Iconic Sharp White V-Fin with Multi-Prism Tips */}
+              <polygon points="60,26 88,4 84,18 64,28" fill="url(#calibarnVFinGrad)" stroke="#E2E8F0" strokeWidth="0.8" />
+              <polygon points="60,26 32,4 36,18 56,28" fill="url(#calibarnVFinGrad)" stroke="#E2E8F0" strokeWidth="0.8" />
+              
+              {/* Secondary Lower V-Fin Wings */}
+              <polygon points="60,28 78,14 74,22 62,30" fill="url(#calibarnGoldAccent)" stroke="#FFD700" strokeWidth="0.5" />
+              <polygon points="60,28 42,14 46,22 58,30" fill="url(#calibarnGoldAccent)" stroke="#FFD700" strokeWidth="0.5" />
+
+              {/* Forehead Armor & Rainbow Shell Unit Crest */}
+              <path
+                d="M 44 42 L 52 26 L 60 22 L 68 26 L 76 42 L 60 38 Z"
+                fill="#0F172A"
+                stroke="#E2E8F0"
+                strokeWidth="1"
+              />
+              {/* Central Rainbow Permet Score 8 Shifting Core in Forehead */}
+              <polygon
+                points="60,24 65,30 60,36 55,30"
+                fill="url(#calibarnRainbowSvg)"
+                className={s.calibarnPermetSvgGlow}
+              />
+
+              {/* Main Optical Sensor (Cyan/Emerald Crystal Camera) */}
+              <rect
+                x="56"
+                y="18"
+                width="8"
+                height="4"
+                rx="1"
+                fill="#00F5D4"
+                stroke="#FFFFFF"
+                strokeWidth="0.8"
+                filter="url(#calibarnCyanGlow)"
+                className={s.calibarnMainSensorGlow}
+              />
+            </svg>
+          </div>
+
+          {/* Layer 6: Đáy khung (Variable Rod Rifle Thruster Chevron / Lower Plaque) */}
+          <div className={s.calibarnBottomPlaque}>
+            <svg viewBox="0 0 120 32" className={s.calibarnBottomSvg} fill="none">
+              {/* Sleek Variable Rod Chevron Cowl */}
+              <polygon
+                points="22,4 98,4 108,22 60,30 12,22"
+                fill="#0F172A"
+                stroke="#E2E8F0"
+                strokeWidth="1.2"
+              />
+              {/* Rainbow Permet Glowing Underglow Bar */}
+              <polygon
+                points="26,8 94,8 102,18 60,26 18,18"
+                fill="url(#calibarnRainbowSvg)"
+                className={s.calibarnPermetSvgGlow}
+              />
+              <polygon
+                points="30,10 90,10 96,16 60,22 24,16"
+                fill="#FFFFFF"
+                stroke="#CBD5E1"
+                strokeWidth="0.6"
+              />
+              
+              {/* Central Text: CALIBARN */}
+              <text
+                x="60"
+                y="17"
+                textAnchor="middle"
+                fontSize="6"
+                fontFamily="'1FTV-VIP-Festigan', 'Courier New', monospace"
+                fontWeight="900"
+                fill="#0F172A"
+                letterSpacing="1.2"
+              >
+                CALIBARN
+              </text>
+            </svg>
+          </div>
+        </div>
+      )}
+
       {/* ── Standard Frames ── */}
+
 
 
       {frameId === 'rainbow' && <div className={s.rainbowBorder} />}
