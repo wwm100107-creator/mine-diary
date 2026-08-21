@@ -46,8 +46,8 @@
   position: absolute;
   top: 0;
   left: 0;
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   pointer-events: none;
   transition: transform 0.1s ease-out, opacity 0.15s ease-out;
   display: flex;
@@ -564,96 +564,253 @@
 }
 
 /* =======================================================
-   MECHA THEMES CURSORS
+   10. THEME: 🌈 GUNDAM CALIBARN (PERMET SCORE 8)
    ======================================================= */
-.sazabi_verka {
-  border: 1.5px solid #FF1E27;
-  box-shadow: 0 0 10px rgba(255, 30, 39, 0.7), inset 0 0 6px rgba(255, 30, 39, 0.3);
-  background: rgba(17, 17, 20, 0.2);
-  border-radius: 4px;
-}
-
-.mechaReticleRing {
-  position: absolute;
-  inset: -4px;
-  border: 1px dashed rgba(255, 215, 0, 0.6);
-  animation: reticleSpin 6s infinite linear;
-}
-
-@keyframes reticleSpin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.sazabiMonoEyeDot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #00FF66;
-  box-shadow: 0 0 6px #00FF66, 0 0 12px #00FF88;
-}
-
 .gundam_calibarn {
   border: 1.5px solid #FFFFFF;
-  box-shadow: 0 0 12px rgba(0, 242, 254, 0.8), 0 0 20px rgba(176, 0, 255, 0.5);
-  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 14px #00F2FE, 0 0 26px #B000FF, 0 0 38px #00FF66;
+  background: rgba(255, 255, 255, 0.12);
   clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  animation: calibarnCursorSpectrum 2.4s infinite linear;
 }
 
-.permetRing {
-  position: absolute;
-  inset: 2px;
-  background: linear-gradient(135deg, #FF0055, #FFE600, #00FF66, #00F2FE, #B000FF);
-  opacity: 0.45;
-  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
-  animation: permetCursorFlow 2s infinite linear;
-}
-
-@keyframes permetCursorFlow {
+@keyframes calibarnCursorSpectrum {
   0% { filter: hue-rotate(0deg); }
   100% { filter: hue-rotate(360deg); }
 }
 
-.calibarnCoreDiamond {
-  width: 7px;
-  height: 7px;
-  background: #00F5D4;
-  box-shadow: 0 0 6px #00F5D4, 0 0 12px #FFFFFF;
-  transform: rotate(45deg);
+.calibarnDashedPermetTrail {
+  position: absolute;
+  inset: -8px;
+  pointer-events: none;
 }
 
+.permetSegment {
+  position: absolute;
+  background: linear-gradient(90deg, #FF0055, #FFE600, #00FF66, #00F2FE);
+  border-radius: 2px;
+  box-shadow: 0 0 6px #00F2FE;
+  animation: permetDashFlow 1.6s infinite linear;
+}
+
+.ps1 { top: -4px; left: 10%; width: 10px; height: 2px; }
+.ps2 { bottom: -4px; right: 10%; width: 10px; height: 2px; }
+.ps3 { top: 20%; left: -6px; width: 2px; height: 10px; }
+.ps4 { bottom: 20%; right: -6px; width: 2px; height: 10px; }
+
+@keyframes permetDashFlow {
+  0% { opacity: 0.3; transform: scaleX(0.7); }
+  50% { opacity: 1; transform: scaleX(1.3); }
+  100% { opacity: 0.3; transform: scaleX(0.7); }
+}
+
+.core_gundam_calibarn {
+  width: 24px;
+  height: 24px;
+  transform: rotate(-15deg);
+}
+
+.calibarnCyberArrowSvg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter: drop-shadow(0 0 8px #00F2FE) drop-shadow(0 0 12px #FFFFFF);
+}
+
+/* =======================================================
+   11. THEME: 🦄 UNICORN AWAKENED (PSYCHO-FRAME DESTROY)
+   ======================================================= */
 .unicorn_awakened {
   border: 1.5px solid #00FF88;
-  box-shadow: 0 0 14px rgba(0, 255, 136, 0.8), inset 0 0 8px rgba(0, 255, 136, 0.4);
+  box-shadow: 0 0 16px rgba(0, 255, 136, 0.85), inset 0 0 10px rgba(0, 255, 136, 0.45);
   background: rgba(255, 255, 255, 0.15);
-  animation: psychoCursorPulse 2s infinite alternate ease-in-out;
+  animation: unicornPsychoBreatheCursor 2s infinite alternate ease-in-out;
 }
 
-@keyframes psychoCursorPulse {
-  0% { transform: scale(0.95); box-shadow: 0 0 8px #00FF88; }
-  100% { transform: scale(1.08); box-shadow: 0 0 20px #00FFA3, 0 0 30px #00E676; }
+@keyframes unicornPsychoBreatheCursor {
+  0% { transform: scale(0.94); box-shadow: 0 0 10px #00FF88, 0 0 20px #00FF66; }
+  100% { transform: scale(1.1); box-shadow: 0 0 24px #00FFA3, 0 0 40px #00E676; }
 }
 
-.unicornCoreV {
-  width: 6px;
-  height: 6px;
-  background: #FFD700;
-  box-shadow: 0 0 6px #FFD700, 0 0 10px #00FF88;
-  clip-path: polygon(50% 0%, 100% 100%, 50% 75%, 0% 100%);
+.unicornPsychoBreathingTrail {
+  position: absolute;
+  inset: -10px;
+  pointer-events: none;
 }
 
+.psychoBreathingRing {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1.5px solid #00FF88;
+  animation: psychoRingExpand 1.5s infinite ease-out;
+}
+
+@keyframes psychoRingExpand {
+  0% { transform: scale(0.8); opacity: 1; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+
+.psychoDustSpark {
+  position: absolute;
+  color: #00FFA3;
+  line-height: 1;
+  text-shadow: 0 0 6px #00FF88, 0 0 12px #FFFFFF;
+  animation: psychoSparkleDrift 1.8s infinite ease-in-out;
+}
+
+.pds1 { top: -8px; right: -4px; font-size: 12px; }
+.pds2 { bottom: -8px; left: -4px; font-size: 10px; color: #FFD700; }
+
+@keyframes psychoSparkleDrift {
+  0%, 100% { transform: translateY(0) scale(0.7); opacity: 0.3; }
+  50% { transform: translateY(-6px) scale(1.2); opacity: 1; }
+}
+
+.core_unicorn_awakened {
+  width: 26px;
+  height: 26px;
+}
+
+.unicornCrosshairSvg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter: drop-shadow(0 0 8px #00FF88) drop-shadow(0 0 12px #FFFFFF);
+}
+
+/* =======================================================
+   12. THEME: 🪶 WING ZERO CUSTOM (ENDLESS WALTZ)
+   ======================================================= */
 .wing_zero_ew {
   border: 1.5px solid #3B82F6;
-  box-shadow: 0 0 12px rgba(59, 130, 246, 0.7), 0 0 20px rgba(255, 255, 255, 0.6);
-  background: rgba(11, 37, 89, 0.15);
+  box-shadow: 0 0 14px rgba(59, 130, 246, 0.8), 0 0 28px rgba(255, 255, 255, 0.7);
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.25) 0%, rgba(11, 37, 89, 0.15) 100%);
+  animation: wingZeroHaloFloat 2.6s infinite alternate ease-in-out;
 }
 
-.wingZeroCoreOrb {
-  width: 8px;
-  height: 8px;
+@keyframes wingZeroHaloFloat {
+  0% { transform: scale(0.95); box-shadow: 0 0 12px #2563EB; }
+  100% { transform: scale(1.08); box-shadow: 0 0 22px #60A5FA, 0 0 35px #BAE6FD; }
+}
+
+.wingZeroAngelHaloTrail {
+  position: absolute;
+  inset: -10px;
+  pointer-events: none;
+}
+
+.angelHaloRing {
+  position: absolute;
+  inset: 0;
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, #E6FFF2 0%, #00FF88 45%, #00A859 100%);
-  box-shadow: 0 0 6px #00FF88, 0 0 12px #3B82F6;
+  border: 1.5px solid #93C5FD;
+  box-shadow: 0 0 10px #60A5FA;
+  animation: angelHaloSpin 4s infinite linear;
+}
+
+@keyframes angelHaloSpin {
+  0% { transform: rotate(0deg); opacity: 0.6; }
+  50% { transform: rotate(180deg); opacity: 1; }
+  100% { transform: rotate(360deg); opacity: 0.6; }
+}
+
+.haloFeatherSpark {
+  position: absolute;
+  top: -8px;
+  right: -6px;
+  font-size: 14px;
+  filter: drop-shadow(0 0 4px #93C5FD);
+  animation: featherSway 2s infinite ease-in-out;
+}
+
+@keyframes featherSway {
+  0%, 100% { transform: rotate(0deg) translateY(0); }
+  50% { transform: rotate(20deg) translateY(-4px); }
+}
+
+.core_wing_zero_ew {
+  width: 24px;
+  height: 24px;
+  transform: rotate(-25deg);
+}
+
+.wingZeroBladeFeatherSvg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter: drop-shadow(0 0 8px #60A5FA) drop-shadow(0 0 12px #FFFFFF);
+}
+
+/* =======================================================
+   13. THEME: 🔴 SAZABI VER.KA (NEO ZEON TARGET LOCK)
+   ======================================================= */
+.sazabi_verka {
+  border: 1.5px solid #FF1E27;
+  box-shadow: 0 0 14px rgba(255, 30, 39, 0.8), inset 0 0 8px rgba(255, 30, 39, 0.4);
+  background: rgba(20, 20, 25, 0.25);
+  border-radius: 4px;
+  animation: sazabiReticlePulse 1.8s infinite alternate ease-in-out;
+}
+
+@keyframes sazabiReticlePulse {
+  0% { transform: scale(0.95); box-shadow: 0 0 10px #FF1E27; }
+  100% { transform: scale(1.08); box-shadow: 0 0 20px #FF1E27, 0 0 32px #FFCC00; }
+}
+
+.sazabiThrusterJetTrail {
+  position: absolute;
+  bottom: -16px;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sazabiJetFlame {
+  width: 10px;
+  height: 18px;
+  background: linear-gradient(0deg, transparent, #FF7700, #FF1100, #FFEE55);
+  border-radius: 50% 50% 20% 20%;
+  filter: blur(1.5px) drop-shadow(0 0 8px #FF3B30);
+  animation: sazabiJetBurnPulse 0.4s infinite alternate;
+}
+
+@keyframes sazabiJetBurnPulse {
+  0% { transform: scaleY(0.7); opacity: 0.7; }
+  100% { transform: scaleY(1.4); opacity: 1; }
+}
+
+.spaceDust {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #FF9500;
+  box-shadow: 0 0 4px #FF3B30;
+  animation: spaceDustFly 0.8s infinite ease-out;
+}
+
+.sd1 { left: -8px; bottom: -4px; animation-delay: 0s; }
+.sd2 { right: -8px; bottom: -4px; animation-delay: 0.4s; }
+
+@keyframes spaceDustFly {
+  0% { transform: translateY(0) scale(1); opacity: 1; }
+  100% { transform: translateY(12px) scale(0.2); opacity: 0; }
+}
+
+.core_sazabi_verka {
+  width: 26px;
+  height: 26px;
+}
+
+.sazabiLockOnReticleSvg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter: drop-shadow(0 0 8px #FF1E27) drop-shadow(0 0 12px #00FF66);
 }
 
 /* =======================================================
@@ -823,7 +980,7 @@
 }
 
 /* =======================================================
-   5. 🌿 HOÀNG GIA LỤC BẢO: Concentric Green Water Ripple
+   5. 🌿 HOÀNG GIA LỤC BẢO: Green Water Ripple
    ======================================================= */
 .burstEmerald {
   position: absolute;
@@ -868,7 +1025,7 @@
 }
 
 /* =======================================================
-   6. 🔥 SVIP THÁNH HỎA: Fire Tornado Vortex Pillar
+   6. 🔥 SVIP THÁNH HỎA: Fire Tornado Pillar
    ======================================================= */
 .burstHolyFire {
   position: absolute;
@@ -912,7 +1069,7 @@
 }
 
 /* =======================================================
-   7. ❄️ SSVIP CÁNH BĂNG: Shattered Ice Glass Burst
+   7. ❄️ SSVIP CÁNH BĂNG: Shattered Ice Glass
    ======================================================= */
 .burstFrostGlass {
   position: absolute;
@@ -1023,7 +1180,7 @@
 }
 
 /* =======================================================
-   9. 🌌 GOD NỮ THẦN: Blackhole Implosion & Supernova Burst
+   9. 🌌 GOD NỮ THẦN: Blackhole Implosion & Supernova
    ======================================================= */
 .burstGodCosmic {
   position: absolute;
@@ -1086,6 +1243,283 @@
 @keyframes supernovaRayFly {
   0% { transform: translate(0, 0) scale(0.3); opacity: 1; }
   100% { transform: translate(var(--ntx), var(--nty)) scale(1.5) rotate(180deg); opacity: 0; }
+}
+
+/* =======================================================
+   10. 🌈 GUNDAM CALIBARN: Radar Scan Grid Burst
+   ======================================================= */
+.burstCalibarnRadar {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.radarScanCircle {
+  position: absolute;
+  top: -24px;
+  left: -24px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 1.5px solid #00F2FE;
+  box-shadow: 0 0 14px #00F2FE, inset 0 0 10px rgba(0, 242, 254, 0.5);
+  animation: radarCirclePulse 0.75s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+}
+
+@keyframes radarCirclePulse {
+  0% { transform: scale(0.2); opacity: 1; border-color: #00F2FE; }
+  50% { border-color: #FF0055; }
+  100% { transform: scale(2.6); opacity: 0; border-color: #00FF66; }
+}
+
+.radarCrossGrid {
+  position: absolute;
+  top: -20px;
+  left: -20px;
+  width: 40px;
+  height: 40px;
+  background: 
+    linear-gradient(to right, transparent 48%, #00F2FE 49%, #00F2FE 51%, transparent 52%),
+    linear-gradient(to bottom, transparent 48%, #00F2FE 49%, #00F2FE 51%, transparent 52%);
+  animation: radarGridFlash 0.6s ease-out forwards;
+}
+
+@keyframes radarGridFlash {
+  0% { transform: scale(0.3) rotate(0deg); opacity: 1; }
+  100% { transform: scale(2.2) rotate(45deg); opacity: 0; }
+}
+
+.radarCoordinateText {
+  position: absolute;
+  font-family: monospace;
+  font-size: 8px;
+  font-weight: 900;
+  color: #00F2FE;
+  text-shadow: 0 0 4px #00F2FE, 0 0 8px #B000FF;
+  animation: coordTextFade 0.7s ease-out forwards;
+}
+
+.rct1 { top: -28px; left: 10px; }
+.rct2 { bottom: -28px; right: 10px; color: #FF0055; }
+
+@keyframes coordTextFade {
+  0% { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(-8px); opacity: 0; }
+}
+
+.calibarnPixelFly {
+  position: absolute;
+  font-family: monospace;
+  font-size: 10px;
+  line-height: 1;
+  color: #FFFFFF;
+  text-shadow: 0 0 6px #00F2FE, 0 0 10px #FF0055;
+  animation: calibarnPixelScatter 0.7s ease-out forwards;
+}
+
+.cpf1 { --cpx: -24px; --cpy: -20px; color: #00F2FE; }
+.cpf2 { --cpx: 24px; --cpy: -20px; color: #FFE600; }
+.cpf3 { --cpx: 0px; --cpy: 28px; color: #FF0055; }
+
+@keyframes calibarnPixelScatter {
+  0% { transform: translate(0, 0) scale(0.6); opacity: 1; }
+  100% { transform: translate(var(--cpx), var(--cpy)) scale(1.4); opacity: 0; }
+}
+
+/* =======================================================
+   11. 🦄 UNICORN AWAKENED: Psycho-Field Cross Flash
+   ======================================================= */
+.burstUnicornCross {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.psychoCrossRay {
+  position: absolute;
+  background: linear-gradient(90deg, transparent, #00FF88, #FFFFFF, #00FF88, transparent);
+  box-shadow: 0 0 14px #00FF88, 0 0 24px #00FFA3;
+  animation: crossRayFlash 0.65s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+}
+
+.pcrHorizontal {
+  top: -2px;
+  left: -30px;
+  width: 60px;
+  height: 4px;
+}
+
+.pcrVertical {
+  top: -30px;
+  left: -2px;
+  width: 4px;
+  height: 60px;
+  background: linear-gradient(0deg, transparent, #00FF88, #FFFFFF, #00FF88, transparent);
+}
+
+@keyframes crossRayFlash {
+  0% { transform: scale(0.2); opacity: 1; }
+  50% { transform: scale(1.4); opacity: 1; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
+.psychoBurstCore {
+  position: absolute;
+  top: -12px;
+  left: -12px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  box-shadow: 0 0 20px #00FFA3, 0 0 35px #00FF88;
+  animation: psychoCoreFlash 0.5s ease-out forwards;
+}
+
+@keyframes psychoCoreFlash {
+  0% { transform: scale(0.3); opacity: 1; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
+
+.unicornCrystalShard {
+  position: absolute;
+  color: #00FFA3;
+  font-size: 16px;
+  line-height: 1;
+  text-shadow: 0 0 8px #00FF88, 0 0 14px #FFFFFF;
+  animation: unicornShardFly 0.75s ease-out forwards;
+}
+
+.ucs1 { --ucx: -28px; --ucy: -28px; }
+.ucs2 { --ucx: 28px; --ucy: -28px; color: #FFD700; }
+.ucs3 { --ucx: 0px; --ucy: 32px; }
+
+@keyframes unicornShardFly {
+  0% { transform: translate(0, 0) scale(0.6); opacity: 1; }
+  100% { transform: translate(var(--ucx), var(--ucy)) scale(1.3) rotate(45deg); opacity: 0; }
+}
+
+/* =======================================================
+   12. 🪶 WING ZERO CUSTOM: Falling Mechanical Feathers
+   ======================================================= */
+.burstWingZero {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.angelFeatherFlash {
+  position: absolute;
+  top: -18px;
+  left: -18px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #FFFFFF 20%, #60A5FA 60%, transparent 80%);
+  animation: featherFlashAnim 0.5s ease-out forwards;
+}
+
+@keyframes featherFlashAnim {
+  0% { transform: scale(0.2); opacity: 1; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
+.dropFeather {
+  position: absolute;
+  font-size: 18px;
+  filter: drop-shadow(0 0 6px #60A5FA);
+  animation: dropFeatherFall 0.85s cubic-bezier(0.2, 0.8, 0.3, 1) forwards;
+  will-change: transform, opacity;
+}
+
+.df1 { --wfx: -20px; --wfy: 32px; --wfr: 45deg; animation-delay: 0s; }
+.df2 { --wfx: 20px; --wfy: 36px; --wfr: -45deg; animation-delay: 0.08s; }
+.df3 { --wfx: 0px; --wfy: 42px; --wfr: 15deg; animation-delay: 0.15s; font-size: 22px; }
+
+@keyframes dropFeatherFall {
+  0% { transform: translate(0, 0) scale(0.6) rotate(0deg); opacity: 1; }
+  50% { transform: translate(calc(var(--wfx) * 0.5), calc(var(--wfy) * 0.4)) scale(1.2) rotate(var(--wfr)); opacity: 0.9; }
+  100% { transform: translate(var(--wfx), var(--wfy)) scale(0.9) rotate(calc(var(--wfr) * 2)); opacity: 0; }
+}
+
+/* =======================================================
+   13. 🔴 SAZABI VER.KA: Mono-Eye Laser Flash & Lock-On
+   ======================================================= */
+.burstSazabiLock {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.sazabiLockCircle {
+  position: absolute;
+  top: -22px;
+  left: -22px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid #FF1E27;
+  box-shadow: 0 0 16px #FF1E27, inset 0 0 10px #FF3B30;
+  animation: sazabiCircleLock 0.65s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+}
+
+@keyframes sazabiCircleLock {
+  0% { transform: scale(0.3) rotate(0deg); opacity: 1; }
+  50% { transform: scale(1.4) rotate(90deg); opacity: 1; }
+  100% { transform: scale(2.4) rotate(180deg); opacity: 0; }
+}
+
+.sazabiMonoEyeFlashCenter {
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #00FF66;
+  box-shadow: 0 0 20px #00FF66, 0 0 35px #00FF88;
+  animation: monoEyeLaserFlash 0.45s ease-out forwards;
+}
+
+@keyframes monoEyeLaserFlash {
+  0% { transform: scale(0.3); opacity: 1; }
+  50% { transform: scale(1.6); opacity: 1; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
+.targetLockBracket {
+  position: absolute;
+  font-family: monospace;
+  font-size: 24px;
+  font-weight: 900;
+  color: #FF1E27;
+  text-shadow: 0 0 8px #FF1E27, 0 0 14px #FFCC00;
+  animation: lockBracketSnap 0.6s ease-out forwards;
+}
+
+.tlb1 { top: -16px; left: -26px; }
+.tlb2 { top: -16px; right: -26px; }
+
+@keyframes lockBracketSnap {
+  0% { transform: scale(1.6); opacity: 0; }
+  30% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(0.8); opacity: 0; }
+}
+
+.sazabiSparks {
+  position: absolute;
+  color: #FFCC00;
+  font-size: 16px;
+  line-height: 1;
+  text-shadow: 0 0 6px #FF1E27;
+  animation: sazabiSparkFly 0.65s ease-out forwards;
+}
+
+.ss1 { --zsx: -30px; --zsy: -18px; }
+.ss2 { --zsx: 30px; --zsy: 18px; }
+
+@keyframes sazabiSparkFly {
+  0% { transform: translate(0, 0) scale(0.6); opacity: 1; }
+  100% { transform: translate(var(--zsx), var(--zsy)) scale(1.3); opacity: 0; }
 }
 
 /* Default Click Ripple */

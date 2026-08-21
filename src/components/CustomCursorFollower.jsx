@@ -123,11 +123,41 @@ function CustomCursorFollower({ user, cursorTheme }) {
           </div>
         )}
 
-        {/* Mecha Themes */}
-        {activeTheme === 'sazabi_verka' && <div className={s.mechaReticleRing} />}
-        {activeTheme === 'gundam_calibarn' && <div className={s.permetRing} />}
-        {activeTheme === 'unicorn_awakened' && <div className={s.psychoRing} />}
-        {activeTheme === 'wing_zero_ew' && <div className={s.wingRing} />}
+        {/* 🌈 10. Gundam Calibarn (Segmented Dashed Rainbow Permet Stream) */}
+        {activeTheme === 'gundam_calibarn' && (
+          <div className={s.calibarnDashedPermetTrail}>
+            <span className={`${s.permetSegment} ${s.ps1}`} />
+            <span className={`${s.permetSegment} ${s.ps2}`} />
+            <span className={`${s.permetSegment} ${s.ps3}`} />
+            <span className={`${s.permetSegment} ${s.ps4}`} />
+          </div>
+        )}
+
+        {/* 🦄 11. Unicorn Awakened (Radiant Emerald Psycho-Frame Breathing Glow) */}
+        {activeTheme === 'unicorn_awakened' && (
+          <div className={s.unicornPsychoBreathingTrail}>
+            <div className={s.psychoBreathingRing} />
+            <span className={`${s.psychoDustSpark} ${s.pds1}`}>✦</span>
+            <span className={`${s.psychoDustSpark} ${s.pds2}`}>◆</span>
+          </div>
+        )}
+
+        {/* 🪶 12. Wing Zero Custom (Angelic Halo Glow) */}
+        {activeTheme === 'wing_zero_ew' && (
+          <div className={s.wingZeroAngelHaloTrail}>
+            <div className={s.angelHaloRing} />
+            <span className={`${s.haloFeatherSpark} ${s.hfs1}`}>🪶</span>
+          </div>
+        )}
+
+        {/* 🔴 13. Sazabi ver.Ka (Rocket Thruster Jet Exhaust & Space Dust) */}
+        {activeTheme === 'sazabi_verka' && (
+          <div className={s.sazabiThrusterJetTrail}>
+            <div className={s.sazabiJetFlame} />
+            <span className={`${s.spaceDust} ${s.sd1}`} />
+            <span className={`${s.spaceDust} ${s.sd2}`} />
+          </div>
+        )}
       </div>
 
       {/* 2. Instant Sharp Pointer Dot / Core Reticle (Raw Instant Coordinates) */}
@@ -316,11 +346,81 @@ function CustomCursorFollower({ user, cursorTheme }) {
           </svg>
         )}
 
-        {/* Mecha Cursors */}
-        {activeTheme === 'sazabi_verka' && <div className={s.sazabiMonoEyeDot} />}
-        {activeTheme === 'gundam_calibarn' && <div className={s.calibarnCoreDiamond} />}
-        {activeTheme === 'unicorn_awakened' && <div className={s.unicornCoreV} />}
-        {activeTheme === 'wing_zero_ew' && <div className={s.wingZeroCoreOrb} />}
+        {/* 🌈 10. Gundam Calibarn: Angular Cybernetic Chamfered Sleek Arrow */}
+        {activeTheme === 'gundam_calibarn' && (
+          <svg viewBox="0 0 24 24" className={s.calibarnCyberArrowSvg}>
+            <defs>
+              <linearGradient id="calibarnArrowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#FFFFFF" />
+                <stop offset="60%" stopColor="#F8FAFC" />
+                <stop offset="100%" stopColor="#CBD5E1" />
+              </linearGradient>
+            </defs>
+            <polygon
+              points="2,2 8,22 12,14 20,18 22,15 14,11 22,4"
+              fill="url(#calibarnArrowGrad)"
+              stroke="#00F5D4"
+              strokeWidth="1.2"
+            />
+            {/* Permet Score 8 Accent Slit on Cursor */}
+            <line x1="6" y1="8" x2="12" y2="13" stroke="#FF0055" strokeWidth="1.2" />
+            <circle cx="12" cy="14" r="1.5" fill="#00FFFF" />
+          </svg>
+        )}
+
+        {/* 🦄 11. Unicorn Awakened: Destroy Mode Expanded White Armor Crosshair */}
+        {activeTheme === 'unicorn_awakened' && (
+          <svg viewBox="0 0 26 26" className={s.unicornCrosshairSvg}>
+            <defs>
+              <linearGradient id="unicornArmorGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#FFFFFF" />
+                <stop offset="100%" stopColor="#E2E8F0" />
+              </linearGradient>
+            </defs>
+            {/* 4 Corner Crosshair Brackets */}
+            <path d="M 4 9 L 4 4 L 9 4" stroke="#FFFFFF" strokeWidth="1.8" fill="none" strokeLinecap="square" />
+            <path d="M 22 9 L 22 4 L 17 4" stroke="#FFFFFF" strokeWidth="1.8" fill="none" strokeLinecap="square" />
+            <path d="M 4 17 L 4 22 L 9 22" stroke="#FFFFFF" strokeWidth="1.8" fill="none" strokeLinecap="square" />
+            <path d="M 22 17 L 22 22 L 17 22" stroke="#FFFFFF" strokeWidth="1.8" fill="none" strokeLinecap="square" />
+            {/* Center Exposed Psycho-Frame Core */}
+            <circle cx="13" cy="13" r="3" fill="#00FF88" stroke="#FFFFFF" strokeWidth="0.8" />
+            <line x1="13" y1="7" x2="13" y2="19" stroke="#00FF88" strokeWidth="0.8" />
+            <line x1="7" y1="13" x2="19" y2="13" stroke="#00FF88" strokeWidth="0.8" />
+          </svg>
+        )}
+
+        {/* 🪶 12. Wing Zero Custom: Armored Mechanical Angel Feather Blade */}
+        {activeTheme === 'wing_zero_ew' && (
+          <svg viewBox="0 0 24 24" className={s.wingZeroBladeFeatherSvg}>
+            <defs>
+              <linearGradient id="wzBladeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#FFFFFF" />
+                <stop offset="50%" stopColor="#BAE6FD" />
+                <stop offset="100%" stopColor="#1E40AF" />
+              </linearGradient>
+            </defs>
+            <path
+              d="M 2 2 C 10 4, 18 10, 22 22 C 14 18, 6 12, 2 2 Z"
+              fill="url(#wzBladeGrad)"
+              stroke="#60A5FA"
+              strokeWidth="1"
+            />
+            {/* Blade Spine */}
+            <line x1="2" y1="2" x2="20" y2="20" stroke="#FFD700" strokeWidth="0.8" />
+            <circle cx="6" cy="6" r="1.5" fill="#00FF88" />
+          </svg>
+        )}
+
+        {/* 🔴 13. Sazabi ver.Ka: Neo Zeon Crimson Red Target Lock Reticle */}
+        {activeTheme === 'sazabi_verka' && (
+          <svg viewBox="0 0 26 26" className={s.sazabiLockOnReticleSvg}>
+            {/* Outer Circular Lock-on Target */}
+            <circle cx="13" cy="13" r="10" stroke="#FF1E27" strokeWidth="1.4" strokeDasharray="4 2" fill="none" />
+            <path d="M 2 13 L 6 13 M 20 13 L 24 13 M 13 2 L 13 6 M 13 20 L 13 24" stroke="#FF1E27" strokeWidth="1.5" />
+            {/* Center Glowing Green Mono-Eye */}
+            <circle cx="13" cy="13" r="2.8" fill="#00FF66" stroke="#FFE57F" strokeWidth="0.6" />
+          </svg>
+        )}
       </div>
 
       {/* 3. Click Burst Particle Effects (Spawned at click coordinates) */}
@@ -373,7 +473,7 @@ function CustomCursorFollower({ user, cursorTheme }) {
             </div>
           )}
 
-          {/* 🌿 5. Hoàng Gia Lục Bảo: Gentle Expanding Green Water Ripple */}
+          {/* 🌿 5. Hoàng Gia Lục Bảo: Concentric Green Water Ripple */}
           {b.theme === 'emerald_royal' && (
             <div className={s.burstEmerald}>
               <div className={`${s.emeraldRipple} ${s.er1}`} />
@@ -407,7 +507,7 @@ function CustomCursorFollower({ user, cursorTheme }) {
             </div>
           )}
 
-          {/* ⚡ 8. SSSVIP Song Long: Dual Crossed "X" Lightning Strike */}
+          {/* ⚡ 8. SSSVIP Song Long: Dual Cross "X" Lightning Strike */}
           {b.theme === 'vip10_thunder' && (
             <div className={s.burstSongLong}>
               <div className={`${s.lightningBoltX} ${s.lbx1}`} />
@@ -430,7 +530,54 @@ function CustomCursorFollower({ user, cursorTheme }) {
             </div>
           )}
 
-          {/* Default Ripple for other themes */}
+          {/* 🌈 10. Gundam Calibarn: Flashing Radar Coordinate Scan Grid */}
+          {b.theme === 'gundam_calibarn' && (
+            <div className={s.burstCalibarnRadar}>
+              <div className={s.radarScanCircle} />
+              <div className={s.radarCrossGrid} />
+              <span className={`${s.radarCoordinateText} ${s.rct1}`}>POS_X: 8.8</span>
+              <span className={`${s.radarCoordinateText} ${s.rct2}`}>PERMET: 8</span>
+              <span className={`${s.calibarnPixelFly} ${s.cpf1}`}>■</span>
+              <span className={`${s.calibarnPixelFly} ${s.cpf2}`}>■</span>
+              <span className={`${s.calibarnPixelFly} ${s.cpf3}`}>■</span>
+            </div>
+          )}
+
+          {/* 🦄 11. Unicorn Awakened: Explosive Green Psycho-Field Cross Flash */}
+          {b.theme === 'unicorn_awakened' && (
+            <div className={s.burstUnicornCross}>
+              <div className={`${s.psychoCrossRay} ${s.pcrVertical}`} />
+              <div className={`${s.psychoCrossRay} ${s.pcrHorizontal}`} />
+              <div className={s.psychoBurstCore} />
+              <span className={`${s.unicornCrystalShard} ${s.ucs1}`}>✦</span>
+              <span className={`${s.unicornCrystalShard} ${s.ucs2}`}>◆</span>
+              <span className={`${s.unicornCrystalShard} ${s.ucs3}`}>✦</span>
+            </div>
+          )}
+
+          {/* 🪶 12. Wing Zero Custom: 3 Falling Mechanical Feathers */}
+          {b.theme === 'wing_zero_ew' && (
+            <div className={s.burstWingZero}>
+              <div className={s.angelFeatherFlash} />
+              <span className={`${s.dropFeather} ${s.df1}`}>🪶</span>
+              <span className={`${s.dropFeather} ${s.df2}`}>🪶</span>
+              <span className={`${s.dropFeather} ${s.df3}`}>🪶</span>
+            </div>
+          )}
+
+          {/* 🔴 13. Sazabi ver.Ka: Intense Mono-Eye Laser Flash & Target Lock Flare */}
+          {b.theme === 'sazabi_verka' && (
+            <div className={s.burstSazabiLock}>
+              <div className={s.sazabiLockCircle} />
+              <div className={s.sazabiMonoEyeFlashCenter} />
+              <span className={`${s.targetLockBracket} ${s.tlb1}`}>[</span>
+              <span className={`${s.targetLockBracket} ${s.tlb2}`}>]</span>
+              <span className={`${s.sazabiSparks} ${s.ss1}`}>•</span>
+              <span className={`${s.sazabiSparks} ${s.ss2}`}>•</span>
+            </div>
+          )}
+
+          {/* Default Ripple */}
           {b.theme !== 'rainbow' &&
             b.theme !== 'sakura_hearts' &&
             b.theme !== 'sparkle_stars' &&
@@ -439,7 +586,11 @@ function CustomCursorFollower({ user, cursorTheme }) {
             b.theme !== 'vip8_fire' &&
             b.theme !== 'vip9_frost' &&
             b.theme !== 'vip10_thunder' &&
-            b.theme !== 'god_cosmic' && (
+            b.theme !== 'god_cosmic' &&
+            b.theme !== 'gundam_calibarn' &&
+            b.theme !== 'unicorn_awakened' &&
+            b.theme !== 'wing_zero_ew' &&
+            b.theme !== 'sazabi_verka' && (
               <div className={s.defaultClickRipple} />
             )}
         </div>
