@@ -121,7 +121,8 @@ export default function Calendar({ userId, mode = 'standard', gender = 'female',
     insights,
     bbtShiftDetected,
     lhPeakDetected,
-  } = useCycleCalendar({ userId, mode, markedDates, userLogs, tick })
+  } = useCycleCalendar({ userId, mode, markedDates, userLogs, dayIconMap: iconMap, tick })
+
 
 
 

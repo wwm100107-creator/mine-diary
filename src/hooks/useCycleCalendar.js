@@ -18,6 +18,7 @@ export function useCycleCalendar({
   mode = 'standard',
   markedDates = null,
   userLogs = null,
+  dayIconMap = null,
   tick = 0,
 }) {
   // 1. Resolve raw marked dates and user logs from shared source if not passed
@@ -33,8 +34,9 @@ export function useCycleCalendar({
 
   // 2. Execute selected prediction engine
   const prediction = useMemo(() => {
-    return predictNextPeriod(resolvedMarks, userId, mode, resolvedLogs)
-  }, [resolvedMarks, userId, mode, resolvedLogs])
+    return predictNextPeriod(resolvedMarks, userId, mode, resolvedLogs, dayIconMap)
+  }, [resolvedMarks, userId, mode, resolvedLogs, dayIconMap])
+
 
   // 3. Generate Calendar Sets for Day Rendering
   const predictedPeriodSet = useMemo(() => {
