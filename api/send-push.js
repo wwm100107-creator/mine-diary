@@ -99,6 +99,18 @@ export default async function handler(req, res) {
               url: '/#chat',
               ...(data || {}),
             },
+            android: {
+              priority: 'high',
+              notification: {
+                title: title || 'Mine Diary 🌸',
+                body: body || 'Bạn có tin nhắn mới!',
+                icon: '/icon-192.png',
+                sound: 'default',
+                click_action: '/#chat',
+                priority: 'max',
+                visibility: 'public',
+              },
+            },
             webpush: {
               headers: {
                 Urgency: 'high',

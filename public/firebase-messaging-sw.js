@@ -47,7 +47,7 @@ try {
         },
         vibrate: [200, 100, 200, 100, 250, 100, 300],
       }
-      self.registration.showNotification(title, options)
+      return self.registration.showNotification(title, options)
     })
   }
 } catch (e) {
