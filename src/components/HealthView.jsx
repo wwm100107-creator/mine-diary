@@ -5,7 +5,7 @@ import SymptomCards from './SymptomCards'
 import HealthChart from './HealthChart'
 import FertilityBar from './FertilityBar'
 import AvatarWithFrame from './AvatarWithFrame'
-import { today, loadMarkedDates, getCustomTrayIcons, loadAllUserSymptoms } from '../utils/cycle'
+import { today, loadMarkedDates, getCustomTrayIcons, loadAllUserSymptoms, loadAllDayIcons } from '../utils/cycle'
 
 import { useCycleCalendar } from '../hooks/useCycleCalendar'
 import {
@@ -62,6 +62,14 @@ export default function HealthView({ user }) {
     }
   }
 
+  // ── Auto-sync when icons or symptoms update locally ──
+  const [cycleVersion, setCycleVersion] = useState(0)
+  useEffect(() => {
+    const handleUpdate = () => setCycleVersion((v) => v + 1)
+    window.addEventListener('minediary:cycle_updated', handleUpdate)
+    return () => window.removeEventListener('minediary:cycle_updated', handleUpdate)
+  }, [])
+
   // 1. Centralized Cycle Prediction Hook (Standard vs Advanced AI)
   const {
     prediction,
@@ -73,18 +81,22 @@ export default function HealthView({ user }) {
   } = useCycleCalendar({
     userId: user?.id,
     mode: predictionMode,
+    tick: cycleVersion,
   })
 
   useEffect(() => {
     if (!user?.id) return
     const customIcons = getCustomTrayIcons(user.id)
     const symptoms = loadAllUserSymptoms(user.id)
+    const dayIconMap = loadAllDayIcons(user.id)
     syncUserCycleData(user.id, {
       markedDates: allMarks,
       customIcons,
       symptoms,
+      dayIconMap,
     })
-  }, [user?.id, allMarks])
+  }, [user?.id, allMarks, cycleVersion])
+
 
 
   // 2. Subscribe to relationships to find partner

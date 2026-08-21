@@ -542,7 +542,7 @@ export function subscribeToUserRelationships(userId, callback) {
 /**
  * Sync user's cycle marks and custom icons to Firestore so partner can view
  */
-export async function syncUserCycleData(userId, { markedDates = [], customIcons = [], symptoms = {} }) {
+export async function syncUserCycleData(userId, { markedDates = [], customIcons = [], symptoms = {}, dayIconMap = {} }) {
   if (!userId) return
   try {
     const cycleRef = doc(db, 'users', userId, 'health', 'cycleData')
@@ -550,12 +550,14 @@ export async function syncUserCycleData(userId, { markedDates = [], customIcons 
       markedDates,
       customIcons,
       symptoms,
+      dayIconMap,
       updatedAt: serverTimestamp(),
     }, { merge: true })
   } catch (err) {
     console.error('Error syncing cycle data to Firestore:', err)
   }
 }
+
 
 /**
  * Subscribe to partner's synced cycle data

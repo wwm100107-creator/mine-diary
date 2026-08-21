@@ -32,9 +32,16 @@ export function getCustomTrayIcons(userId) {
 /**
  * Save custom tray icons
  */
+function notifyCycleUpdate(userId) {
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('minediary:cycle_updated', { detail: { userId } }))
+  }
+}
+
 export function saveCustomTrayIcons(userId, icons) {
   try {
     localStorage.setItem(customTrayStorageKey(userId), JSON.stringify(icons))
+    notifyCycleUpdate(userId)
   } catch (e) {
     console.error('Error saving custom tray icons:', e)
   }
@@ -91,6 +98,7 @@ export function addDayIcon(userId, dateStr, icon) {
   if (icon === '🍓') {
     localStorage.setItem(periodStorageKey(userId, dateStr), '1')
   }
+  notifyCycleUpdate(userId)
   return updated
 }
 
@@ -105,6 +113,7 @@ export function removeDayIcon(userId, dateStr, iconIndex) {
   if (removed === '🍓' && !updated.includes('🍓')) {
     localStorage.removeItem(periodStorageKey(userId, dateStr))
   }
+  notifyCycleUpdate(userId)
   return updated
 }
 
@@ -118,6 +127,7 @@ export function moveDayIcon(userId, fromDateStr, toDateStr, iconIndex) {
   removeDayIcon(userId, fromDateStr, iconIndex)
   addDayIcon(userId, toDateStr, icon)
 }
+
 
 /**
  * Load all dates marked with 🍓 (for cycle calculation)
@@ -159,12 +169,32 @@ export function isMarked(userId, dateStr) {
   return getDayIcons(userId, dateStr).includes('🍓')
 }
 
+/**
+ * Load ALL day icons across all dates for a user.
+ * Returns { [dateStr]: string[] } — used to sync to Firestore for partner view.
+ */
+export function loadAllDayIcons(userId) {
+  const prefix = `minediary:icons:${userId ?? 'guest'}:`
+  const map = {}
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i)
+      if (key && key.startsWith(prefix)) {
+        const dateStr = key.slice(prefix.length)
+        const raw = localStorage.getItem(key)
+        if (raw) map[dateStr] = JSON.parse(raw)
+      }
+    }
+  } catch (e) {}
+  return map
+}
+
 // ── Cycle & Prediction Calculations ──────────────────────────────────────────
 
 /**
  * Group dates into periods (start with 🍓, end with ❌ or consecutive gap > 1)
  */
-function extractCycles(userId, sortedDates) {
+function extractCycles(userId, sortedDates, dayIconMap = null) {
   if (!sortedDates.length) return []
   const episodes = []
   let current = [sortedDates[0]]
@@ -175,7 +205,9 @@ function extractCycles(userId, sortedDates) {
     const gap = (currDate - prevDate) / 86_400_000
 
     // Check if previous date had ❌ (explicit period end)
-    const prevIcons = getDayIcons(userId, sortedDates[i - 1])
+    const prevIcons = (dayIconMap && dayIconMap[sortedDates[i - 1]] !== undefined)
+      ? dayIconMap[sortedDates[i - 1]]
+      : getDayIcons(userId, sortedDates[i - 1])
     const hasEnded = prevIcons.includes('❌')
 
     if (gap <= 1 && !hasEnded) {
@@ -221,11 +253,12 @@ export function loadAllUserSymptoms(userId) {
  * ════════════════════════════════════════════════════════════════════════════
  * Dựa trên lịch sử kinh nguyệt thuần túy, O = NextPeriod - 14.
  */
-export function predictStandardCycle(markedDates, userId = 'guest') {
+export function predictStandardCycle(markedDates, userId = 'guest', dayIconMap = null) {
   if (!markedDates.length) return null
 
-  const cycles = extractCycles(userId, markedDates)
+  const cycles = extractCycles(userId, markedDates, dayIconMap)
   const starts = cycles.map(c => new Date(c.startDate))
+
 
   const avgDuration = Math.round(
     cycles.reduce((acc, c) => acc + c.days, 0) / cycles.length
@@ -291,8 +324,8 @@ export function predictStandardCycle(markedDates, userId = 'guest') {
  * Quét sâu BBT (thân nhiệt cơ bản), que thử LH và dịch nhầy (cervical mucus)
  * để bẻ cong ngày rụng trứng, thu hẹp/đóng sớm cửa sổ thụ thai.
  */
-export function predictAdvancedCycle(markedDates, userLogs = null, userId = 'guest') {
-  const base = predictStandardCycle(markedDates, userId)
+export function predictAdvancedCycle(markedDates, userLogs = null, userId = 'guest', dayIconMap = null) {
+  const base = predictStandardCycle(markedDates, userId, dayIconMap)
   if (!base) return null
 
   const logs = userLogs || loadAllUserSymptoms(userId)
@@ -407,12 +440,13 @@ export function predictAdvancedCycle(markedDates, userLogs = null, userId = 'gue
 /**
  * Unified Prediction Dispatcher
  */
-export function predictNextPeriod(markedDates, userId = 'guest', mode = 'standard', userLogs = null) {
+export function predictNextPeriod(markedDates, userId = 'guest', mode = 'standard', userLogs = null, dayIconMap = null) {
   if (mode === 'advanced') {
-    return predictAdvancedCycle(markedDates, userLogs, userId)
+    return predictAdvancedCycle(markedDates, userLogs, userId, dayIconMap)
   }
-  return predictStandardCycle(markedDates, userId)
+  return predictStandardCycle(markedDates, userId, dayIconMap)
 }
+
 
 /**
  * 3. Calculate 7-Day Fertility probability strip (T2 -> CN)

@@ -62,10 +62,12 @@ function buildGrid(year, month) {
   return days
 }
 
-export default function Calendar({ userId, mode = 'standard', gender = 'female', showCyclePrediction = true, markedDates = null, onDateSelect, className, readOnly = false }) {
+export default function Calendar({ userId, mode = 'standard', gender = 'female', showCyclePrediction = true, markedDates = null, iconMap = null, userLogs = null, onDateSelect, className, readOnly = false }) {
   const isMale = gender === 'male'
   // showCyclePrediction=false: strip used in Diary tab — no period/fertile UI regardless of gender
   const showCycle = showCyclePrediction && !isMale
+  // iconMap: { [dateStr]: string[] } override from Firestore (partner view)
+  const getIcons = (dateStr) => (iconMap && iconMap[dateStr] !== undefined) ? iconMap[dateStr] : getDayIcons(userId, dateStr)
 
   const now = new Date()
   const [view, setView] = useState({ year: now.getFullYear(), month: now.getMonth() })
@@ -108,7 +110,7 @@ export default function Calendar({ userId, mode = 'standard', gender = 'female',
   const grid = useMemo(() => buildGrid(view.year, view.month), [view])
 
   // ── Centralized Cycle & Fertility Prediction with Dynamic Engine (Standard vs Advanced AI) ──
-  // markedDates prop: when provided (e.g. partner Firestore data), overrides localStorage reads
+  // markedDates/userLogs props: when provided (e.g. partner Firestore data), overrides localStorage reads
   const {
     prediction,
     predictedPeriodSet: predictedSet,
@@ -119,7 +121,8 @@ export default function Calendar({ userId, mode = 'standard', gender = 'female',
     insights,
     bbtShiftDetected,
     lhPeakDetected,
-  } = useCycleCalendar({ userId, mode, markedDates, tick })
+  } = useCycleCalendar({ userId, mode, markedDates, userLogs, tick })
+
 
 
   // Cleanup timers on unmount
@@ -564,8 +567,9 @@ export default function Calendar({ userId, mode = 'standard', gender = 'female',
           // ── Advanced AI: 3-level fertility coloring ──
           const aiLevel = dayLevelMap.get(str) // 'peak' | 'high' | 'low' | undefined
 
-          const dayIcons = getDayIcons(userId, str)
+          const dayIcons = getIcons(str)
           const maxVisible = 3
+
           const visibleIcons = dayIcons.slice(0, maxVisible)
           const extraCount = dayIcons.length - maxVisible
 

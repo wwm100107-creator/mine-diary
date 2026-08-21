@@ -48,8 +48,10 @@ export default function PartnerCycleView({ user }) {
     prediction,
     markedDates: partnerMarkedDates,
     symptoms: partnerSymptoms,
+    dayIconMap: partnerDayIconMap,
     loading,
   } = usePartnerCycleData(user.id, partnerId)
+
 
 
   // 3. Send Care Message to 1-on-1 Chat
@@ -156,9 +158,13 @@ export default function PartnerCycleView({ user }) {
               <Calendar
                 userId={partnerId}
                 gender="female"
+                mode={partnerUser?.predictionMode || 'standard'}
                 markedDates={partnerMarkedDates}
+                iconMap={partnerDayIconMap}
+                userLogs={partnerSymptoms}
                 readOnly={true}
               />
+
 
             </div>
 

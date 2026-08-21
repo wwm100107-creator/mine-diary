@@ -63,7 +63,11 @@ export default function SymptomCards({ userId, dateStr, mode = 'standard' }) {
     const next = { ...data, [field]: value }
     setData(next)
     localStorage.setItem(storageKey, JSON.stringify(next))
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('minediary:cycle_updated', { detail: { userId } }))
+    }
   }
+
 
   const toggleCheckbox = (id) => {
     const current = new Set(data.physical)

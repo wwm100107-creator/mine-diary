@@ -65,12 +65,20 @@ export function usePartnerCycleData(currentUserId, partnerId) {
   const markedDates = useMemo(() => cycleData?.markedDates || [], [cycleData])
   const symptoms = useMemo(() => cycleData?.symptoms || {}, [cycleData])
   const customIcons = useMemo(() => cycleData?.customIcons || [], [cycleData])
+  const dayIconMap = useMemo(() => cycleData?.dayIconMap || {}, [cycleData])
 
   // 5. Calculate real-time period & ovulation prediction
   const prediction = useMemo(() => {
     if (!markedDates.length) return null
-    return predictNextPeriod(markedDates, partnerId)
-  }, [markedDates, partnerId])
+    return predictNextPeriod(
+      markedDates,
+      partnerId,
+      partnerUser?.predictionMode || 'standard',
+      symptoms,
+      dayIconMap
+    )
+  }, [markedDates, partnerId, partnerUser?.predictionMode, symptoms, dayIconMap])
+
 
   return {
     hasPermission,
@@ -80,6 +88,8 @@ export function usePartnerCycleData(currentUserId, partnerId) {
     markedDates,
     symptoms,
     customIcons,
+    dayIconMap,
     loading,
   }
 }
+
