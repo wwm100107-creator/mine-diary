@@ -226,12 +226,23 @@ function ClickBurstsLayer({ bursts }) {
 
 const MemoClickBursts = memo(ClickBurstsLayer)
 
+function checkIsTouchDevice() {
+  if (typeof window === 'undefined') return false
+  return (
+    'ontouchstart' in window ||
+    navigator.maxTouchPoints > 0 ||
+    window.matchMedia('(pointer: coarse)').matches ||
+    /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
+  )
+}
+
 function CustomCursorFollower({ user, cursorTheme }) {
   const activeTheme = cursorTheme || user?.avatarFrame || user?.frame || 'default'
 
   const [bursts, setBursts] = useState([])
   const burstTimersRef = useRef([]) // ponytail: collect timeouts for cleanup, avoids setState-after-unmount
   const [isMounted, setIsMounted] = useState(false)
+  const [isTouch, setIsTouch] = useState(false)
 
   const rootRef = useRef(null)
   const ringRef = useRef(null)
@@ -249,19 +260,24 @@ function CustomCursorFollower({ user, cursorTheme }) {
     isVisible: false,
   })
 
-  // 1. Unconditionally inject global cursor: none !important style in document head
+  // 1. Inject global cursor: none ONLY on Desktop/Mouse devices (Never hide native cursor on iPhone/iPad)
   useEffect(() => {
     setIsMounted(true)
-    let styleEl = document.getElementById('custom-cursor-hide-native')
-    if (!styleEl) {
-      styleEl = document.createElement('style')
-      styleEl.id = 'custom-cursor-hide-native'
-      styleEl.innerHTML = `
-        html, body, *, *::before, *::after {
-          cursor: none !important;
-        }
-      `
-      document.head.appendChild(styleEl)
+    const touchMode = checkIsTouchDevice()
+    setIsTouch(touchMode)
+
+    if (!touchMode) {
+      let styleEl = document.getElementById('custom-cursor-hide-native')
+      if (!styleEl) {
+        styleEl = document.createElement('style')
+        styleEl.id = 'custom-cursor-hide-native'
+        styleEl.innerHTML = `
+          html, body, *, *::before, *::after {
+            cursor: none !important;
+          }
+        `
+        document.head.appendChild(styleEl)
+      }
     }
 
     return () => {
@@ -270,11 +286,29 @@ function CustomCursorFollower({ user, cursorTheme }) {
     }
   }, [])
 
-  // 2. High-performance Mouse Movement & Angle Heading Tracking
+  // 2. High-performance Mouse Movement (Desktop) & Tap/Click Bursts (All Devices)
   useEffect(() => {
     let rafId = null
+    const touchMode = checkIsTouchDevice()
+
+    const spawnBurst = (x, y) => {
+      const id = Date.now() + Math.random()
+      const newBurst = {
+        id,
+        x,
+        y,
+        theme: activeTheme,
+      }
+      setBursts((prev) => [...prev.slice(-8), newBurst])
+      const tid = setTimeout(() => {
+        setBursts((prev) => prev.filter((b) => b.id !== id))
+        burstTimersRef.current = burstTimersRef.current.filter((t) => t !== tid)
+      }, 1000)
+      burstTimersRef.current.push(tid)
+    }
 
     const handleMouseMove = (e) => {
+      if (touchMode) return
       const { clientX, clientY } = e
       const p = posRef.current
 
@@ -308,20 +342,14 @@ function CustomCursorFollower({ user, cursorTheme }) {
 
     const handleMouseDown = (e) => {
       if (ringRef.current) ringRef.current.classList.add(s.ringClick)
-      
-      const id = Date.now() + Math.random()
-      const newBurst = {
-        id,
-        x: e.clientX,
-        y: e.clientY,
-        theme: activeTheme,
-      }
-      setBursts((prev) => [...prev.slice(-8), newBurst])
-      const tid = setTimeout(() => {
-        setBursts((prev) => prev.filter((b) => b.id !== id))
-        burstTimersRef.current = burstTimersRef.current.filter((t) => t !== tid)
-      }, 1000)
-      burstTimersRef.current.push(tid)
+      spawnBurst(e.clientX, e.clientY)
+    }
+
+    // Touch tap support for iPhone, iPad, and touch screens
+    const handleTouchStart = (e) => {
+      if (!e.touches || e.touches.length === 0) return
+      const touch = e.touches[0]
+      spawnBurst(touch.clientX, touch.clientY)
     }
 
     const handleMouseUp = () => {
@@ -329,6 +357,7 @@ function CustomCursorFollower({ user, cursorTheme }) {
     }
 
     const handleMouseOver = (e) => {
+      if (touchMode) return
       const target = e.target
       const isInteractive = target?.closest(
         'button, a, input, textarea, select, [role="button"], [tabindex="0"], label, .clickable'
@@ -344,48 +373,54 @@ function CustomCursorFollower({ user, cursorTheme }) {
 
     const handleMouseLeave = () => {
       posRef.current.isVisible = false
-      if (rootRef.current) {
+      if (rootRef.current && !touchMode) {
         rootRef.current.style.opacity = '0'
       }
     }
 
-    // High performance rAF loop for smooth trailing ring & directional angle rotation
+    // High performance rAF loop for smooth trailing ring (Desktop only)
     const loop = () => {
-      const p = posRef.current
-      if (p.isVisible) {
-        // Smooth position lerp for trailing ring
-        p.lerpX += (p.targetX - p.lerpX) * 0.35
-        p.lerpY += (p.targetY - p.lerpY) * 0.35
+      if (!touchMode) {
+        const p = posRef.current
+        if (p.isVisible) {
+          // Smooth position lerp for trailing ring
+          p.lerpX += (p.targetX - p.lerpX) * 0.35
+          p.lerpY += (p.targetY - p.lerpY) * 0.35
 
-        // Smooth angle lerp (shortest angular distance)
-        let diff = (p.targetAngle - p.lerpAngle) % 360
-        if (diff > 180) diff -= 360
-        if (diff < -180) diff += 360
-        p.lerpAngle += diff * 0.25
+          // Smooth angle lerp (shortest angular distance)
+          let diff = (p.targetAngle - p.lerpAngle) % 360
+          if (diff > 180) diff -= 360
+          if (diff < -180) diff += 360
+          p.lerpAngle += diff * 0.25
 
-        // Hardware GPU update without React re-render
-        if (ringRef.current) {
-          ringRef.current.style.transform = `translate3d(${p.lerpX}px, ${p.lerpY}px, 0) translate(-50%, -50%)`
+          // Hardware GPU update without React re-render
+          if (ringRef.current) {
+            ringRef.current.style.transform = `translate3d(${p.lerpX}px, ${p.lerpY}px, 0) translate(-50%, -50%)`
+          }
+
+          if (coreRef.current) {
+            coreRef.current.style.transform = `translate3d(${p.targetX}px, ${p.targetY}px, 0) translate(-50%, -50%) rotate(${p.lerpAngle}deg)`
+          }
         }
-
-        if (coreRef.current) {
-          coreRef.current.style.transform = `translate3d(${p.targetX}px, ${p.targetY}px, 0) translate(-50%, -50%) rotate(${p.lerpAngle}deg)`
-        }
+        rafId = requestAnimationFrame(loop)
       }
-      rafId = requestAnimationFrame(loop)
     }
 
     window.addEventListener('mousemove', handleMouseMove, { passive: true })
     window.addEventListener('mousedown', handleMouseDown, { passive: true })
+    window.addEventListener('touchstart', handleTouchStart, { passive: true })
     window.addEventListener('mouseup', handleMouseUp, { passive: true })
     window.addEventListener('mouseover', handleMouseOver, { passive: true })
     document.addEventListener('mouseleave', handleMouseLeave, { passive: true })
 
-    rafId = requestAnimationFrame(loop)
+    if (!touchMode) {
+      rafId = requestAnimationFrame(loop)
+    }
 
     return () => {
       window.removeEventListener('mousemove', handleMouseMove)
       window.removeEventListener('mousedown', handleMouseDown)
+      window.removeEventListener('touchstart', handleTouchStart)
       window.removeEventListener('mouseup', handleMouseUp)
       window.removeEventListener('mouseover', handleMouseOver)
       document.removeEventListener('mouseleave', handleMouseLeave)
@@ -402,31 +437,33 @@ function CustomCursorFollower({ user, cursorTheme }) {
     <div
       ref={rootRef}
       className={s.cursorRoot}
-      style={{ opacity: 0 }}
+      style={{ opacity: isTouch ? 1 : 0 }}
       aria-hidden="true"
     >
-      {/* 1. Trailing Follower Ring / Theme Halo (Smooth Lerp Position) */}
-      <div
-        ref={ringRef}
-        className={`${s.followerRing} ${s[activeTheme] || s.default}`}
-      >
-        {/* 🌈 Rainbow Pixel Trail */}
-        {activeTheme === 'rainbow' && (
-          <div className={s.rainbowTrailStream} />
-        )}
+      {/* 1. Trailing Follower Ring & 2. Pointer Core (Desktop / Mouse Only — Hidden on iPhone/iPad) */}
+      {!isTouch && (
+        <>
+          <div
+            ref={ringRef}
+            className={`${s.followerRing} ${s[activeTheme] || s.default}`}
+          >
+            {/* 🌈 Rainbow Pixel Trail */}
+            {activeTheme === 'rainbow' && (
+              <div className={s.rainbowTrailStream} />
+            )}
 
-        {/* 🌸 Sakura Hearts Trail */}
-        {activeTheme === 'sakura_hearts' && (
-          <div className={s.sakuraMistWrap}>
-            <span className={`${s.floatingHeart} ${s.fh1}`}>♥</span>
-            <span className={`${s.floatingHeart} ${s.fh2}`}>♥</span>
-          </div>
-        )}
+            {/* 🌸 Sakura Hearts Trail */}
+            {activeTheme === 'sakura_hearts' && (
+              <div className={s.sakuraMistWrap}>
+                <span className={`${s.floatingHeart} ${s.fh1}`}>♥</span>
+                <span className={`${s.floatingHeart} ${s.fh2}`}>♥</span>
+              </div>
+            )}
 
-        {/* ✨ Sparkle Stars Trail */}
-        {activeTheme === 'sparkle_stars' && (
-          <div className={s.shootingStarTrail} />
-        )}
+            {/* ✨ Sparkle Stars Trail */}
+            {activeTheme === 'sparkle_stars' && (
+              <div className={s.shootingStarTrail} />
+            )}
 
         {/* ⚡ Cyber Aura Trail */}
         {activeTheme === 'cyber_aura' && (
@@ -784,8 +821,10 @@ function CustomCursorFollower({ user, cursorTheme }) {
           </svg>
         )}
       </div>
+      </>
+      )}
 
-      {/* 3. Click Burst Particle Effects (Spawned at exact clientX / clientY) */}
+      {/* 3. Click / Tap Burst Particle Effects (Active on ALL Devices: Desktop, iPhone, iPad) */}
       <MemoClickBursts bursts={bursts} />
     </div>
   )

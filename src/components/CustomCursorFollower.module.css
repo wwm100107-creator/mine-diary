@@ -54,6 +54,14 @@
   will-change: transform;
 }
 
+/* Hide virtual follower ring & pointer core on touch devices (iPhone, iPad, touchscreens) */
+@media (pointer: coarse), (hover: none) {
+  .followerRing,
+  .pointerCore {
+    display: none !important;
+  }
+}
+
 /* ── DEFAULT THEME ── */
 .default {
   border: 1.5px solid rgba(255, 143, 171, 0.75);
