@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { requestPushPermission } from '../lib/push'
+import { requestPushPermission, displayOsNotification } from '../lib/push'
 import { usePwaInstallState } from '../hooks/usePwaInstallState'
 import s from './NotificationPermissionModal.module.css'
 
@@ -15,6 +15,15 @@ export default function NotificationPermissionModal({ user, onClose, onPermissio
       if (token) {
         setSuccess(true)
         if (onPermissionGranted) onPermissionGranted(token)
+
+        // 🔔 Fire immediate confirmation OS notification to verify lock screen delivery
+        displayOsNotification({
+          title: 'Mine Diary 🌸',
+          body: 'Đã kích hoạt thông báo thành công! Bạn sẽ nhận được tin nhắn và lời nhắc chu kỳ ngay tại đây ✨',
+          icon: '/favicon.svg',
+          data: { url: '/#chat' },
+        }).catch(console.warn)
+
         setTimeout(() => {
           onClose()
         }, 1200)

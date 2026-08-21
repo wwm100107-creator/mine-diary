@@ -28,7 +28,7 @@ import { useDynamicFavicon } from './hooks/useDynamicFavicon'
 import { usePwaInstallState } from './hooks/usePwaInstallState'
 import IosInstallBottomSheet from './components/IosInstallBottomSheet'
 import CustomCursorFollower from './components/CustomCursorFollower'
-import { requestNotificationPermission } from './lib/push'
+import { requestNotificationPermission, displayOsNotification } from './lib/push'
 import s from './App.module.css'
 
 
@@ -282,18 +282,40 @@ export default function App() {
         if (key !== prevKey) {
           lastSeenMsgsRef.current.set(c.chatId, key)
 
-          // 🛑 Anti-spam condition: Do NOT trigger toast if currently viewing this partner's chat room!
-          if (currentTab === 'chat' && activeChatPartnerId === c.partnerId) {
-            return
-          }
+          const isCurrentChatOpen =
+            currentTab === 'chat' &&
+            activeChatPartnerId === c.partnerId &&
+            typeof document !== 'undefined' &&
+            document.visibilityState === 'visible'
 
           // 🔔 Play cute 8-bit Ting sound effect
           playCuteTing()
 
           const isCare = c.isSystemMessage || c.lastMessageType === 'care_reminder'
+          const senderName = c.displayName || 'Người bạn'
+
+          // 📲 OS-Level Notification (Bắn thẳng ra Màn hình khóa & Thanh thông báo hệ thống nếu đang ở ngoài phòng chat hoặc app đang ẩn/tắt)
+          if (!isCurrentChatOpen) {
+            displayOsNotification({
+              title: `${senderName} 💬`,
+              body: c.lastMessage,
+              icon: '/favicon.svg',
+              data: {
+                partnerId: c.partnerId,
+                tag: `chat_${c.chatId}`,
+                url: '/#chat',
+              },
+            }).catch(console.warn)
+          }
+
+          // 🛑 Anti-spam condition: Do NOT trigger in-app toast if currently viewing this partner's chat room!
+          if (currentTab === 'chat' && activeChatPartnerId === c.partnerId) {
+            return
+          }
+
           const newToast = {
             id: `toast_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
-            senderName: c.displayName || 'Người bạn',
+            senderName,
             avatar: c.avatar || 'bunny',
             avatarFrame: c.avatarFrame || 'none',
             text: c.lastMessage,

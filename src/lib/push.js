@@ -127,6 +127,62 @@ export async function requestPushPermission(user) {
 export const requestNotificationPermission = requestPushPermission
 
 /**
+ * Dispatch OS-level Notification (Lock Screen, Status Bar, Sound, and Vibration)
+ * Works directly on Android, iOS Standalone PWA, and Desktop browsers.
+ * @param {Object} params
+ * @param {string} params.title - Notification Title
+ * @param {string} params.body - Notification Body
+ * @param {string} [params.icon] - Icon URL
+ * @param {Object} [params.data] - Additional payload data
+ */
+export async function displayOsNotification({ title, body, icon = '/favicon.svg', data = {} }) {
+  if (typeof window === 'undefined') return false
+  if (!('Notification' in window) || Notification.permission !== 'granted') return false
+
+  const notifTitle = title || 'Mine Diary 🌸'
+  const notifOptions = {
+    body: body || 'Bạn có tin nhắn mới!',
+    icon: icon || '/favicon.svg',
+    badge: '/favicon.svg',
+    tag: data.tag || `minediary_msg_${data.partnerId || 'default'}`,
+    renotify: true,
+    silent: false,
+    data: {
+      url: '/#chat',
+      ...data,
+    },
+    vibrate: [200, 100, 200, 100, 250, 100, 300],
+  }
+
+  // 1. Primary: ServiceWorkerRegistration.showNotification (Required for Android & iOS Standalone)
+  if ('serviceWorker' in navigator) {
+    try {
+      const reg = await navigator.serviceWorker.ready
+      if (reg && typeof reg.showNotification === 'function') {
+        await reg.showNotification(notifTitle, notifOptions)
+        return true
+      }
+    } catch (swErr) {
+      console.warn('[Push] ServiceWorker showNotification error:', swErr)
+    }
+  }
+
+  // 2. Fallback: Window Notification API
+  try {
+    const notif = new Notification(notifTitle, notifOptions)
+    notif.onclick = () => {
+      window.focus()
+      window.location.hash = '#chat'
+    }
+    return true
+  } catch (nErr) {
+    console.warn('[Push] Window Notification error:', nErr)
+  }
+
+  return false
+}
+
+/**
  * Send Push Notification to a recipient user when a new message is sent
  * @param {Object} params
  * @param {string} params.recipientUserId - Target user ID to receive push notification
