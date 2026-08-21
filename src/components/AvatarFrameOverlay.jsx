@@ -4,6 +4,7 @@ import s from './AvatarFrameOverlay.module.css'
 export const AVATAR_FRAMES = [
   { id: 'none', name: 'Mặc định', icon: '🚫', desc: 'Không khung viền' },
   { id: 'god_cosmic', name: '🌌 GOD Nữ Thần', icon: '👑', desc: 'Cấp bậc Tối Thượng GOD Mode — Song Nữ Thần Valkyrie, lửa địa ngục & lôi quang 7 màu nhấp nháy' },
+  { id: 'emerald_royal', name: '🌿 Hoàng Gia Lục Bảo', icon: '💎', desc: 'Emerald Royal & Elven Magic — Hào quang ngọc bích, viền vàng ánh kim, vương miện ngọc thạch & dải băng hoàng gia Elven' },
   { id: 'vip10_thunder', name: '⚡ SSSVIP Song Long', icon: '⚡', desc: 'SSSVIP Song Long Lôi Thần — Đầu rồng phong lôi, sấm sét liên tục & điện quang chớp giật' },
   { id: 'vip9_frost', name: '❄️ SSVIP Cánh Băng', icon: '❄️', desc: 'SSVIP Thiên Thần Băng Tuyết — Cánh thiên thần bạch kim & sương băng huyền ảo' },
   { id: 'vip8_fire', name: '🔥 SVIP Thánh Hỏa', icon: '🔥', desc: 'SVIP Cánh thiên thần trắng, vương miện hoàng gia & hào quang lửa' },
@@ -12,6 +13,7 @@ export const AVATAR_FRAMES = [
   { id: 'sparkle_stars', name: '✨ Ngôi Sao Lấp Lánh', icon: '⭐', desc: 'Sao pixel nhấp nháy 4 góc' },
   { id: 'sakura_hearts', name: '🌸 Trái Tim & Sakura', icon: '🌸', desc: 'Hoa anh đào & tim hồng nhịp đập' },
 ]
+
 
 function AvatarFrameOverlayComponent({ frameId = 'none', size = 36, sizePreset }) {
   if (!frameId || frameId === 'none') return null
@@ -751,7 +753,164 @@ function AvatarFrameOverlayComponent({ frameId = 'none', size = 36, sizePreset }
         </div>
       )}
 
+      {/* ══════════════════════════════════════════════════════════════════════
+         FRAME: 🌿 EMERALD ROYAL / ELVEN MAGIC — HOÀNG GIA LỤC BẢO
+         ══════════════════════════════════════════════════════════════════════ */}
+      {frameId === 'emerald_royal' && (
+        <div className={s.emeraldContainer}>
+          {/* Layer 1: Hào Quang Phép Thuật (Aura Background) */}
+          <div className={s.emeraldAuraPulse} />
+          <div className={s.emeraldInnerTealGlow} />
+
+          {/* Layer 2: Viền Vàng Cánh Điệu (Main Golden Border + Glint/Shine effect) */}
+          <div className={s.emeraldGoldBorder}>
+            <div className={s.emeraldGlintShine} />
+          </div>
+
+          {/* Layer 5: Hiệu ứng Hạt Năng Lượng (Sparkles & Stars 4 cánh) */}
+          <div className={s.emeraldSparkles}>
+            <span className={`${s.emeraldMote} ${s.em1}`}>✦</span>
+            <span className={`${s.emeraldMote} ${s.em2}`}>✧</span>
+            <span className={`${s.emeraldMote} ${s.em3}`}>★</span>
+            <span className={`${s.emeraldMote} ${s.em4}`}>✦</span>
+            <span className={`${s.emeraldMote} ${s.em5}`}>✧</span>
+            <span className={`${s.emeraldMote} ${s.em6}`}>✦</span>
+          </div>
+
+          {/* Layer 3: Vương Miện Lục Bảo (Top Emerald Crown with SVG Gem & Filigree Wings) */}
+          <div className={s.emeraldTopCrown}>
+            <svg
+              className={s.emeraldCrownSvg}
+              viewBox="0 0 120 60"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <defs>
+                <linearGradient id="emGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#FFF275" />
+                  <stop offset="35%" stopColor="#FFD700" />
+                  <stop offset="70%" stopColor="#FFA500" />
+                  <stop offset="100%" stopColor="#B45309" />
+                </linearGradient>
+                <linearGradient id="emGemGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#A7F3D0" />
+                  <stop offset="30%" stopColor="#00F5D4" />
+                  <stop offset="70%" stopColor="#059669" />
+                  <stop offset="100%" stopColor="#022C22" />
+                </linearGradient>
+                <filter id="emGlow" x="-30%" y="-30%" width="160%" height="160%">
+                  <feGaussianBlur stdDeviation="2" result="blur" />
+                  <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                </filter>
+              </defs>
+
+              {/* Elven Wings / Golden Filigree Spreading Left and Right */}
+              <path
+                d="M 60 42 C 45 42, 25 36, 6 22 C 16 18, 32 24, 46 32 C 34 20, 20 12, 4 4 C 18 6, 38 18, 52 30 Z"
+                fill="url(#emGoldGrad)"
+                stroke="#FFD700"
+                strokeWidth="0.8"
+                filter="url(#emGlow)"
+              />
+              <path
+                d="M 60 42 C 75 42, 95 36, 114 22 C 104 18, 88 24, 74 32 C 86 20, 100 12, 116 4 C 102 6, 82 18, 68 30 Z"
+                fill="url(#emGoldGrad)"
+                stroke="#FFD700"
+                strokeWidth="0.8"
+                filter="url(#emGlow)"
+              />
+
+              {/* Center Royal Crown Crest */}
+              <path
+                d="M 44 48 L 48 30 L 54 38 L 60 20 L 66 38 L 72 30 L 76 48 Z"
+                fill="url(#emGoldGrad)"
+                stroke="#FFE066"
+                strokeWidth="1"
+              />
+
+              {/* Central Glowing Emerald Rhombus/Hexagon Gem */}
+              <polygon
+                points="60,14 70,28 60,42 50,28"
+                fill="url(#emGemGrad)"
+                stroke="#A7F3D0"
+                strokeWidth="1.2"
+                filter="url(#emGlow)"
+              />
+              {/* Inner Facet Highlights */}
+              <polygon
+                points="60,18 66,28 60,38 54,28"
+                fill="none"
+                stroke="#FFFFFF"
+                strokeWidth="0.7"
+                opacity="0.85"
+              />
+              <circle cx="60" cy="28" r="2.2" fill="#FFFFFF" opacity="0.95" />
+            </svg>
+          </div>
+
+          {/* Layer 4: Bảng Tên Vàng Lục (Bottom Banner Plaque) */}
+          <div className={s.emeraldBottomBanner}>
+            <svg
+              className={s.emeraldBannerSvg}
+              viewBox="0 0 120 36"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              {/* Swallowtail Winged Ribbon Tails */}
+              <path
+                d="M 12 18 L 0 6 L 16 12 L 0 28 L 12 18 Z"
+                fill="url(#emGoldGrad)"
+                stroke="#FFD700"
+                strokeWidth="0.8"
+              />
+              <path
+                d="M 108 18 L 120 6 L 104 12 L 120 28 L 108 18 Z"
+                fill="url(#emGoldGrad)"
+                stroke="#FFD700"
+                strokeWidth="0.8"
+              />
+
+              {/* Main Curved Plaque Body */}
+              <path
+                d="M 14 8 Q 60 14 106 8 L 102 28 Q 60 34 18 28 Z"
+                fill="#022C22"
+                stroke="url(#emGoldGrad)"
+                strokeWidth="1.5"
+              />
+              <path
+                d="M 17 11 Q 60 16 103 11 L 100 25 Q 60 30 20 25 Z"
+                fill="#064E3B"
+                stroke="#00F5D4"
+                strokeWidth="0.6"
+                strokeDasharray="2,2"
+              />
+
+              {/* Gold Filigree Corner Ornaments */}
+              <circle cx="22" cy="18" r="2" fill="#FFD700" />
+              <circle cx="98" cy="18" r="2" fill="#FFD700" />
+              
+              {/* Central Text: ELVEN ROYAL */}
+              <text
+                x="60"
+                y="22"
+                textAnchor="middle"
+                fontSize="7.5"
+                fontFamily="'1FTV-VIP-Festigan', 'Courier New', monospace"
+                fontWeight="900"
+                fill="#FFE066"
+                letterSpacing="1.2"
+                stroke="#78350F"
+                strokeWidth="0.3"
+              >
+                ELVEN
+              </text>
+            </svg>
+          </div>
+        </div>
+      )}
+
       {/* ── Standard Frames ── */}
+
       {frameId === 'rainbow' && <div className={s.rainbowBorder} />}
 
       {frameId === 'sparkle_stars' && (
