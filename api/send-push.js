@@ -31,10 +31,13 @@ export default async function handler(req, res) {
           notification: {
             title: title || 'Mine Diary 🌸',
             body: body || 'Bạn có tin nhắn mới!',
-            icon: icon || '/favicon.svg',
+            icon: icon || '/icon-192.png',
             click_action: '/#chat',
           },
           data: {
+            title: title || 'Mine Diary 🌸',
+            body: body || 'Bạn có tin nhắn mới!',
+            icon: icon || '/icon-192.png',
             url: '/#chat',
             ...data,
           },
