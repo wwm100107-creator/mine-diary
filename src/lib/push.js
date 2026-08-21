@@ -137,14 +137,17 @@ export const requestNotificationPermission = requestPushPermission
  */
 export async function displayOsNotification({ title, body, icon = '/favicon.svg', data = {} }) {
   if (typeof window === 'undefined') return false
-  if (!('Notification' in window) || Notification.permission !== 'granted') return false
+  if (!('Notification' in window) || Notification.permission !== 'granted') {
+    console.warn('[Push] Cannot display OS notification: permission not granted.')
+    return false
+  }
 
   const notifTitle = title || 'Mine Diary 🌸'
   const notifOptions = {
     body: body || 'Bạn có tin nhắn mới!',
     icon: icon || '/favicon.svg',
     badge: '/favicon.svg',
-    tag: data.tag || `minediary_msg_${data.partnerId || 'default'}`,
+    tag: data.tag || `minediary_msg_${data.partnerId || Date.now()}`,
     renotify: true,
     silent: false,
     data: {
@@ -154,12 +157,21 @@ export async function displayOsNotification({ title, body, icon = '/favicon.svg'
     vibrate: [200, 100, 200, 100, 250, 100, 300],
   }
 
-  // 1. Primary: ServiceWorkerRegistration.showNotification (Required for Android & iOS Standalone)
+  // 1. Primary: Try ServiceWorkerRegistration (Required on Android Chrome & iOS PWA)
   if ('serviceWorker' in navigator) {
     try {
-      const reg = await navigator.serviceWorker.ready
+      let reg = await navigator.serviceWorker.getRegistration()
+      if (!reg || !reg.active) {
+        reg = await Promise.race([
+          navigator.serviceWorker.ready,
+          navigator.serviceWorker.register('/firebase-messaging-sw.js', { scope: '/' }),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('SW timeout')), 1500)),
+        ]).catch(() => null)
+      }
+
       if (reg && typeof reg.showNotification === 'function') {
         await reg.showNotification(notifTitle, notifOptions)
+        console.log('[Push] Notification displayed via Service Worker:', notifTitle)
         return true
       }
     } catch (swErr) {
@@ -167,13 +179,14 @@ export async function displayOsNotification({ title, body, icon = '/favicon.svg'
     }
   }
 
-  // 2. Fallback: Window Notification API
+  // 2. Fallback: Window Notification API (Desktop browsers)
   try {
     const notif = new Notification(notifTitle, notifOptions)
     notif.onclick = () => {
       window.focus()
       window.location.hash = '#chat'
     }
+    console.log('[Push] Notification displayed via Window API:', notifTitle)
     return true
   } catch (nErr) {
     console.warn('[Push] Window Notification error:', nErr)

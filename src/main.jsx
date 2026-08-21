@@ -16,16 +16,15 @@ if (typeof window !== 'undefined') {
   })
 }
 
-// ── Anti-SW Caching: Cleanly unregister any legacy service workers (Except FCM SW) ──
+// ── PWA & Web Push: Register background service worker ──
 if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
-  navigator.serviceWorker.getRegistrations().then((registrations) => {
-    for (const reg of registrations) {
-      const scriptUrl = reg.active ? reg.active.scriptURL : ''
-      if (!scriptUrl.includes('firebase-messaging-sw')) {
-        reg.unregister()
-      }
-    }
-  }).catch(() => {})
+  navigator.serviceWorker.register('/firebase-messaging-sw.js', { scope: '/' })
+    .then((reg) => {
+      console.log('[PWA] Push Service Worker active with scope:', reg.scope)
+    })
+    .catch((err) => {
+      console.warn('[PWA] Service Worker registration warning:', err)
+    })
 }
 
 // ── Anti-FOUC: Synchronously apply saved theme before React mounts ──

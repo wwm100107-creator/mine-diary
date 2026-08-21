@@ -254,6 +254,12 @@ export default function App() {
     return () => window.removeEventListener('minediary:active_chat_partner', handleActivePartnerChange)
   }, [])
 
+  const currentTabRef = useRef(currentTab)
+  currentTabRef.current = currentTab
+
+  const activeChatPartnerIdRef = useRef(activeChatPartnerId)
+  activeChatPartnerIdRef.current = activeChatPartnerId
+
   useEffect(() => {
     if (!user?.id) {
       setToasts([])
@@ -283,8 +289,8 @@ export default function App() {
           lastSeenMsgsRef.current.set(c.chatId, key)
 
           const isCurrentChatOpen =
-            currentTab === 'chat' &&
-            activeChatPartnerId === c.partnerId &&
+            currentTabRef.current === 'chat' &&
+            activeChatPartnerIdRef.current === c.partnerId &&
             typeof document !== 'undefined' &&
             document.visibilityState === 'visible'
 
@@ -309,7 +315,7 @@ export default function App() {
           }
 
           // 🛑 Anti-spam condition: Do NOT trigger in-app toast if currently viewing this partner's chat room!
-          if (currentTab === 'chat' && activeChatPartnerId === c.partnerId) {
+          if (currentTabRef.current === 'chat' && activeChatPartnerIdRef.current === c.partnerId) {
             return
           }
 
@@ -332,7 +338,7 @@ export default function App() {
     })
 
     return () => unsubscribe()
-  }, [user?.id, currentTab, activeChatPartnerId])
+  }, [user?.id])
 
   const handleDismissToast = (toastId) => {
     setToasts((prev) => prev.filter((t) => t.id !== toastId))

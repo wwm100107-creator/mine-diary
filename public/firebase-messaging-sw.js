@@ -7,12 +7,12 @@ importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging-com
 
 const params = new URL(location).searchParams
 const firebaseConfig = {
-  apiKey: params.get('apiKey') || '',
-  authDomain: params.get('authDomain') || '',
-  projectId: params.get('projectId') || '',
-  storageBucket: params.get('storageBucket') || '',
-  messagingSenderId: params.get('messagingSenderId') || '',
-  appId: params.get('appId') || '',
+  apiKey: params.get('apiKey') || 'AIzaSyBs-sAlF8tQEDdGuj8smBVbtFK9uDZ8_9E',
+  authDomain: params.get('authDomain') || 'mine-diary-11279.firebaseapp.com',
+  projectId: params.get('projectId') || 'mine-diary-11279',
+  storageBucket: params.get('storageBucket') || 'mine-diary-11279.firebasestorage.app',
+  messagingSenderId: params.get('messagingSenderId') || '460955731657',
+  appId: params.get('appId') || '1:460955731657:web:ea44acfe6fc4fdc2d1ef18',
 }
 
 self.addEventListener('install', (event) => {
