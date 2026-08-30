@@ -92,14 +92,14 @@ export default function App() {
   }, [user?.id, user?.theme])
   const [currentTab, setCurrentTab] = useState(() => {
     if (typeof window !== 'undefined') {
-      if (window.location.pathname === '/admin' || window.location.hash === '#admin') {
+      if (isAdmin || window.location.pathname === '/admin' || window.location.hash === '#admin') {
         return 'admin'
       }
       if (window.location.hash === '#chat') return 'chat'
       if (window.location.hash === '#health') return 'health'
       if (window.location.hash === '#partner-cycle') return 'partner_cycle'
     }
-    return 'diary'
+    return isAdmin ? 'admin' : 'diary'
   })
 
   // ── Global Real-time Shared Cycle Status for Navbar Synchronization ──────────
@@ -172,9 +172,16 @@ export default function App() {
     return () => window.removeEventListener('minediary:cycle_updated', runPeriodNotificationCheck)
   }, [user, partnerUser, hasSharedCycleAccess, partnerCycleData])
 
-  // ── Compute Allowed Navigation Tabs based on Gender & Real-time Cycle Sharing ──
+  // ── Compute Allowed Navigation Tabs based on Role, Gender & Real-time Cycle Sharing ──
 
   const navTabs = useMemo(() => {
+    // 🛡️ For Admin Accounts: ONLY keep the 'Quản trị' tab to simplify management
+    if (isAdmin) {
+      return [
+        { id: 'admin', label: 'Quản trị', icon: '🛡️' },
+      ]
+    }
+
     const tabs = [
       { id: 'diary', label: 'Nhật ký chung', icon: '📖' },
     ]
@@ -189,23 +196,18 @@ export default function App() {
       tabs.push({ id: 'partner_cycle', label: 'Theo dõi chu kỳ', icon: '💖' })
     }
 
-    // Chat tab (Always present)
+    // Chat tab (Always present for normal users)
     tabs.push({ id: 'chat', label: 'Tin nhắn', icon: '💬' })
-
-    // Admin tab
-    if (isAdmin) {
-      tabs.push({ id: 'admin', label: 'Quản trị', icon: '🛡️' })
-    }
 
     return tabs
   }, [isFemale, hasSharedCycleAccess, isAdmin])
 
-  // If current active tab is not in allowed tabs, automatically switch to 'diary'
+  // If current active tab is not in allowed tabs, automatically switch to default allowed tab
   useEffect(() => {
     if (!navTabs.some((t) => t.id === currentTab)) {
-      setCurrentTab('diary')
+      setCurrentTab(isAdmin ? 'admin' : 'diary')
     }
-  }, [navTabs, currentTab])
+  }, [navTabs, currentTab, isAdmin])
 
   // ── iOS Glass Sliding Tab Indicator State ───────────────────────────────
   const navRef = useRef(null)
