@@ -13,9 +13,87 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  contain: layout style paint;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform;
 }
 
+/* ⚡ Fast Path: Ultra-lightweight GPU badge for tiny avatars */
+.miniFrameBadge {
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  pointer-events: none;
+  contain: strict;
+  transform: translateZ(0);
+  box-sizing: border-box;
+}
 
+.mini_god_cosmic {
+  border: 2px solid #FFE600;
+  box-shadow: 0 0 4px #FF0055, 0 0 8px #00F2FE;
+}
+
+.mini_vip10_thunder {
+  border: 2px solid #00F2FE;
+  box-shadow: 0 0 4px #00F2FE, 0 0 8px #FFD700;
+}
+
+.mini_vip9_frost {
+  border: 2px solid #BAE6FD;
+  box-shadow: 0 0 4px #38BDF8;
+}
+
+.mini_vip8_fire {
+  border: 2px solid #FF7700;
+  box-shadow: 0 0 4px #DC2626;
+}
+
+.mini_sazabi_verka {
+  border: 2px solid #FF1E27;
+  box-shadow: 0 0 4px #FF1E27;
+}
+
+.mini_gundam_calibarn {
+  border: 2px solid #00F5D4;
+  box-shadow: 0 0 4px #FF0055, 0 0 6px #00F5D4;
+}
+
+.mini_unicorn_awakened {
+  border: 2px solid #00FF88;
+  box-shadow: 0 0 4px #00FF88;
+}
+
+.mini_wing_zero_ew {
+  border: 2px solid #60A5FA;
+  box-shadow: 0 0 4px #38BDF8;
+}
+
+.mini_emerald_royal {
+  border: 2px solid #00C988;
+  box-shadow: 0 0 4px #00FF88;
+}
+
+.mini_cyber_aura {
+  border: 2px solid #F59E0B;
+  box-shadow: 0 0 4px #EF4444;
+}
+
+.mini_sakura_hearts {
+  border: 2px solid #FF8FAB;
+  box-shadow: 0 0 4px #FF8FAB;
+}
+
+.mini_sparkle_stars {
+  border: 2px solid #FFE57F;
+  box-shadow: 0 0 4px #FFE57F;
+}
+
+.mini_rainbow {
+  border: 2px solid #FF8FAB;
+  box-shadow: 0 0 4px #60A5FA;
+}
 
 /* ============================================
    FRAME: 🌌 GOD MODE — NỮ THẦN SÁNG THẾ & LÔI QUANG 7 MÀU
@@ -30,8 +108,9 @@
   align-items: center;
   justify-content: center;
   z-index: 25;
-  transform: scale(var(--frame-scale, 1));
+  transform: scale(var(--frame-scale, 1)) translateZ(0);
   transform-origin: center center;
+  backface-visibility: hidden;
 }
 
 /* Layer 1: Continuous 7-Color Rainbow Shifting Lightning Aura */

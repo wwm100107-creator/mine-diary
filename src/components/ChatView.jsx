@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react'
+import React, { useState, useEffect, useRef, useMemo, useCallback, memo } from 'react'
 import AvatarWithFrame from './AvatarWithFrame'
 import {
   searchUsers,
@@ -29,12 +29,144 @@ function normalizeText(text) {
     .trim()
 }
 
+function formatTime(ts) {
+  if (!ts) return ''
+  const d = ts.toDate ? ts.toDate() : new Date(ts)
+  return d.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
+}
+
+// ── ⚡ Memoized Chat Sidebar Item (Zero re-renders during typing) ──
+const ChatSidebarItem = memo(function ChatSidebarItem({
+  partner,
+  isSelected,
+  isRequest,
+  onSelect,
+}) {
+  return (
+    <div
+      className={`${s.chatItem} ${isRequest ? s.requestItem : ''} ${isSelected ? s.chatItemSelected : ''}`}
+      onClick={() => onSelect(partner)}
+      role="button"
+      tabIndex={0}
+    >
+      <div className={s.chatItemAvatarWrap}>
+        <AvatarWithFrame
+          avatarUrl={partner.avatar || 'bunny'}
+          frameId={partner.avatarFrame || partner.frame || 'none'}
+          size={38}
+          sizePreset="sm"
+        />
+      </div>
+      <div className={s.chatItemContent}>
+        <div className={s.chatItemTop}>
+          <span className={s.chatItemName}>{partner.displayName}</span>
+          {isRequest ? (
+            <span className={s.badgePendingTag}>Chờ duyệt</span>
+          ) : (
+            <span className={s.chatItemUid}>#{partner.id}</span>
+          )}
+        </div>
+        <div className={s.chatItemBottom}>
+          <span className={s.chatItemPreview}>
+            {partner.lastMessage || (isRequest ? 'Gửi lời mời trò chuyện...' : 'Bắt đầu cuộc trò chuyện...')}
+          </span>
+        </div>
+      </div>
+    </div>
+  )
+})
+
+// ── ⚡ Memoized Chat Message Row (Zero re-renders on typing & single mount on new message) ──
+const ChatMessageItem = memo(function ChatMessageItem({
+  msg,
+  isSent,
+  partnerAvatar,
+  partnerFrame,
+}) {
+  const isSystem =
+    msg.isSystemMessage ||
+    msg.type === 'system' ||
+    msg.type === 'care_reminder' ||
+    msg.type === 'cancel_relationship_request' ||
+    msg.type === 'relationship_accepted' ||
+    msg.type === 'relationship_declined' ||
+    msg.type === 'relationship_cancelled' ||
+    msg.type === 'relationship_kept' ||
+    msg.type === 'relationship_request'
+
+  if (isSystem) {
+    return (
+      <div className={s.systemMessageRow}>
+        <div className={s.systemMessageCard}>
+          <div className={s.systemMessageContent}>{msg.text}</div>
+          <span className={s.systemMessageTime}>{formatTime(msg.createdAt)}</span>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className={`${s.messageRow} ${isSent ? s.sent : s.received}`}>
+      {!isSent && (
+        <AvatarWithFrame
+          avatarUrl={partnerAvatar || 'bunny'}
+          frameId={partnerFrame || 'none'}
+          size={28}
+          sizePreset="xs"
+          border={false}
+        />
+      )}
+      <div className={`${s.bubble} ${isSent ? s.sentBubble : s.receivedBubble}`}>
+        {msg.text}
+      </div>
+      <span className={s.messageTime}>{formatTime(msg.createdAt)}</span>
+    </div>
+  )
+})
+
+// ── ⚡ Isolated Chat Input Bar (Local state: 0ms typing lag, 0 external re-renders) ──
+const ChatInputBar = memo(function ChatInputBar({ onSendMessage, isAccepted }) {
+  const [text, setText] = useState('')
+  const inputRef = useRef(null)
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    const trimmed = text.trim()
+    if (!trimmed) return
+    onSendMessage(trimmed)
+    setText('')
+  }
+
+  if (!isAccepted) return null
+
+  return (
+    <form className={s.inputBar} onSubmit={handleSubmit}>
+      <input
+        ref={inputRef}
+        type="text"
+        className={s.chatInput}
+        placeholder="Gõ tin nhắn... (Gõ 'huy set' để hủy mối quan hệ)"
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        autoFocus
+      />
+      <button
+        type="submit"
+        className={s.sendBtn}
+        disabled={!text.trim()}
+        aria-label="Gửi tin nhắn"
+      >
+        Gửi 💌
+      </button>
+    </form>
+  )
+})
+
 export default function ChatView({ user }) {
   // ── State ──
   const [chatTab, setChatTab] = useState('active') // 'active' | 'requests'
   const [activePartner, setActivePartner] = useState(null) // { id, displayName, avatar, avatarFrame, status }
   const [idInput, setIdInput] = useState('')
-  const [msgText, setMsgText] = useState('')
   const [messages, setMessages] = useState([])
   const [roomData, setRoomData] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -278,9 +410,8 @@ export default function ChatView({ user }) {
   }
 
   // Send message with Regex Bot Listener (Hủy Set)
-  const handleSendMessage = useCallback(async (e) => {
-    e?.preventDefault()
-    const text = msgText.trim()
+  const handleSendMessage = useCallback(async (textInput) => {
+    const text = (textInput || '').trim()
     if (!text || !user?.id || !activePartner?.id) return
 
     // ── Bot Chat Listener: Regex check for "huy set" ──
@@ -288,7 +419,6 @@ export default function ChatView({ user }) {
     const cancelSetRegex = /\b(huy\s+set(\s+quan\s+he)?|bo\s+set|xoa\s+set|cancel\s+set)\b/i
 
     if (cancelSetRegex.test(normalized)) {
-      setMsgText('')
       if (!relationship || relationship.status !== 'accepted') {
         alert('Hiện tại 2 bạn chưa có mối quan hệ nào đang hoạt động để hủy set!')
         return
@@ -305,13 +435,12 @@ export default function ChatView({ user }) {
       return
     }
 
-    setMsgText('')
     try {
       await sendChatMessage(user.id, activePartner.id, text)
     } catch (err) {
       console.error('Send message error:', err)
     }
-  }, [msgText, user?.id, user?.displayName, user?.name, activePartner?.id, relationship])
+  }, [user?.id, user?.displayName, user?.name, activePartner?.id, relationship])
 
   // Accept Message Request
   const handleAcceptRequest = async () => {
@@ -581,39 +710,15 @@ export default function ChatView({ user }) {
                   </p>
                 </div>
               ) : (
-                activeChats.map((partner) => {
-                  const isSelected = activePartner?.id === partner.id
-                  return (
-                    <div
-                      key={partner.id}
-                      className={`${s.chatItem} ${isSelected ? s.chatItemSelected : ''}`}
-                      onClick={() => {
-                        setActivePartner(partner)
-                      }}
-                      role="button"
-                      tabIndex={0}
-                    >
-                      <div className={s.chatItemAvatarWrap}>
-                        <AvatarWithFrame
-                          avatarUrl={partner.avatar || 'bunny'}
-                          frameId={partner.avatarFrame || partner.frame || 'none'}
-                          size={38}
-                        />
-                      </div>
-                      <div className={s.chatItemContent}>
-                        <div className={s.chatItemTop}>
-                          <span className={s.chatItemName}>{partner.displayName}</span>
-                          <span className={s.chatItemUid}>#{partner.id}</span>
-                        </div>
-                        <div className={s.chatItemBottom}>
-                          <span className={s.chatItemPreview}>
-                            {partner.lastMessage || 'Bắt đầu cuộc trò chuyện...'}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  )
-                })
+                activeChats.map((partner) => (
+                  <ChatSidebarItem
+                    key={partner.id}
+                    partner={partner}
+                    isSelected={activePartner?.id === partner.id}
+                    isRequest={false}
+                    onSelect={setActivePartner}
+                  />
+                ))
               )
             ) : (
               requestChats.length === 0 ? (
@@ -624,37 +729,15 @@ export default function ChatView({ user }) {
                   </p>
                 </div>
               ) : (
-                requestChats.map((partner) => {
-                  const isSelected = activePartner?.id === partner.id
-                  return (
-                    <div
-                      key={partner.id}
-                      className={`${s.chatItem} ${s.requestItem} ${isSelected ? s.chatItemSelected : ''}`}
-                      onClick={() => setActivePartner(partner)}
-                      role="button"
-                      tabIndex={0}
-                    >
-                      <div className={s.chatItemAvatarWrap}>
-                        <AvatarWithFrame
-                          avatarUrl={partner.avatar || 'bunny'}
-                          frameId={partner.avatarFrame || partner.frame || 'none'}
-                          size={38}
-                        />
-                      </div>
-                      <div className={s.chatItemContent}>
-                        <div className={s.chatItemTop}>
-                          <span className={s.chatItemName}>{partner.displayName}</span>
-                          <span className={s.badgePendingTag}>Chờ duyệt</span>
-                        </div>
-                        <div className={s.chatItemBottom}>
-                          <span className={s.chatItemPreview}>
-                            {partner.lastMessage || 'Gửi lời mời trò chuyện...'}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  )
-                })
+                requestChats.map((partner) => (
+                  <ChatSidebarItem
+                    key={partner.id}
+                    partner={partner}
+                    isSelected={activePartner?.id === partner.id}
+                    isRequest={true}
+                    onSelect={setActivePartner}
+                  />
+                ))
               )
             )}
           </div>
@@ -962,41 +1045,15 @@ export default function ChatView({ user }) {
                     </span>
                   </div>
                 ) : (
-                  messages.map((msg) => {
-                    const isSent = msg.senderId === user.id
-                    const isSystem = msg.isSystemMessage || msg.type === 'system' || msg.type === 'care_reminder' || msg.type === 'cancel_relationship_request'
-
-                    if (isSystem) {
-                      return (
-                        <div key={msg.id} className={s.systemMessageRow}>
-                          <div className={s.systemMessageCard}>
-                            <div className={s.systemMessageContent}>{msg.text}</div>
-                            <span className={s.systemMessageTime}>{formatTime(msg.createdAt)}</span>
-                          </div>
-                        </div>
-                      )
-                    }
-
-                    return (
-                      <div
-                        key={msg.id}
-                        className={`${s.messageRow} ${isSent ? s.sent : s.received}`}
-                      >
-                        {!isSent && (
-                          <AvatarWithFrame
-                            avatarUrl={activePartner.avatar || 'bunny'}
-                            frameId={activePartner.avatarFrame || activePartner.frame || 'none'}
-                            size={28}
-                            border={false}
-                          />
-                        )}
-                        <div className={`${s.bubble} ${isSent ? s.sentBubble : s.receivedBubble}`}>
-                          {msg.text}
-                        </div>
-                        <span className={s.messageTime}>{formatTime(msg.createdAt)}</span>
-                      </div>
-                    )
-                  })
+                  messages.map((msg) => (
+                    <ChatMessageItem
+                      key={msg.id}
+                      msg={msg}
+                      isSent={msg.senderId === user.id}
+                      partnerAvatar={activePartner.avatar}
+                      partnerFrame={activePartner.avatarFrame || activePartner.frame}
+                    />
+                  ))
                 )}
                 <div ref={messagesEndRef} />
               </div>
@@ -1020,25 +1077,10 @@ export default function ChatView({ user }) {
                   </button>
                 </div>
               ) : (
-                <form className={s.inputBar} onSubmit={handleSendMessage}>
-                  <input
-                    ref={inputRef}
-                    type="text"
-                    className={s.chatInput}
-                    placeholder="Gõ tin nhắn... (Gõ 'huy set' để hủy mối quan hệ)"
-                    value={msgText}
-                    onChange={(e) => setMsgText(e.target.value)}
-                    autoFocus
-                  />
-                  <button
-                    type="submit"
-                    className={s.sendBtn}
-                    disabled={!msgText.trim()}
-                    aria-label="Gửi tin nhắn"
-                  >
-                    Gửi 💌
-                  </button>
-                </form>
+                <ChatInputBar
+                  onSendMessage={handleSendMessage}
+                  isAccepted={isAccepted}
+                />
               )}
             </>
           ) : (
