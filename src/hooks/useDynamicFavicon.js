@@ -19,36 +19,10 @@ export function useDynamicFavicon(user) {
       user?.username === 'adminserver'
     )
 
-    let primaryIconUrl = '/icon-split.svg'
-    let shortcutIconUrl = '/favicon.svg'
-    let appleIconUrl = '/favicon.svg'
+    let primaryIconUrl = '/favicon.svg'
+    let shortcutIconUrl = '/favicon.png'
+    let appleIconUrl = '/icon-192.png'
     let iconType = 'image/svg+xml'
-
-    if (isAdmin) {
-      // 1. Admin Account: Animated Pixel Wolf (Howling at crescent moon with smoke aura)
-      primaryIconUrl = '/icon-wolf-animated.svg'
-      shortcutIconUrl = '/icon-wolf-static.png'
-      appleIconUrl = '/icon-wolf-static.svg'
-      iconType = 'image/svg+xml'
-    } else if (user?.gender === 'female') {
-      // 2. Female User: Cute Pink Bunny
-      primaryIconUrl = '/icon-bunny.svg'
-      shortcutIconUrl = '/icon-bunny.svg'
-      appleIconUrl = '/icon-bunny.svg'
-      iconType = 'image/svg+xml'
-    } else if (user?.gender === 'male') {
-      // 3. Male User: Cute Blue Bear
-      primaryIconUrl = '/icon-bear.svg'
-      shortcutIconUrl = '/icon-bear.svg'
-      appleIconUrl = '/icon-bear.svg'
-      iconType = 'image/svg+xml'
-    } else {
-      // 4. Guest / Unauthenticated: Split Half-Bunny Half-Bear
-      primaryIconUrl = '/icon-split.svg'
-      shortcutIconUrl = '/icon-split.svg'
-      appleIconUrl = '/icon-split.svg'
-      iconType = 'image/svg+xml'
-    }
 
     // ── 1. Update Primary Favicon (<link rel="icon">) ──
     let link = document.querySelector("link[rel='icon']")
