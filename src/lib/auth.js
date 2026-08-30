@@ -10,6 +10,7 @@ import {
 } from 'firebase/firestore'
 import { db } from './firebase'
 import { VIP_TIERS } from '../utils/vipTiers'
+import { sendTelegramSecurityAlert } from '../utils/securityAlert'
 
 const SESSION_KEY = 'minediary:current_user'
 
@@ -215,7 +216,7 @@ export async function registerUser({ username, displayName, customUid, password,
 
 /**
  * 2. Login user with Username, UID or Email + Password
- * Includes direct authentication for Admin Server (`adminserver`).
+ * Includes direct authentication for Admin Server (`adminserver`) with 2FA Protection.
  * @param {{ usernameOrId: string, password: string }}
  */
 export async function loginUser({ usernameOrId, password }) {
@@ -225,53 +226,60 @@ export async function loginUser({ usernameOrId, password }) {
 
   const lowerInput = input.toLowerCase()
 
-  // ── Dedicated Admin Server Login ──
+  // ── Dedicated Admin Server Login with 2FA & Brute-Force Shield ──
   if (lowerInput === ADMIN_USERNAME) {
-    if (password !== ADMIN_PASSWORD) {
-      throw new Error('Mật khẩu quản trị viên không chính xác')
+    const lockout = getAdminLockoutStatus()
+    if (lockout.isLocked) {
+      const mins = Math.floor(lockout.remainingSeconds / 60)
+      const secs = lockout.remainingSeconds % 60
+      throw new Error(`Tài khoản Admin đã bị khóa tạm thời do nhập sai quá nhiều lần. Vui lòng chờ ${mins}m ${secs}s để thử lại.`)
     }
 
-    const adminPasswordHash = await hashPassword(ADMIN_PASSWORD)
+    if (password !== ADMIN_PASSWORD) {
+      const failState = recordFailedAdminAttempt()
+      const remaining = MAX_ATTEMPTS - failState.attempts
+      if (failState.isLocked) {
+        sendTelegramSecurityAlert('⚠️ CẢNH BÁO: Phát hiện 5 lần nhập sai mật khẩu Admin liên tiếp! Hệ thống đã tự động khóa đăng nhập Admin trong 15 phút.')
+        throw new Error('Bạn đã nhập sai mật khẩu 5 lần liên tiếp. Tài khoản Admin đã bị khóa trong 15 phút để bảo vệ!')
+      }
+      throw new Error(`Mật khẩu quản trị viên không chính xác. Còn lại ${remaining} lần thử trước khi bị khóa tạm thời.`)
+    }
+
+    // Password is valid -> Check 2FA State
     const adminUserRef = doc(db, 'users', ADMIN_USERNAME)
     const adminSnap = await getDoc(adminUserRef)
+    const adminDocData = adminSnap.exists() ? adminSnap.data() : {}
+    const twoFactor = adminDocData.twoFactor || null
 
-    const adminData = {
-      id: ADMIN_USERNAME,
-      username: ADMIN_USERNAME,
-      displayName: 'System Admin 🛡️',
-      name: 'System Admin 🛡️',
-      avatar: adminSnap.exists() ? (adminSnap.data().avatar || 'dino') : 'dino',
-      avatarFrame: adminSnap.exists() ? (adminSnap.data().avatarFrame || 'cyber_aura') : 'cyber_aura',
-      isAdmin: true,
-      role: 'admin',
-      isBanned: false,
-      plainPassword: ADMIN_PASSWORD,
-      passwordHash: adminPasswordHash,
-      email: 'adminserver@minediary.local',
-      updatedAt: serverTimestamp(),
+    if (!twoFactor || !twoFactor.enabled) {
+      // First-time 2FA Setup
+      const newSecret = generateTotpSecret(16)
+      const backupCodes = generateBackupCodes(5)
+      const otpAuthUrl = getOtpAuthUrl('MineDiary', 'adminserver', newSecret)
+      return {
+        requires2FA: true,
+        isFirstTimeSetup: true,
+        secret: newSecret,
+        backupCodes,
+        otpAuthUrl,
+        tempUser: {
+          id: ADMIN_USERNAME,
+          username: ADMIN_USERNAME,
+          displayName: 'System Admin 🛡️',
+        },
+      }
     }
 
-    if (!adminSnap.exists()) {
-      adminData.createdAt = serverTimestamp()
+    // 2FA Already Enabled -> Request 6-digit TOTP / Backup code
+    return {
+      requires2FA: true,
+      isFirstTimeSetup: false,
+      tempUser: {
+        id: ADMIN_USERNAME,
+        username: ADMIN_USERNAME,
+        displayName: 'System Admin 🛡️',
+      },
     }
-
-    await setDoc(adminUserRef, adminData, { merge: true })
-
-    const sessionAdmin = {
-      id: ADMIN_USERNAME,
-      name: adminData.displayName,
-      displayName: adminData.displayName,
-      username: ADMIN_USERNAME,
-      avatar: adminData.avatar,
-      avatarFrame: adminData.avatarFrame,
-      vipTier: 'god',
-      attendance: { streak: 30, lastCheckInDate: null, claimedDays: [] },
-      isAdmin: true,
-      role: 'admin',
-      email: 'adminserver@minediary.local',
-    }
-    saveSession(sessionAdmin)
-    return sessionAdmin
   }
 
   const passwordHash = await hashPassword(password)
@@ -398,11 +406,6 @@ export function getCurrentUser() {
   }
 }
 
-export const getSession = getCurrentUser
-
-/**
- * 5. Save/Update current user session in localStorage
- */
 export function saveSession(user) {
   try {
     localStorage.setItem(SESSION_KEY, JSON.stringify(user))
@@ -410,3 +413,92 @@ export function saveSession(user) {
     console.error('Save session error:', e)
   }
 }
+
+/**
+ * 6. Verify and complete 2FA Login for Admin
+ */
+export async function verifyAndCompleteAdmin2FA({ code, secret, backupCodes, isFirstTimeSetup }) {
+  const cleanCode = (code || '').trim().toUpperCase().replace(/\s/g, '')
+  if (!cleanCode) {
+    throw new Error('Vui lòng nhập mã xác thực 6 số hoặc mã dự phòng')
+  }
+
+  const adminUserRef = doc(db, 'users', ADMIN_USERNAME)
+  const adminSnap = await getDoc(adminUserRef)
+  const adminDocData = adminSnap.exists() ? adminSnap.data() : {}
+
+  let effectiveSecret = secret
+  let effectiveBackups = backupCodes || []
+
+  if (!isFirstTimeSetup) {
+    if (!adminDocData.twoFactor?.secret) {
+      throw new Error('Cấu hình 2FA không hợp lệ. Vui lòng thiết lập lại.')
+    }
+    effectiveSecret = adminDocData.twoFactor.secret
+    effectiveBackups = adminDocData.twoFactor.backupCodes || []
+  }
+
+  // 1. Check if user entered a backup recovery code
+  const cleanCompare = cleanCode.replace(/-/g, '')
+  const backupIndex = effectiveBackups.findIndex((b) => b.replace(/-/g, '').toUpperCase() === cleanCompare)
+
+  if (backupIndex !== -1) {
+    // Valid backup code -> consume it so it cannot be reused
+    effectiveBackups.splice(backupIndex, 1)
+  } else {
+    // 2. Verify 6-digit TOTP code
+    const isTotpValid = await verifyTotpCode(effectiveSecret, cleanCode)
+    if (!isTotpValid) {
+      throw new Error('Mã xác thực 6 số không chính xác hoặc đã hết hạn (30s). Vui lòng thử lại!')
+    }
+  }
+
+  // 2FA Succeeded -> Save 2FA configuration in Firestore
+  const twoFactorData = {
+    enabled: true,
+    secret: effectiveSecret,
+    backupCodes: effectiveBackups,
+    updatedAt: serverTimestamp(),
+    ...(isFirstTimeSetup ? { enabledAt: serverTimestamp() } : {}),
+  }
+
+  const adminPasswordHash = await hashPassword(ADMIN_PASSWORD)
+  const adminData = {
+    id: ADMIN_USERNAME,
+    username: ADMIN_USERNAME,
+    displayName: 'System Admin 🛡️',
+    name: 'System Admin 🛡️',
+    avatar: adminSnap.exists() ? (adminSnap.data().avatar || 'dino') : 'dino',
+    avatarFrame: adminSnap.exists() ? (adminSnap.data().avatarFrame || 'cyber_aura') : 'cyber_aura',
+    isAdmin: true,
+    role: 'admin',
+    isBanned: false,
+    plainPassword: ADMIN_PASSWORD,
+    passwordHash: adminPasswordHash,
+    twoFactor: twoFactorData,
+    email: 'adminserver@minediary.local',
+    updatedAt: serverTimestamp(),
+  }
+
+  await setDoc(adminUserRef, adminData, { merge: true })
+  resetAdminLockout()
+  sendTelegramSecurityAlert('✅ THÔNG BÁO: Đăng nhập Quản trị viên (adminserver) thành công qua xác thực 2FA.')
+
+  const sessionAdmin = {
+    id: ADMIN_USERNAME,
+    name: adminData.displayName,
+    displayName: adminData.displayName,
+    username: ADMIN_USERNAME,
+    avatar: adminData.avatar,
+    avatarFrame: adminData.avatarFrame,
+    vipTier: 'god',
+    attendance: { streak: 30, lastCheckInDate: null, claimedDays: [] },
+    isAdmin: true,
+    role: 'admin',
+    email: 'adminserver@minediary.local',
+  }
+  saveSession(sessionAdmin)
+
+  return sessionAdmin
+}
+

@@ -1,0 +1,72 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // 🛡️ Admin Verification (Only true adminserver or admin role)
+    function isAdmin() {
+      return isAuthenticated() && (
+        request.auth.uid == 'adminserver' ||
+        request.auth.token.role == 'admin' ||
+        request.auth.token.isAdmin == true
+      );
+    }
+
+    // ── 1. Users Collection Rules ──────────────────────────────────────────
+    match /users/{userId} {
+      // Allow public read for display name, avatar, and relationship pairing
+      allow read: if true;
+
+      // Allow registration of new normal accounts
+      allow create: if request.resource.data.isAdmin == false &&
+                       request.resource.data.role == 'user' &&
+                       userId != 'adminserver';
+
+      // Allow users to update their own profile EXCEPT sensitive administrative fields
+      allow update: if isAdmin() || (
+        isOwner(userId) &&
+        !request.resource.data.diff(resource.data).affectedKeys().hasAny([
+          'isAdmin', 'role', 'isBanned', 'banReason', 'banUntil',
+          'allowFertilityTracking', 'vipTier', 'twoFactor'
+        ])
+      );
+
+      // Only Admin can delete accounts
+      allow delete: if isAdmin() && userId != 'adminserver';
+    }
+
+    // ── 2. Relationships Collection Rules ──────────────────────────────────
+    match /relationships/{relId} {
+      allow read: if true;
+      allow create, update, delete: if isAuthenticated();
+    }
+
+    // ── 3. Chats & Messages Collection Rules ───────────────────────────────
+    match /chats/{chatId} {
+      allow read, write: if true;
+
+      match /messages/{messageId} {
+        allow read, write: if true;
+      }
+    }
+
+    // ── 4. Cycle Data & Health Logs ────────────────────────────────────────
+    match /cycleData/{userId} {
+      allow read: if true;
+      allow write: if isOwner(userId) || isAdmin();
+    }
+
+    // ── 5. System Notifications & Push Tokens ──────────────────────────────
+    match /fcmTokens/{tokenId} {
+      allow read, write: if true;
+    }
+  }
+}

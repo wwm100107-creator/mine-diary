@@ -4,7 +4,7 @@ import AvatarWithFrame from './AvatarWithFrame'
 import AvatarUploadModal from './AvatarUploadModal'
 import BannedScreen from './BannedScreen'
 import { AVATARS, getAvatar } from '../utils/avatars'
-import { loginUser, registerUser } from '../lib/auth'
+import { loginUser, registerUser, verifyAndCompleteAdmin2FA } from '../lib/auth'
 import { submitBanAppeal } from '../lib/admin'
 import s from './AuthLanding.module.css'
 
@@ -83,6 +83,10 @@ export default function AuthLanding({
 
   // Form states
   const [loginInput, setLoginInput] = useState({ usernameOrId: '', password: '' })
+  const [twoFactorState, setTwoFactorState] = useState(null)
+  const [twoFactorCode, setTwoFactorCode] = useState('')
+  const [twoFactorError, setTwoFactorError] = useState('')
+
   const [registerInput, setRegisterInput] = useState({
     username: '',
     displayName: '',
@@ -111,16 +115,46 @@ export default function AuthLanding({
     setBannedInfo(null)
     setLoading(true)
     try {
-      const user = await loginUser({
+      const res = await loginUser({
         usernameOrId: loginInput.usernameOrId,
         password: loginInput.password,
       })
-      onAuthSuccess?.(user)
+
+      // Admin 2FA challenge
+      if (res?.requires2FA) {
+        setTwoFactorState(res)
+        setTwoFactorCode('')
+        setTwoFactorError('')
+        return
+      }
+
+      onAuthSuccess?.(res)
     } catch (err) {
       setError(err.message || 'Đăng nhập thất bại. Vui lòng kiểm tra lại!')
       if (err.isBanned && err.banDetails) {
         setBannedInfo(err.banDetails)
       }
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // ── Handle 2FA Verification ──
+  const handleVerify2FA = async (e) => {
+    e.preventDefault()
+    if (!twoFactorCode.trim()) return
+    setTwoFactorError('')
+    setLoading(true)
+    try {
+      const sessionAdmin = await verifyAndCompleteAdmin2FA({
+        code: twoFactorCode,
+        secret: twoFactorState.secret,
+        backupCodes: twoFactorState.backupCodes,
+        isFirstTimeSetup: twoFactorState.isFirstTimeSetup,
+      })
+      onAuthSuccess?.(sessionAdmin)
+    } catch (err) {
+      setTwoFactorError(err.message || 'Mã xác thực không hợp lệ!')
     } finally {
       setLoading(false)
     }
@@ -269,11 +303,107 @@ export default function AuthLanding({
           <p className={s.brandSubtitle}>Ghi lại mỗi ngày, nhỏ thôi cũng được ✨</p>
         </div>
 
-        {/* Tab Switcher */}
-        <div className={s.tabSwitch} role="tablist">
-          <button
-            type="button"
-            className={`${s.tabBtn} ${tab === 'login' ? s.active : ''}`}
+        {twoFactorState ? (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: 38, marginBottom: 6 }}>🛡️</div>
+              <h2 style={{ fontFamily: 'var(--font-pixel)', fontSize: 16, color: '#D81B60', margin: 0 }}>
+                {twoFactorState.isFirstTimeSetup ? 'KÍCH HOẠT BẢO MẬT 2FA ADMIN' : 'XÁC THỰC BẢO MẬT 2FA (ADMIN)'}
+              </h2>
+              <p style={{ fontSize: 12, color: 'var(--color-ink-soft)', marginTop: 4, lineHeight: 1.4 }}>
+                {twoFactorState.isFirstTimeSetup
+                  ? 'Quét mã QR bằng ứng dụng Google Authenticator trên điện thoại để hoàn tất cài đặt:'
+                  : 'Nhập mã OTP 6 số từ Google Authenticator hoặc dùng Mã Khôi Phục Dự Phòng:'}
+              </p>
+            </div>
+
+            {twoFactorState.isFirstTimeSetup && (
+              <div style={{ background: '#FFF5F8', border: '2px dashed #FF8FAB', borderRadius: 12, padding: 14, textAlign: 'center' }}>
+                <img
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(twoFactorState.otpAuthUrl)}`}
+                  alt="2FA QR Code"
+                  style={{ width: 140, height: 140, borderRadius: 8, background: '#FFF', padding: 6, display: 'block', margin: '0 auto 10px auto', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}
+                />
+                <div style={{ fontSize: 11, color: 'var(--color-ink-soft)', marginBottom: 4 }}>Hoặc nhập khóa thủ công:</div>
+                <code style={{ fontSize: 13, fontWeight: 'bold', letterSpacing: '0.08em', background: '#FFF', padding: '4px 10px', borderRadius: 6, color: '#D81B60', border: '1.5px solid var(--color-pink-300)', display: 'inline-block' }}>
+                  {twoFactorState.secret}
+                </code>
+
+                <div style={{ marginTop: 12, textAlign: 'left', background: '#FFF', padding: '10px 12px', borderRadius: 8, border: '1px solid var(--color-border-mid)' }}>
+                  <strong style={{ fontSize: 11, color: '#D81B60', display: 'block', marginBottom: 4 }}>🔑 5 Mã Dự Phòng Khẩn Cấp (Hãy lưu lại an toàn):</strong>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4, fontFamily: 'monospace', fontSize: 11, color: '#334155' }}>
+                    {twoFactorState.backupCodes?.map((bc, idx) => (
+                      <span key={idx} style={{ background: '#F1F5F9', padding: '2px 6px', borderRadius: 4 }}>{bc}</span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <form onSubmit={handleVerify2FA} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <div>
+                <label style={{ fontSize: 11, fontWeight: 'bold', color: 'var(--color-ink-soft)', display: 'block', marginBottom: 6 }}>
+                  {twoFactorState.isFirstTimeSetup ? 'Nhập mã 6 số từ Google Authenticator để kích hoạt:' : 'Mã xác thực 6 số (hoặc mã dự phòng XXXX-XXXX):'}
+                </label>
+                <input
+                  type="text"
+                  maxLength={10}
+                  placeholder="000000 hoặc XXXX-XXXX"
+                  value={twoFactorCode}
+                  onChange={(e) => setTwoFactorCode(e.target.value)}
+                  autoFocus
+                  style={{
+                    width: '100%',
+                    height: 48,
+                    textAlign: 'center',
+                    fontSize: 20,
+                    fontFamily: 'monospace',
+                    fontWeight: 'bold',
+                    letterSpacing: '0.2em',
+                    border: '2px solid #FF8FAB',
+                    borderRadius: 10,
+                    outline: 'none',
+                    background: '#FFF',
+                  }}
+                  required
+                />
+              </div>
+
+              {twoFactorError && (
+                <div style={{ background: '#FFEBEE', border: '1.5px solid #EF5350', borderRadius: 8, padding: '8px 12px', fontSize: 11, color: '#C62828', fontWeight: 600 }}>
+                  ⚠️ {twoFactorError}
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={loading || !twoFactorCode.trim()}
+                className={s.submitBtn}
+                style={{ height: 44, marginTop: 4 }}
+              >
+                {loading ? 'Đang xác thực...' : 'Xác Thực & Đăng Nhập 🔓'}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setTwoFactorState(null)
+                  setTwoFactorCode('')
+                  setTwoFactorError('')
+                }}
+                style={{ background: 'transparent', border: 'none', color: 'var(--color-ink-soft)', fontSize: 12, cursor: 'pointer', textDecoration: 'underline', marginTop: 4 }}
+              >
+                ← Quay lại đăng nhập
+              </button>
+            </form>
+          </div>
+        ) : (
+          <>
+            {/* Tab Switcher */}
+            <div className={s.tabSwitch} role="tablist">
+              <button
+                type="button"
+                className={`${s.tabBtn} ${tab === 'login' ? s.active : ''}`}
             onClick={() => {
               setTab('login')
               setError('')
@@ -608,6 +738,8 @@ export default function AuthLanding({
           </svg>
           Đăng nhập nhanh bằng Google
         </button>
+          </>
+        )}
       </div>
 
       {/* ── Full Avatar, Frame & Theme Customization Modal (New User: VIP Tier is strictly Normal) ── */}
