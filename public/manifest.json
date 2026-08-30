@@ -1,5 +1,5 @@
 {
-  "id": "minediary-pwa-app",
+  "id": "minediary-pwa-app-v2",
   "name": "Mine Diary - Nhật Ký & Chu Kỳ Pixel",
   "short_name": "MineDiary",
   "description": "Nhật ký cá nhân và theo dõi chu kỳ dễ thương phong cách cute pixel",
@@ -13,19 +13,19 @@
   "categories": ["lifestyle", "productivity", "utilities"],
   "icons": [
     {
-      "src": "/icon-192.png",
+      "src": "/icon-192.png?v=storybook",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/icon-512.png",
+      "src": "/icon-512.png?v=storybook",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/favicon.svg",
+      "src": "/favicon.svg?v=storybook",
       "sizes": "48x48 72x72 96x96 128x128 192x192 256x256 512x512",
       "type": "image/svg+xml",
       "purpose": "any"
