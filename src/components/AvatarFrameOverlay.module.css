@@ -13,9 +13,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  contain: layout style paint;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform;
 }
-
-
 
 /* ============================================
    FRAME: 🌌 GOD MODE — NỮ THẦN SÁNG THẾ & LÔI QUANG 7 MÀU
@@ -30,8 +32,9 @@
   align-items: center;
   justify-content: center;
   z-index: 25;
-  transform: scale(var(--frame-scale, 1));
+  transform: scale(var(--frame-scale, 1)) translateZ(0);
   transform-origin: center center;
+  backface-visibility: hidden;
 }
 
 /* Layer 1: Continuous 7-Color Rainbow Shifting Lightning Aura */
