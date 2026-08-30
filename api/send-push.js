@@ -116,7 +116,7 @@ export default async function handler(req, res) {
                 body: body || 'Bạn có tin nhắn mới!',
                 icon: '/icon-192.png',
                 badge: '/badge-72.png',
-                tag: `chat_${data?.partnerId || 'default'}`,
+                tag: String(data?.tag || `chat_${data?.chatId || data?.partnerId || 'default'}`),
                 renotify: true,
                 vibrate: [200, 100, 200, 100, 250, 100, 300],
               },

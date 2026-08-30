@@ -16,10 +16,12 @@ import AvatarWithFrame from './components/AvatarWithFrame'
 import AvatarUploadModal from './components/AvatarUploadModal'
 import AttendanceModal from './components/AttendanceModal'
 import NotificationPermissionModal from './components/NotificationPermissionModal'
-import { upsertUser, getUser, uploadUserAvatar, subscribeToUserRelationships, subscribeToUserChats, syncUserCycleData } from './lib/social'
+import { upsertUser, getUser, uploadUserAvatar, subscribeToUserRelationships, subscribeToUserChats, syncUserCycleData, subscribeToPartnerCycleData } from './lib/social'
 import { isUserAdmin } from './lib/admin'
 import { getCurrentUser, saveSession, logoutUser, verifyBanStatus } from './lib/auth'
 import { canCheckInToday } from './lib/attendance'
+import { getUserVipRank } from './utils/vipTiers'
+import { checkAndNotifyPeriodPrediction } from './utils/cycleNotification'
 import { loadMarkedDates, predictNextPeriod, toDateStr, getCustomTrayIcons, loadAllUserSymptoms, loadAllDayIcons } from './utils/cycle'
 import { applyTheme, getSavedTheme } from './utils/theme'
 import { playCuteTing } from './utils/sound'
@@ -37,6 +39,7 @@ export default function App() {
   // Session initialization
   const [user, setUser] = useState(() => getCurrentUser())
   const isAdmin = isUserAdmin(user)
+  const isGodOrAdmin = isAdmin || user?.vipTier === 'god' || getUserVipRank(user) >= 4
 
   // ── PWA & Web Push Detection ──
   const { isIOS, isStandalone, permission } = usePwaInstallState()
@@ -72,15 +75,15 @@ export default function App() {
     }
   }, [user?.id, isStandalone])
 
-  // Auto-prompt attendance modal on first boot/login if today is unclaimed (Regular Users only)
+  // Auto-prompt attendance modal on first boot/login if today is unclaimed (Non-GOD Regular Users only)
   useEffect(() => {
-    if (user?.id && !hasAutoOpenedAttendanceRef.current && !isAdmin) {
+    if (user?.id && !hasAutoOpenedAttendanceRef.current && !isGodOrAdmin) {
       hasAutoOpenedAttendanceRef.current = true
       if (canCheckInToday(user)) {
         setIsAttendanceModalOpen(true)
       }
     }
-  }, [user?.id, isAdmin])
+  }, [user?.id, isGodOrAdmin])
 
   // Apply saved theme on boot & user change
   useEffect(() => {
@@ -137,9 +140,39 @@ export default function App() {
     return () => window.removeEventListener('minediary:cycle_updated', sync)
   }, [user?.id, user?.gender])
 
+  // ── Auto 1-Day Before Period Prediction Check & Notifications (Female & Male Partner) ──
+  const isFemale = user?.gender === 'female' || !user?.gender
+  const [partnerCycleData, setPartnerCycleData] = useState(null)
+
+  // Listen to partner cycle data if user is male and has shared cycle access
+  useEffect(() => {
+    if (user?.id && !isFemale && hasSharedCycleAccess && partnerUser?.id) {
+      const unsub = subscribeToPartnerCycleData(partnerUser.id, (data) => {
+        setPartnerCycleData(data)
+      })
+      return () => unsub()
+    }
+  }, [user?.id, isFemale, hasSharedCycleAccess, partnerUser?.id])
+
+  // Run automatic 1-day before period check on boot, cycle updates, or partner sync
+  useEffect(() => {
+    if (!user?.id) return
+
+    const runPeriodNotificationCheck = () => {
+      checkAndNotifyPeriodPrediction({
+        user,
+        partnerUser,
+        hasSharedCycleAccess,
+        partnerCycleData,
+      }).catch(console.warn)
+    }
+
+    runPeriodNotificationCheck()
+    window.addEventListener('minediary:cycle_updated', runPeriodNotificationCheck)
+    return () => window.removeEventListener('minediary:cycle_updated', runPeriodNotificationCheck)
+  }, [user, partnerUser, hasSharedCycleAccess, partnerCycleData])
 
   // ── Compute Allowed Navigation Tabs based on Gender & Real-time Cycle Sharing ──
-  const isFemale = user?.gender === 'female' || !user?.gender
 
   const navTabs = useMemo(() => {
     const tabs = [
@@ -626,8 +659,8 @@ export default function App() {
 
           {/* User Profile & Logout */}
           <div className={s.headerActions}>
-            {/* 30-Day VIP Attendance Button (Not for Admin) */}
-            {!isAdmin && (
+            {/* 30-Day VIP Attendance Button (Hidden for GOD & Admin to simplify UI) */}
+            {!isGodOrAdmin && (
               <button
                 type="button"
                 className={s.attendanceHeaderBtn}
@@ -748,8 +781,8 @@ export default function App() {
         />
       )}
 
-      {/* 30-Day VIP Attendance Modal (Regular Users only) */}
-      {isAttendanceModalOpen && user && !isAdmin && (
+      {/* 30-Day VIP Attendance Modal (Non-GOD Regular Users only) */}
+      {isAttendanceModalOpen && user && !isGodOrAdmin && (
         <AttendanceModal
           user={user}
           onUpdateUser={(updated) => {

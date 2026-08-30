@@ -34,7 +34,7 @@ self.addEventListener('push', (event) => {
     title = notif.title || payloadData.title || data.title || title
     options.body = notif.body || payloadData.body || data.body || options.body
     options.icon = notif.icon || payloadData.icon || data.icon || '/icon-192.png'
-    options.tag = payloadData.tag || notif.tag || `chat_${payloadData.partnerId || 'default'}`
+    options.tag = payloadData.tag || notif.tag || `chat_${payloadData.chatId || payloadData.partnerId || 'default'}`
     if (payloadData) {
       options.data = { ...options.data, ...payloadData }
     }

@@ -273,7 +273,9 @@ export async function sendChatMessage(myId, targetId, text, options = {}) {
       body: text.trim(),
       icon: '/icon-192.png',
       data: {
+        chatId: cId,
         partnerId: myId,
+        tag: `chat_${cId}`,
         type: msgType,
       },
     }).catch(() => {})
