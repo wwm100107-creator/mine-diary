@@ -101,6 +101,43 @@
   border-radius: 4px;
 }
 
+.topBarRight {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logoutBtn {
+  font-family: var(--font-pixel);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 8px 14px;
+  background: #FFF0F2;
+  border: 2px solid #FF8FAB;
+  border-radius: var(--radius-md);
+  color: #D81B60;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 #FFB7C5;
+  transition: all var(--transition-fast);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.logoutBtn:hover {
+  background: #FF5E7E;
+  border-color: #D81B60;
+  color: var(--color-white);
+  transform: translateY(-2px);
+  box-shadow: 3px 3px 0 #D81B60;
+}
+
+.logoutBtn:active {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 #D81B60;
+}
+
 /* ── Metrics Grid (4-Column Responsive Card Grid) ── */
 .metricsGrid {
   display: grid;

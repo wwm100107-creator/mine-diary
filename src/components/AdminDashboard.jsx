@@ -55,7 +55,7 @@ function formatBanUntil(banUntil) {
   })
 }
 
-export default function AdminDashboard({ user, onUpdateUser, onBack }) {
+export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout }) {
   const [users, setUsers] = useState([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
@@ -431,18 +431,26 @@ export default function AdminDashboard({ user, onUpdateUser, onBack }) {
       {/* Admin Top Navigation Bar */}
       <div className={s.topBar}>
         <div className={s.topBarLeft}>
-          <button type="button" className={s.backBtn} onClick={onBack} title="Quay lại">
-            ← Quay lại
-          </button>
           <h2 className={s.dashboardTitle}>
             <span>🛡️</span> Bảng Điều Khiển Quản Trị Viên
           </h2>
         </div>
 
-        <div className={s.adminBadge}>
-          <PixelAvatar avatarId={user?.avatar || 'bunny'} size={24} border={false} />
-          <span className={s.adminName}>{user?.displayName || user?.name || 'Admin'}</span>
-          <span className={s.adminPill}>ADMIN</span>
+        <div className={s.topBarRight}>
+          <div className={s.adminBadge}>
+            <PixelAvatar avatarId={user?.avatar || 'bunny'} size={24} border={false} />
+            <span className={s.adminName}>{user?.displayName || user?.name || 'Admin'}</span>
+            <span className={s.adminPill}>ADMIN</span>
+          </div>
+
+          <button
+            type="button"
+            className={s.logoutBtn}
+            onClick={onLogout}
+            title="Đăng xuất tài khoản quản trị viên"
+          >
+            <span>🚪</span> Đăng xuất
+          </button>
         </div>
       </div>
 

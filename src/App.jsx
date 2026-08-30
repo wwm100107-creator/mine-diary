@@ -632,6 +632,7 @@ export default function App() {
           saveSession(updated)
         }}
         onBack={() => switchTab('diary')}
+        onLogout={handleSafeLogout}
       />
     )
   }
