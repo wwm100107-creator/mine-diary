@@ -81,7 +81,6 @@ const ChatMessageItem = memo(function ChatMessageItem({
   msg,
   isSent,
   partnerAvatar,
-  partnerFrame,
 }) {
   const isSystem =
     msg.isSystemMessage ||
@@ -110,9 +109,8 @@ const ChatMessageItem = memo(function ChatMessageItem({
       {!isSent && (
         <AvatarWithFrame
           avatarUrl={partnerAvatar || 'bunny'}
-          frameId={partnerFrame || 'none'}
+          frameId="none"
           size={28}
-          sizePreset="xs"
           border={false}
         />
       )}
@@ -1051,7 +1049,6 @@ export default function ChatView({ user }) {
                       msg={msg}
                       isSent={msg.senderId === user.id}
                       partnerAvatar={activePartner.avatar}
-                      partnerFrame={activePartner.avatarFrame || activePartner.frame}
                     />
                   ))
                 )}
