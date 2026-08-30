@@ -9,6 +9,7 @@ import { subscribeToUserRelationships, getUser, updateRelationshipCycleSharing }
 
 export function useSharedCycleStatus(user) {
   const [hasSharedCycleAccess, setHasSharedCycleAccess] = useState(false)
+  const [sharedFemalePartners, setSharedFemalePartners] = useState([])
   const [partnerUser, setPartnerUser] = useState(null)
   const [sharedRelationship, setSharedRelationship] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -16,6 +17,7 @@ export function useSharedCycleStatus(user) {
   useEffect(() => {
     if (!user?.id) {
       setHasSharedCycleAccess(false)
+      setSharedFemalePartners([])
       setPartnerUser(null)
       setSharedRelationship(null)
       setLoading(false)
@@ -29,15 +31,15 @@ export function useSharedCycleStatus(user) {
 
         if (acceptedRels.length === 0) {
           setHasSharedCycleAccess(false)
+          setSharedFemalePartners([])
           setPartnerUser(null)
           setSharedRelationship(null)
           setLoading(false)
           return
         }
 
-        // Check if any accepted partner is female and has shared cycle
-        let foundFemalePartner = null
-        let foundRel = null
+        // Check all accepted relationships to find all female partners who shared their cycle
+        const validFemalePartners = []
 
         for (const rel of acceptedRels) {
           const partnerId = rel.participants?.find((p) => p !== user.id)
@@ -53,23 +55,26 @@ export function useSharedCycleStatus(user) {
           // 1. isCycleShared is true
           // 2. Or is a couple relationship (auto-healing legacy overwrite)
           if (isPartnerFemale && (isExplicitlyShared || rel.type === 'couple')) {
-            foundFemalePartner = pUser
-            foundRel = rel
+            validFemalePartners.push({
+              partnerUser: pUser,
+              relationship: rel,
+            })
 
             // Auto-heal relationship in database if isCycleShared was false
             if (!isExplicitlyShared) {
               updateRelationshipCycleSharing(rel.id, true).catch(() => {})
             }
-            break
           }
         }
 
-        if (foundFemalePartner && foundRel) {
+        if (validFemalePartners.length > 0) {
           setHasSharedCycleAccess(true)
-          setPartnerUser(foundFemalePartner)
-          setSharedRelationship(foundRel)
+          setSharedFemalePartners(validFemalePartners)
+          setPartnerUser(validFemalePartners[0].partnerUser)
+          setSharedRelationship(validFemalePartners[0].relationship)
         } else {
           setHasSharedCycleAccess(false)
+          setSharedFemalePartners([])
           setPartnerUser(null)
           setSharedRelationship(null)
         }
@@ -85,6 +90,7 @@ export function useSharedCycleStatus(user) {
 
   return {
     hasSharedCycleAccess,
+    sharedFemalePartners,
     partnerUser,
     sharedRelationship,
     loading,

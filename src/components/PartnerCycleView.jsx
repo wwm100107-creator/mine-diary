@@ -4,7 +4,9 @@ import Calendar from './Calendar'
 import FertilityBar from './FertilityBar'
 import HealthChart from './HealthChart'
 import AvatarWithFrame from './AvatarWithFrame'
-import { subscribeToUserRelationships, sendChatMessage } from '../lib/social'
+import { isUserAdmin } from '../lib/admin'
+import { sendChatMessage } from '../lib/social'
+import { useSharedCycleStatus } from '../hooks/useSharedCycleStatus'
 import { usePartnerCycleData } from '../hooks/usePartnerCycleData'
 
 const CARE_PRESETS = [
@@ -17,42 +19,52 @@ const CARE_PRESETS = [
 ]
 
 export default function PartnerCycleView({ user }) {
-  const [userRelationships, setUserRelationships] = useState([])
   const [customMsg, setCustomMsg] = useState('')
   const [sentToast, setSentToast] = useState('')
+  const [selectedPartnerId, setSelectedPartnerId] = useState('')
 
-  // 1. Subscribe to relationships to find partner
+  // 1. Get all shared female partners
+  const { hasSharedCycleAccess, sharedFemalePartners, loading: sharedLoading } = useSharedCycleStatus(user)
+
+  // Auto-sync selected partner id
   useEffect(() => {
-    if (!user?.id) return
-    const unsubscribe = subscribeToUserRelationships(user.id, (rels) => {
-      setUserRelationships(rels)
-    })
-    return () => unsubscribe()
-  }, [user?.id])
+    if (sharedFemalePartners.length > 0) {
+      if (!selectedPartnerId || !sharedFemalePartners.some((p) => p.partnerUser?.id === selectedPartnerId)) {
+        setSelectedPartnerId(sharedFemalePartners[0].partnerUser.id)
+      }
+    } else {
+      setSelectedPartnerId('')
+    }
+  }, [sharedFemalePartners, selectedPartnerId])
 
-  const activeRel = useMemo(() => {
-    return userRelationships.find(
-      (r) => r.status === 'accepted' && Boolean(r.isCycleShared || r.shareCycleData)
-    )
-  }, [userRelationships])
+  const currentPair = useMemo(() => {
+    if (!sharedFemalePartners.length) return null
+    return sharedFemalePartners.find((p) => p.partnerUser?.id === selectedPartnerId) || sharedFemalePartners[0]
+  }, [sharedFemalePartners, selectedPartnerId])
 
-  const partnerId = useMemo(() => {
-    if (!activeRel) return null
-    return activeRel.participants.find((p) => p !== user.id)
-  }, [activeRel, user?.id])
+  const activePartnerUser = currentPair?.partnerUser || null
+  const activeRel = currentPair?.relationship || null
+  const partnerId = activePartnerUser?.id || null
 
   // 2. Fetch Partner Cycle Data
   const {
     hasPermission,
-    partnerUser,
+    partnerUser: realtimePartnerUser,
     prediction,
     markedDates: partnerMarkedDates,
     symptoms: partnerSymptoms,
     dayIconMap: partnerDayIconMap,
     loading,
-  } = usePartnerCycleData(user.id, partnerId)
+  } = usePartnerCycleData(user?.id, partnerId)
 
+  const effectivePartnerUser = realtimePartnerUser || activePartnerUser
 
+  // Check if Fertility Bar is permitted by Admin for this female user
+  const canViewFertility = Boolean(
+    effectivePartnerUser?.allowFertilityTracking === true ||
+    isUserAdmin(effectivePartnerUser) ||
+    effectivePartnerUser?.role === 'admin'
+  )
 
   // 3. Send Care Message to 1-on-1 Chat
   const handleSendLoveMessage = async (textToSend) => {
@@ -73,7 +85,7 @@ export default function PartnerCycleView({ user }) {
     }
   }
 
-  if (!activeRel || !partnerUser) {
+  if (!hasSharedCycleAccess || !effectivePartnerUser || !activeRel) {
     return (
       <div className={s.partnerView}>
         <div className={s.pixelCard} style={{ textAlign: 'center', padding: 48, margin: 'auto' }}>
@@ -91,20 +103,41 @@ export default function PartnerCycleView({ user }) {
 
   return (
     <div className={s.partnerView} role="main" aria-label="Theo dõi chu kỳ người thương">
+      {/* ── 0. Multi-Partner Selector Bar (If more than 1 Female Partner is sharing) ── */}
+      {sharedFemalePartners.length > 1 && (
+        <div className={s.partnerSelectorCard}>
+          <div className={s.selectorLabel}>
+            <span>🌸</span> <strong>Chọn người thương để theo dõi chu kỳ:</strong>
+          </div>
+          <select
+            className={s.partnerSelect}
+            value={selectedPartnerId}
+            onChange={(e) => setSelectedPartnerId(e.target.value)}
+            aria-label="Chọn tài khoản Nữ để xem chu kỳ"
+          >
+            {sharedFemalePartners.map(({ partnerUser: pU, relationship: pRel }) => (
+              <option key={pU.id} value={pU.id}>
+                {pRel.customIcon || '💖'} {pU.displayName || pU.name || pU.id} (#{pU.id})
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+
       {/* ── 1. Hero Banner: Partner Profile & Status ── */}
       <div className={s.partnerHeroBanner}>
         <div className={s.partnerHeroLeft}>
           <AvatarWithFrame
-            avatarUrl={partnerUser.avatar || 'bunny'}
-            frameId={partnerUser.avatarFrame || partnerUser.frame || 'none'}
+            avatarUrl={effectivePartnerUser.avatar || 'bunny'}
+            frameId={effectivePartnerUser.avatarFrame || effectivePartnerUser.frame || 'none'}
             size={56}
           />
           <div>
             <h2 className={s.partnerHeroName}>
-              {activeRel.customIcon || '💖'} {partnerUser.displayName || partnerUser.name || partnerUser.id}
+              {activeRel.customIcon || '💖'} {effectivePartnerUser.displayName || effectivePartnerUser.name || effectivePartnerUser.id}
             </h2>
             <div className={s.partnerHeroSub}>
-              UID: #{partnerUser.id} • Mối quan hệ: <strong>{activeRel.customName}</strong>
+              UID: #{effectivePartnerUser.id} • Mối quan hệ: <strong>{activeRel.customName}</strong>
             </div>
           </div>
         </div>
@@ -158,7 +191,7 @@ export default function PartnerCycleView({ user }) {
               <Calendar
                 userId={partnerId}
                 gender="female"
-                mode={partnerUser?.predictionMode || 'standard'}
+                mode={effectivePartnerUser?.predictionMode || 'standard'}
                 markedDates={partnerMarkedDates}
                 iconMap={partnerDayIconMap}
                 userLogs={partnerSymptoms}
@@ -219,8 +252,10 @@ export default function PartnerCycleView({ user }) {
             </div>
           </div>
 
-          {/* ── 4. Middle: Fertility Strip ── */}
-          <FertilityBar prediction={prediction} />
+          {/* ── 4. Middle: Fertility Strip (Only if Female Partner is granted permission by Admin) ── */}
+          {canViewFertility && (
+            <FertilityBar prediction={prediction} />
+          )}
 
           {/* ── 5. Bottom: Historical Charts (mirroring female's data from Firestore) ── */}
           <div className={s.bottomSection}>

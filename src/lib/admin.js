@@ -330,3 +330,18 @@ export async function updateUserVipTier(userId, newVipTier) {
   await updateDoc(userRef, updatePayload)
   return true
 }
+
+/**
+ * 10. Grant / Revoke Fertility Tracking Feature Permission (Admin Exclusive)
+ * @param {string} userId
+ * @param {boolean} isAllowed
+ */
+export async function updateUserFertilityPermission(userId, isAllowed) {
+  const userRef = doc(db, 'users', userId)
+  await updateDoc(userRef, {
+    allowFertilityTracking: Boolean(isAllowed),
+    fertilityPermissionUpdatedAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  })
+  return true
+}

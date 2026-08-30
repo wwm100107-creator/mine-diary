@@ -5,6 +5,7 @@ import SymptomCards from './SymptomCards'
 import HealthChart from './HealthChart'
 import FertilityBar from './FertilityBar'
 import AvatarWithFrame from './AvatarWithFrame'
+import { isUserAdmin } from '../lib/admin'
 import { today, loadMarkedDates, getCustomTrayIcons, loadAllUserSymptoms, loadAllDayIcons } from '../utils/cycle'
 
 import { useCycleCalendar } from '../hooks/useCycleCalendar'
@@ -128,6 +129,19 @@ export default function HealthView({ user }) {
     markedDates: partnerMarks,
     loading: partnerLoading,
   } = usePartnerCycleData(user.id, partnerId)
+
+  // Check Fertility Bar permissions (Admin granted only)
+  const canViewSelfFertility = Boolean(
+    user?.allowFertilityTracking === true ||
+    isUserAdmin(user) ||
+    user?.role === 'admin'
+  )
+
+  const canViewPartnerFertility = Boolean(
+    partnerUser?.allowFertilityTracking === true ||
+    isUserAdmin(partnerUser) ||
+    partnerUser?.role === 'admin'
+  )
 
   // 4. Send quick care reminder into 1-on-1 chat
   const handleSendCareReminder = async (item) => {
@@ -284,8 +298,10 @@ export default function HealthView({ user }) {
                 </div>
               </div>
 
-              {/* Fertility Bar for Partner */}
-              <FertilityBar prediction={partnerPrediction} />
+              {/* Fertility Bar for Partner (Only if Partner has permission granted by Admin) */}
+              {canViewPartnerFertility && (
+                <FertilityBar prediction={partnerPrediction} />
+              )}
 
               {/* Khay Nhắc Nhở & Hỏi Han (Quick Care Messages to Chat) */}
               <div className={s.careTraySection}>
@@ -369,8 +385,10 @@ export default function HealthView({ user }) {
             </div>
           </div>
 
-          {/* Middle Section: 7-Day Fertility Probability Strip & Disclaimer */}
-          <FertilityBar prediction={prediction} />
+          {/* Middle Section: 7-Day Fertility Probability Strip (Only if Admin has granted permission) */}
+          {canViewSelfFertility && (
+            <FertilityBar prediction={prediction} />
+          )}
 
           {/* Bottom Section: Historical Cycle Charts */}
           <div className={s.bottomSection}>

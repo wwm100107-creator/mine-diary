@@ -12,6 +12,7 @@ import {
   resetUserPassword,
   deleteUserAccount,
   updateUserVipTier,
+  updateUserFertilityPermission,
 } from '../lib/admin'
 import { VIP_TIERS, getUserVipTier } from '../utils/vipTiers'
 import s from './AdminDashboard.module.css'
@@ -378,6 +379,33 @@ export default function AdminDashboard({ user, onUpdateUser, onBack }) {
       setSuperAdminCmd('')
     } else {
       setSuperAdminError('Lệnh truy xuất không hợp lệ! Quyền Admin cấp cao bị từ chối.')
+    }
+  }
+
+  // Toggle Fertility Tracking Permission for a User
+  const handleToggleFertilityPermission = async (targetUser) => {
+    if (!targetUser?.id) return
+    const newStatus = !targetUser.allowFertilityTracking
+    setActionLoading(true)
+    try {
+      await updateUserFertilityPermission(targetUser.id, newStatus)
+      setUsers((prev) =>
+        prev.map((u) => (u.id === targetUser.id ? { ...u, allowFertilityTracking: newStatus } : u))
+      )
+      if (detailModalUser && detailModalUser.id === targetUser.id) {
+        setDetailModalUser((prev) => ({ ...prev, allowFertilityTracking: newStatus }))
+      }
+      if (user?.id === targetUser.id) {
+        onUpdateUser?.({
+          ...user,
+          allowFertilityTracking: newStatus,
+        })
+      }
+    } catch (err) {
+      console.error('Failed to toggle fertility permission:', err)
+      alert('Lỗi khi cập nhật quyền thụ thai: ' + err.message)
+    } finally {
+      setActionLoading(false)
     }
   }
 
@@ -954,6 +982,42 @@ export default function AdminDashboard({ user, onUpdateUser, onBack }) {
               {vipUpdateSuccess && (
                 <span className={s.vipSuccessMsg}>{vipUpdateSuccess}</span>
               )}
+            </div>
+
+            {/* Fertility Feature Permission Section */}
+            <div className={s.vipTierSection} style={{ marginTop: 14, background: '#FFF5F8', border: '1.5px solid var(--color-pink-300)' }}>
+              <div className={s.vipTierHeader}>
+                <span className={s.vipTierTitle} style={{ color: 'var(--color-pink-600)' }}>
+                  🌸 Cấp Phép Tính Năng Khả Năng Thụ Thai
+                </span>
+                <span
+                  className={s.currentVipTag}
+                  style={{
+                    color: detailModalUser.allowFertilityTracking ? '#2E7D32' : '#C62828',
+                    background: detailModalUser.allowFertilityTracking ? '#E8F5E9' : '#FFEBEE',
+                    border: `1px solid ${detailModalUser.allowFertilityTracking ? '#4CAF50' : '#EF5350'}`,
+                  }}
+                >
+                  {detailModalUser.allowFertilityTracking ? '🟢 ĐÃ CẤP PHÉP' : '🔒 BỊ KHÓA'}
+                </span>
+              </div>
+              <p className={s.vipTierDesc}>
+                Tính năng <strong>Thanh Khả Năng Thụ Thai</strong> mặc định bị ẩn trên toàn bộ tài khoản Nam và Nữ. Khi Admin cấp phép cho tài khoản Nữ, cô ấy và đối phương được chia sẻ chu kỳ sẽ nhìn thấy bảng phân tích này.
+              </p>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 10 }}>
+                <button
+                  type="button"
+                  className={s.vipUpdateBtn}
+                  style={{
+                    background: detailModalUser.allowFertilityTracking ? '#FF5252' : '#5EB5A0',
+                    borderColor: detailModalUser.allowFertilityTracking ? '#D32F2F' : '#2E7D32',
+                  }}
+                  onClick={() => handleToggleFertilityPermission(detailModalUser)}
+                  disabled={actionLoading}
+                >
+                  {detailModalUser.allowFertilityTracking ? 'Thu Hồi Quyền ✕' : 'Cấp Phép Ngay ✓'}
+                </button>
+              </div>
             </div>
 
             {/* Account Protection / Delete User Section */}
