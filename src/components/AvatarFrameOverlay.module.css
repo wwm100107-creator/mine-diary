@@ -13,10 +13,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  contain: layout style paint;
-  transform: translateZ(0);
-  backface-visibility: hidden;
-  will-change: transform;
 }
 
 /* ============================================

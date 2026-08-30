@@ -493,6 +493,7 @@
   box-sizing: border-box;
   overflow: visible;
   position: relative;
+  z-index: 50;
 }
 
 .chatHeaderLeft {
@@ -502,6 +503,8 @@
   flex: 1;
   min-width: 0;
   overflow: visible;
+  position: relative;
+  z-index: 55;
 }
 
 .mobileBackBtn {
@@ -527,6 +530,7 @@
   position: relative;
   padding: 4px 6px;
   overflow: visible;
+  z-index: 60;
   transition: gap 0.25s ease, padding 0.25s ease;
 }
 
@@ -555,7 +559,7 @@
   min-height: 36px;
   flex-shrink: 0;
   overflow: visible;
-  z-index: 30;
+  z-index: 70;
 }
 
 .avatarSlot.wideSlot {
@@ -914,11 +918,14 @@
 .messageArea {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 16px 20px;
   display: flex;
   flex-direction: column;
   gap: 12px;
   background: #FFFDF9;
+  position: relative;
+  z-index: 10;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
   scroll-behavior: smooth;
@@ -1022,6 +1029,8 @@
   border-top: 2px solid var(--color-border);
   display: flex;
   gap: 8px;
+  position: relative;
+  z-index: 50;
 }
 
 .chatInput {
@@ -1040,7 +1049,7 @@
 
 .chatInput:focus {
   border-color: var(--color-pink-400);
-  box-shadow: 2px 2px 0 var(--color-pink-300);
+  box-shadow: 0 0 0 3px var(--color-pink-100);
 }
 
 .sendBtn {
@@ -1077,6 +1086,8 @@
   border-top: 2px solid var(--color-border);
   display: flex;
   gap: 12px;
+  position: relative;
+  z-index: 50;
 }
 
 .acceptRequestBtn {
