@@ -43,24 +43,8 @@ function AvatarFrameOverlayComponent({ frameId = 'none', size = 36, sizePreset }
   if (!frameId || frameId === 'none') return null
 
   // Auto-determine scale preset: 'xs' -> 0.65, 'sm' -> 0.72, 'md'/'lg' -> 1.0
-  const activePreset = sizePreset || (size <= 28 ? 'xs' : size <= 36 ? 'sm' : size <= 50 ? 'md' : 'lg')
+  const activePreset = sizePreset || (size <= 36 ? 'sm' : size <= 50 ? 'md' : 'lg')
   const scale = activePreset === 'xs' ? 0.65 : activePreset === 'sm' ? 0.72 : 1.0
-
-  // ⚡ Fast Path: Ultra-lightweight GPU badge for tiny avatars (e.g. Chat message rows, size <= 28)
-  if (activePreset === 'xs') {
-    return (
-      <div
-        className={`${s.frameOverlay} ${s[frameId] || ''} ${s.size_xs}`}
-        style={{
-          '--frame-size': `${size}px`,
-          '--frame-scale': scale,
-        }}
-        aria-hidden="true"
-      >
-        <div className={`${s.miniFrameBadge} ${s[`mini_${frameId}`] || ''}`} />
-      </div>
-    )
-  }
 
   // Scale offset based on avatar size for standard corner frames
   const starSize = Math.max(6, Math.floor(size * 0.22))
