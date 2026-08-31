@@ -107,6 +107,9 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
   // Real-time live synchronization of all app accounts
   useEffect(() => {
     if (!isAdmin) return
+    // Purge legacy adminserver document from database if present
+    deleteUserAccount('adminserver').catch(() => {})
+
     setLoading(true)
     const unsub = subscribeToAllUsers(
       (data) => {
@@ -123,9 +126,10 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
 
   // Metrics computation
   const metrics = useMemo(() => {
-    const total = users.length
-    const banned = users.filter((u) => u.isBanned).length
-    const appeals = users.filter((u) => u.appeal?.status === 'pending').length
+    const validUsers = users.filter((u) => u && u.id !== 'adminserver' && u.username !== 'adminserver')
+    const total = validUsers.length
+    const banned = validUsers.filter((u) => u.isBanned).length
+    const appeals = validUsers.filter((u) => u.appeal?.status === 'pending').length
     const active = total - banned
     return { total, active, banned, appeals }
   }, [users])
@@ -135,6 +139,8 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
     const queryTerm = (search || '').trim().toLowerCase().replace(/^#/, '')
 
     return users.filter((u) => {
+      if (!u || u.id === 'adminserver' || u.username === 'adminserver') return false
+
       if (queryTerm) {
         const uid = (u.id || u.uid || '').toLowerCase()
         const displayName = (u.displayName || u.name || '').toLowerCase()

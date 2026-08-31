@@ -46,6 +46,16 @@ export function isProtectedUser(userOrId) {
 
 function mapUserDoc(d) {
   const data = d.data() || {}
+  const rawId = (data.id || d.id || '').toLowerCase()
+  const rawUsername = (data.username || '').toLowerCase()
+
+  // 🗑️ Permanent deletion of legacy adminserver
+  if (rawId === 'adminserver' || rawUsername === 'adminserver') {
+    deleteDoc(doc(db, 'users', d.id)).catch(() => {})
+    deleteDoc(doc(db, 'users', 'adminserver')).catch(() => {})
+    return null
+  }
+
   let createdAtDate = null
   if (data.createdAt?.toDate) {
     createdAtDate = data.createdAt.toDate()
@@ -70,14 +80,19 @@ function mapUserDoc(d) {
     if (!isNaN(parsed.getTime())) appealDate = parsed
   }
 
+  const isSupremeAdmin = rawId === 'adminminediary' || rawUsername === 'adminminediary'
+
   return {
     ...data,
     id: data.id || d.id,
     uid: data.id || d.id,
     username: data.username || d.id.split('#')[0] || d.id,
     displayName: data.displayName || data.name || data.username || d.id,
-    avatar: data.avatar || 'bunny',
-    avatarFrame: data.avatarFrame || data.frame || 'none',
+    avatar: isSupremeAdmin ? (data.avatar || '/admin-avatar.jpg') : (data.avatar || 'bunny'),
+    avatarFrame: isSupremeAdmin ? (data.avatarFrame || 'cyber_aura') : (data.avatarFrame || data.frame || 'none'),
+    vipTier: isSupremeAdmin ? 'god' : (data.vipTier || 'normal'),
+    isAdmin: isSupremeAdmin ? true : Boolean(data.isAdmin || data.role === 'admin'),
+    role: isSupremeAdmin ? 'admin' : (data.role || 'user'),
     createdAtDate,
     banUntilDate,
     appealDate,
@@ -85,18 +100,21 @@ function mapUserDoc(d) {
 }
 
 function sortUsers(list) {
-  return [...list].sort((a, b) => {
-    // Protected admin always at the top
-    const isAAdmin = isProtectedUser(a)
-    const isBAdmin = isProtectedUser(b)
-    if (isAAdmin && !isBAdmin) return -1
-    if (!isAAdmin && isBAdmin) return 1
+  return [...list]
+    .filter(Boolean)
+    .filter((u) => u.id !== 'adminserver' && u.username !== 'adminserver')
+    .sort((a, b) => {
+      // Protected admin always at the top
+      const isAAdmin = isProtectedUser(a)
+      const isBAdmin = isProtectedUser(b)
+      if (isAAdmin && !isBAdmin) return -1
+      if (!isAAdmin && isBAdmin) return 1
 
-    const tA = a.createdAtDate ? a.createdAtDate.getTime() : 0
-    const tB = b.createdAtDate ? b.createdAtDate.getTime() : 0
-    if (tB !== tA) return tB - tA
-    return (a.id || '').localeCompare(b.id || '')
-  })
+      const tA = a.createdAtDate ? a.createdAtDate.getTime() : 0
+      const tB = b.createdAtDate ? b.createdAtDate.getTime() : 0
+      if (tB !== tA) return tB - tA
+      return (a.id || '').localeCompare(b.id || '')
+    })
 }
 
 /**
@@ -105,7 +123,7 @@ function sortUsers(list) {
 export async function fetchAllUsers() {
   try {
     const snap = await getDocs(collection(db, 'users'))
-    const users = snap.docs.map(mapUserDoc)
+    const users = snap.docs.map(mapUserDoc).filter(Boolean)
     return sortUsers(users)
   } catch (err) {
     console.error('fetchAllUsers error:', err)
@@ -121,7 +139,7 @@ export function subscribeToAllUsers(callback, onError) {
     return onSnapshot(
       collection(db, 'users'),
       (snap) => {
-        const users = snap.docs.map(mapUserDoc)
+        const users = snap.docs.map(mapUserDoc).filter(Boolean)
         callback(sortUsers(users))
       },
       (err) => {
