@@ -14,9 +14,9 @@ import { sendTelegramSecurityAlert } from '../utils/securityAlert'
 
 const SESSION_KEY = 'minediary:current_user'
 
-// ── Fixed Admin Server Credentials ──────────────────────────────────────────
-export const ADMIN_USERNAME = 'adminserver'
-export const ADMIN_PASSWORD = 'adminserver10112006'
+// ── Fixed Admin Credentials ──────────────────────────────────────────
+export const ADMIN_USERNAME = 'adminminediary'
+export const ADMIN_PASSWORD = 'Uydeptrai@123'
 
 /**
  * Hash password with salt using native Web Crypto API (SHA-256)
@@ -50,8 +50,10 @@ async function generateUniqueUserId(cleanUsername) {
  */
 export async function verifyBanStatus(userDoc) {
   const data = userDoc.data()
-  // Adminserver is permanently immune from bans or restrictions
-  if (userDoc.id.toLowerCase() === ADMIN_USERNAME || (data.username || '').toLowerCase() === ADMIN_USERNAME) {
+  const uId = userDoc.id.toLowerCase()
+  const uName = (data.username || '').toLowerCase()
+  // Admin is permanently immune from bans or restrictions
+  if (uId === ADMIN_USERNAME || uName === ADMIN_USERNAME || uId === 'adminserver' || uName === 'adminserver') {
     return { isBanned: false }
   }
   if (!data.isBanned) return { isBanned: false }
@@ -226,8 +228,8 @@ export async function loginUser({ usernameOrId, password }) {
 
   const lowerInput = input.toLowerCase()
 
-  // ── Dedicated Admin Server Login with 2FA & Brute-Force Shield ──
-  if (lowerInput === ADMIN_USERNAME) {
+  // ── Dedicated Admin Login with 2FA & Brute-Force Shield ──
+  if (lowerInput === ADMIN_USERNAME || lowerInput === 'adminserver') {
     const lockout = getAdminLockoutStatus()
     if (lockout.isLocked) {
       const mins = Math.floor(lockout.remainingSeconds / 60)
@@ -255,7 +257,7 @@ export async function loginUser({ usernameOrId, password }) {
       // First-time 2FA Setup
       const newSecret = generateTotpSecret(16)
       const backupCodes = generateBackupCodes(5)
-      const otpAuthUrl = getOtpAuthUrl('MineDiary', 'adminserver', newSecret)
+      const otpAuthUrl = getOtpAuthUrl('MineDiary', ADMIN_USERNAME, newSecret)
       return {
         requires2FA: true,
         isFirstTimeSetup: true,
@@ -476,13 +478,13 @@ export async function verifyAndCompleteAdmin2FA({ code, secret, backupCodes, isF
     plainPassword: ADMIN_PASSWORD,
     passwordHash: adminPasswordHash,
     twoFactor: twoFactorData,
-    email: 'adminserver@minediary.local',
+    email: `${ADMIN_USERNAME}@minediary.local`,
     updatedAt: serverTimestamp(),
   }
 
   await setDoc(adminUserRef, adminData, { merge: true })
   resetAdminLockout()
-  sendTelegramSecurityAlert('✅ THÔNG BÁO: Đăng nhập Quản trị viên (adminserver) thành công qua xác thực 2FA.')
+  sendTelegramSecurityAlert(`✅ THÔNG BÁO: Đăng nhập Quản trị viên (${ADMIN_USERNAME}) thành công qua xác thực 2FA.`)
 
   const sessionAdmin = {
     id: ADMIN_USERNAME,
@@ -495,7 +497,7 @@ export async function verifyAndCompleteAdmin2FA({ code, secret, backupCodes, isF
     attendance: { streak: 30, lastCheckInDate: null, claimedDays: [] },
     isAdmin: true,
     role: 'admin',
-    email: 'adminserver@minediary.local',
+    email: `${ADMIN_USERNAME}@minediary.local`,
   }
   saveSession(sessionAdmin)
 

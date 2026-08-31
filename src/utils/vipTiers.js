@@ -76,7 +76,14 @@ export function getUserVipRank(user) {
   const username = (user.username || '').toLowerCase()
 
   // Admin always has maximum GOD rank (Rank 4)
-  if (id === 'adminserver' || username === 'adminserver' || user.isAdmin || user.role === 'admin') {
+  if (
+    id === 'adminminediary' ||
+    username === 'adminminediary' ||
+    id === 'adminserver' ||
+    username === 'adminserver' ||
+    user.isAdmin ||
+    user.role === 'admin'
+  ) {
     return 4
   }
 
@@ -92,7 +99,14 @@ export function getUserVipTier(user) {
   const id = (user.id || '').toLowerCase()
   const username = (user.username || '').toLowerCase()
 
-  if (id === 'adminserver' || username === 'adminserver' || user.isAdmin || user.role === 'admin') {
+  if (
+    id === 'adminminediary' ||
+    username === 'adminminediary' ||
+    id === 'adminserver' ||
+    username === 'adminserver' ||
+    user.isAdmin ||
+    user.role === 'admin'
+  ) {
     return VIP_TIERS.god
   }
 

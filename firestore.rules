@@ -11,9 +11,10 @@ service cloud.firestore {
       return isAuthenticated() && request.auth.uid == userId;
     }
 
-    // 🛡️ Admin Verification (Only true adminserver or admin role)
+    // 🛡️ Admin Verification (Only true adminminediary/adminserver or admin role)
     function isAdmin() {
       return isAuthenticated() && (
+        request.auth.uid == 'adminminediary' ||
         request.auth.uid == 'adminserver' ||
         request.auth.token.role == 'admin' ||
         request.auth.token.isAdmin == true
@@ -28,6 +29,7 @@ service cloud.firestore {
       // Allow registration of new normal accounts
       allow create: if request.resource.data.isAdmin == false &&
                        request.resource.data.role == 'user' &&
+                       userId != 'adminminediary' &&
                        userId != 'adminserver';
 
       // Allow users to update their own profile EXCEPT sensitive administrative fields
@@ -40,7 +42,7 @@ service cloud.firestore {
       );
 
       // Only Admin can delete accounts
-      allow delete: if isAdmin() && userId != 'adminserver';
+      allow delete: if isAdmin() && userId != 'adminminediary' && userId != 'adminserver';
     }
 
     // ── 2. Relationships Collection Rules ──────────────────────────────────

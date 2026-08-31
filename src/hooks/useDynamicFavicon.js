@@ -15,6 +15,8 @@ export function useDynamicFavicon(user) {
       isUserAdmin(user) ||
       user?.role === 'admin' ||
       user?.isAdmin ||
+      user?.id === 'adminminediary' ||
+      user?.username === 'adminminediary' ||
       user?.id === 'adminserver' ||
       user?.username === 'adminserver'
     )

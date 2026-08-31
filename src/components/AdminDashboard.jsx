@@ -262,11 +262,11 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
     }
   }
 
-  // Handle Delete User Account (Strict protection for adminserver)
+  // Handle Delete User Account (Strict protection for supreme admin)
   const handleDeleteUser = async (targetUser) => {
     if (!targetUser) return
     if (isProtectedUser(targetUser)) {
-      alert('👑 Tài khoản Quản trị viên tối cao (adminserver) là Bất tử, không thể bị xóa hoặc hạn chế!')
+      alert('👑 Tài khoản Quản trị viên tối cao là Bất tử, không thể bị xóa hoặc hạn chế!')
       return
     }
 
@@ -1031,7 +1031,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
             {/* Account Protection / Delete User Section */}
             {isProtectedUser(detailModalUser) ? (
               <div style={{ background: '#FFF9C4', border: '1.5px solid #FFB300', borderRadius: 8, padding: '10px 14px', marginTop: 14, color: '#B78103', fontSize: 12, fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 6 }}>
-                <span>👑</span> Tài khoản Quản trị tối cao (adminserver) là Bất tử. Được bảo vệ vĩnh viễn và không thể bị xóa hoặc hạn chế quyền!
+                <span>👑</span> Tài khoản Quản trị tối cao là Bất tử. Được bảo vệ vĩnh viễn và không thể bị xóa hoặc hạn chế quyền!
               </div>
             ) : (
               <div style={{ background: '#FFF5F5', border: '1.5px dashed #FEB2B2', borderRadius: 8, padding: '12px 14px', marginTop: 14, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>

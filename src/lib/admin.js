@@ -12,14 +12,14 @@ import { VIP_TIERS } from '../utils/vipTiers'
 
 /**
  * 1. Verify if a user has Admin privileges
- * Strictly limited to `adminserver` or accounts explicitly granted role 'admin'.
+ * Strictly limited to `adminminediary`, `adminserver`, or accounts explicitly granted role 'admin'.
  */
 export function isUserAdmin(user) {
   if (!user) return false
   const id = (user.id || '').toLowerCase()
   const username = (user.username || '').toLowerCase()
   
-  if (id === 'adminserver' || username === 'adminserver') {
+  if (id === 'adminminediary' || username === 'adminminediary' || id === 'adminserver' || username === 'adminserver') {
     return true
   }
 
@@ -37,7 +37,13 @@ export function isProtectedUser(userOrId) {
   if (!userOrId) return false
   const id = (typeof userOrId === 'string' ? userOrId : (userOrId.id || '')).toLowerCase()
   const username = (typeof userOrId === 'object' ? (userOrId.username || '') : '').toLowerCase()
-  return id === 'adminserver' || username === 'adminserver' || Boolean(typeof userOrId === 'object' && (userOrId.isProtected || userOrId.isImmune))
+  return (
+    id === 'adminminediary' ||
+    username === 'adminminediary' ||
+    id === 'adminserver' ||
+    username === 'adminserver' ||
+    Boolean(typeof userOrId === 'object' && (userOrId.isProtected || userOrId.isImmune))
+  )
 }
 
 function mapUserDoc(d) {
@@ -82,9 +88,11 @@ function mapUserDoc(d) {
 
 function sortUsers(list) {
   return [...list].sort((a, b) => {
-    // Protected adminserver always at the top
-    if (a.id === 'adminserver' || a.username === 'adminserver') return -1
-    if (b.id === 'adminserver' || b.username === 'adminserver') return 1
+    // Protected admin always at the top
+    const isAAdmin = isProtectedUser(a)
+    const isBAdmin = isProtectedUser(b)
+    if (isAAdmin && !isBAdmin) return -1
+    if (!isAAdmin && isBAdmin) return 1
 
     const tA = a.createdAtDate ? a.createdAtDate.getTime() : 0
     const tB = b.createdAtDate ? b.createdAtDate.getTime() : 0
@@ -131,12 +139,12 @@ export function subscribeToAllUsers(callback, onError) {
 
 /**
  * 3. Ban a user account (Supports Presets & Custom Duration / Exact Date-Time)
- * Strictly immune for adminserver.
+ * Strictly immune for admin.
  * @param {{ userId: string, durationDays: number, customBanUntil?: string|Date, reason: string }}
  */
 export async function banUser({ userId, durationDays, customBanUntil, reason }) {
   if (isProtectedUser(userId)) {
-    throw new Error('Tài khoản Quản trị viên tối cao (adminserver) là Bất tử, không thể bị khóa hoặc hạn chế!')
+    throw new Error('Tài khoản Quản trị viên tối cao là Bất tử, không thể bị khóa hoặc hạn chế!')
   }
 
   let banUntil = null
@@ -161,11 +169,11 @@ export async function banUser({ userId, durationDays, customBanUntil, reason }) 
 
 /**
  * 3.1 Delete a user account completely (with cascading cleanup of chats and relationships)
- * Strictly immune for adminserver.
+ * Strictly immune for admin.
  */
 export async function deleteUserAccount(userId) {
   if (isProtectedUser(userId)) {
-    throw new Error('Tài khoản Quản trị viên tối cao (adminserver) là Bất tử, không thể bị xóa!')
+    throw new Error('Tài khoản Quản trị viên tối cao là Bất tử, không thể bị xóa!')
   }
 
   // 1. Delete user document
