@@ -526,6 +526,7 @@ export default function App() {
         const newAttendance = data.attendance || prev.attendance || { streak: 0, lastCheckInDate: null, claimedDays: [] }
         const newAvatar = data.avatar || prev.avatar || 'bunny'
         const newDisplayName = data.displayName || data.name || prev.displayName
+        const newPredictionMode = data.predictionMode || prev.predictionMode || 'standard'
         const newRole = (data.role === 'admin' || snap.id.toLowerCase() === 'adminminediary' || snap.id.toLowerCase() === 'adminserver') ? 'admin' : (data.role || prev.role || 'user')
         const newIsAdmin = newRole === 'admin' || data.isAdmin === true
 
