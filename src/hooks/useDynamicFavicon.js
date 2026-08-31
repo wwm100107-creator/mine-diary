@@ -16,9 +16,7 @@ export function useDynamicFavicon(user) {
       user?.role === 'admin' ||
       user?.isAdmin ||
       user?.id === 'adminminediary' ||
-      user?.username === 'adminminediary' ||
-      user?.id === 'adminserver' ||
-      user?.username === 'adminserver'
+      user?.username === 'adminminediary'
     )
 
     let primaryIconUrl = '/favicon.svg'

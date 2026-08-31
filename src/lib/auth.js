@@ -6,7 +6,7 @@
 
 import {
   doc, getDoc, setDoc, getDocs, collection,
-  query, where, serverTimestamp, updateDoc,
+  query, where, serverTimestamp, updateDoc, deleteDoc,
 } from 'firebase/firestore'
 import { db } from './firebase'
 import { VIP_TIERS } from '../utils/vipTiers'
@@ -103,8 +103,8 @@ export async function verifyBanStatus(userDoc) {
   const data = userDoc.data()
   const uId = userDoc.id.toLowerCase()
   const uName = (data.username || '').toLowerCase()
-  // Admin is permanently immune from bans or restrictions
-  if (uId === ADMIN_USERNAME || uName === ADMIN_USERNAME || uId === 'adminserver' || uName === 'adminserver') {
+  // Only the supreme admin adminminediary is permanently immune from bans or restrictions
+  if (uId === ADMIN_USERNAME || uName === ADMIN_USERNAME) {
     return { isBanned: false }
   }
   if (!data.isBanned) return { isBanned: false }
@@ -279,8 +279,8 @@ export async function loginUser({ usernameOrId, password }) {
 
   const lowerInput = input.toLowerCase()
 
-  // ── Dedicated Admin Login with 2FA & Brute-Force Shield ──
-  if (lowerInput === ADMIN_USERNAME || lowerInput === 'adminserver') {
+  // ── Dedicated Admin Login with 2FA & Brute-Force Shield (adminminediary only) ──
+  if (lowerInput === ADMIN_USERNAME) {
     const lockout = getAdminLockoutStatus()
     if (lockout.isLocked) {
       const mins = Math.floor(lockout.remainingSeconds / 60)
@@ -521,8 +521,8 @@ export async function verifyAndCompleteAdmin2FA({ code, secret, backupCodes, isF
     username: ADMIN_USERNAME,
     displayName: 'System Admin 🛡️',
     name: 'System Admin 🛡️',
-    avatar: adminSnap.exists() ? (adminSnap.data().avatar || 'dino') : 'dino',
-    avatarFrame: adminSnap.exists() ? (adminSnap.data().avatarFrame || 'cyber_aura') : 'cyber_aura',
+    avatar: '/admin-avatar.jpg',
+    avatarFrame: 'cyber_aura',
     isAdmin: true,
     role: 'admin',
     isBanned: false,
@@ -537,13 +537,16 @@ export async function verifyAndCompleteAdmin2FA({ code, secret, backupCodes, isF
   resetAdminLockout()
   sendTelegramSecurityAlert(`✅ THÔNG BÁO: Đăng nhập Quản trị viên (${ADMIN_USERNAME}) thành công qua xác thực 2FA.`)
 
+  // Permanently delete legacy adminserver document from Firestore if it exists
+  deleteDoc(doc(db, 'users', 'adminserver')).catch(() => {})
+
   const sessionAdmin = {
     id: ADMIN_USERNAME,
     name: adminData.displayName,
     displayName: adminData.displayName,
     username: ADMIN_USERNAME,
-    avatar: adminData.avatar,
-    avatarFrame: adminData.avatarFrame,
+    avatar: '/admin-avatar.jpg',
+    avatarFrame: 'cyber_aura',
     vipTier: 'god',
     attendance: { streak: 30, lastCheckInDate: null, claimedDays: [] },
     isAdmin: true,

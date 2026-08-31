@@ -25,7 +25,7 @@ export default function handler(req, res) {
         const parsed = JSON.parse(rawUser)
         finalRole = parsed.role || (parsed.isAdmin ? 'admin' : 'user')
         finalGender = parsed.gender || ''
-        finalIsAdmin = Boolean(parsed.isAdmin || parsed.role === 'admin' || parsed.id === 'adminminediary' || parsed.id === 'adminserver')
+        finalIsAdmin = Boolean(parsed.isAdmin || parsed.role === 'admin' || parsed.id === 'adminminediary')
       }
     } catch (e) {}
   }

@@ -12,14 +12,14 @@ import { VIP_TIERS } from '../utils/vipTiers'
 
 /**
  * 1. Verify if a user has Admin privileges
- * Strictly limited to `adminminediary`, `adminserver`, or accounts explicitly granted role 'admin'.
+ * Strictly limited to `adminminediary` or accounts explicitly granted role 'admin'.
  */
 export function isUserAdmin(user) {
   if (!user) return false
   const id = (user.id || '').toLowerCase()
   const username = (user.username || '').toLowerCase()
   
-  if (id === 'adminminediary' || username === 'adminminediary' || id === 'adminserver' || username === 'adminserver') {
+  if (id === 'adminminediary' || username === 'adminminediary') {
     return true
   }
 
@@ -40,8 +40,6 @@ export function isProtectedUser(userOrId) {
   return (
     id === 'adminminediary' ||
     username === 'adminminediary' ||
-    id === 'adminserver' ||
-    username === 'adminserver' ||
     Boolean(typeof userOrId === 'object' && (userOrId.isProtected || userOrId.isImmune))
   )
 }

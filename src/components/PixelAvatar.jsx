@@ -17,7 +17,7 @@ export default function PixelAvatar({
 }) {
   const isCustomImage =
     typeof avatarId === 'string' &&
-    (avatarId.startsWith('data:image/') || avatarId.startsWith('http') || avatarId.startsWith('blob:'))
+    (avatarId.startsWith('data:image/') || avatarId.startsWith('http') || avatarId.startsWith('blob:') || avatarId.startsWith('/') || avatarId.includes('.'))
 
   const numericSize = typeof size === 'number' ? size : 36
   const computedPreset = sizePreset || (numericSize <= 36 ? 'sm' : numericSize <= 50 ? 'md' : 'lg')

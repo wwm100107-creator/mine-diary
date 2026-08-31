@@ -79,8 +79,6 @@ export function getUserVipRank(user) {
   if (
     id === 'adminminediary' ||
     username === 'adminminediary' ||
-    id === 'adminserver' ||
-    username === 'adminserver' ||
     user.isAdmin ||
     user.role === 'admin'
   ) {
@@ -102,8 +100,6 @@ export function getUserVipTier(user) {
   if (
     id === 'adminminediary' ||
     username === 'adminminediary' ||
-    id === 'adminserver' ||
-    username === 'adminserver' ||
     user.isAdmin ||
     user.role === 'admin'
   ) {

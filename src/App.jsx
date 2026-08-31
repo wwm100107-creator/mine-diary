@@ -85,6 +85,18 @@ export default function App() {
     }
   }, [user?.id, isGodOrAdmin])
 
+  // Auto-sync Admin Avatar to official uploaded portrait
+  useEffect(() => {
+    if (user?.id === 'adminminediary' && user?.avatar !== '/admin-avatar.jpg') {
+      setUser((prev) => {
+        if (!prev) return prev
+        const updated = { ...prev, avatar: '/admin-avatar.jpg' }
+        saveSession(updated)
+        return updated
+      })
+    }
+  }, [user?.id, user?.avatar])
+
   // Apply saved theme on boot & user change
   useEffect(() => {
     const themeToApply = user?.theme || getSavedTheme()
@@ -527,7 +539,7 @@ export default function App() {
         const newAvatar = data.avatar || prev.avatar || 'bunny'
         const newDisplayName = data.displayName || data.name || prev.displayName
         const newPredictionMode = data.predictionMode || prev.predictionMode || 'standard'
-        const newRole = (data.role === 'admin' || snap.id.toLowerCase() === 'adminminediary' || snap.id.toLowerCase() === 'adminserver') ? 'admin' : (data.role || prev.role || 'user')
+        const newRole = (data.role === 'admin' || snap.id.toLowerCase() === 'adminminediary') ? 'admin' : (data.role || prev.role || 'user')
         const newIsAdmin = newRole === 'admin' || data.isAdmin === true
 
         // Only update if state has genuinely changed
