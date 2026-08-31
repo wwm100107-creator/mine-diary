@@ -11,12 +11,63 @@ import {
 import { db } from './firebase'
 import { VIP_TIERS } from '../utils/vipTiers'
 import { sendTelegramSecurityAlert } from '../utils/securityAlert'
+import {
+  generateTotpSecret,
+  generateTotpCode,
+  verifyTotpCode,
+  getOtpAuthUrl,
+  generateBackupCodes,
+} from '../utils/totp'
 
 const SESSION_KEY = 'minediary:current_user'
 
 // ── Fixed Admin Credentials ──────────────────────────────────────────
 export const ADMIN_USERNAME = 'adminminediary'
 export const ADMIN_PASSWORD = 'Uydeptrai@123'
+
+const LOCKOUT_KEY = 'minediary:admin_lockout'
+const MAX_ATTEMPTS = 5
+const LOCKOUT_DURATION_MS = 15 * 60 * 1000 // 15 minutes
+
+export function getAdminLockoutStatus() {
+  try {
+    const raw = localStorage.getItem(LOCKOUT_KEY)
+    if (!raw) return { isLocked: false, remainingSeconds: 0, attempts: 0 }
+    const data = JSON.parse(raw)
+    const now = Date.now()
+    if (data.lockedUntil && now < data.lockedUntil) {
+      const remainingSeconds = Math.ceil((data.lockedUntil - now) / 1000)
+      return { isLocked: true, remainingSeconds, attempts: data.attempts || MAX_ATTEMPTS }
+    }
+    if (data.lockedUntil && now >= data.lockedUntil) {
+      localStorage.removeItem(LOCKOUT_KEY)
+      return { isLocked: false, remainingSeconds: 0, attempts: 0 }
+    }
+    return { isLocked: false, remainingSeconds: 0, attempts: data.attempts || 0 }
+  } catch (e) {
+    return { isLocked: false, remainingSeconds: 0, attempts: 0 }
+  }
+}
+
+export function recordFailedAdminAttempt() {
+  const current = getAdminLockoutStatus()
+  const newAttempts = (current.attempts || 0) + 1
+  const now = Date.now()
+  if (newAttempts >= MAX_ATTEMPTS) {
+    const lockedUntil = now + LOCKOUT_DURATION_MS
+    localStorage.setItem(LOCKOUT_KEY, JSON.stringify({ attempts: newAttempts, lockedUntil }))
+    return { isLocked: true, remainingSeconds: Math.ceil(LOCKOUT_DURATION_MS / 1000), attempts: newAttempts }
+  } else {
+    localStorage.setItem(LOCKOUT_KEY, JSON.stringify({ attempts: newAttempts, lockedUntil: null }))
+    return { isLocked: false, remainingSeconds: 0, attempts: newAttempts }
+  }
+}
+
+export function resetAdminLockout() {
+  try {
+    localStorage.removeItem(LOCKOUT_KEY)
+  } catch (e) {}
+}
 
 /**
  * Hash password with salt using native Web Crypto API (SHA-256)
