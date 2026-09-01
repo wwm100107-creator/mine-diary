@@ -29,7 +29,6 @@ import { useSharedCycleStatus } from './hooks/useSharedCycleStatus'
 import { useDynamicFavicon } from './hooks/useDynamicFavicon'
 import { usePwaInstallState } from './hooks/usePwaInstallState'
 import IosInstallBottomSheet from './components/IosInstallBottomSheet'
-import CustomCursorFollower from './components/CustomCursorFollower'
 import { requestNotificationPermission, displayOsNotification } from './lib/push'
 import s from './App.module.css'
 
@@ -84,18 +83,6 @@ export default function App() {
       }
     }
   }, [user?.id, isGodOrAdmin])
-
-  // Auto-sync Admin Avatar to official uploaded portrait
-  useEffect(() => {
-    if (user?.id === 'adminminediary' && user?.avatar !== '/admin-avatar.jpg') {
-      setUser((prev) => {
-        if (!prev) return prev
-        const updated = { ...prev, avatar: '/admin-avatar.jpg' }
-        saveSession(updated)
-        return updated
-      })
-    }
-  }, [user?.id, user?.avatar])
 
   // Apply saved theme on boot & user change
   useEffect(() => {
@@ -821,9 +808,6 @@ export default function App() {
 
       {/* iOS Safari Add to Home Screen Onboarding Bottom Sheet */}
       <IosInstallBottomSheet isIOS={isIOS} isStandalone={isStandalone} />
-
-      {/* Global Custom Mouse Follower (Syncs with user's Avatar Frame & Mecha Themes) */}
-      <CustomCursorFollower user={user} />
     </div>
   )
 }

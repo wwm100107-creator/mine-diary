@@ -109,13 +109,6 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
-
-/* Custom Cursor Global Override */
-html.has-custom-cursor,
-html.has-custom-cursor *,
-body.has-custom-cursor,
-body.has-custom-cursor * {
-  cursor: none !important;
 }
 
 

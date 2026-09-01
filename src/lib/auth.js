@@ -453,7 +453,23 @@ export function logoutUser() {
 export function getCurrentUser() {
   try {
     const raw = localStorage.getItem(SESSION_KEY)
-    return raw ? JSON.parse(raw) : null
+    if (!raw) return null
+    const user = JSON.parse(raw)
+    if (user && (user.id === ADMIN_USERNAME || user.username === ADMIN_USERNAME)) {
+      let changed = false
+      if (user.avatar === '/admin-avatar.jpg') {
+        user.avatar = 'bunny'
+        changed = true
+      }
+      if (user.avatarFrame === 'cyber_aura' || user.avatarFrame === 'taiji_ink_wash') {
+        user.avatarFrame = 'none'
+        changed = true
+      }
+      if (changed) {
+        localStorage.setItem(SESSION_KEY, JSON.stringify(user))
+      }
+    }
+    return user
   } catch (e) {
     return null
   }
@@ -521,8 +537,8 @@ export async function verifyAndCompleteAdmin2FA({ code, secret, backupCodes, isF
     username: ADMIN_USERNAME,
     displayName: 'System Admin 🛡️',
     name: 'System Admin 🛡️',
-    avatar: '/admin-avatar.jpg',
-    avatarFrame: 'cyber_aura',
+    avatar: 'bunny',
+    avatarFrame: 'none',
     isAdmin: true,
     role: 'admin',
     isBanned: false,
@@ -545,8 +561,8 @@ export async function verifyAndCompleteAdmin2FA({ code, secret, backupCodes, isF
     name: adminData.displayName,
     displayName: adminData.displayName,
     username: ADMIN_USERNAME,
-    avatar: '/admin-avatar.jpg',
-    avatarFrame: 'cyber_aura',
+    avatar: 'bunny',
+    avatarFrame: 'none',
     vipTier: 'god',
     attendance: { streak: 30, lastCheckInDate: null, claimedDays: [] },
     isAdmin: true,

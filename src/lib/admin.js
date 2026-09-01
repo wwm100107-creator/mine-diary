@@ -31,6 +31,28 @@ export function isUserAdmin(user) {
 }
 
 /**
+ * 1.05 Sanitize Admin Account (Reset avatar to bunny, frame to none if set to legacy)
+ */
+export async function sanitizeAdminAccount() {
+  try {
+    const adminRef = doc(db, 'users', 'adminminediary')
+    const snap = await getDoc(adminRef)
+    if (snap.exists()) {
+      const data = snap.data()
+      if (data.avatar === '/admin-avatar.jpg' || data.avatarFrame === 'cyber_aura' || data.avatarFrame === 'taiji_ink_wash') {
+        await updateDoc(adminRef, {
+          avatar: 'bunny',
+          avatarFrame: 'none',
+          updatedAt: serverTimestamp(),
+        })
+      }
+    }
+  } catch (e) {
+    // ignore
+  }
+}
+
+/**
  * 1.1 Check if a user is permanently protected & immune from ban/delete/restriction
  */
 export function isProtectedUser(userOrId) {
@@ -88,8 +110,8 @@ function mapUserDoc(d) {
     uid: data.id || d.id,
     username: data.username || d.id.split('#')[0] || d.id,
     displayName: data.displayName || data.name || data.username || d.id,
-    avatar: isSupremeAdmin ? (data.avatar || '/admin-avatar.jpg') : (data.avatar || 'bunny'),
-    avatarFrame: isSupremeAdmin ? (data.avatarFrame || 'cyber_aura') : (data.avatarFrame || data.frame || 'none'),
+    avatar: isSupremeAdmin && (data.avatar === '/admin-avatar.jpg' || !data.avatar) ? 'bunny' : (data.avatar || 'bunny'),
+    avatarFrame: isSupremeAdmin && (data.avatarFrame === 'cyber_aura' || data.avatarFrame === 'taiji_ink_wash') ? 'none' : (data.avatarFrame || data.frame || 'none'),
     vipTier: isSupremeAdmin ? 'god' : (data.vipTier || 'normal'),
     isAdmin: isSupremeAdmin ? true : Boolean(data.isAdmin || data.role === 'admin'),
     role: isSupremeAdmin ? 'admin' : (data.role || 'user'),

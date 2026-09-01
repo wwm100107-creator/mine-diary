@@ -13,6 +13,7 @@ import {
   deleteUserAccount,
   updateUserVipTier,
   updateUserFertilityPermission,
+  sanitizeAdminAccount,
 } from '../lib/admin'
 import { VIP_TIERS, getUserVipTier } from '../utils/vipTiers'
 import s from './AdminDashboard.module.css'
@@ -109,6 +110,8 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
     if (!isAdmin) return
     // Purge legacy adminserver document from database if present
     deleteUserAccount('adminserver').catch(() => {})
+    // Ensure admin avatar and frame are reset to default
+    sanitizeAdminAccount().catch(() => {})
 
     setLoading(true)
     const unsub = subscribeToAllUsers(
