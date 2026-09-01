@@ -447,7 +447,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
 
         <div className={s.topBarRight}>
           <div className={s.adminBadge}>
-            <PixelAvatar avatarId={user?.avatar || 'bunny'} size={24} border={false} />
+            <PixelAvatar avatarId={user?.avatar || '/admin-avatar.mp4'} size={32} border={false} />
             <span className={s.adminName}>{user?.displayName || user?.name || 'Admin'}</span>
             <span className={s.adminPill}>ADMIN</span>
           </div>

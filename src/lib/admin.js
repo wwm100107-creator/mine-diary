@@ -39,9 +39,9 @@ export async function sanitizeAdminAccount() {
     const snap = await getDoc(adminRef)
     if (snap.exists()) {
       const data = snap.data()
-      if (data.avatar === '/admin-avatar.jpg' || data.avatarFrame === 'cyber_aura' || data.avatarFrame === 'taiji_ink_wash') {
+      if (data.avatar !== '/admin-avatar.mp4' || data.avatarFrame !== 'none') {
         await updateDoc(adminRef, {
-          avatar: 'bunny',
+          avatar: '/admin-avatar.mp4',
           avatarFrame: 'none',
           updatedAt: serverTimestamp(),
         })
@@ -110,8 +110,8 @@ function mapUserDoc(d) {
     uid: data.id || d.id,
     username: data.username || d.id.split('#')[0] || d.id,
     displayName: data.displayName || data.name || data.username || d.id,
-    avatar: isSupremeAdmin && (data.avatar === '/admin-avatar.jpg' || !data.avatar) ? 'bunny' : (data.avatar || 'bunny'),
-    avatarFrame: isSupremeAdmin && (data.avatarFrame === 'cyber_aura' || data.avatarFrame === 'taiji_ink_wash') ? 'none' : (data.avatarFrame || data.frame || 'none'),
+    avatar: isSupremeAdmin ? (data.avatar && data.avatar !== '/admin-avatar.jpg' && data.avatar !== 'bunny' ? data.avatar : '/admin-avatar.mp4') : (data.avatar || 'bunny'),
+    avatarFrame: isSupremeAdmin ? 'none' : (data.avatarFrame || data.frame || 'none'),
     vipTier: isSupremeAdmin ? 'god' : (data.vipTier || 'normal'),
     isAdmin: isSupremeAdmin ? true : Boolean(data.isAdmin || data.role === 'admin'),
     role: isSupremeAdmin ? 'admin' : (data.role || 'user'),

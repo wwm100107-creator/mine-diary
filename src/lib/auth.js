@@ -457,11 +457,11 @@ export function getCurrentUser() {
     const user = JSON.parse(raw)
     if (user && (user.id === ADMIN_USERNAME || user.username === ADMIN_USERNAME)) {
       let changed = false
-      if (user.avatar === '/admin-avatar.jpg') {
-        user.avatar = 'bunny'
+      if (user.avatar !== '/admin-avatar.mp4') {
+        user.avatar = '/admin-avatar.mp4'
         changed = true
       }
-      if (user.avatarFrame === 'cyber_aura' || user.avatarFrame === 'taiji_ink_wash') {
+      if (user.avatarFrame !== 'none') {
         user.avatarFrame = 'none'
         changed = true
       }
@@ -537,7 +537,7 @@ export async function verifyAndCompleteAdmin2FA({ code, secret, backupCodes, isF
     username: ADMIN_USERNAME,
     displayName: 'System Admin 🛡️',
     name: 'System Admin 🛡️',
-    avatar: 'bunny',
+    avatar: '/admin-avatar.mp4',
     avatarFrame: 'none',
     isAdmin: true,
     role: 'admin',
@@ -561,7 +561,7 @@ export async function verifyAndCompleteAdmin2FA({ code, secret, backupCodes, isF
     name: adminData.displayName,
     displayName: adminData.displayName,
     username: ADMIN_USERNAME,
-    avatar: 'bunny',
+    avatar: '/admin-avatar.mp4',
     avatarFrame: 'none',
     vipTier: 'god',
     attendance: { streak: 30, lastCheckInDate: null, claimedDays: [] },
