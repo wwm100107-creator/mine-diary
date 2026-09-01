@@ -16,21 +16,28 @@ export default function PixelAvatar({
   className = '',
   style = {},
 }) {
-  const [videoError, setVideoError] = useState(false)
+  const [hasError, setHasError] = useState(false)
   const videoRef = useRef(null)
 
+  useEffect(() => {
+    setHasError(false)
+  }, [avatarId])
+
   const isVideo =
-    !videoError &&
+    !hasError &&
     typeof avatarId === 'string' &&
     (avatarId.endsWith('.mp4') ||
       avatarId.endsWith('.webm') ||
       avatarId.startsWith('data:video/') ||
       avatarId.includes('.mp4') ||
-      avatarId.includes('admin-avatar'))
+      avatarId.includes('.webm'))
 
   const isCustomImage =
+    !hasError &&
     !isVideo &&
     typeof avatarId === 'string' &&
+    !avatarId.endsWith('.mp4') &&
+    !avatarId.endsWith('.webm') &&
     (avatarId.startsWith('data:image/') || avatarId.startsWith('http') || avatarId.startsWith('blob:') || avatarId.startsWith('/') || avatarId.includes('.'))
 
   // Infinite Video Looper: ensures continuous seamless playback across all browsers & mobile devices
@@ -56,7 +63,7 @@ export default function PixelAvatar({
     ...style,
   }
 
-  const avatar = (!isCustomImage && !isVideo) ? getAvatar(avatarId) : null
+  const avatar = (!isCustomImage && !isVideo) ? (getAvatar(avatarId) || getAvatar('bunny')) : null
 
   return (
     <div className={className} style={containerStyle} title={avatar?.name || (isVideo ? 'Video Avatar' : 'Avatar')}>
@@ -87,7 +94,7 @@ export default function PixelAvatar({
             muted
             playsInline
             preload="auto"
-            onError={() => setVideoError(true)}
+            onError={() => setHasError(true)}
             style={{
               width: '100%',
               height: '100%',
@@ -103,6 +110,7 @@ export default function PixelAvatar({
           <img
             src={avatarId}
             alt="Avatar"
+            onError={() => setHasError(true)}
             style={{
               width: '100%',
               height: '100%',
