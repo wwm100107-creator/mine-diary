@@ -78,12 +78,15 @@
 .adminBadge {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 12px;
+  gap: 10px;
+  padding: 6px 14px 6px 8px;
   background: var(--color-pink-50);
   border: 2px solid var(--color-pink-300);
   border-radius: 999px;
   box-shadow: 2px 2px 0 var(--color-pink-200);
+  position: relative;
+  overflow: visible;
+  z-index: 20;
 }
 
 .adminName {
@@ -351,6 +354,9 @@
 /* Specific Column Cell Alignments */
 .colAvatar {
   text-align: center;
+  position: relative;
+  overflow: visible;
+  z-index: 20;
 }
 
 .avatarWrapper {
@@ -361,6 +367,16 @@
   background: var(--color-white);
   border-radius: 6px;
   box-shadow: 1px 1px 0 var(--color-border-mid);
+  position: relative;
+  overflow: visible;
+}
+
+.avatarWrapperVideo {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  padding: 0 !important;
+  overflow: visible !important;
 }
 
 .colUserId {

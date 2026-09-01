@@ -571,14 +571,19 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                 <tr key={u.id} className={s.userRow}>
                   {/* Column 1: Avatar (Centered with Dynamic Frame) */}
                   <td className={s.colAvatar}>
-                    <div className={s.avatarWrapper}>
-                      <PixelAvatar
-                        avatarId={u.avatar || 'bunny'}
-                        frameId={u.avatarFrame || u.frame || (u.vipTier === 'god' ? 'god_cosmic' : u.vipTier === 'sssvip' ? 'vip10_thunder' : u.vipTier === 'ssvip' ? 'vip9_frost' : u.vipTier === 'svip' ? 'vip8_fire' : 'none')}
-                        size={36}
-                        border={false}
-                      />
-                    </div>
+                    {(() => {
+                      const isVid = typeof u.avatar === 'string' && (u.avatar.endsWith('.mp4') || u.avatar.includes('admin-avatar'))
+                      return (
+                        <div className={`${s.avatarWrapper} ${isVid ? s.avatarWrapperVideo : ''}`}>
+                          <PixelAvatar
+                            avatarId={u.avatar || 'bunny'}
+                            frameId={u.avatarFrame || u.frame || (u.vipTier === 'god' ? 'god_cosmic' : u.vipTier === 'sssvip' ? 'vip10_thunder' : u.vipTier === 'ssvip' ? 'vip9_frost' : u.vipTier === 'svip' ? 'vip8_fire' : 'none')}
+                            size={isVid ? 44 : 36}
+                            border={false}
+                          />
+                        </div>
+                      )
+                    })()}
                   </td>
 
                   {/* Column 2: User ID & Display Name */}

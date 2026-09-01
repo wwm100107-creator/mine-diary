@@ -59,7 +59,7 @@ export default function PixelAvatar({
     height: numericSize,
     flexShrink: 0,
     overflow: 'visible',
-    zIndex: 10,
+    zIndex: isVideo ? 99 : 10,
     ...style,
   }
 
@@ -70,19 +70,26 @@ export default function PixelAvatar({
       {/* Base Avatar Container */}
       <div
         style={{
-          width: '100%',
-          height: '100%',
+          width: isVideo ? '150%' : '100%',
+          height: isVideo ? '150%' : '100%',
           borderRadius: isVideo ? '50%' : (numericSize > 48 ? 10 : 6),
           backgroundColor: isVideo ? 'transparent' : (isCustomImage ? '#FFF0F5' : avatar?.bg || '#FFF0F5'),
           border: isVideo ? 'none' : (border ? `2px solid var(--color-border-mid)` : 'none'),
-          boxShadow: isVideo ? 'none' : (border ? `2px 2px 0 var(--color-border-mid)` : 'none'),
+          boxShadow: isVideo
+            ? '0 6px 20px rgba(0, 0, 0, 0.5), 0 0 0 1.5px rgba(255, 255, 255, 0.22)'
+            : (border ? `2px 2px 0 var(--color-border-mid)` : 'none'),
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: (isCustomImage || isVideo) ? 0 : Math.max(2, Math.floor(numericSize * 0.08)),
+          padding: 0,
           overflow: 'hidden',
-          position: 'relative',
-          zIndex: 1,
+          position: isVideo ? 'absolute' : 'relative',
+          top: isVideo ? '50%' : 'auto',
+          left: isVideo ? '50%' : 'auto',
+          transform: isVideo ? 'translate(-50%, -50%) translateZ(0)' : 'none',
+          zIndex: isVideo ? 99 : 1,
+          WebkitMaskImage: isVideo ? '-webkit-radial-gradient(white, black)' : 'none',
+          maskImage: isVideo ? 'radial-gradient(white, black)' : 'none',
         }}
       >
         {isVideo ? (
@@ -99,10 +106,13 @@ export default function PixelAvatar({
               width: '100%',
               height: '100%',
               objectFit: 'cover',
-              borderRadius: 'inherit',
+              borderRadius: '50%',
               display: 'block',
               pointerEvents: 'none',
               transform: 'translateZ(0)',
+              backfaceVisibility: 'hidden',
+              imageRendering: '-webkit-optimize-contrast',
+              filter: 'contrast(1.04) brightness(1.02)',
               willChange: 'transform',
             }}
           />
