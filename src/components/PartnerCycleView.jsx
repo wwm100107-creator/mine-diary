@@ -278,7 +278,7 @@ export default function PartnerCycleView({ user }) {
             Chưa Được Cấp Quyền Truy Cập Dữ Liệu
           </h3>
           <p style={{ fontSize: 13, color: 'var(--color-ink-soft)', maxWidth: 420, margin: '8px auto', lineHeight: 1.5 }}>
-            Bạn và <strong>{partnerUser.displayName}</strong> đã kết đôi thành công. Khi nào bạn ấy đồng ý chia sẻ thông tin chu kỳ, lịch và dự đoán sẽ tự động hiển thị tại đây nhé!
+            Bạn và <strong>{effectivePartnerUser?.displayName || effectivePartnerUser?.name || effectivePartnerUser?.username || 'người ấy'}</strong> đã kết đôi thành công. Khi nào bạn ấy đồng ý chia sẻ thông tin chu kỳ, lịch và dự đoán sẽ tự động hiển thị tại đây nhé!
           </p>
         </div>
       )}
