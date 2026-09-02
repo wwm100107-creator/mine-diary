@@ -95,7 +95,7 @@ export default function PixelAvatar({
         {isVideo ? (
           <video
             ref={videoRef}
-            src={avatarId.includes('admin-avatar') ? undefined : avatarId}
+            src={avatarId.includes('admin-avatar') ? '/admin-avatar.webm' : avatarId}
             autoPlay
             loop
             muted
@@ -114,15 +114,7 @@ export default function PixelAvatar({
               filter: 'contrast(1.04) brightness(1.02) drop-shadow(0 4px 14px rgba(0, 0, 0, 0.45))',
               willChange: 'transform',
             }}
-          >
-            {avatarId.includes('admin-avatar') && (
-              <>
-                <source src="/admin-avatar.webm" type="video/webm" />
-                <source src="/admin-avatar.mov" type="video/quicktime" />
-                <source src="/admin-avatar.mp4" type="video/mp4" />
-              </>
-            )}
-          </video>
+          />
         ) : isCustomImage ? (
           <img
             src={avatarId}
