@@ -28,9 +28,12 @@ export default function PixelAvatar({
     typeof avatarId === 'string' &&
     (avatarId.endsWith('.mp4') ||
       avatarId.endsWith('.webm') ||
+      avatarId.endsWith('.mov') ||
       avatarId.startsWith('data:video/') ||
       avatarId.includes('.mp4') ||
-      avatarId.includes('.webm'))
+      avatarId.includes('.webm') ||
+      avatarId.includes('.mov') ||
+      avatarId.includes('admin-avatar'))
 
   const isCustomImage =
     !hasError &&
@@ -38,6 +41,7 @@ export default function PixelAvatar({
     typeof avatarId === 'string' &&
     !avatarId.endsWith('.mp4') &&
     !avatarId.endsWith('.webm') &&
+    !avatarId.endsWith('.mov') &&
     (avatarId.startsWith('data:image/') || avatarId.startsWith('http') || avatarId.startsWith('blob:') || avatarId.startsWith('/') || avatarId.includes('.'))
 
   // Infinite Video Looper: ensures continuous seamless playback across all browsers & mobile devices
