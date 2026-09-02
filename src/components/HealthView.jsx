@@ -230,7 +230,7 @@ export default function HealthView({ user }) {
             className={`${s.switchTabBtn} ${viewMode === 'partner' ? s.switchTabBtnActive : ''}`}
             onClick={() => setViewMode('partner')}
           >
-            <span>💖</span> Chu Kỳ {partnerUser.displayName}
+            <span>💖</span> Chu Kỳ {partnerUser?.displayName || partnerUser?.name || 'Người ấy'}
             {hasPartnerPermission ? ' (Đang chia sẻ 🌸)' : ' (Chưa chia sẻ 🔒)'}
           </button>
         </div>
@@ -252,10 +252,10 @@ export default function HealthView({ user }) {
               />
               <div>
                 <h3 className={s.partnerName}>
-                  {coupleRel.customIcon || '💖'} {partnerUser.displayName}
+                  {coupleRel?.customIcon || '💖'} {partnerUser?.displayName || partnerUser?.name || 'Người thương'}
                 </h3>
                 <div className={s.partnerRelTag}>
-                  UID: #{partnerUser.id} • Mối quan hệ: <strong>{coupleRel.customName}</strong>
+                  UID: #{partnerUser?.id || ''} • Mối quan hệ: <strong>{coupleRel?.customName || 'Người thương'}</strong>
                 </div>
               </div>
             </div>
@@ -379,7 +379,7 @@ export default function HealthView({ user }) {
 
             <div className={s.pixelCard}>
               <h2 className={s.cardTitle}>
-                <span>📝</span> Triệu Chứng: {selectedDate.split('-').reverse().join('/')}
+                <span>📝</span> Triệu Chứng: {selectedDate ? selectedDate.split('-').reverse().join('/') : ''}
               </h2>
               <SymptomCards userId={user.id} dateStr={selectedDate} mode={predictionMode} />
             </div>
