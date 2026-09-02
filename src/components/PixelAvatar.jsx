@@ -95,13 +95,16 @@ export default function PixelAvatar({
         {isVideo ? (
           <video
             ref={videoRef}
-            src={avatarId.includes('admin-avatar') ? '/admin-avatar.webm' : avatarId}
+            src={avatarId.includes('admin-avatar') ? '/admin-avatar.webm?v=2' : avatarId}
             autoPlay
             loop
             muted
             playsInline
             preload="auto"
-            onError={() => setHasError(true)}
+            onError={(e) => {
+              console.warn('Video avatar failed to load, falling back to pixel art:', e)
+              setHasError(true)
+            }}
             style={{
               width: '100%',
               height: '100%',
