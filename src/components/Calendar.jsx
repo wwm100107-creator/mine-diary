@@ -566,7 +566,7 @@ export default function Calendar({ userId, mode = 'standard', gender = 'female',
             str === toDateStr(prediction.ovulationDate)
 
           // ── Advanced AI: 3-level fertility coloring ──
-          const aiLevel = dayLevelMap.get(str) // 'peak' | 'high' | 'low' | undefined
+          const aiLevel = dayLevelMap?.get ? dayLevelMap.get(str) : undefined
 
           const dayIcons = getIcons(str)
           const maxVisible = 3

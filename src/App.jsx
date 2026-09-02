@@ -703,8 +703,8 @@ export default function App() {
                     <span className={s.userDisplayName} title={user.displayName || user.name || user.username || user.id}>
                       {user.displayName || user.name || user.username || user.id}
                     </span>
-                    <span className={s.userUidText} title={`UID: ${user.id}`}>
-                      {user.id ? (user.id.startsWith('#') ? user.id : `#${user.id}`) : '#Guest'}
+                    <span className={s.userUidText} title={`UID: ${user?.id || 'Guest'}`}>
+                      {user?.id ? (String(user.id).startsWith('#') ? user.id : `#${user.id}`) : '#Guest'}
                     </span>
                   </div>
                 </div>

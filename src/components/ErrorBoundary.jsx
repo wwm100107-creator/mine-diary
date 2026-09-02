@@ -65,9 +65,34 @@ export default class ErrorBoundary extends Component {
             }}>
               Úi, Có Chút Trục Trặc Khi Tải!
             </h2>
-            <p style={{ fontSize: '13px', lineHeight: '1.6', color: '#7A6B69', margin: '0 0 20px' }}>
+            <p style={{ fontSize: '13px', lineHeight: '1.6', color: '#7A6B69', margin: '0 0 16px' }}>
               Trang vừa được làm mới quá nhanh hoặc có lỗi dữ liệu tạm thời. Bạn hãy nhấn tải lại nhé!
             </p>
+            {this.state.error && (
+              <div style={{
+                background: '#FFF0F3',
+                border: '1.5px dashed #FF8FAB',
+                borderRadius: '8px',
+                padding: '10px 12px',
+                marginBottom: '16px',
+                textAlign: 'left',
+                fontSize: '11px',
+                color: '#C2185B',
+                wordBreak: 'break-word',
+                fontFamily: 'monospace',
+                maxHeight: '140px',
+                overflowY: 'auto',
+              }}>
+                <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>Chi tiết lỗi (Error):</div>
+                <div>{this.state.error?.message || String(this.state.error)}</div>
+                {this.state.error?.stack && (
+                  <details style={{ marginTop: '6px' }}>
+                    <summary style={{ cursor: 'pointer', color: '#880E4F' }}>Xem Call Stack</summary>
+                    <pre style={{ fontSize: '10px', margin: '4px 0 0', whiteSpace: 'pre-wrap' }}>{this.state.error.stack}</pre>
+                  </details>
+                )}
+              </div>
+            )}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               <button
                 onClick={this.handleReload}

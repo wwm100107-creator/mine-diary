@@ -139,6 +139,7 @@ export function loadMarkedDates(userId) {
 
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i)
+    if (!key) continue
     if (key.startsWith(prefixIcon)) {
       const dateStr = key.slice(prefixIcon.length)
       const icons = getDayIcons(userId, dateStr)
