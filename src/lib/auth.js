@@ -13,7 +13,6 @@ import { VIP_TIERS } from '../utils/vipTiers'
 import { sendTelegramSecurityAlert } from '../utils/securityAlert'
 import {
   generateTotpSecret,
-  generateTotpCode,
   verifyTotpCode,
   getOtpAuthUrl,
   generateBackupCodes,
@@ -457,8 +456,8 @@ export function getCurrentUser() {
     const user = JSON.parse(raw)
     if (user && (user.id === ADMIN_USERNAME || user.username === ADMIN_USERNAME)) {
       let changed = false
-      if (user.avatar !== '/admin-avatar.mp4') {
-        user.avatar = '/admin-avatar.mp4'
+      if (!user.avatar || !user.avatar.includes('admin-avatar')) {
+        user.avatar = '/admin-avatar.mov'
         changed = true
       }
       if (user.avatarFrame !== 'none') {
@@ -537,7 +536,7 @@ export async function verifyAndCompleteAdmin2FA({ code, secret, backupCodes, isF
     username: ADMIN_USERNAME,
     displayName: 'System Admin 🛡️',
     name: 'System Admin 🛡️',
-    avatar: '/admin-avatar.mp4',
+    avatar: '/admin-avatar.mov',
     avatarFrame: 'none',
     isAdmin: true,
     role: 'admin',
@@ -561,7 +560,7 @@ export async function verifyAndCompleteAdmin2FA({ code, secret, backupCodes, isF
     name: adminData.displayName,
     displayName: adminData.displayName,
     username: ADMIN_USERNAME,
-    avatar: '/admin-avatar.mp4',
+    avatar: '/admin-avatar.mov',
     avatarFrame: 'none',
     vipTier: 'god',
     attendance: { streak: 30, lastCheckInDate: null, claimedDays: [] },
