@@ -6,6 +6,7 @@ import DiaryView from './components/DiaryView'
 import HealthView from './components/HealthView'
 import PartnerCycleView from './components/PartnerCycleView'
 import AdminDashboard from './components/AdminDashboard'
+import AdminLogin from './components/AdminLogin'
 import ChatView from './components/ChatView'
 import PixelToastContainer from './components/PixelToast'
 import EasterEgg from './components/EasterEgg'
@@ -31,13 +32,42 @@ import IosInstallBottomSheet from './components/IosInstallBottomSheet'
 import { requestNotificationPermission, displayOsNotification } from './lib/push'
 import s from './App.module.css'
 
-
+export function checkIsAdminRealm() {
+  if (typeof window === 'undefined') return false
+  const host = window.location.hostname.toLowerCase()
+  const path = window.location.pathname.toLowerCase()
+  const hash = window.location.hash.toLowerCase()
+  return (
+    host.startsWith('admin.') ||
+    host.includes('-admin.') ||
+    path === '/admin' ||
+    path.startsWith('/admin/') ||
+    hash === '#admin' ||
+    hash.startsWith('#admin')
+  )
+}
 
 export default function App() {
   // Session initialization
   const [user, setUser] = useState(() => getCurrentUser())
   const isAdmin = isUserAdmin(user)
   const isGodOrAdmin = isAdmin || user?.vipTier === 'god' || getUserVipRank(user) >= 4
+
+  // ── Subdomain & Route Realm Isolation (Admin vs End-User) ──
+  const [isAdminRealm, setIsAdminRealm] = useState(() => checkIsAdminRealm())
+
+  useEffect(() => {
+    const handleRealmChange = () => {
+      setIsAdminRealm(checkIsAdminRealm())
+    }
+    window.addEventListener('hashchange', handleRealmChange)
+    window.addEventListener('popstate', handleRealmChange)
+    return () => {
+      window.removeEventListener('hashchange', handleRealmChange)
+      window.removeEventListener('popstate', handleRealmChange)
+    }
+  }, [])
+
 
   // ── PWA & Web Push Detection ──
   const { isIOS, isStandalone, permission } = usePwaInstallState()
@@ -90,14 +120,11 @@ export default function App() {
   }, [user?.id, user?.theme])
   const [currentTab, setCurrentTab] = useState(() => {
     if (typeof window !== 'undefined') {
-      if (isAdmin || window.location.pathname === '/admin' || window.location.hash === '#admin') {
-        return 'admin'
-      }
       if (window.location.hash === '#chat') return 'chat'
       if (window.location.hash === '#health') return 'health'
       if (window.location.hash === '#partner-cycle') return 'partner_cycle'
     }
-    return isAdmin ? 'admin' : 'diary'
+    return 'diary'
   })
 
   // ── Global Real-time Shared Cycle Status for Navbar Synchronization ──────────
@@ -173,13 +200,6 @@ export default function App() {
   // ── Compute Allowed Navigation Tabs based on Role, Gender & Real-time Cycle Sharing ──
 
   const navTabs = useMemo(() => {
-    // 🛡️ For Admin Accounts: ONLY keep the 'Quản trị' tab to simplify management
-    if (isAdmin) {
-      return [
-        { id: 'admin', label: 'Quản trị', icon: '🛡️' },
-      ]
-    }
-
     const tabs = [
       { id: 'diary', label: 'Nhật ký chung', icon: '📖' },
     ]
@@ -198,14 +218,14 @@ export default function App() {
     tabs.push({ id: 'chat', label: 'Tin nhắn', icon: '💬' })
 
     return tabs
-  }, [isFemale, hasSharedCycleAccess, isAdmin])
+  }, [isFemale, hasSharedCycleAccess])
 
   // If current active tab is not in allowed tabs, automatically switch to default allowed tab
   useEffect(() => {
     if (!navTabs.some((t) => t.id === currentTab)) {
-      setCurrentTab(isAdmin ? 'admin' : 'diary')
+      setCurrentTab('diary')
     }
-  }, [navTabs, currentTab, isAdmin])
+  }, [navTabs, currentTab])
 
   // ── iOS Glass Sliding Tab Indicator State ───────────────────────────────
   const navRef = useRef(null)
@@ -597,7 +617,47 @@ export default function App() {
     window.history.pushState({}, '', '/')
   }
 
-  // ── Unauthenticated / Landing Page ────────────────────────────────────────
+  // ── 🛡️ Dedicated Admin Realm Guard (subdomain admin.* or /admin or #admin) ──
+  if (isAdminRealm) {
+    // If not logged in or logged in user is not admin -> Dedicated Admin Login Portal
+    if (!user || !isAdmin) {
+      return (
+        <AdminLogin
+          onLoginSuccess={(loggedInAdmin) => {
+            setBanStatus(null)
+            setUser(loggedInAdmin)
+            saveSession(loggedInAdmin)
+          }}
+          onBackToApp={() => {
+            window.location.hash = ''
+            window.history.pushState({}, '', '/')
+            setIsAdminRealm(false)
+            setCurrentTab('diary')
+          }}
+        />
+      )
+    }
+
+    // Authenticated Admin -> Dedicated Admin Dashboard
+    return (
+      <AdminDashboard
+        user={user}
+        onUpdateUser={(updated) => {
+          setUser(updated)
+          saveSession(updated)
+        }}
+        onBack={() => {
+          window.location.hash = ''
+          window.history.pushState({}, '', '/')
+          setIsAdminRealm(false)
+          setCurrentTab('diary')
+        }}
+        onLogout={handleSafeLogout}
+      />
+    )
+  }
+
+  // ── 🌸 End-User Realm: Unauthenticated / Landing Page ───────────────────────
   if (!user) {
     return (
       <AuthLanding
@@ -615,21 +675,6 @@ export default function App() {
     return (
       <BannedScreen
         banDetails={banStatus}
-        onLogout={handleSafeLogout}
-      />
-    )
-  }
-
-  // ── Admin Dashboard View (when on /admin) ─────────────────────────────────
-  if (currentTab === 'admin') {
-    return (
-      <AdminDashboard
-        user={user}
-        onUpdateUser={(updated) => {
-          setUser(updated)
-          saveSession(updated)
-        }}
-        onBack={() => switchTab('diary')}
         onLogout={handleSafeLogout}
       />
     )
@@ -710,6 +755,19 @@ export default function App() {
                 </div>
               )
             })()}
+            {isAdmin && (
+              <button
+                type="button"
+                className={s.adminPortalBtn}
+                onClick={() => {
+                  window.location.hash = '#admin'
+                  setIsAdminRealm(true)
+                }}
+                title="Chuyển đến Bảng Quản Trị Hệ Thống"
+              >
+                🛡️ Cổng Admin
+              </button>
+            )}
             <button
               className={s.logoutBtn}
               onClick={() => {
