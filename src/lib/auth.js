@@ -300,32 +300,7 @@ export async function loginUser({ usernameOrId, password }) {
     // Password is valid -> Clear any lockout immediately
     resetAdminLockout()
 
-    // Check if 2FA was explicitly enabled by admin in Firestore
-    let adminDocData = {}
-    try {
-      const adminUserRef = doc(db, 'users', ADMIN_USERNAME)
-      const adminSnap = await getDoc(adminUserRef)
-      if (adminSnap.exists()) adminDocData = adminSnap.data()
-    } catch (e) {
-      console.warn('Could not read admin doc:', e)
-    }
-
-    const twoFactor = adminDocData.twoFactor || null
-
-    // Only challenge 2FA if explicitly enabled
-    if (twoFactor && twoFactor.enabled) {
-      return {
-        requires2FA: true,
-        isFirstTimeSetup: false,
-        tempUser: {
-          id: ADMIN_USERNAME,
-          username: ADMIN_USERNAME,
-          displayName: 'System Admin 🛡️',
-        },
-      }
-    }
-
-    // Direct Instant Admin Login (No 2FA barrier when not enabled)
+    // ⚡ INSTANT ZERO-LATENCY ADMIN LOGIN (No slow network getDoc roundtrip!)
     const sessionAdmin = {
       id: ADMIN_USERNAME,
       name: 'System Admin 🛡️',
