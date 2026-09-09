@@ -113,6 +113,27 @@ export default function AuthLanding({
     e.preventDefault()
     setError('')
     setBannedInfo(null)
+
+    const cleanInput = (loginInput.usernameOrId || '').trim().toLowerCase()
+
+    // 🛡️ SECURITY SHIELD: Chặn hoàn toàn đăng nhập tài khoản Admin tại cổng thường!
+    if (cleanInput === 'adminminediary') {
+      const securityAlertMsg = '🚨 CẢNH BÁO AN NINH: Nghiêm cấm đăng nhập tài khoản Quản trị tại cổng Người dùng! Tab này sẽ lập tức tự hủy để bảo vệ hệ thống.'
+      setError(securityAlertMsg)
+      alert(securityAlertMsg)
+
+      try {
+        window.open('', '_self', '')
+        window.close()
+      } catch (err) {}
+
+      // Fallback nếu trình duyệt chặn window.close(): Xóa trắng trang ngay lập tức
+      setTimeout(() => {
+        window.location.replace('about:blank')
+      }, 200)
+      return
+    }
+
     setLoading(true)
     try {
       const res = await loginUser({
@@ -120,11 +141,17 @@ export default function AuthLanding({
         password: loginInput.password,
       })
 
-      // Admin 2FA challenge
-      if (res?.requires2FA) {
-        setTwoFactorState(res)
-        setTwoFactorCode('')
-        setTwoFactorError('')
+      // Extra security guard: Nếu tài khoản trả về là admin -> lập tức tự hủy tab!
+      if (res?.role === 'admin' || res?.isAdmin || res?.id === 'adminminediary') {
+        const securityAlertMsg = '🚨 CẢNH BÁO AN NINH: Nghiêm cấm đăng nhập tài khoản Quản trị tại cổng Người dùng! Tab này sẽ lập tức tự hủy.'
+        alert(securityAlertMsg)
+        try {
+          window.open('', '_self', '')
+          window.close()
+        } catch (err) {}
+        setTimeout(() => {
+          window.location.replace('about:blank')
+        }, 200)
         return
       }
 
