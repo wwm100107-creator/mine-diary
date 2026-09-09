@@ -2,54 +2,17 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Helper functions
-    function isAuthenticated() {
-      return request.auth != null;
-    }
-
-    function isOwner(userId) {
-      return isAuthenticated() && request.auth.uid == userId;
-    }
-
-    // 🛡️ Admin Verification (Only true adminminediary or admin role)
-    function isAdmin() {
-      return isAuthenticated() && (
-        request.auth.uid == 'adminminediary' ||
-        request.auth.token.role == 'admin' ||
-        request.auth.token.isAdmin == true
-      );
-    }
-
-    // ── 1. Users Collection Rules ──────────────────────────────────────────
+    // ── 1. Users Collection ──────────────────────────────────────────
     match /users/{userId} {
-      // Allow public read for display name, avatar, and relationship pairing
-      allow read: if true;
-
-      // Allow registration of new normal accounts
-      allow create: if request.resource.data.isAdmin == false &&
-                       request.resource.data.role == 'user' &&
-                       userId != 'adminminediary';
-
-      // Allow users to update their own profile EXCEPT sensitive administrative fields
-      allow update: if isAdmin() || (
-        isOwner(userId) &&
-        !request.resource.data.diff(resource.data).affectedKeys().hasAny([
-          'isAdmin', 'role', 'isBanned', 'banReason', 'banUntil',
-          'allowFertilityTracking', 'vipTier', 'twoFactor'
-        ])
-      );
-
-      // Only Admin can delete accounts
-      allow delete: if isAdmin() && userId != 'adminminediary';
+      allow read, write: if true;
     }
 
-    // ── 2. Relationships Collection Rules ──────────────────────────────────
+    // ── 2. Relationships Collection (Friendships / Couples) ─────────
     match /relationships/{relId} {
-      allow read: if true;
-      allow create, update, delete: if isAuthenticated();
+      allow read, write: if true;
     }
 
-    // ── 3. Chats & Messages Collection Rules ───────────────────────────────
+    // ── 3. Chats & Messages Collection ───────────────────────────────
     match /chats/{chatId} {
       allow read, write: if true;
 
@@ -58,15 +21,15 @@ service cloud.firestore {
       }
     }
 
-    // ── 4. Cycle Data & Health Logs ────────────────────────────────────────
+    // ── 4. Cycle Data & Health Logs ──────────────────────────────────
     match /cycleData/{userId} {
-      allow read: if true;
-      allow write: if isOwner(userId) || isAdmin();
+      allow read, write: if true;
     }
 
-    // ── 5. System Notifications & Push Tokens ──────────────────────────────
+    // ── 5. System Notifications & Push Tokens ────────────────────────
     match /fcmTokens/{tokenId} {
       allow read, write: if true;
     }
   }
 }
+
