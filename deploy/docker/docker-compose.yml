@@ -1,0 +1,82 @@
+version: '3.8'
+
+services:
+  # ── Reverse Proxy (Nginx) ───────────────────────────────────────────────────
+  reverse-proxy:
+    image: nginx:alpine
+    container_name: minediary_proxy
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./certs:/etc/letsencrypt:ro
+    depends_on:
+      - user-frontend
+      - admin-frontend
+      - user-backend
+      - admin-backend
+    networks:
+      - minediary_net
+
+  # ── End-User Frontend (app.example.com) ───────────────────────────────────────
+  user-frontend:
+    build:
+      context: ../../
+      dockerfile: deploy/docker/Dockerfile.user-frontend
+    container_name: minediary_user_frontend
+    restart: always
+    environment:
+      - VITE_APP_TYPE=user
+      - VITE_API_URL=https://app.example.com/api
+    networks:
+      - minediary_net
+
+  # ── Admin Portal Frontend (admin.example.com) ────────────────────────────────
+  admin-frontend:
+    build:
+      context: ../../
+      dockerfile: deploy/docker/Dockerfile.admin-frontend
+    container_name: minediary_admin_frontend
+    restart: always
+    environment:
+      - VITE_APP_TYPE=admin
+      - VITE_API_URL=https://admin.example.com/api
+    networks:
+      - minediary_net
+
+  # ── End-User Backend Service ────────────────────────────────────────────────
+  user-backend:
+    build:
+      context: ../../
+      dockerfile: deploy/docker/Dockerfile.user-backend
+    container_name: minediary_user_backend
+    restart: always
+    environment:
+      - PORT=4000
+      - NODE_ENV=production
+      - JWT_AUDIENCE=user-api
+      - JWT_ISSUER=minediary-auth
+    networks:
+      - minediary_net
+
+  # ── Admin Backend Service (Isolated & RBAC Protected) ───────────────────────
+  admin-backend:
+    build:
+      context: ../../
+      dockerfile: deploy/docker/Dockerfile.admin-backend
+    container_name: minediary_admin_backend
+    restart: always
+    environment:
+      - PORT=4001
+      - NODE_ENV=production
+      - JWT_AUDIENCE=admin-api
+      - JWT_ISSUER=minediary-admin-auth
+    networks:
+      - minediary_net
+
+networks:
+  minediary_net:
+    driver: bridge
