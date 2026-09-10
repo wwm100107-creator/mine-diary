@@ -17,7 +17,7 @@
 
 /* Fallback font stack */
 :root {
-  --font-admin:    'NT-Akashii', 'Bangers', 'Impact', cursive;
+  --font-admin:    'NT-Akashii', system-ui, -apple-system, sans-serif;
   --font-pixel:    'Bangers', 'Impact', cursive;
   --font-diary:    'Dancing Script', 'Caveat', cursive;
   --font-ui:       'Nunito', system-ui, -apple-system, sans-serif;

@@ -5,15 +5,26 @@
 
 .adminContainer {
   --font-pixel: var(--font-admin);
+  --font-ui: var(--font-admin);
   max-width: 1100px;
   margin: 0 auto;
   padding: 24px 20px 48px;
   display: flex;
   flex-direction: column;
   gap: 20px;
-  font-family: var(--font-ui);
+  font-family: var(--font-admin);
   box-sizing: border-box;
   width: 100%;
+}
+
+.adminContainer input,
+.adminContainer select,
+.adminContainer textarea,
+.adminContainer button,
+.adminContainer table,
+.adminContainer td,
+.adminContainer th {
+  font-family: var(--font-admin);
 }
 
 /* ── Top Bar ── */
@@ -216,12 +227,17 @@
   background: var(--color-white);
   border: 2px solid var(--color-border-mid);
   border-radius: var(--radius-md);
-  font-family: var(--font-ui);
+  font-family: var(--font-admin);
   font-size: 13px;
   color: var(--color-ink);
   outline: none;
   box-sizing: border-box;
   transition: all var(--transition-fast);
+}
+
+.searchInput::placeholder {
+  font-family: var(--font-admin);
+  color: var(--color-ink-faint);
 }
 
 .searchInput:focus {
@@ -250,13 +266,17 @@
   background: var(--color-white);
   border: 2px solid var(--color-border-mid);
   border-radius: var(--radius-md);
-  font-family: var(--font-ui);
+  font-family: var(--font-admin);
   font-size: 13px;
   font-weight: 600;
   color: var(--color-ink);
   outline: none;
   cursor: pointer;
   transition: all var(--transition-fast);
+}
+
+.statusSelect option {
+  font-family: var(--font-admin);
 }
 
 .statusSelect:focus {
@@ -1591,9 +1611,18 @@
   transform: translateY(-1px);
 }
 
+.emptyRow {
+  padding: 40px 16px !important;
+  text-align: center;
+  font-family: var(--font-admin);
+  font-size: 14px;
+  color: var(--color-ink-soft);
+}
+
 .emptyRowError {
   padding: 36px 16px !important;
   text-align: center;
+  font-family: var(--font-admin);
 }
 
 .errorTableState {
