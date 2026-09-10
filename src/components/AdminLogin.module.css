@@ -4,6 +4,8 @@
    ============================================ */
 
 .container {
+  --font-ui: var(--font-admin);
+  --font-pixel: var(--font-admin);
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -11,7 +13,7 @@
   padding: 24px 16px;
   background: radial-gradient(circle at 50% 20%, #1e1b4b 0%, #0f172a 100%);
   color: #f8fafc;
-  font-family: var(--font-ui, system-ui, sans-serif);
+  font-family: var(--font-admin);
   position: relative;
   overflow: hidden;
   box-sizing: border-box;

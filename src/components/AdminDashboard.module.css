@@ -4,6 +4,7 @@
    ============================================ */
 
 .adminContainer {
+  --font-pixel: var(--font-admin);
   max-width: 1100px;
   margin: 0 auto;
   padding: 24px 20px 48px;
