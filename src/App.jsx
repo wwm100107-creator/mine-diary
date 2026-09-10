@@ -38,8 +38,11 @@ export function checkIsAdminRealm() {
   const path = window.location.pathname.toLowerCase()
   const hash = window.location.hash.toLowerCase()
   return (
+    host === 'mine-diary-admin.vercel.app' ||
+    host.includes('mine-diary-admin') ||
     host.startsWith('admin.') ||
     host.includes('-admin.') ||
+    host.includes('admin-') ||
     path === '/admin' ||
     path.startsWith('/admin/') ||
     hash === '#admin' ||
@@ -649,6 +652,10 @@ export default function App() {
             saveSession(loggedInAdmin)
           }}
           onBackToApp={() => {
+            if (window.location.hostname.includes('admin')) {
+              window.location.href = 'https://mine-diary.vercel.app'
+              return
+            }
             window.location.hash = ''
             window.history.pushState({}, '', '/')
             setIsAdminRealm(false)
@@ -667,6 +674,10 @@ export default function App() {
           saveSession(updated)
         }}
         onBack={() => {
+          if (window.location.hostname.includes('admin')) {
+            window.location.href = 'https://mine-diary.vercel.app'
+            return
+          }
           window.location.hash = ''
           window.history.pushState({}, '', '/')
           setIsAdminRealm(false)
