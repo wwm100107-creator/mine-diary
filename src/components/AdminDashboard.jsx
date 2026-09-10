@@ -90,6 +90,8 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
   const [superAdminError, setSuperAdminError] = useState('')
   const [targetVipTier, setTargetVipTier] = useState('normal')
   const [vipUpdateSuccess, setVipUpdateSuccess] = useState('')
+  const [firestoreError, setFirestoreError] = useState(null)
+  const [copiedRules, setCopiedRules] = useState(false)
 
   const isAdmin = isUserAdmin(user)
 
@@ -98,8 +100,11 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
     try {
       const data = await fetchAllUsers()
       setUsers(data)
+      setFirestoreError(null)
     } catch (err) {
       console.error('Error fetching users:', err)
+      setFirestoreError(err?.code || err?.message || 'permission-denied')
+      setUsers([])
     } finally {
       setLoading(false)
     }
@@ -118,14 +123,27 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
       (data) => {
         setUsers(data)
         setLoading(false)
+        setFirestoreError(null)
       },
       (err) => {
         console.error('Realtime users subscription fallback to loadData:', err)
+        setFirestoreError(err?.code || err?.message || 'permission-denied')
         loadData()
       }
     )
     return () => unsub?.()
   }, [isAdmin])
+
+  // Auto-reload when switching back from Firebase Console tab
+  useEffect(() => {
+    const handleFocus = () => {
+      if (firestoreError && isAdmin) {
+        loadData()
+      }
+    }
+    window.addEventListener('focus', handleFocus)
+    return () => window.removeEventListener('focus', handleFocus)
+  }, [firestoreError, isAdmin])
 
   // Metrics computation
   const metrics = useMemo(() => {
@@ -540,6 +558,51 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
         </div>
       </div>
 
+      {/* Firestore Locked Security Rules Warning Banner */}
+      {firestoreError && (
+        <div className={s.firestoreWarningBanner}>
+          <div className={s.firestoreWarningHeader}>
+            <span className={s.warningBannerIcon}>⚠️</span>
+            <div>
+              <h4 className={s.warningBannerTitle}>Firestore Đang Bị Khóa Quyền Truy Cập (PERMISSION_DENIED)</h4>
+              <p className={s.warningBannerDesc}>
+                Dữ liệu tài khoản của bạn trên Google Cloud vẫn an toàn 100% (Test Mode không xóa dữ liệu). Bạn chỉ cần cập nhật Rules trên Firebase Console để mở khóa.
+              </p>
+            </div>
+          </div>
+          <div className={s.warningBannerActions}>
+            <a
+              href="https://console.firebase.google.com/project/mine-diary-11279/firestore/rules"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={s.warningConsoleLink}
+            >
+              Mở Firebase Rules Console ↗
+            </a>
+            <button
+              type="button"
+              className={s.warningCopyBtn}
+              onClick={() => {
+                const rules = `rules_version = '2';\nservice cloud.firestore {\n  match /databases/{database}/documents {\n    match /{document=**} {\n      allow read, write: if true;\n    }\n  }\n}`
+                navigator.clipboard.writeText(rules)
+                setCopiedRules(true)
+                setTimeout(() => setCopiedRules(false), 3000)
+              }}
+            >
+              {copiedRules ? '✅ Đã sao chép Rules chuẩn!' : '📋 Sao chép Rules chuẩn (Không lỗi Parse)'}
+            </button>
+            <button
+              type="button"
+              className={s.warningRetryBtn}
+              onClick={loadData}
+              disabled={loading}
+            >
+              🔄 Thử tải lại
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Accounts Table Card (Pixel Responsive Layout) */}
       <div className={s.tableCard}>
         <table className={s.userTable}>
@@ -558,6 +621,26 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
               <tr>
                 <td colSpan={6} className={s.emptyRow}>
                   ⏳ Đang tải danh sách tài khoản...
+                </td>
+              </tr>
+            ) : firestoreError ? (
+              <tr>
+                <td colSpan={6} className={s.emptyRowError}>
+                  <div className={s.errorTableState}>
+                    <span className={s.errorIcon}>🔒</span>
+                    <strong className={s.errorTitle}>Quyền truy cập Firestore đang bị từ chối (PERMISSION_DENIED)</strong>
+                    <p className={s.errorText}>
+                      Quy tắc bảo mật trên Firebase Console đang chặn đọc dữ liệu. Dữ liệu trên Google Cloud vẫn an toàn 100%. Vui lòng Publish Rules trên Firebase Console để mở khóa.
+                    </p>
+                    <button
+                      type="button"
+                      className={s.retryErrorBtn}
+                      onClick={loadData}
+                      disabled={loading}
+                    >
+                      🔄 Thử tải lại ngay
+                    </button>
+                  </div>
                 </td>
               </tr>
             ) : filteredUsers.length === 0 ? (

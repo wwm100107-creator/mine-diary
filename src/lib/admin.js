@@ -149,7 +149,7 @@ export async function fetchAllUsers() {
     return sortUsers(users)
   } catch (err) {
     console.error('fetchAllUsers error:', err)
-    return []
+    throw err
   }
 }
 
