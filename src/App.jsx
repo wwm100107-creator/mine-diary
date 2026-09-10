@@ -18,7 +18,7 @@ import AttendanceModal from './components/AttendanceModal'
 import NotificationPermissionModal from './components/NotificationPermissionModal'
 import { upsertUser, getUser, uploadUserAvatar, subscribeToUserChats, syncUserCycleData, subscribeToPartnerCycleData } from './lib/social'
 import { isUserAdmin } from './lib/admin'
-import { getCurrentUser, saveSession, logoutUser } from './lib/auth'
+import { getCurrentUser, saveSession, logoutUser, touchUserActivity } from './lib/auth'
 import { canCheckInToday } from './lib/attendance'
 import { getUserVipRank } from './utils/vipTiers'
 import { checkAndNotifyPeriodPrediction } from './utils/cycleNotification'
@@ -68,6 +68,26 @@ export default function App() {
     }
   }, [])
 
+  // ── Ponytail: Track active user heartbeat & device IP ──
+  useEffect(() => {
+    if (!user?.id || isAdmin) return
+    touchUserActivity(user.id)
+    const interval = setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        touchUserActivity(user.id)
+      }
+    }, 120_000)
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') {
+        touchUserActivity(user.id)
+      }
+    }
+    document.addEventListener('visibilitychange', onVisible)
+    return () => {
+      clearInterval(interval)
+      document.removeEventListener('visibilitychange', onVisible)
+    }
+  }, [user?.id, isAdmin])
 
   // ── PWA & Web Push Detection ──
   const { isIOS, isStandalone, permission } = usePwaInstallState()

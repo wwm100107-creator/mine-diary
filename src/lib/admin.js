@@ -102,6 +102,14 @@ function mapUserDoc(d) {
     if (!isNaN(parsed.getTime())) appealDate = parsed
   }
 
+  let lastActiveAtDate = null
+  if (data.lastActiveAt?.toDate) {
+    lastActiveAtDate = data.lastActiveAt.toDate()
+  } else if (data.lastActiveAt) {
+    const parsed = new Date(data.lastActiveAt)
+    if (!isNaN(parsed.getTime())) lastActiveAtDate = parsed
+  }
+
   const isSupremeAdmin = rawId === 'adminminediary' || rawUsername === 'adminminediary'
 
   return {
@@ -118,6 +126,9 @@ function mapUserDoc(d) {
     createdAtDate,
     banUntilDate,
     appealDate,
+    lastActiveAtDate,
+    lastLoginIp: data.lastLoginIp || data.ip || '—',
+    lastDevice: data.lastDevice || data.device || '—',
   }
 }
 

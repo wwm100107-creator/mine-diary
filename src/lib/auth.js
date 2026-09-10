@@ -262,6 +262,7 @@ export async function registerUser({ username, displayName, customUid, password,
     email: `${cleanUsername.toLowerCase()}@minediary.local`,
   }
   saveSession(sessionUser)
+  touchUserActivity(finalUserId).catch(() => {})
 
   return sessionUser
 }
@@ -417,6 +418,7 @@ export async function loginUser({ usernameOrId, password }) {
     email: data.email || '',
   }
   saveSession(sessionUser)
+  touchUserActivity(foundDoc.id).catch(() => {})
 
   return sessionUser
 }
@@ -558,4 +560,117 @@ export async function verifyAndCompleteAdmin2FA({ code, secret, backupCodes, isF
 
   return sessionAdmin
 }
+
+/**
+ * ── 12. Client IP, Device & Activity Tracking (Ponytail minimal) ─────────────
+ */
+let cachedIp = null
+export async function getClientIp() {
+  if (cachedIp) return cachedIp
+  try {
+    const res = await fetch('/api/ip').catch(() => null)
+    if (res && res.ok) {
+      const data = await res.json()
+      if (data.ip) {
+        cachedIp = data.ip
+        return data.ip
+      }
+    }
+    const ipifyRes = await fetch('https://api.ipify.org?format=json')
+    const ipifyData = await ipifyRes.json()
+    cachedIp = ipifyData.ip || '—'
+    return cachedIp
+  } catch (e) {
+    return '—'
+  }
+}
+
+export function getDeviceInfo() {
+  if (typeof navigator === 'undefined') return 'Không xác định'
+  const ua = navigator.userAgent
+  let os = 'Khác'
+  if (/windows/i.test(ua)) os = 'Windows'
+  else if (/macintosh|mac os x/i.test(ua)) os = 'macOS'
+  else if (/android/i.test(ua)) os = 'Android'
+  else if (/iphone|ipad|ipod/i.test(ua)) os = 'iOS'
+  else if (/linux/i.test(ua)) os = 'Linux'
+
+  let browser = 'Trình duyệt'
+  if (/chrome|crios/i.test(ua) && !/edge|edg|opr/i.test(ua)) browser = 'Chrome'
+  else if (/safari/i.test(ua) && !/chrome/i.test(ua)) browser = 'Safari'
+  else if (/firefox|fxios/i.test(ua)) browser = 'Firefox'
+  else if (/edg/i.test(ua)) browser = 'Edge'
+  else if (/opr|opera/i.test(ua)) browser = 'Opera'
+
+  return `${os} • ${browser}`
+}
+
+/**
+ * Update user lastActiveAt, login IP, and device (throttled to at most 1 write per 60s)
+ */
+let lastTouchTimestamp = 0
+export async function touchUserActivity(userId) {
+  if (!userId || userId === ADMIN_USERNAME) return
+  const now = Date.now()
+  if (now - lastTouchTimestamp < 60_000) return
+  lastTouchTimestamp = now
+
+  try {
+    const ip = await getClientIp()
+    const device = getDeviceInfo()
+    await updateDoc(doc(db, 'users', userId), {
+      lastActiveAt: serverTimestamp(),
+      lastLoginIp: ip,
+      lastDevice: device,
+    })
+  } catch (e) {
+    // Non-blocking background sync
+  }
+}
+
+/**
+ * Format user activity status (Online vs Off X phút, giờ, ngày, tháng)
+ * @param {Date|Timestamp|string|number} lastActiveAt
+ */
+export function formatUserActivityStatus(lastActiveAt) {
+  if (!lastActiveAt) {
+    return { isOnline: false, text: 'Chưa có hoạt động', short: 'Off', color: '#9CA3AF' }
+  }
+
+  let date = null
+  if (lastActiveAt?.toDate) {
+    date = lastActiveAt.toDate()
+  } else if (lastActiveAt instanceof Date) {
+    date = lastActiveAt
+  } else {
+    date = new Date(lastActiveAt)
+  }
+
+  if (!date || isNaN(date.getTime())) {
+    return { isOnline: false, text: 'Chưa có hoạt động', short: 'Off', color: '#9CA3AF' }
+  }
+
+  const diffMs = Date.now() - date.getTime()
+  // Active within 3 minutes = Online
+  if (diffMs < 3 * 60 * 1000) {
+    return { isOnline: true, text: '🟢 Đang hoạt động', short: 'Online', color: '#10B981' }
+  }
+
+  const diffMin = Math.floor(diffMs / 60_000)
+  const diffHour = Math.floor(diffMin / 60)
+  const diffDay = Math.floor(diffHour / 24)
+  const diffMonth = Math.floor(diffDay / 30)
+
+  if (diffMin < 60) {
+    return { isOnline: false, text: `Off ${diffMin} phút trước`, short: `${diffMin}p`, color: '#6B7280' }
+  }
+  if (diffHour < 24) {
+    return { isOnline: false, text: `Off ${diffHour} giờ trước`, short: `${diffHour}h`, color: '#6B7280' }
+  }
+  if (diffDay < 30) {
+    return { isOnline: false, text: `Off ${diffDay} ngày trước`, short: `${diffDay}d`, color: '#6B7280' }
+  }
+  return { isOnline: false, text: `Off ${diffMonth} tháng trước`, short: `${diffMonth}th`, color: '#6B7280' }
+}
+
 

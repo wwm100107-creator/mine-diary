@@ -16,6 +16,7 @@ import {
   sanitizeAdminAccount,
 } from '../lib/admin'
 import { VIP_TIERS, getUserVipTier } from '../utils/vipTiers'
+import { formatUserActivityStatus } from '../lib/auth'
 import s from './AdminDashboard.module.css'
 
 function formatDate(date) {
@@ -151,8 +152,12 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
     const total = validUsers.length
     const banned = validUsers.filter((u) => u.isBanned).length
     const appeals = validUsers.filter((u) => u.appeal?.status === 'pending').length
+    const online = validUsers.filter((u) => {
+      if (!u.lastActiveAtDate) return false
+      return (Date.now() - u.lastActiveAtDate.getTime()) < 3 * 60 * 1000
+    }).length
     const active = total - banned
-    return { total, active, banned, appeals }
+    return { total, active, banned, appeals, online }
   }, [users])
 
   // Filtered users list
@@ -167,16 +172,24 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
         const displayName = (u.displayName || u.name || '').toLowerCase()
         const username = (u.username || '').toLowerCase()
         const email = (u.email || '').toLowerCase()
+        const ip = (u.lastLoginIp || '').toLowerCase()
+        const device = (u.lastDevice || '').toLowerCase()
 
         const matchSearch =
           uid.includes(queryTerm) ||
           displayName.includes(queryTerm) ||
           username.includes(queryTerm) ||
-          email.includes(queryTerm)
+          email.includes(queryTerm) ||
+          ip.includes(queryTerm) ||
+          device.includes(queryTerm)
 
         if (!matchSearch) return false
       }
 
+      if (statusFilter === 'online') {
+        if (!u.lastActiveAtDate) return false
+        return (Date.now() - u.lastActiveAtDate.getTime()) < 3 * 60 * 1000
+      }
       if (statusFilter === 'active') return !u.isBanned
       if (statusFilter === 'banned') return Boolean(u.isBanned)
       if (statusFilter === 'appeals') return u.appeal?.status === 'pending'
@@ -493,6 +506,16 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
 
         <div className={s.metricCard}>
           <div className={s.metricInfo}>
+            <span className={s.metricLabel}>Đang Online</span>
+            <span className={s.metricValue} style={{ color: '#10B981' }}>
+              {metrics.online}
+            </span>
+          </div>
+          <span className={s.metricIcon}>⚡</span>
+        </div>
+
+        <div className={s.metricCard}>
+          <div className={s.metricInfo}>
             <span className={s.metricLabel}>Đang Hoạt Động</span>
             <span className={s.metricValue} style={{ color: 'var(--color-mint-400)' }}>
               {metrics.active}
@@ -529,7 +552,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
           <input
             type="text"
             className={s.searchInput}
-            placeholder="Tìm theo tên hoặc ID (vd: Mina, #1234)..."
+            placeholder="Tìm theo tên, ID, IP hoặc thiết bị (vd: Mina, #1234, 118.69)..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -542,8 +565,9 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
             onChange={(e) => setStatusFilter(e.target.value)}
           >
             <option value="all">Tất cả trạng thái</option>
-            <option value="active">🟢 Đang hoạt động</option>
-            <option value="banned">⛔ Đang bị cấm</option>
+            <option value="online">⚡ Đang Online ({metrics.online})</option>
+            <option value="active">🟢 Đang hoạt động (không bị cấm)</option>
+            <option value="banned">⛔ Đang bị cấm ({metrics.banned})</option>
             <option value="appeals">📬 Có khiếu nại chờ duyệt ({metrics.appeals})</option>
           </select>
 
@@ -611,7 +635,8 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
               <th className={s.thAvatar}>Avatar</th>
               <th className={s.thUserId}>ID Người Dùng</th>
               <th className={s.thDate}>Ngày Tạo</th>
-              <th className={s.thStatus}>Trạng Thái</th>
+              <th className={s.thStatus}>Trạng Thái & Hoạt Động</th>
+              <th className={s.thIp}>Thiết Bị & IP</th>
               <th className={s.thSeeAll}>See All</th>
               <th className={s.thAction}>Hành Động</th>
             </tr>
@@ -619,13 +644,13 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={6} className={s.emptyRow}>
+                <td colSpan={7} className={s.emptyRow}>
                   ⏳ Đang tải danh sách tài khoản...
                 </td>
               </tr>
             ) : firestoreError ? (
               <tr>
-                <td colSpan={6} className={s.emptyRowError}>
+                <td colSpan={7} className={s.emptyRowError}>
                   <div className={s.errorTableState}>
                     <span className={s.errorIcon}>🔒</span>
                     <strong className={s.errorTitle}>Quyền truy cập Firestore đang bị từ chối (PERMISSION_DENIED)</strong>
@@ -645,7 +670,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
               </tr>
             ) : filteredUsers.length === 0 ? (
               <tr>
-                <td colSpan={6} className={s.emptyRow}>
+                <td colSpan={7} className={s.emptyRow}>
                   Không tìm thấy tài khoản nào phù hợp.
                 </td>
               </tr>
@@ -712,34 +737,59 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                     <span className={s.dateBadge}>{formatDate(u.createdAtDate)}</span>
                   </td>
 
-                  {/* Column 4: Status */}
+                  {/* Column 4: Status & Activity */}
                   <td className={s.colStatus}>
-                    {isProtectedUser(u) ? (
-                      <span className={s.badgeImmune} title="Tài khoản Quản trị tối cao bất tử">
-                        👑 Bất Tử (Tối Cao)
-                      </span>
-                    ) : u.isBanned ? (
-                      <div className={s.badgeBanned}>
-                        <span className={s.bannedMainText}>⛔ Bị cấm ({formatBanUntil(u.banUntilDate)})</span>
-                        {u.banReason && (
-                          <span className={s.banReasonNote}>
-                            Lý do: {u.banReason}
-                          </span>
-                        )}
-                        {u.appeal?.status === 'pending' && (
-                          <div className={s.badgeAppealPending}>
-                            📬 Có đơn khiếu nại mới!
+                    <div className={s.statusCellWrap}>
+                      {isProtectedUser(u) ? (
+                        <span className={s.badgeImmune} title="Tài khoản Quản trị tối cao bất tử">
+                          👑 Bất Tử (Tối Cao)
+                        </span>
+                      ) : u.isBanned ? (
+                        <div className={s.badgeBanned}>
+                          <span className={s.bannedMainText}>⛔ Bị cấm ({formatBanUntil(u.banUntilDate)})</span>
+                          {u.banReason && (
+                            <span className={s.banReasonNote}>
+                              Lý do: {u.banReason}
+                            </span>
+                          )}
+                          {u.appeal?.status === 'pending' && (
+                            <div className={s.badgeAppealPending}>
+                              📬 Có đơn khiếu nại mới!
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <span className={s.badgeActive}>
+                          ● Hoạt động
+                        </span>
+                      )}
+
+                      {/* Real-time Activity status (Online vs Off phút/giờ/ngày/tháng) */}
+                      {(() => {
+                        const act = formatUserActivityStatus(u.lastActiveAtDate)
+                        return (
+                          <div className={`${s.activityBadge} ${act.isOnline ? s.activityOnline : s.activityOffline}`}>
+                            <span className={s.activityDot} />
+                            <span>{act.text}</span>
                           </div>
-                        )}
-                      </div>
-                    ) : (
-                      <span className={s.badgeActive}>
-                        ● Hoạt động
-                      </span>
-                    )}
+                        )
+                      })()}
+                    </div>
                   </td>
 
-                  {/* Column 5: See All (Centered) */}
+                  {/* Column 5: Device & IP */}
+                  <td className={s.colIp}>
+                    <div className={s.ipBlock}>
+                      <span className={s.ipText} title="Địa chỉ IP đăng nhập">
+                        🌐 {u.lastLoginIp || '—'}
+                      </span>
+                      <span className={s.deviceText} title="Thiết bị đăng nhập">
+                        💻 {u.lastDevice || '—'}
+                      </span>
+                    </div>
+                  </td>
+
+                  {/* Column 6: See All (Centered) */}
                   <td className={s.colSeeAll}>
                     <button
                       type="button"
@@ -950,9 +1000,33 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                 <span className={s.detailVal}>{detailModalUser.isAdmin || detailModalUser.role === 'admin' ? '🛡️ Quản trị viên (Admin)' : '👤 Người dùng thông thường'}</span>
               </div>
               <div className={s.detailRow}>
-                <span className={s.detailKey}>Trạng Thái:</span>
+                <span className={s.detailKey}>Trạng Thái Tài Khoản:</span>
                 <span className={s.detailVal}>
-                  {detailModalUser.isBanned ? `⛔ Đang bị cấm (hết hạn: ${formatBanUntil(detailModalUser.banUntilDate)})` : '🟢 Đang hoạt động bình thường'}
+                  {detailModalUser.isBanned ? `⛔ Đang bị cấm (hết hạn: ${formatBanUntil(detailModalUser.banUntilDate)})` : '🟢 Hoạt động bình thường'}
+                </span>
+              </div>
+              <div className={s.detailRow}>
+                <span className={s.detailKey}>Tình Trạng Hoạt Động:</span>
+                <span className={s.detailVal} style={{ fontWeight: 600 }}>
+                  {formatUserActivityStatus(detailModalUser.lastActiveAtDate).text}
+                </span>
+              </div>
+              <div className={s.detailRow}>
+                <span className={s.detailKey}>Lần Cuối Hoạt Động:</span>
+                <span className={s.detailVal}>
+                  {formatFullTime(detailModalUser.lastActiveAtDate)}
+                </span>
+              </div>
+              <div className={s.detailRow}>
+                <span className={s.detailKey}>Địa Chỉ IP Đăng Nhập:</span>
+                <span className={s.detailVal} style={{ fontFamily: 'monospace', fontWeight: 600 }}>
+                  🌐 {detailModalUser.lastLoginIp || 'Chưa ghi nhận'}
+                </span>
+              </div>
+              <div className={s.detailRow}>
+                <span className={s.detailKey}>Thiết Bị Đăng Nhập:</span>
+                <span className={s.detailVal}>
+                  💻 {detailModalUser.lastDevice || 'Chưa ghi nhận'}
                 </span>
               </div>
               

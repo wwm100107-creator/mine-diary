@@ -436,6 +436,86 @@
   text-align: left;
 }
 
+.colIp {
+  text-align: left;
+  min-width: 140px;
+}
+
+.ipBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.ipText {
+  font-family: monospace;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-ink);
+  background: var(--color-pink-50);
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--color-pink-200);
+  width: fit-content;
+}
+
+.deviceText {
+  font-size: 10px;
+  color: var(--color-ink-soft);
+  white-space: nowrap;
+}
+
+.statusCellWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.activityBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 4px;
+  width: fit-content;
+}
+
+.activityOnline {
+  background: #ECFDF5;
+  color: #059669;
+  border: 1px solid #A7F3D0;
+}
+
+.activityOffline {
+  background: #F3F4F6;
+  color: #4B5563;
+  border: 1px solid #E5E7EB;
+}
+
+.activityDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.activityOnline .activityDot {
+  background: #10B981;
+  box-shadow: 0 0 5px rgba(16, 185, 129, 0.7);
+  animation: pulseDot 2s infinite ease-in-out;
+}
+
+.activityOffline .activityDot {
+  background: #9CA3AF;
+}
+
+@keyframes pulseDot {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.3); opacity: 0.7; }
+}
+
 .colSeeAll {
   text-align: center;
 }
