@@ -1052,15 +1052,15 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
               </div>
               <div className={s.detailRow}>
                 <span className={s.detailKey}>Tọa Độ IP Đăng Nhập:</span>
-                <span className={s.detailVal} style={{ fontFamily: 'monospace', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 6, color: '#7dd3fc' }}>
-                  <InkIcon name="globe" size={13} color="#7dd3fc" />
+                <span className={s.detailVal} style={{ fontFamily: 'monospace', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 6, color: '#0284c7' }}>
+                  <InkIcon name="globe" size={13} color="#0284c7" />
                   <span>{detailModalUser.lastLoginIp || 'Chưa ghi nhận'}</span>
                 </span>
               </div>
               <div className={s.detailRow}>
                 <span className={s.detailKey}>Bản Mệnh Pháp Bảo:</span>
                 <span className={s.detailVal} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                  <InkIcon name="device" size={13} color="#94a3b8" />
+                  <InkIcon name="device" size={13} color="#64748b" />
                   <span>{detailModalUser.lastDevice || 'Chưa ghi nhận'}</span>
                 </span>
               </div>
@@ -1070,10 +1070,10 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
             <div className={s.superAdminSection}>
               <div className={s.superAdminHeader}>
                 <span className={s.superAdminBadge} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                  <InkIcon name="eye" size={15} color="#fbbf24" />
+                  <InkIcon name="eye" size={15} color="#d97706" />
                   <span>CỔ THẦN CHI NHÃN // GIẢI MÃ NGUYÊN BẢN</span>
                 </span>
-                <span style={{ fontSize: 11.5, color: '#94a3b8' }}>
+                <span style={{ fontSize: 11.5, color: '#64748b' }}>
                   Nhập mật lệnh Đạo Tổ để soi thấu chân thần và mật pháp gốc
                 </span>
               </div>
@@ -1095,11 +1095,11 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
               ) : (
                 <div className={s.unlockedResultBox}>
                   <div className={s.unlockedBadge} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                    <InkIcon name="check" size={14} color="#6ee7b7" />
+                    <InkIcon name="check" size={14} color="#065f46" />
                     <span>CỔ THẦN CHI NHÃN ĐÃ SOI THẤU NGUYÊN BẢN</span>
                   </div>
                   <div className={s.plainPasswordRow}>
-                    <span style={{ fontSize: 12.5, color: '#94a3b8' }}>Mật Pháp Gốc:</span>
+                    <span style={{ fontSize: 12.5, color: '#64748b' }}>Mật Pháp Gốc:</span>
                     <span className={s.plainPasswordText}>
                       {detailModalUser.plainPassword || 'MineDiary2026@'}
                     </span>
@@ -1108,7 +1108,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
               )}
 
               {superAdminError && (
-                <div style={{ color: '#f87171', fontSize: 12, fontWeight: 600 }}>
+                <div style={{ color: '#dc2626', fontSize: 12, fontWeight: 600 }}>
                   {superAdminError}
                 </div>
               )}
@@ -1117,7 +1117,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
             {/* Administrative Password Reset Tool (Tẩy Tủy Hoán Cốt) */}
             <div className={s.resetPassSection}>
               <span className={s.resetPassTitle} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                <InkIcon name="bolt" size={16} color="#38bdf8" />
+                <InkIcon name="bolt" size={16} color="#0284c7" />
                 <span>Tẩy Tủy Hoán Cốt (Admin Override Password)</span>
               </span>
               <form className={s.resetPassInputRow} onSubmit={handleAdminResetPassword}>
@@ -1137,13 +1137,13 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                   {actionLoading ? '...' : (
                     <>
                       <span>Truyền Pháp</span>
-                      <InkIcon name="key" size={14} color="#7dd3fc" />
+                      <InkIcon name="key" size={14} color="#ffffff" />
                     </>
                   )}
                 </button>
               </form>
               {resetSuccess && (
-                <span style={{ fontSize: 12, color: '#34d399', fontWeight: 600 }}>
+                <span style={{ fontSize: 12, color: '#059669', fontWeight: 600 }}>
                   {resetSuccess}
                 </span>
               )}
@@ -1151,18 +1151,18 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
 
             {/* Account Protection / Delete User Section */}
             {isProtectedUser(detailModalUser) ? (
-              <div style={{ background: 'rgba(245, 158, 11, 0.12)', border: '1px solid rgba(245, 158, 11, 0.35)', borderRadius: 12, padding: '12px 16px', color: '#fef08a', fontSize: 12.5, fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 8 }}>
-                <InkIcon name="crown" size={18} color="#fef08a" />
+              <div style={{ background: '#fffbeb', border: '1.5px solid #fde68a', borderRadius: 12, padding: '12px 16px', color: '#92400e', fontSize: 12.5, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 8 }}>
+                <InkIcon name="crown" size={18} color="#d97706" />
                 <span>Tài khoản Đại Thừa Đạo Tổ là Bất Tử. Được quy tắc thiên địa che chở vĩnh hằng!</span>
               </div>
             ) : (
-              <div style={{ background: 'rgba(239, 68, 68, 0.08)', border: '1px solid rgba(239, 68, 68, 0.25)', borderRadius: 12, padding: '14px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ background: '#fef2f2', border: '1.5px solid #fecdd3', borderRadius: 12, padding: '14px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div>
-                  <div style={{ fontSize: 13, fontWeight: 'bold', color: '#fca5a5', display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <InkIcon name="close" size={15} color="#ef4444" />
+                  <div style={{ fontSize: 13, fontWeight: 700, color: '#991b1b', display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <InkIcon name="close" size={15} color="#dc2626" />
                     <span>Trừ Diệt Vĩnh Viễn Thần Hồn</span>
                   </div>
-                  <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 2 }}>
+                  <div style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>
                     Xóa hoàn toàn tài khoản này khỏi cơ sở dữ liệu thiên địa.
                   </div>
                 </div>
@@ -1186,8 +1186,8 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
         <div className={s.modalOverlay} onClick={() => setBanModalUser(null)}>
           <div className={s.modalCard} onClick={(e) => e.stopPropagation()}>
             <div className={s.modalHeader}>
-              <h3 className={s.modalTitle} style={{ color: '#fca5a5' }}>
-                <InkIcon name="sword" size={20} color="#f43f5e" />
+              <h3 className={s.modalTitle} style={{ color: '#991b1b' }}>
+                <InkIcon name="sword" size={20} color="#dc2626" />
                 <span>TRẤN ÁP HỒN PHÁCH // THIÊN PHẠT</span>
               </h3>
               <button
@@ -1200,12 +1200,12 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
             </div>
 
             {/* Target user preview */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 14px', background: 'rgba(15, 23, 42, 0.6)', borderRadius: 12, border: '1px solid rgba(239, 68, 68, 0.25)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', background: '#f8fafc', borderRadius: 12, border: '1.5px solid rgba(15, 23, 42, 0.1)' }}>
               <div className={s.userAvatarWrap}>
                 <PixelAvatar avatarId={banModalUser.avatar || 'bunny'} size={38} />
               </div>
               <div>
-                <strong style={{ fontSize: 14, color: '#f8fafc' }}>
+                <strong style={{ fontSize: 14.5, color: '#0f172a' }}>
                   {banModalUser.displayName || banModalUser.id}
                 </strong>
                 <div style={{ fontSize: 11, color: '#64748b', fontFamily: 'monospace' }}>
@@ -1216,7 +1216,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
 
             <form onSubmit={handleConfirmBan} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                <label style={{ fontSize: 13, fontWeight: 600, color: '#cbd5e1' }}>Thời Gian Trấn Áp</label>
+                <label style={{ fontSize: 13, fontWeight: 600, color: '#334155' }}>Thời Gian Trấn Áp</label>
                 <select
                   className={s.statusSelect}
                   style={{ width: '100%' }}
@@ -1245,7 +1245,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                       placeholder="Số ngày"
                       required
                     />
-                    <span style={{ fontSize: 13, color: '#94a3b8' }}>ngày kể từ hiện tại</span>
+                    <span style={{ fontSize: 13, color: '#64748b' }}>ngày kể từ hiện tại</span>
                   </div>
                 )}
 
@@ -1263,7 +1263,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                <label style={{ fontSize: 13, fontWeight: 600, color: '#cbd5e1' }}>Tội Danh / Lý Do Trấn Áp</label>
+                <label style={{ fontSize: 13, fontWeight: 600, color: '#334155' }}>Tội Danh / Lý Do Trấn Áp</label>
                 <textarea
                   className={s.searchInput}
                   style={{ width: '100%', height: 80, padding: 12, resize: 'none' }}
@@ -1306,8 +1306,8 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
         <div className={s.modalOverlay} onClick={() => setAppealModalUser(null)}>
           <div className={s.modalCard} onClick={(e) => e.stopPropagation()}>
             <div className={s.modalHeader}>
-              <h3 className={s.modalTitle} style={{ color: '#fef08a' }}>
-                <InkIcon name="scroll" size={20} color="#f59e0b" />
+              <h3 className={s.modalTitle} style={{ color: '#92400e' }}>
+                <InkIcon name="scroll" size={20} color="#d97706" />
                 <span>THẨM ĐỊNH OAN KHUẤT // SỚ KÊU OAN</span>
               </h3>
               <button
@@ -1320,20 +1320,20 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
             </div>
 
             <div className={s.appealLetterBox}>
-              <div style={{ fontWeight: 700, color: '#fbbf24', marginBottom: 6, display: 'flex', alignItems: 'center', gap: 6 }}>
-                <InkIcon name="scroll" size={15} color="#fbbf24" />
+              <div style={{ fontWeight: 700, color: '#92400e', marginBottom: 6, display: 'flex', alignItems: 'center', gap: 6 }}>
+                <InkIcon name="scroll" size={15} color="#d97706" />
                 <span>Lời Giãi Bày Của Tu Sĩ:</span>
               </div>
               <div>"{appealModalUser.appeal?.message || 'Không có lời phân trần'}"</div>
               {appealModalUser.appealDate && (
-                <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 8, textAlign: 'right' }}>
+                <div style={{ fontSize: 11, color: '#64748b', marginTop: 8, textAlign: 'right' }}>
                   Dâng sớ lúc: {formatFullTime(appealModalUser.appealDate)}
                 </div>
               )}
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-              <label style={{ fontSize: 13, fontWeight: 600, color: '#cbd5e1' }}>Lời Răn Đe / Lý Do Bác Bỏ (Nếu từ chối)</label>
+              <label style={{ fontSize: 13, fontWeight: 600, color: '#334155' }}>Lời Răn Đe / Lý Do Bác Bỏ (Nếu từ chối)</label>
               <input
                 type="text"
                 className={s.searchInput}
@@ -1372,8 +1372,8 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
         <div className={s.modalOverlay} onClick={() => setVipModalUser(null)}>
           <div className={s.modalCard} onClick={(e) => e.stopPropagation()}>
             <div className={s.modalHeader}>
-              <h3 className={s.modalTitle} style={{ color: '#fef08a' }}>
-                <InkIcon name="crown" size={20} color="#f59e0b" />
+              <h3 className={s.modalTitle} style={{ color: '#92400e' }}>
+                <InkIcon name="crown" size={20} color="#d97706" />
                 <span>BAN TỨ TIÊN DUYÊN // THĂNG CẤP TU VI</span>
               </h3>
               <button
@@ -1385,30 +1385,30 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
               </button>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', background: 'rgba(15, 23, 42, 0.65)', borderRadius: 14, border: '1px solid rgba(245, 158, 11, 0.25)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', background: '#fffbeb', borderRadius: 14, border: '1.5px solid #fde68a' }}>
               <div className={s.userAvatarWrap}>
                 <PixelAvatar avatarId={vipModalUser.avatar || 'bunny'} size={42} />
               </div>
               <div>
-                <strong style={{ fontSize: 15, color: '#f8fafc' }}>
+                <strong style={{ fontSize: 15, color: '#78350f' }}>
                   {vipModalUser.displayName || vipModalUser.id}
                 </strong>
-                <div style={{ fontSize: 12, color: '#f59e0b', marginTop: 2 }}>
+                <div style={{ fontSize: 12, color: '#b45309', marginTop: 2, fontWeight: 600 }}>
                   Cảnh giới hiện tại: {getUserVipTier(vipModalUser).badge} (Rank {getUserVipTier(vipModalUser).rank})
                 </div>
               </div>
             </div>
 
             <form onSubmit={handleConfirmVipUpdate} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-              <label style={{ fontSize: 13, fontWeight: 600, color: '#cbd5e1' }}>Chọn Cảnh Giới Đạo Pháp Muốn Ban Tứ:</label>
+              <label style={{ fontSize: 13, fontWeight: 600, color: '#334155' }}>Chọn Cảnh Giới Đạo Pháp Muốn Ban Tứ:</label>
               
               <div className={s.vipGrid}>
                 {[
-                  { id: 'normal', label: 'Phàm Nhân', sub: 'Rank 0 — Mặc định', icon: 'sparkles', color: '#94a3b8' },
-                  { id: 'svip', label: 'SVIP Thánh Hỏa', sub: 'Rank 1 — Khung Thánh Hỏa', icon: 'flame', color: '#ef4444' },
+                  { id: 'normal', label: 'Phàm Nhân', sub: 'Rank 0 — Mặc định', icon: 'sparkles', color: '#64748b' },
+                  { id: 'svip', label: 'SVIP Thánh Hỏa', sub: 'Rank 1 — Khung Thánh Hỏa', icon: 'flame', color: '#dc2626' },
                   { id: 'ssvip', label: 'SSVIP Cực Băng', sub: 'Rank 2 — Khung Băng Phách', icon: 'gem', color: '#0284c7' },
                   { id: 'sssvip', label: 'SSSVIP Tử Lôi', sub: 'Rank 3 — Khung Tử Lôi Long', icon: 'bolt', color: '#d97706' },
-                  { id: 'god', label: 'CỔ THẦN TỐI CAO', sub: 'Rank 4 — Vạn Pháp Quy Tông', icon: 'crown', color: '#a855f7' },
+                  { id: 'god', label: 'CỔ THẦN TỐI CAO', sub: 'Rank 4 — Vạn Pháp Quy Tông', icon: 'crown', color: '#7c3aed' },
                 ].map((tier) => (
                   <div
                     key={tier.id}
@@ -1423,7 +1423,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
               </div>
 
               {vipModalSuccess && (
-                <div style={{ padding: '8px 14px', background: 'rgba(16, 185, 129, 0.15)', border: '1px solid #10b981', borderRadius: 10, color: '#6ee7b7', textAlign: 'center', fontSize: 12.5, fontWeight: 700 }}>
+                <div style={{ padding: '8px 14px', background: '#ecfdf5', border: '1.5px solid #a7f3d0', borderRadius: 10, color: '#065f46', textAlign: 'center', fontSize: 12.5, fontWeight: 700 }}>
                   {vipModalSuccess}
                 </div>
               )}
