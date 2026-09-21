@@ -624,9 +624,9 @@ export default function AvatarUploadModal({
             type="button"
             className={s.saveBtn}
             onClick={handleSave}
-            disabled={tab === 'upload' && !rawImage && !selectedPreset}
+            disabled={(tab === 'upload' && !rawImage && !selectedPreset) || isProcessing}
           >
-            Lưu Thay Đổi ✨
+            {isProcessing ? 'Đang pixel hóa... ⏳' : 'Lưu Thay Đổi ✨'}
           </button>
         </div>
       </div>

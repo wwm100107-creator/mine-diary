@@ -95,35 +95,6 @@ export default function App() {
     }
   }, [user?.id, isAdmin])
 
-  // ── Sync user document from Firestore in real-time (gender, ban status, vipTier, avatar, etc.) ──
-  useEffect(() => {
-    if (!user?.id || isAdmin) return
-    const unsub = onSnapshot(doc(db, 'users', user.id), (snap) => {
-      if (snap.exists()) {
-        const freshData = snap.data()
-        setUser((prev) => {
-          if (!prev) return prev
-          if (
-            prev.gender === freshData.gender &&
-            prev.vipTier === freshData.vipTier &&
-            prev.role === freshData.role &&
-            prev.isBanned === freshData.isBanned &&
-            prev.displayName === freshData.displayName &&
-            prev.avatar === freshData.avatar &&
-            prev.allowFertilityTracking === freshData.allowFertilityTracking
-          ) {
-            return prev
-          }
-          const updated = { ...prev, ...freshData, id: user.id }
-          saveSession(updated)
-          return updated
-        })
-      }
-    }, (err) => {
-      console.warn('[App] User realtime sync error:', err)
-    })
-    return () => unsub()
-  }, [user?.id, isAdmin])
 
   // ── PWA & Web Push Detection ──
   const { isIOS, isStandalone, permission } = usePwaInstallState()
@@ -665,35 +636,33 @@ export default function App() {
         applyTheme(newTheme)
       }
       // 1. Optimistic UI update for instant feedback
+      const targetFrame = newFrameId || 'none'
       const updatedUser = {
         ...user,
         avatar: newAvatarData,
-        avatarFrame: newFrameId,
+        avatarFrame: targetFrame,
+        frame: targetFrame,
         theme: newTheme || user.theme || getSavedTheme(),
       }
       setUser(updatedUser)
       saveSession(updatedUser)
 
-      // 2. Cloud Storage upload & Database sync
-      const finalAvatarUrl = await uploadUserAvatar(user.id, newAvatarData, newFrameId)
+      // 2. Cloud Storage upload & Database sync (writes avatar, avatarFrame, frame, and theme together)
+      const finalAvatarUrl = await uploadUserAvatar(user.id, newAvatarData, targetFrame, newTheme)
 
-      // 3. Update theme in Firestore users collection
-      if (newTheme) {
-        updateDoc(doc(db, 'users', user.id), {
-          theme: newTheme,
-        }).catch(console.error)
-      }
-
-      if (finalAvatarUrl && (finalAvatarUrl !== newAvatarData || user.avatarFrame !== newFrameId)) {
-        const persistedUser = {
-          ...user,
-          avatar: finalAvatarUrl,
-          avatarFrame: newFrameId,
-          theme: newTheme || user.theme || getSavedTheme(),
+      // 3. Keep local user state and session storage synced with final persisted URL
+      setUser((prev) => {
+        if (!prev) return updatedUser
+        const persisted = {
+          ...prev,
+          avatar: finalAvatarUrl || newAvatarData,
+          avatarFrame: targetFrame,
+          frame: targetFrame,
+          theme: newTheme || prev.theme || getSavedTheme(),
         }
-        setUser(persistedUser)
-        saveSession(persistedUser)
-      }
+        saveSession(persisted)
+        return persisted
+      })
     } catch (err) {
       console.error('Failed to update avatar, frame, and theme:', err)
     }
@@ -725,22 +694,30 @@ export default function App() {
         const newPredictionMode = data.predictionMode || prev.predictionMode || 'standard'
         const newRole = (data.role === 'admin' || snap.id.toLowerCase() === 'adminminediary') ? 'admin' : (data.role || prev.role || 'user')
         const newIsAdmin = newRole === 'admin' || data.isAdmin === true
+        const newGender = data.gender || prev.gender
+        const newAllowFertility = data.allowFertilityTracking !== undefined ? data.allowFertilityTracking : prev.allowFertilityTracking
+        const newTheme = data.theme || prev.theme
 
         // Only update if state has genuinely changed
         if (
           prev.vipTier !== newVipTier ||
           prev.avatarFrame !== newFrame ||
+          prev.frame !== newFrame ||
           prev.displayName !== newDisplayName ||
           prev.avatar !== newAvatar ||
           prev.predictionMode !== newPredictionMode ||
           prev.role !== newRole ||
           prev.isAdmin !== newIsAdmin ||
+          prev.gender !== newGender ||
+          prev.allowFertilityTracking !== newAllowFertility ||
+          JSON.stringify(prev.theme) !== JSON.stringify(newTheme) ||
           JSON.stringify(prev.attendance) !== JSON.stringify(newAttendance)
         ) {
           const updatedUser = {
             ...prev,
             vipTier: newVipTier,
             avatarFrame: newFrame,
+            frame: newFrame,
             attendance: newAttendance,
             avatar: newAvatar,
             displayName: newDisplayName,
@@ -748,6 +725,9 @@ export default function App() {
             predictionMode: newPredictionMode,
             role: newRole,
             isAdmin: newIsAdmin,
+            gender: newGender,
+            allowFertilityTracking: newAllowFertility,
+            theme: newTheme,
           }
           saveSession(updatedUser)
           return updatedUser

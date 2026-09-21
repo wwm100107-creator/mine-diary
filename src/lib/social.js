@@ -63,40 +63,52 @@ export async function upsertUser({
  * @param {string} avatarFrame - Animated frame ID ('none' | 'rainbow' | 'sparkle_stars' | 'cyber_aura' | 'sakura_hearts')
  * @returns {Promise<string>} Final URL or Data URL saved
  */
-export async function uploadUserAvatar(userId, avatarDataUrl, avatarFrame = 'none') {
+export async function uploadUserAvatar(userId, avatarDataUrl, avatarFrame = 'none', theme = null) {
   if (!userId) return avatarDataUrl
 
-  let finalUrl = avatarDataUrl
+  let finalUrl = avatarDataUrl || 'bunny'
+  const targetFrame = avatarFrame || 'none'
 
-  // 1. If it's a preset avatar id like 'bunny'
-  if (!avatarDataUrl || !avatarDataUrl.startsWith('data:image/')) {
-    await setDoc(
-      doc(db, 'users', userId),
-      { avatar: avatarDataUrl || 'bunny', avatarFrame: avatarFrame || 'none', updatedAt: serverTimestamp() },
-      { merge: true }
-    )
-    return avatarDataUrl
+  const userPayload = {
+    avatar: finalUrl,
+    avatarFrame: targetFrame,
+    frame: targetFrame,
+    updatedAt: serverTimestamp(),
+  }
+  if (theme) {
+    userPayload.theme = theme
   }
 
-  // 2. Try Firebase Cloud Storage upload
+  // 1. If it's a preset avatar id like 'bunny' or a standard web URL
+  if (!avatarDataUrl || !avatarDataUrl.startsWith('data:image/')) {
+    await setDoc(doc(db, 'users', userId), userPayload, { merge: true })
+    return finalUrl
+  }
+
+  // 2. Try Firebase Cloud Storage upload with strict 2.5-second timeout guard
   try {
-    const blob = dataUrlToBlob(avatarDataUrl)
-    const storageRef = ref(storage, `avatars/${userId}_${Date.now()}.png`)
-    const snapshot = await uploadBytes(storageRef, blob, {
-      contentType: 'image/png',
-    })
-    finalUrl = await getDownloadURL(snapshot.ref)
+    const uploadPromise = (async () => {
+      const blob = dataUrlToBlob(avatarDataUrl)
+      const storageRef = ref(storage, `avatars/${userId}_${Date.now()}.png`)
+      const snapshot = await uploadBytes(storageRef, blob, {
+        contentType: 'image/png',
+      })
+      return await getDownloadURL(snapshot.ref)
+    })()
+
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Storage upload timeout')), 2500)
+    )
+
+    finalUrl = await Promise.race([uploadPromise, timeoutPromise])
   } catch (storageErr) {
     console.warn('Storage upload fallback to Data URL:', storageErr)
     finalUrl = avatarDataUrl
   }
 
-  // 3. Update Database (Firestore)
-  await setDoc(
-    doc(db, 'users', userId),
-    { avatar: finalUrl, avatarFrame: avatarFrame || 'none', updatedAt: serverTimestamp() },
-    { merge: true }
-  )
+  // 3. Update Database (Firestore) with both avatarFrame and frame for full compatibility
+  userPayload.avatar = finalUrl
+  await setDoc(doc(db, 'users', userId), userPayload, { merge: true })
 
   return finalUrl
 }

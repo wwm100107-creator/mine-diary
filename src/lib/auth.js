@@ -444,11 +444,11 @@ export function getCurrentUser() {
     const user = JSON.parse(raw)
     if (user && (user.id === ADMIN_USERNAME || user.username === ADMIN_USERNAME)) {
       let changed = false
-      if (!user.avatar || !user.avatar.includes('admin-avatar') || user.avatar !== '/admin-avatar.webm') {
+      if (!user.avatar) {
         user.avatar = '/admin-avatar.webm'
         changed = true
       }
-      if (user.avatarFrame !== 'none') {
+      if (!user.avatarFrame) {
         user.avatarFrame = 'none'
         changed = true
       }

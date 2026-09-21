@@ -32,7 +32,7 @@ export function cropToSquare(imageSource, outputSize = 256) {
         const sy = (img.height - minDim) / 2
 
         ctx.drawImage(img, sx, sy, minDim, minDim, 0, 0, outputSize, outputSize)
-        resolve(canvas.toDataURL('image/png', 0.92))
+        resolve(canvas.toDataURL('image/jpeg', 0.88))
       } catch (err) {
         reject(err)
       }
