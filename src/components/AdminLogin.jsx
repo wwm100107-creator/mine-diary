@@ -91,10 +91,10 @@ export default function AdminLogin({ onLoginSuccess, onBackToApp }) {
         {/* Header */}
         <header className={s.header}>
           <div className={s.shieldBadge}>
-            <InkIcon name="sword" size={30} color="#38bdf8" />
+            <InkIcon name="sword" size={30} color="#0284c7" />
           </div>
           <div className={s.badgeRealm}>
-            <InkIcon name="sparkles" size={12} color="#38bdf8" />
+            <InkIcon name="sparkles" size={12} color="#0284c7" />
             <span>TIÊN NGHỊCH ĐẠO TRÀNG // THIÊN MÔN</span>
           </div>
           <h1 className={s.title}>Đăng Nhập Quản Trị</h1>
@@ -106,7 +106,7 @@ export default function AdminLogin({ onLoginSuccess, onBackToApp }) {
         {/* Error Banner */}
         {(error || twoFactorError) && (
           <div className={s.errorBanner} role="alert">
-            <InkIcon name="warning" size={18} color="#f87171" />
+            <InkIcon name="warning" size={18} color="#b91c1c" />
             <span>{error || twoFactorError}</span>
           </div>
         )}
@@ -174,7 +174,7 @@ export default function AdminLogin({ onLoginSuccess, onBackToApp }) {
         ) : (
           <form className={s.form} onSubmit={handle2FASubmit}>
             <div className={s.twoFactorBox}>
-              <p style={{ margin: 0, fontSize: '13px', color: '#cbd5e1', lineHeight: 1.5 }}>
+              <p style={{ margin: 0, fontSize: '13.5px', color: '#475569', lineHeight: 1.5 }}>
                 {twoFactorState.isFirstTimeSetup
                   ? 'Quét phù ấn trận đồ trong ứng dụng Google Authenticator và nhập mật mã 6 số:'
                   : 'Nhập mật pháp 6 số bảo mật từ Google Authenticator hoặc ngọc giản dự phòng:'}
