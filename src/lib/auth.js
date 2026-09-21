@@ -464,7 +464,9 @@ export function getCurrentUser() {
 
 export function saveSession(user) {
   try {
-    localStorage.setItem(SESSION_KEY, JSON.stringify(user))
+    if (!user) return
+    const { diaries, ...cleanUser } = user
+    localStorage.setItem(SESSION_KEY, JSON.stringify(cleanUser))
   } catch (e) {
     console.error('Save session error:', e)
   }

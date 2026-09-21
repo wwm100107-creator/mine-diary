@@ -46,5 +46,14 @@ service cloud.firestore {
     match /fcmTokens/{tokenId} {
       allow read, write: if true;
     }
+
+    // ── 6. Diaries Collection ─────────────────────────────────────────
+    match /diaries/{diaryId} {
+      allow read, write: if true;
+
+      match /{allChildren=**} {
+        allow read, write: if true;
+      }
+    }
   }
 }

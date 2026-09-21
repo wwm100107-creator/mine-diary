@@ -18,7 +18,8 @@ import AttendanceModal from './components/AttendanceModal'
 import NotificationPermissionModal from './components/NotificationPermissionModal'
 import GoogleOnboardingModal from './components/GoogleOnboardingModal'
 import PixelIcon from './components/PixelIcon'
-import { upsertUser, getUser, uploadUserAvatar, subscribeToUserChats, syncUserCycleData, subscribeToPartnerCycleData } from './lib/social'
+import { upsertUser, getUser, uploadUserAvatar, subscribeToUserChats, syncUserCycleData, subscribeToPartnerCycleData, restoreUserCycleData } from './lib/social'
+import { restoreAllUserDiaries } from './lib/diary'
 import { isUserAdmin } from './lib/admin'
 import { getCurrentUser, saveSession, logoutUser, touchUserActivity } from './lib/auth'
 import { canCheckInToday } from './lib/attendance'
@@ -195,9 +196,28 @@ export default function App() {
     }
   }, [user?.id])
 
-  // ── Auto-sync Female Cycle & Symptoms to Firestore on boot & updates ──
+  // ── Permanent Cloud Restore on Boot/Login (Diaries, Moods, Cycles, Symptoms) ──
   useEffect(() => {
-    if (!user?.id || user?.gender === 'male') return
+    if (!user?.id || isAdmin) return
+
+    async function restoreUserDataFromCloud() {
+      try {
+        console.log('[App] Restoring user data from Firestore Cloud for:', user.id)
+        // 1. Restore all written diaries and moods into local cache
+        await restoreAllUserDiaries(user.id)
+        // 2. Restore all cycle marks, symptoms, and custom icons into local cache
+        await restoreUserCycleData(user.id)
+      } catch (err) {
+        console.warn('[App] Cloud restore warning:', err)
+      }
+    }
+
+    restoreUserDataFromCloud()
+  }, [user?.id, isAdmin])
+
+  // ── Auto-sync Female Cycle & Symptoms to Firestore on actual user updates ──
+  useEffect(() => {
+    if (!user?.id || user?.gender === 'male' || isAdmin) return
 
     const sync = () => {
       try {
@@ -205,24 +225,33 @@ export default function App() {
         const customIcons = getCustomTrayIcons(user.id)
         const symptoms = loadAllUserSymptoms(user.id)
         const dayIconMap = loadAllDayIcons(user.id)
-        syncUserCycleData(user.id, {
-          markedDates,
-          customIcons,
-          symptoms,
-          dayIconMap,
-        })
+
+        // Only sync if there is actually valid data (prevents pushing empty data on fresh load)
+        if (
+          (markedDates && markedDates.length > 0) ||
+          (customIcons && customIcons.length > 0) ||
+          (symptoms && Object.keys(symptoms).length > 0) ||
+          (dayIconMap && Object.keys(dayIconMap).length > 0)
+        ) {
+          syncUserCycleData(user.id, {
+            markedDates,
+            customIcons,
+            symptoms,
+            dayIconMap,
+          })
+        }
       } catch (err) {
         console.warn('Error auto-syncing cycle data:', err)
       }
     }
-    sync()
+
     window.addEventListener('minediary:cycle_updated', sync)
     window.addEventListener('storage', sync)
     return () => {
       window.removeEventListener('minediary:cycle_updated', sync)
       window.removeEventListener('storage', sync)
     }
-  }, [user?.id, user?.gender, hasSharedCycleAccess])
+  }, [user?.id, user?.gender, isAdmin])
 
   // ── Auto 1-Day Before Period Prediction Check & Notifications (Female & Male Partner) ──
   const isFemale = user?.gender === 'female' || !user?.gender

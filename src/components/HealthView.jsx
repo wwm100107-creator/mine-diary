@@ -90,12 +90,21 @@ export default function HealthView({ user }) {
     const customIcons = getCustomTrayIcons(user.id)
     const symptoms = loadAllUserSymptoms(user.id)
     const dayIconMap = loadAllDayIcons(user.id)
-    syncUserCycleData(user.id, {
-      markedDates: allMarks,
-      customIcons,
-      symptoms,
-      dayIconMap,
-    })
+
+    // Safety guard: do not push empty data over existing cloud records
+    if (
+      (allMarks && allMarks.length > 0) ||
+      (customIcons && customIcons.length > 0) ||
+      (symptoms && Object.keys(symptoms).length > 0) ||
+      (dayIconMap && Object.keys(dayIconMap).length > 0)
+    ) {
+      syncUserCycleData(user.id, {
+        markedDates: allMarks,
+        customIcons,
+        symptoms,
+        dayIconMap,
+      })
+    }
   }, [user?.id, user?.gender, allMarks, cycleVersion])
 
 

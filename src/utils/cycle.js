@@ -674,3 +674,61 @@ export const toDateStr = (date) => {
 }
 
 export const today = () => toDateStr(new Date())
+
+/**
+ * Restore remote cloud cycle, icons, and symptoms data into LocalStorage
+ */
+export function restoreCycleDataToLocalStorage(userId, { markedDates = [], dayIconMap = {}, symptoms = {}, customIcons = [] } = {}) {
+  if (!userId) return
+  try {
+    // 1. Restore Custom Tray Icons
+    if (Array.isArray(customIcons) && customIcons.length > 0) {
+      const existing = getCustomTrayIcons(userId)
+      const merged = Array.from(new Set([...existing, ...customIcons]))
+      localStorage.setItem(customTrayStorageKey(userId), JSON.stringify(merged))
+    }
+
+    // 2. Restore Marked Cycle Dates
+    if (Array.isArray(markedDates) && markedDates.length > 0) {
+      for (const d of markedDates) {
+        localStorage.setItem(periodStorageKey(userId, d), '1')
+        const currentIcons = getDayIcons(userId, d)
+        if (!currentIcons.includes('🍓')) {
+          localStorage.setItem(iconStorageKey(userId, d), JSON.stringify(['🍓', ...currentIcons]))
+        }
+      }
+    }
+
+    // 3. Restore Day Icons Map
+    if (dayIconMap && typeof dayIconMap === 'object') {
+      for (const [dateStr, icons] of Object.entries(dayIconMap)) {
+        if (Array.isArray(icons) && icons.length > 0) {
+          const currentIcons = getDayIcons(userId, dateStr)
+          const merged = Array.from(new Set([...currentIcons, ...icons]))
+          localStorage.setItem(iconStorageKey(userId, dateStr), JSON.stringify(merged))
+        }
+      }
+    }
+
+    // 4. Restore Symptoms Map
+    if (symptoms && typeof symptoms === 'object') {
+      for (const [dateStr, symData] of Object.entries(symptoms)) {
+        if (symData && typeof symData === 'object' && Object.keys(symData).length > 0) {
+          const symKey = `minediary:symptoms:${userId}:${dateStr}`
+          let existing = {}
+          try {
+            const raw = localStorage.getItem(symKey)
+            if (raw) existing = JSON.parse(raw)
+          } catch (e) {}
+          const merged = { ...existing, ...symData }
+          localStorage.setItem(symKey, JSON.stringify(merged))
+        }
+      }
+    }
+
+    notifyCycleUpdate(userId)
+  } catch (err) {
+    console.error('restoreCycleDataToLocalStorage error:', err)
+  }
+}
+

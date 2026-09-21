@@ -18,6 +18,7 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { db, storage } from './firebase'
 import { dataUrlToBlob } from '../utils/pixelArt'
 import { sendPushNotification } from './push'
+import { restoreCycleDataToLocalStorage } from '../utils/cycle'
 
 // ── User profile ──────────────────────────────────────────────────────────────
 
@@ -585,28 +586,98 @@ export function subscribeToUserRelationships(userId, callback) {
 // ── Cycle Data Sync for Partner Sharing ─────────────────────────────────────
 
 /**
+ * Restore user's own cycle data from Firestore into LocalStorage
+ */
+export async function restoreUserCycleData(userId) {
+  if (!userId || userId === 'guest') return null
+  try {
+    const data = await getPartnerCycleData(userId)
+    if (data && (
+      (data.markedDates && data.markedDates.length > 0) ||
+      (data.dayIconMap && Object.keys(data.dayIconMap).length > 0) ||
+      (data.symptoms && Object.keys(data.symptoms).length > 0) ||
+      (data.customIcons && data.customIcons.length > 0)
+    )) {
+      console.log('[CycleRestore] Restoring user cycle data from Firestore into local cache:', data.markedDates?.length, 'dates')
+      restoreCycleDataToLocalStorage(userId, data)
+      return data
+    }
+  } catch (err) {
+    console.warn('[CycleRestore] Failed to restore cycle data:', err)
+  }
+  return null
+}
+
+/**
  * Sync user's cycle marks and custom icons to Firestore so partner can view
  * Saves dual-location: root collection 'cycleData/{userId}' AND subcollection 'users/{userId}/health/cycleData'
+ * With automatic safety merge to protect against empty-cache overwrites.
  */
 export async function syncUserCycleData(userId, { markedDates = [], customIcons = [], symptoms = {}, dayIconMap = {} }) {
-  if (!userId) return
+  if (!userId || userId === 'guest') return
   try {
+    const isIncomingEmpty =
+      (!markedDates || markedDates.length === 0) &&
+      (!customIcons || customIcons.length === 0) &&
+      (!symptoms || Object.keys(symptoms).length === 0) &&
+      (!dayIconMap || Object.keys(dayIconMap).length === 0)
+
+    const existingRemote = await getPartnerCycleData(userId)
+
+    // 1. SAFETY SHIELD: If local storage is completely empty (new browser / PWA reset),
+    // and Firestore already has data, RESTORE remote data to local instead of wiping the cloud!
+    if (isIncomingEmpty) {
+      if (existingRemote && (
+        (existingRemote.markedDates && existingRemote.markedDates.length > 0) ||
+        (existingRemote.dayIconMap && Object.keys(existingRemote.dayIconMap).length > 0)
+      )) {
+        console.log('[CycleSync] Preserving remote cycle data, restoring to local storage instead of wiping cloud.')
+        restoreCycleDataToLocalStorage(userId, existingRemote)
+        return
+      }
+    }
+
+    // 2. MERGE SHIELD: Seamlessly union local and remote data to never lose historical dates
+    let mergedMarkedDates = Array.isArray(markedDates) ? [...markedDates] : []
+    let mergedCustomIcons = Array.isArray(customIcons) ? [...customIcons] : []
+    let mergedSymptoms = symptoms ? { ...symptoms } : {}
+    let mergedDayIconMap = dayIconMap ? { ...dayIconMap } : {}
+
+    if (existingRemote) {
+      if (Array.isArray(existingRemote.markedDates) && existingRemote.markedDates.length > 0) {
+        mergedMarkedDates = Array.from(new Set([...existingRemote.markedDates, ...mergedMarkedDates])).sort()
+      }
+      if (Array.isArray(existingRemote.customIcons) && existingRemote.customIcons.length > 0) {
+        mergedCustomIcons = Array.from(new Set([...existingRemote.customIcons, ...mergedCustomIcons]))
+      }
+      if (existingRemote.symptoms && typeof existingRemote.symptoms === 'object') {
+        mergedSymptoms = { ...existingRemote.symptoms, ...mergedSymptoms }
+      }
+      if (existingRemote.dayIconMap && typeof existingRemote.dayIconMap === 'object') {
+        for (const [dateKey, icons] of Object.entries(existingRemote.dayIconMap)) {
+          if (Array.isArray(icons)) {
+            const current = mergedDayIconMap[dateKey] || []
+            mergedDayIconMap[dateKey] = Array.from(new Set([...icons, ...current]))
+          }
+        }
+      }
+    }
+
     // Ensure all marked cycle dates have strawberry icon in dayIconMap
-    const finalDayIconMap = { ...dayIconMap }
-    for (const d of markedDates) {
-      if (!finalDayIconMap[d]) {
-        finalDayIconMap[d] = ['🍓']
-      } else if (!finalDayIconMap[d].includes('🍓')) {
-        finalDayIconMap[d] = ['🍓', ...finalDayIconMap[d]]
+    for (const d of mergedMarkedDates) {
+      if (!mergedDayIconMap[d]) {
+        mergedDayIconMap[d] = ['🍓']
+      } else if (!mergedDayIconMap[d].includes('🍓')) {
+        mergedDayIconMap[d] = ['🍓', ...mergedDayIconMap[d]]
       }
     }
 
     const payload = {
       userId,
-      markedDates,
-      customIcons,
-      symptoms,
-      dayIconMap: finalDayIconMap,
+      markedDates: mergedMarkedDates,
+      customIcons: mergedCustomIcons,
+      symptoms: mergedSymptoms,
+      dayIconMap: mergedDayIconMap,
       updatedAt: serverTimestamp(),
     }
 

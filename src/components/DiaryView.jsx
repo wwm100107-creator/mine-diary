@@ -1,11 +1,8 @@
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback, useEffect } from 'react'
 import Calendar from './Calendar'
 import DiaryEditor from './DiaryEditor'
+import { saveDiaryEntry, getDiaryEntry, countWords } from '../lib/diary'
 import s from '../App.module.css' // Reuse main app styles for now
-
-// ── Storage helpers ───────────────────────────────────────────────────────────
-const diaryKey = (userId, dateStr) => `minediary:diary:${userId}:${dateStr}`
-const moodKey  = (userId, dateStr) => `minediary:mood:${userId}:${dateStr}`
 
 const DAYS_VI   = ['Chủ Nhật','Thứ Hai','Thứ Ba','Thứ Tư','Thứ Năm','Thứ Sáu','Thứ Bảy']
 const MONTHS_VI = ['tháng 1','tháng 2','tháng 3','tháng 4','tháng 5','tháng 6',
@@ -35,14 +32,6 @@ function formatMiniDate(dateStr) {
   return `${dd}/${m}`
 }
 
-function stripHtml(html) {
-  return html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()
-}
-function countWords(html) {
-  const text = stripHtml(html)
-  return text === '' ? 0 : text.split(/\s+/).length
-}
-
 export default function DiaryView({ user }) {
   const [selectedDate, setSelectedDate] = useState(null)
   const [calShrunk,    setCalShrunk]    = useState(false)
@@ -52,27 +41,42 @@ export default function DiaryView({ user }) {
   const autosaveTimer = useRef(null)
 
   // ── Select date ────────────────────────────────────────────────────────
-  const handleDateSelect = useCallback((dateStr) => {
+  const handleDateSelect = useCallback(async (dateStr) => {
     if (selectedDate && user) {
-      localStorage.setItem(diaryKey(user.id, selectedDate), diaryHtml)
-      localStorage.setItem(moodKey(user.id, selectedDate), JSON.stringify([...activeMoods]))
+      saveDiaryEntry(user.id, selectedDate, { content: diaryHtml, moods: [...activeMoods] })
     }
     setSelectedDate(dateStr)
     setCalShrunk(true)
 
-    const saved      = localStorage.getItem(diaryKey(user.id, dateStr)) ?? ''
-    const savedMoods = JSON.parse(localStorage.getItem(moodKey(user.id, dateStr)) ?? '[]')
-    setDiaryHtml(saved)
-    setActiveMoods(new Set(savedMoods))
+    // Load from local cache immediately, then reconcile with Firestore
+    const entry = await getDiaryEntry(user?.id, dateStr)
+    setDiaryHtml(entry.content || '')
+    setActiveMoods(new Set(entry.moods || []))
   }, [selectedDate, user, diaryHtml, activeMoods])
+
+  // Re-sync if cloud restore completed in background
+  useEffect(() => {
+    if (!selectedDate || !user?.id) return
+    const onRestored = () => {
+      getDiaryEntry(user.id, selectedDate).then((entry) => {
+        if (entry.content && !diaryHtml) {
+          setDiaryHtml(entry.content)
+          setActiveMoods(new Set(entry.moods || []))
+        }
+      })
+    }
+    window.addEventListener('minediary:diaries_restored', onRestored)
+    return () => window.removeEventListener('minediary:diaries_restored', onRestored)
+  }, [selectedDate, user?.id, diaryHtml])
 
   // ── Save ───────────────────────────────────────────────────────────────
   const saveDiary = useCallback((html, moods) => {
     if (!selectedDate || !user) return
-    localStorage.setItem(diaryKey(user.id, selectedDate), html ?? diaryHtml)
-    localStorage.setItem(moodKey(user.id, selectedDate), JSON.stringify([...(moods ?? activeMoods)]))
+    const contentToSave = html ?? diaryHtml
+    const moodsToSave = moods ?? activeMoods
+    saveDiaryEntry(user.id, selectedDate, { content: contentToSave, moods: moodsToSave })
     setSavedVisible(true)
-    setTimeout(() => setSavedVisible(false), 2000)
+    setTimeout(() => setSavedVisible(false), 2500)
   }, [selectedDate, user, diaryHtml, activeMoods])
 
   const handleEditorChange = useCallback((html) => {
@@ -146,7 +150,7 @@ export default function DiaryView({ user }) {
                 <span
                   className={`${s.saveStatus} ${savedVisible ? s.visible : ''}`}
                   role="status" aria-live="polite"
-                >✓ Đã lưu</span>
+                >✓ Đã lưu đám mây</span>
                 <button className={s.saveBtn} onClick={() => saveDiary()}>Lưu</button>
               </div>
             </div>
