@@ -47,9 +47,9 @@ function formatFullTime(date) {
 }
 
 function formatBanUntil(banUntil) {
-  if (!banUntil) return 'Vĩnh viễn Cửu U'
+  if (!banUntil) return 'Vĩnh viễn'
   const d = banUntil instanceof Date ? banUntil : new Date(banUntil)
-  if (isNaN(d.getTime())) return 'Vĩnh viễn Cửu U'
+  if (isNaN(d.getTime())) return 'Vĩnh viễn'
   return d.toLocaleString('vi-VN', {
     day: '2-digit',
     month: '2-digit',
@@ -235,7 +235,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
       await loadData()
     } catch (err) {
       console.error('Ban user error:', err)
-      alert('Không thể thực hiện phong ấn tài khoản!')
+      alert('Không thể thực hiện khóa tài khoản!')
     } finally {
       setActionLoading(false)
     }
@@ -245,7 +245,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
   const handleUnban = async (targetUser) => {
     if (!targetUser) return
     const confirmed = window.confirm(
-      `Phá giải phong ấn Cửu U cho tu sĩ ${targetUser.displayName || targetUser.id}?`
+      `Mở khóa tài khoản cho người dùng ${targetUser.displayName || targetUser.id}?`
     )
     if (!confirmed) return
 
@@ -255,7 +255,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
       await loadData()
     } catch (err) {
       console.error('Unban error:', err)
-      alert('Lỗi khi giải trừ phong ấn.')
+      alert('Lỗi khi mở khóa tài khoản.')
     } finally {
       setActionLoading(false)
     }
@@ -265,7 +265,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
   const handleApproveAppeal = async (targetUser) => {
     if (!targetUser) return
     const confirmed = window.confirm(
-      `Chấp thuận sớ khiếu nại và lập tức phá giải phong ấn cho ${targetUser.displayName || targetUser.id}?`
+      `Chấp thuận khiếu nại và lập tức mở khóa cho ${targetUser.displayName || targetUser.id}?`
     )
     if (!confirmed) return
 
@@ -276,7 +276,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
       await loadData()
     } catch (err) {
       console.error('Approve appeal error:', err)
-      alert('Lỗi khi duyệt sớ khiếu nại.')
+      alert('Lỗi khi duyệt khiếu nại.')
     } finally {
       setActionLoading(false)
     }
@@ -286,7 +286,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
   const handleRejectAppeal = async (targetUser) => {
     if (!targetUser) return
     const confirmed = window.confirm(
-      `Bác bỏ sớ khiếu nại của ${targetUser.displayName || targetUser.id}? Tiếp tục duy trì trấn áp Cửu U.`
+      `Từ chối khiếu nại của ${targetUser.displayName || targetUser.id}? Tài khoản sẽ tiếp tục bị khóa.`
     )
     if (!confirmed) return
 
@@ -298,7 +298,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
       await loadData()
     } catch (err) {
       console.error('Reject appeal error:', err)
-      alert('Lỗi khi từ chối sớ khiếu nại.')
+      alert('Lỗi khi từ chối khiếu nại.')
     } finally {
       setActionLoading(false)
     }
@@ -308,12 +308,12 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
   const handleDeleteUser = async (targetUser) => {
     if (!targetUser) return
     if (isProtectedUser(targetUser)) {
-      alert('👑 Tài khoản Đại Thừa Đạo Tổ là Bất tử, không thể bị xóa hoặc hạn chế!')
+      alert('👑 Tài khoản Quản trị viên tối cao được bảo vệ, không thể bị xóa hoặc hạn chế!')
       return
     }
 
     const confirmed = window.confirm(
-      `⚠️ CẢNH BÁO THIÊN KIẾP:\nBạn có chắc chắn muốn TRỪ DIỆT VĨNH VIỄN tài khoản "${targetUser.displayName || targetUser.username || targetUser.id}" (#${targetUser.id}) không?\nHành động này thiêu hủy hoàn toàn thần hồn, không thể hoàn tác!`
+      `⚠️ CẢNH BÁO:\nBạn có chắc chắn muốn XÓA VĨNH VIỄN tài khoản "${targetUser.displayName || targetUser.username || targetUser.id}" (#${targetUser.id}) không?\nHành động này không thể hoàn tác!`
     )
     if (!confirmed) return
 
@@ -322,7 +322,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
       await deleteUserAccount(targetUser.id)
       setDetailModalUser(null)
       await loadData()
-      alert(`✓ Đã trừ diệt vĩnh viễn tài khoản #${targetUser.id} thành công!`)
+      alert(`✓ Đã xóa vĩnh viễn tài khoản #${targetUser.id} thành công!`)
     } catch (err) {
       console.error('Delete user error:', err)
       alert(`Lỗi khi xóa tài khoản: ${err.message}`)
@@ -340,12 +340,12 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
     setResetSuccess('')
     try {
       await resetUserPassword(detailModalUser.id, newPassInput.trim())
-      setResetSuccess(`✓ Tẩy tủy hoán cốt thành công! Mật pháp mới: "${newPassInput.trim()}"`)
+      setResetSuccess(`✓ Đổi mật khẩu thành công! Mật khẩu mới: "${newPassInput.trim()}"`)
       setNewPassInput('')
       await loadData()
     } catch (err) {
       console.error('Reset password error:', err)
-      alert('Lỗi khi tái lập mật pháp.')
+      alert('Lỗi khi đặt lại mật khẩu.')
     } finally {
       setActionLoading(false)
     }
@@ -359,7 +359,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
     setVipUpdateSuccess('')
     try {
       await updateUserVipTier(detailModalUser.id, targetVipTier)
-      setVipUpdateSuccess(`✓ Đã thăng hoa cảnh giới tu vi thành: "${VIP_TIERS[targetVipTier]?.name || targetVipTier}"`)
+      setVipUpdateSuccess(`✓ Đã cập nhật cấp bậc VIP thành: "${VIP_TIERS[targetVipTier]?.name || targetVipTier}"`)
       setDetailModalUser((prev) => ({ ...prev, vipTier: targetVipTier }))
       if (user?.id === detailModalUser.id) {
         onUpdateUser?.({
@@ -371,7 +371,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
       await loadData()
     } catch (err) {
       console.error('Update VIP error:', err)
-      alert('Lỗi khi cập nhật cảnh giới tu vi.')
+      alert('Lỗi khi cập nhật cấp bậc VIP.')
     } finally {
       setActionLoading(false)
     }
@@ -386,7 +386,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
     try {
       await updateUserVipTier(vipModalUser.id, selectedVipTier)
       const tierName = VIP_TIERS[selectedVipTier]?.name || selectedVipTier
-      setVipModalSuccess(`✓ Đã ban tặng cảnh giới "${tierName}" thành công!`)
+      setVipModalSuccess(`✓ Đã cập nhật cấp bậc VIP "${tierName}" thành công!`)
       setUsers((prev) =>
         prev.map((u) => (u.id === vipModalUser.id ? { ...u, vipTier: selectedVipTier } : u))
       )
@@ -403,7 +403,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
       }, 1200)
     } catch (err) {
       console.error('Update VIP error:', err)
-      alert('Lỗi khi cập nhật cảnh giới: ' + err.message)
+      alert('Lỗi khi cập nhật cấp bậc VIP: ' + err.message)
     } finally {
       setActionLoading(false)
     }
@@ -420,7 +420,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
       setSuperAdminUnlocked(true)
       setSuperAdminCmd('')
     } else {
-      setSuperAdminError('Pháp lệnh không hợp lệ! Cổ Thần Chi Nhãn cự tuyệt thần niệm.')
+      setSuperAdminError('Mã xác thực không chính xác! Quyền truy cập bị từ chối.')
     }
   }
 
@@ -445,7 +445,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
       }
     } catch (err) {
       console.error('Failed to toggle fertility permission:', err)
-      alert('Lỗi khi cập nhật quyền hạn thiên cơ: ' + err.message)
+      alert('Lỗi khi cập nhật quyền theo dõi chu kỳ: ' + err.message)
     } finally {
       setActionLoading(false)
     }
@@ -462,10 +462,10 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
           </div>
           <h2 style={{ fontSize: 22, color: '#f8fafc', marginBottom: 10 }}>Truy Cập Bị Từ Chối</h2>
           <p style={{ color: '#94a3b8', fontSize: 14, lineHeight: 1.6, marginBottom: 20 }}>
-            Thần thức của bạn chưa đạt cảnh giới Chấp Pháp Trưởng Lão hoặc Đại Thừa Đạo Tổ để chấp chưởng Thiên Đạo Trận Đồ.
+            Tài khoản của bạn không có quyền Quản trị viên (Admin) để truy cập trang quản lý này.
           </p>
           <button type="button" className={s.backBtn} onClick={onBack}>
-            ← Quay lại Nhật Ký Vạn Giới
+            ← Quay lại ứng dụng
           </button>
         </div>
       </div>
@@ -474,7 +474,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
 
   return (
     <div className={s.adminContainer}>
-      {/* Background Animated Xianxia Ink Wash & Qi Flow Canvas */}
+      {/* Background Animated Ink Wash Canvas */}
       <InkMistCanvas />
 
       {/* Admin Top Navigation Bar */}
@@ -482,12 +482,12 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
         <div className={s.topBarLeft}>
           <button type="button" className={s.backBtn} onClick={onBack} title="Quay về giao diện người dùng">
             <InkIcon name="sword" size={15} color="#38bdf8" />
-            <span>Thoát Xuất Tiên Giới</span>
+            <span>Về Ứng Dụng</span>
           </button>
 
           <h2 className={s.dashboardTitle}>
             <InkIcon name="shield" size={24} color="#38bdf8" />
-            <span className={s.titleGleam}>Tiên Nghịch Đạo Giản // Thiên Đạo Trận Đồ</span>
+            <span className={s.titleGleam}>Bảng Điều Khiển Quản Trị Hệ Thống</span>
           </h2>
         </div>
 
@@ -496,18 +496,18 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
             <div className={s.adminAvatarRing}>
               <PixelAvatar avatarId={user?.avatar || '/admin-avatar.mp4'} size={32} border={false} />
             </div>
-            <span className={s.adminName}>{user?.displayName || user?.name || 'Đạo Tổ'}</span>
-            <span className={s.adminPill}>Đại Thừa Đạo Tổ</span>
+            <span className={s.adminName}>{user?.displayName || user?.name || 'Admin'}</span>
+            <span className={s.adminPill}>Quản trị viên tối cao</span>
           </div>
 
           <button
             type="button"
             className={s.logoutBtn}
             onClick={onLogout}
-            title="Đăng xuất khỏi Đạo Tràng Quản Trị"
+            title="Đăng xuất khỏi trang Quản trị"
           >
             <InkIcon name="logout" size={15} color="#fca5a5" />
-            <span>Thoát Đạo Tràng</span>
+            <span>Đăng Xuất</span>
           </button>
         </div>
       </div>
@@ -516,7 +516,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
       <div className={s.metricsGrid}>
         <div className={s.metricCard} style={{ '--metric-accent': '#38bdf8' }}>
           <div className={s.metricInfo}>
-            <span className={s.metricLabel}>Chư Thiên Tu Sĩ</span>
+            <span className={s.metricLabel}>Tổng Tài Khoản</span>
             <span className={s.metricValue}>{metrics.total}</span>
           </div>
           <div className={s.metricIconWrap}>
@@ -526,7 +526,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
 
         <div className={s.metricCard} style={{ '--metric-accent': '#34d399' }}>
           <div className={s.metricInfo}>
-            <span className={s.metricLabel}>Thần Thức Đang Hiện</span>
+            <span className={s.metricLabel}>Đang Online</span>
             <span className={s.metricValue} style={{ color: '#34d399' }}>
               {metrics.online}
             </span>
@@ -538,7 +538,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
 
         <div className={s.metricCard} style={{ '--metric-accent': '#38bdf8' }}>
           <div className={s.metricInfo}>
-            <span className={s.metricLabel}>Đang Độ Kiếp</span>
+            <span className={s.metricLabel}>Đang Hoạt Động</span>
             <span className={s.metricValue} style={{ color: '#7dd3fc' }}>
               {metrics.active}
             </span>
@@ -550,7 +550,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
 
         <div className={s.metricCard} style={{ '--metric-accent': '#f43f5e' }}>
           <div className={s.metricInfo}>
-            <span className={s.metricLabel}>Cửu U Trấn Áp</span>
+            <span className={s.metricLabel}>Đang Bị Khóa</span>
             <span className={s.metricValue} style={{ color: '#f43f5e' }}>
               {metrics.banned}
             </span>
@@ -562,7 +562,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
 
         <div className={s.metricCard} style={{ '--metric-accent': '#f59e0b' }}>
           <div className={s.metricInfo}>
-            <span className={s.metricLabel}>Sớ Cầu Xin Giải Phong</span>
+            <span className={s.metricLabel}>Khiếu Nại Chờ Duyệt</span>
             <span className={s.metricValue} style={{ color: '#f59e0b' }}>
               {metrics.appeals}
             </span>
@@ -582,7 +582,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
           <input
             type="text"
             className={s.searchInput}
-            placeholder="Thần niệm tầm tung (Đạo hiệu, UID, Tọa độ IP, Pháp bảo)..."
+            placeholder="Tìm kiếm người dùng (Tên, UID, Email, IP, Thiết bị)..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -594,11 +594,11 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
           >
-            <option value="all">Toàn Bộ Tu Sĩ ({metrics.total})</option>
-            <option value="online">Thần Thức Đang Hiện ({metrics.online})</option>
-            <option value="active">Đang Độ Kiếp ({metrics.active})</option>
-            <option value="banned">Cửu U Trấn Áp ({metrics.banned})</option>
-            <option value="appeals">Có Sớ Khiếu Nại ({metrics.appeals})</option>
+            <option value="all">Tất Cả Người Dùng ({metrics.total})</option>
+            <option value="online">Đang Online ({metrics.online})</option>
+            <option value="active">Đang Hoạt Động ({metrics.active})</option>
+            <option value="banned">Đang Bị Khóa ({metrics.banned})</option>
+            <option value="appeals">Có Khiếu Nại Mở Khóa ({metrics.appeals})</option>
           </select>
 
           <button
@@ -608,7 +608,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
             disabled={loading}
           >
             <InkIcon name="refresh" size={15} color="#38bdf8" />
-            <span>Quét Thần Thức</span>
+            <span>Làm Mới</span>
           </button>
         </div>
       </div>
@@ -619,9 +619,9 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <InkIcon name="warning" size={28} color="#f43f5e" />
             <div>
-              <strong style={{ fontSize: 15, color: '#fca5a5' }}>Firestore Thiên Môn Đang Bị Khóa (PERMISSION_DENIED)</strong>
+              <strong style={{ fontSize: 15, color: '#fca5a5' }}>Lỗi Quyền Truy Cập Firestore (PERMISSION_DENIED)</strong>
               <p style={{ fontSize: 13, color: '#fda4af', margin: '4px 0 0', lineHeight: 1.5 }}>
-                Dữ liệu tu sĩ trên Google Cloud vẫn an toàn 100%. Vui lòng Publish Security Rules trên Firebase Console.
+                Dữ liệu người dùng trên Google Cloud vẫn an toàn 100%. Vui lòng Publish Security Rules trên Firebase Console.
               </p>
             </div>
           </div>
@@ -654,24 +654,24 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
               disabled={loading}
             >
               <InkIcon name="refresh" size={14} />
-              <span>Thử Quét Lại</span>
+              <span>Thử Lại</span>
             </button>
           </div>
         </div>
       )}
 
-      {/* Accounts Table Card (Ink Wash Shan Shui Anti-Aliased Layout) */}
+      {/* Accounts Table Card */}
       <div className={s.tableContainer}>
         <table className={s.table}>
           <thead>
             <tr>
-              <th className={s.colAvatar}>Linh Hoàn</th>
-              <th className={s.colUserId}>Đạo Hiệu & UID</th>
-              <th className={s.colDate}>Ngày Nhập Đạo</th>
-              <th className={s.colStatus}>Trạng Thái Thần Thức</th>
-              <th className={s.colIp}>Tọa Độ IP & Pháp Bảo</th>
-              <th className={s.colSeeAll}>Thiên Cơ Giản</th>
-              <th className={s.colAction}>Chấp Pháp Thiên Lệnh</th>
+              <th className={s.colAvatar}>Avatar</th>
+              <th className={s.colUserId}>Họ Tên & UID</th>
+              <th className={s.colDate}>Ngày Tạo</th>
+              <th className={s.colStatus}>Trạng Thái</th>
+              <th className={s.colIp}>Địa Chỉ IP & Thiết Bị</th>
+              <th className={s.colSeeAll}>Chi Tiết</th>
+              <th className={s.colAction}>Hành Động</th>
             </tr>
           </thead>
           <tbody>
@@ -680,7 +680,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                 <td colSpan={7}>
                   <div className={s.loadingBox}>
                     <InkIcon name="refresh" size={26} color="#38bdf8" />
-                    <span>Đang cảm ứng thần niệm chư thiên vạn giới...</span>
+                    <span>Đang tải danh sách người dùng...</span>
                   </div>
                 </td>
               </tr>
@@ -689,7 +689,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                 <td colSpan={7}>
                   <div className={s.emptyBox}>
                     <InkIcon name="search" size={26} color="#64748b" />
-                    <span>Không tìm thấy tu sĩ nào tương hợp với thần thức tìm kiếm.</span>
+                    <span>Không tìm thấy tài khoản nào phù hợp với từ khóa tìm kiếm.</span>
                   </div>
                 </td>
               </tr>
@@ -720,7 +720,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                             {u.displayName || u.username || u.id}
                           </span>
                           {u.isAdmin && (
-                            <span className={s.roleAdminTag}>Đạo Tổ</span>
+                            <span className={s.roleAdminTag}>Admin</span>
                           )}
                           <span
                             className={s.userVipBadge}
@@ -739,7 +739,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                               setSelectedVipTier(u.vipTier || (isProtectedUser(u) ? 'god' : 'normal'))
                               setVipModalSuccess('')
                             }}
-                            title="Nhấn để điều chỉnh cảnh giới tu vi"
+                            title="Nhấn để điều chỉnh cấp bậc VIP"
                           >
                             <InkIcon name={uVip.id === 'god' ? 'crown' : uVip.id === 'sssvip' ? 'bolt' : uVip.id === 'ssvip' ? 'gem' : uVip.id === 'svip' ? 'flame' : 'sparkles'} size={12} color={uVip.color} />
                             <span>{uVip.badge}</span>
@@ -758,32 +758,32 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                     <td className={s.colStatus}>
                       <div className={s.statusCellWrap}>
                         {isProtectedUser(u) ? (
-                          <span className={s.badgeImmune} title="Tài khoản Đại Thừa Đạo Tổ Bất Tử">
+                          <span className={s.badgeImmune} title="Tài khoản Quản trị viên tối cao">
                             <InkIcon name="crown" size={13} color="#fef08a" />
-                            <span>Bất Khả Xâm Phạm</span>
+                            <span>Quản Trị Viên</span>
                           </span>
                         ) : u.isBanned ? (
                           <div className={s.badgeBanned}>
                             <span className={s.bannedMainText}>
                               <InkIcon name="ban" size={13} color="#fca5a5" />
-                              <span>Trấn Áp Cửu U ({formatBanUntil(u.banUntilDate)})</span>
+                              <span>Đang Khóa ({formatBanUntil(u.banUntilDate)})</span>
                             </span>
                             {u.banReason && (
                               <span className={s.banReasonNote}>
-                                Tội danh: {u.banReason}
+                                Lý do: {u.banReason}
                               </span>
                             )}
                             {u.appeal?.status === 'pending' && (
                               <div className={s.badgeAppealPending}>
                                 <InkIcon name="scroll" size={12} color="#fde047" />
-                                <span>Có sớ xin giải phong!</span>
+                                <span>Có khiếu nại mở khóa!</span>
                               </div>
                             )}
                           </div>
                         ) : (
                           <span className={s.badgeActive}>
                             <InkIcon name="check" size={12} color="#6ee7b7" />
-                            <span>Đang Độ Kiếp</span>
+                            <span>Bình Thường</span>
                           </span>
                         )}
 
@@ -798,13 +798,13 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                     {/* Column 5: Device & IP */}
                     <td className={s.colIp}>
                       <div className={s.ipBlock}>
-                        <span className={s.ipText} title="Tọa độ tinh vực đăng nhập">
+                        <span className={s.ipText} title="Địa chỉ IP đăng nhập">
                           <InkIcon name="globe" size={13} color="#7dd3fc" />
-                          <span>{u.lastLoginIp || 'Ẩn Thân'}</span>
+                          <span>{u.lastLoginIp || '—'}</span>
                         </span>
-                        <span className={s.deviceText} title="Bản mệnh pháp bảo kết nối">
+                        <span className={s.deviceText} title="Thiết bị đăng nhập">
                           <InkIcon name="device" size={13} color="#94a3b8" />
-                          <span>{u.lastDevice || 'Pháp Bảo Không Tên'}</span>
+                          <span>{u.lastDevice || '—'}</span>
                         </span>
                       </div>
                     </td>
@@ -824,10 +824,10 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                           setSuperAdminCmd('')
                           setSuperAdminError('')
                         }}
-                        title="Khai mở toàn bộ thần hồn và mật tịch"
+                        title="Xem chi tiết thông tin tài khoản"
                       >
                         <InkIcon name="eye" size={14} color="#7dd3fc" />
-                        <span>Xem Thần Hồn</span>
+                        <span>Chi Tiết</span>
                       </button>
                     </td>
 
@@ -843,14 +843,14 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                               setSelectedVipTier('god')
                               setVipModalSuccess('')
                             }}
-                            title="Tài khoản Đạo Tổ nắm giữ Cổ Thần Đại Đạo"
+                            title="Tài khoản Quản trị viên"
                           >
                             <InkIcon name="crown" size={13} color="#fef08a" />
-                            <span>Cổ Thần VIP</span>
+                            <span>Cấp VIP</span>
                           </button>
                           <span className={s.protectedShieldBadge}>
                             <InkIcon name="shield" size={13} color="#fef08a" />
-                            <span>Bất Tử</span>
+                            <span>Bảo Vệ</span>
                           </span>
                         </div>
                       ) : u.isBanned ? (
@@ -863,10 +863,10 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                               setSelectedVipTier(u.vipTier || 'normal')
                               setVipModalSuccess('')
                             }}
-                            title="Ban phát hoặc giáng cảnh giới tu vi"
+                            title="Cập nhật cấp độ VIP"
                           >
                             <InkIcon name="crown" size={13} color="#fef08a" />
-                            <span>Cảnh Giới</span>
+                            <span>Đổi VIP</span>
                           </button>
                           {u.appeal?.status === 'pending' && (
                             <button
@@ -876,10 +876,10 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                                 setAppealModalUser(u)
                                 setRejectNote('')
                               }}
-                              title="Thẩm định sớ kêu oan của tu sĩ"
+                              title="Xem khiếu nại mở khóa của người dùng"
                             >
                               <InkIcon name="scroll" size={13} color="#fde047" />
-                              <span>Xét Sớ Oan</span>
+                              <span>Khiếu Nại</span>
                             </button>
                           )}
                           <button
@@ -889,7 +889,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                             disabled={actionLoading}
                           >
                             <InkIcon name="unlock" size={13} color="#6ee7b7" />
-                            <span>Phá Giải</span>
+                            <span>Mở Khóa</span>
                           </button>
                           <button
                             type="button"
@@ -897,10 +897,10 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                             style={{ borderColor: 'rgba(239, 68, 68, 0.4)' }}
                             onClick={() => handleDeleteUser(u)}
                             disabled={actionLoading}
-                            title="Thiêu rụi vĩnh viễn thần hồn tu sĩ"
+                            title="Xóa vĩnh viễn tài khoản người dùng"
                           >
                             <InkIcon name="close" size={13} color="#fca5a5" />
-                            <span>Trừ Diệt</span>
+                            <span>Xóa</span>
                           </button>
                         </div>
                       ) : (
@@ -913,10 +913,10 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                               setSelectedVipTier(u.vipTier || 'normal')
                               setVipModalSuccess('')
                             }}
-                            title="Ban phát hoặc giáng cảnh giới tu vi"
+                            title="Cập nhật cấp độ VIP"
                           >
                             <InkIcon name="crown" size={13} color="#fef08a" />
-                            <span>Cảnh Giới</span>
+                            <span>Đổi VIP</span>
                           </button>
                           <button
                             type="button"
@@ -931,7 +931,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                             disabled={actionLoading || u.id === user?.id}
                           >
                             <InkIcon name="sword" size={13} color="#fca5a5" />
-                            <span>Trấn Áp</span>
+                            <span>Khóa TK</span>
                           </button>
                           <button
                             type="button"
@@ -939,10 +939,10 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                             style={{ borderColor: 'rgba(239, 68, 68, 0.4)' }}
                             onClick={() => handleDeleteUser(u)}
                             disabled={actionLoading}
-                            title="Thiêu rụi vĩnh viễn thần hồn tu sĩ"
+                            title="Xóa vĩnh viễn tài khoản người dùng"
                           >
                             <InkIcon name="close" size={13} color="#fca5a5" />
-                            <span>Trừ Diệt</span>
+                            <span>Xóa</span>
                           </button>
                         </div>
                       )}
@@ -962,7 +962,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
             <div className={s.modalHeader}>
               <h3 className={s.modalTitle}>
                 <InkIcon name="scroll" size={20} color="#38bdf8" />
-                <span>THIÊN CƠ GIẢN // CHI TIẾT THẦN HỒN</span>
+                <span>CHI TIẾT TÀI KHOẢN NGƯỜI DÙNG</span>
               </h3>
               <button
                 type="button"
@@ -988,7 +988,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                   {detailModalUser.displayName || detailModalUser.id}
                 </strong>
                 <div style={{ fontSize: 12, color: '#64748b', fontFamily: 'monospace' }}>
-                  Linh Thức UID: #{detailModalUser.id}
+                  UID: #{detailModalUser.id}
                 </div>
               </div>
             </div>
@@ -996,69 +996,69 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
             {/* Detailed Account Grid */}
             <div className={s.detailGrid}>
               <div className={s.detailRow}>
-                <span className={s.detailKey}>Đạo Hiệu Đăng Nhập:</span>
+                <span className={s.detailKey}>Tên Đăng Nhập:</span>
                 <span className={s.detailVal}>{detailModalUser.username || detailModalUser.id.split('#')[0]}</span>
               </div>
               <div className={s.detailRow}>
-                <span className={s.detailKey}>Linh Thức Email:</span>
+                <span className={s.detailKey}>Địa Chỉ Email:</span>
                 <span className={s.detailVal}>{detailModalUser.email || 'Chưa liên kết'}</span>
               </div>
               <div className={s.detailRow}>
-                <span className={s.detailKey}>Âm Dương Giới Tính:</span>
+                <span className={s.detailKey}>Giới Tính:</span>
                 <span className={s.detailVal} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
                   {detailModalUser.gender === 'male' ? (
                     <>
                       <InkIcon name="boy" size={15} color="#38bdf8" />
-                      <span>Dương Tính (Nam ♂)</span>
+                      <span>Nam (♂)</span>
                     </>
                   ) : detailModalUser.gender === 'female' ? (
                     <>
                       <InkIcon name="girl" size={15} color="#f472b6" />
-                      <span>Âm Tính (Nữ ♀)</span>
+                      <span>Nữ (♀)</span>
                     </>
                   ) : (
-                    'Chưa Thiết Lập'
+                    'Chưa chọn'
                   )}
                 </span>
               </div>
               <div className={s.detailRow}>
-                <span className={s.detailKey}>Bản Mệnh Linh Khung:</span>
+                <span className={s.detailKey}>Khung Avatar:</span>
                 <span className={s.detailVal}>
                   {detailModalUser.avatarFrame || detailModalUser.frame || 'Mặc định'}
                 </span>
               </div>
               <div className={s.detailRow}>
-                <span className={s.detailKey}>Tiên Lộ Điểm Danh:</span>
+                <span className={s.detailKey}>Chuỗi Điểm Danh:</span>
                 <span className={s.detailVal} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
                   <InkIcon name="flame" size={14} color="#f59e0b" />
                   <span>{detailModalUser.attendanceStreak || detailModalUser.streak || 0} ngày liên tiếp</span>
                 </span>
               </div>
               <div className={s.detailRow}>
-                <span className={s.detailKey}>Thời Gian Khởi Tạo:</span>
+                <span className={s.detailKey}>Ngày Đăng Ký:</span>
                 <span className={s.detailVal}>{formatFullTime(detailModalUser.createdAtDate)}</span>
               </div>
               <div className={s.detailRow}>
-                <span className={s.detailKey}>Thần Thức Hoạt Động:</span>
+                <span className={s.detailKey}>Trạng Thái Hoạt Động:</span>
                 <span className={s.detailVal} style={{ fontWeight: 600 }}>
                   {formatUserActivityStatus(detailModalUser.lastActiveAtDate).text}
                 </span>
               </div>
               <div className={s.detailRow}>
-                <span className={s.detailKey}>Lần Cuối Xuất Hiện:</span>
+                <span className={s.detailKey}>Hoạt Động Gần Nhất:</span>
                 <span className={s.detailVal}>
                   {formatFullTime(detailModalUser.lastActiveAtDate)}
                 </span>
               </div>
               <div className={s.detailRow}>
-                <span className={s.detailKey}>Tọa Độ IP Đăng Nhập:</span>
+                <span className={s.detailKey}>Địa Chỉ IP Đăng Nhập:</span>
                 <span className={s.detailVal} style={{ fontFamily: 'monospace', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 6, color: '#0284c7' }}>
                   <InkIcon name="globe" size={13} color="#0284c7" />
                   <span>{detailModalUser.lastLoginIp || 'Chưa ghi nhận'}</span>
                 </span>
               </div>
               <div className={s.detailRow}>
-                <span className={s.detailKey}>Bản Mệnh Pháp Bảo:</span>
+                <span className={s.detailKey}>Thiết Bị Đăng Nhập:</span>
                 <span className={s.detailVal} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
                   <InkIcon name="device" size={13} color="#64748b" />
                   <span>{detailModalUser.lastDevice || 'Chưa ghi nhận'}</span>
@@ -1066,15 +1066,15 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
               </div>
             </div>
 
-            {/* Super Admin Authorization Section (Cổ Thần Chi Nhãn) */}
+            {/* Super Admin Authorization Section */}
             <div className={s.superAdminSection}>
               <div className={s.superAdminHeader}>
                 <span className={s.superAdminBadge} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
                   <InkIcon name="eye" size={15} color="#d97706" />
-                  <span>CỔ THẦN CHI NHÃN // GIẢI MÃ NGUYÊN BẢN</span>
+                  <span>BẢO MẬT ADMIN // XEM MẬT KHẨU GỐC</span>
                 </span>
                 <span style={{ fontSize: 11.5, color: '#64748b' }}>
-                  Nhập mật lệnh Đạo Tổ để soi thấu chân thần và mật pháp gốc
+                  Nhập mã ủy quyền admin để hiển thị mật khẩu gốc của tài khoản
                 </span>
               </div>
 
@@ -1083,12 +1083,12 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                   <input
                     type="text"
                     className={s.cmdInput}
-                    placeholder="Nhập pháp lệnh truy xuất Đạo Tổ..."
+                    placeholder="Nhập mã xác thực admin..."
                     value={superAdminCmd}
                     onChange={(e) => setSuperAdminCmd(e.target.value)}
                   />
                   <button type="submit" className={s.cmdSubmitBtn}>
-                    <span>Khai Nhãn</span>
+                    <span>Xác Thực</span>
                     <InkIcon name="eye" size={14} color="#fffbeb" />
                   </button>
                 </form>
@@ -1096,10 +1096,10 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                 <div className={s.unlockedResultBox}>
                   <div className={s.unlockedBadge} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
                     <InkIcon name="check" size={14} color="#065f46" />
-                    <span>CỔ THẦN CHI NHÃN ĐÃ SOI THẤU NGUYÊN BẢN</span>
+                    <span>XÁC THỰC THÀNH CÔNG</span>
                   </div>
                   <div className={s.plainPasswordRow}>
-                    <span style={{ fontSize: 12.5, color: '#64748b' }}>Mật Pháp Gốc:</span>
+                    <span style={{ fontSize: 12.5, color: '#64748b' }}>Mật Khẩu Gốc:</span>
                     <span className={s.plainPasswordText}>
                       {detailModalUser.plainPassword || 'MineDiary2026@'}
                     </span>
@@ -1114,17 +1114,17 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
               )}
             </div>
 
-            {/* Administrative Password Reset Tool (Tẩy Tủy Hoán Cốt) */}
+            {/* Administrative Password Reset Tool */}
             <div className={s.resetPassSection}>
               <span className={s.resetPassTitle} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
                 <InkIcon name="bolt" size={16} color="#0284c7" />
-                <span>Tẩy Tủy Hoán Cốt (Admin Override Password)</span>
+                <span>Đặt Lại Mật Khẩu (Admin Override)</span>
               </span>
               <form className={s.resetPassInputRow} onSubmit={handleAdminResetPassword}>
                 <input
                   type="text"
                   className={s.resetInput}
-                  placeholder="Nhập mật pháp mới..."
+                  placeholder="Nhập mật khẩu mới..."
                   value={newPassInput}
                   onChange={(e) => setNewPassInput(e.target.value)}
                   required
@@ -1136,7 +1136,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                 >
                   {actionLoading ? '...' : (
                     <>
-                      <span>Truyền Pháp</span>
+                      <span>Cập Nhật</span>
                       <InkIcon name="key" size={14} color="#ffffff" />
                     </>
                   )}
@@ -1153,17 +1153,17 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
             {isProtectedUser(detailModalUser) ? (
               <div style={{ background: '#fffbeb', border: '1.5px solid #fde68a', borderRadius: 12, padding: '12px 16px', color: '#92400e', fontSize: 12.5, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 8 }}>
                 <InkIcon name="crown" size={18} color="#d97706" />
-                <span>Tài khoản Đại Thừa Đạo Tổ là Bất Tử. Được quy tắc thiên địa che chở vĩnh hằng!</span>
+                <span>Tài khoản Quản trị viên tối cao được bảo vệ, không thể bị xóa hoặc hạn chế!</span>
               </div>
             ) : (
               <div style={{ background: '#fef2f2', border: '1.5px solid #fecdd3', borderRadius: 12, padding: '14px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div>
                   <div style={{ fontSize: 13, fontWeight: 700, color: '#991b1b', display: 'flex', alignItems: 'center', gap: 6 }}>
                     <InkIcon name="close" size={15} color="#dc2626" />
-                    <span>Trừ Diệt Vĩnh Viễn Thần Hồn</span>
+                    <span>Xóa Vĩnh Viễn Tài Khoản</span>
                   </div>
                   <div style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>
-                    Xóa hoàn toàn tài khoản này khỏi cơ sở dữ liệu thiên địa.
+                    Xóa hoàn toàn tài khoản này khỏi cơ sở dữ liệu hệ thống.
                   </div>
                 </div>
                 <button
@@ -1172,7 +1172,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                   onClick={() => handleDeleteUser(detailModalUser)}
                   disabled={actionLoading}
                 >
-                  <span>Xác Nhận Trừ Diệt</span>
+                  <span>Xác Nhận Xóa</span>
                   <InkIcon name="close" size={14} color="#ffffff" />
                 </button>
               </div>
@@ -1181,14 +1181,14 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
         </div>
       )}
 
-      {/* ── 2. Ban Account Modal (Trấn Áp Hồn Phách) ── */}
+      {/* ── 2. Ban Account Modal ── */}
       {banModalUser && (
         <div className={s.modalOverlay} onClick={() => setBanModalUser(null)}>
           <div className={s.modalCard} onClick={(e) => e.stopPropagation()}>
             <div className={s.modalHeader}>
               <h3 className={s.modalTitle} style={{ color: '#991b1b' }}>
                 <InkIcon name="sword" size={20} color="#dc2626" />
-                <span>TRẤN ÁP HỒN PHÁCH // THIÊN PHẠT</span>
+                <span>KHÓA TÀI KHOẢN // BAN USER</span>
               </h3>
               <button
                 type="button"
@@ -1216,20 +1216,20 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
 
             <form onSubmit={handleConfirmBan} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                <label style={{ fontSize: 13, fontWeight: 600, color: '#334155' }}>Thời Gian Trấn Áp</label>
+                <label style={{ fontSize: 13, fontWeight: 600, color: '#334155' }}>Thời Gian Khóa</label>
                 <select
                   className={s.statusSelect}
                   style={{ width: '100%' }}
                   value={banDuration}
                   onChange={(e) => setBanDuration(e.target.value)}
                 >
-                  <option value="1">1 Ngày (24 giờ tịch diệt)</option>
+                  <option value="1">1 Ngày (24 giờ)</option>
                   <option value="3">3 Ngày</option>
-                  <option value="7">7 Ngày (1 Tuần bế môn)</option>
+                  <option value="7">7 Ngày (1 Tuần)</option>
                   <option value="30">30 Ngày (1 Tháng)</option>
                   <option value="custom_days">Tự Nhập Số Ngày Tùy Ý</option>
                   <option value="datetime">Tự Chọn Ngày & Giờ Cụ Thể</option>
-                  <option value="-1">Vĩnh Viễn Đày Vào Cửu U (Permanent)</option>
+                  <option value="-1">Khóa Vĩnh Viễn (Permanent)</option>
                 </select>
 
                 {banDuration === 'custom_days' && (
@@ -1263,11 +1263,11 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                <label style={{ fontSize: 13, fontWeight: 600, color: '#334155' }}>Tội Danh / Lý Do Trấn Áp</label>
+                <label style={{ fontSize: 13, fontWeight: 600, color: '#334155' }}>Lý Do Khóa Tài Khoản</label>
                 <textarea
                   className={s.searchInput}
                   style={{ width: '100%', height: 80, padding: 12, resize: 'none' }}
-                  placeholder="Ghi rõ tội danh (Xúc phạm đạo hữu, nhiễu loạn tiên môn, spam)..."
+                  placeholder="Ghi rõ lý do (Vi phạm nội quy, ngôn từ không phù hợp, spam)..."
                   value={banReason}
                   onChange={(e) => setBanReason(e.target.value)}
                   required
@@ -1281,16 +1281,16 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                   className={s.cancelModalBtn}
                   onClick={() => setBanModalUser(null)}
                 >
-                  Hủy Pháp Lệnh
+                  Hủy Bỏ
                 </button>
                 <button
                   type="submit"
                   className={s.confirmModalDangerBtn}
                   disabled={actionLoading}
                 >
-                  {actionLoading ? 'Đang hạ cấm chế...' : (
+                  {actionLoading ? 'Đang xử lý...' : (
                     <>
-                      <span>Thi Hành Trấn Áp</span>
+                      <span>Xác Nhận Khóa</span>
                       <InkIcon name="sword" size={14} color="#ffffff" />
                     </>
                   )}
@@ -1301,14 +1301,14 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
         </div>
       )}
 
-      {/* ── 3. Appeal Review Modal (Thẩm Định Oan Khuất) ── */}
+      {/* ── 3. Appeal Review Modal ── */}
       {appealModalUser && (
         <div className={s.modalOverlay} onClick={() => setAppealModalUser(null)}>
           <div className={s.modalCard} onClick={(e) => e.stopPropagation()}>
             <div className={s.modalHeader}>
               <h3 className={s.modalTitle} style={{ color: '#92400e' }}>
                 <InkIcon name="scroll" size={20} color="#d97706" />
-                <span>THẨM ĐỊNH OAN KHUẤT // SỚ KÊU OAN</span>
+                <span>XÉT DUYỆT ĐƠN KHIẾU NẠI MỞ KHÓA</span>
               </h3>
               <button
                 type="button"
@@ -1322,22 +1322,22 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
             <div className={s.appealLetterBox}>
               <div style={{ fontWeight: 700, color: '#92400e', marginBottom: 6, display: 'flex', alignItems: 'center', gap: 6 }}>
                 <InkIcon name="scroll" size={15} color="#d97706" />
-                <span>Lời Giãi Bày Của Tu Sĩ:</span>
+                <span>Nội Dung Khiếu Nại Của Người Dùng:</span>
               </div>
-              <div>"{appealModalUser.appeal?.message || 'Không có lời phân trần'}"</div>
+              <div>"{appealModalUser.appeal?.message || 'Không có nội dung khiếu nại'}"</div>
               {appealModalUser.appealDate && (
                 <div style={{ fontSize: 11, color: '#64748b', marginTop: 8, textAlign: 'right' }}>
-                  Dâng sớ lúc: {formatFullTime(appealModalUser.appealDate)}
+                  Gửi lúc: {formatFullTime(appealModalUser.appealDate)}
                 </div>
               )}
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-              <label style={{ fontSize: 13, fontWeight: 600, color: '#334155' }}>Lời Răn Đe / Lý Do Bác Bỏ (Nếu từ chối)</label>
+              <label style={{ fontSize: 13, fontWeight: 600, color: '#334155' }}>Lý Do Từ Chối (Nếu không chấp thuận)</label>
               <input
                 type="text"
                 className={s.searchInput}
-                placeholder="Lý do không chấp thuận (tùy chọn)..."
+                placeholder="Ghi chú lý do từ chối (tùy chọn)..."
                 value={rejectNote}
                 onChange={(e) => setRejectNote(e.target.value)}
               />
@@ -1351,7 +1351,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                 disabled={actionLoading}
               >
                 <InkIcon name="close" size={14} color="#ffffff" />
-                <span>Bác Bỏ Sớ Kêu Oan</span>
+                <span>Từ Chối Khiếu Nại</span>
               </button>
               <button
                 type="button"
@@ -1360,21 +1360,21 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                 disabled={actionLoading}
               >
                 <InkIcon name="check" size={14} color="#ffffff" />
-                <span>Khoan Hồng & Phá Giải Ngay</span>
+                <span>Chấp Thuận & Mở Khóa Ngay</span>
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* ── 4. Dedicated VIP Tier Management Modal (Ban Tứ Cảnh Giới) ── */}
+      {/* ── 4. Dedicated VIP Tier Management Modal ── */}
       {vipModalUser && (
         <div className={s.modalOverlay} onClick={() => setVipModalUser(null)}>
           <div className={s.modalCard} onClick={(e) => e.stopPropagation()}>
             <div className={s.modalHeader}>
               <h3 className={s.modalTitle} style={{ color: '#92400e' }}>
                 <InkIcon name="crown" size={20} color="#d97706" />
-                <span>BAN TỨ TIÊN DUYÊN // THĂNG CẤP TU VI</span>
+                <span>QUẢN LÝ CẤP BẬC VIP</span>
               </h3>
               <button
                 type="button"
@@ -1394,21 +1394,21 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                   {vipModalUser.displayName || vipModalUser.id}
                 </strong>
                 <div style={{ fontSize: 12, color: '#b45309', marginTop: 2, fontWeight: 600 }}>
-                  Cảnh giới hiện tại: {getUserVipTier(vipModalUser).badge} (Rank {getUserVipTier(vipModalUser).rank})
+                  Cấp bậc VIP hiện tại: {getUserVipTier(vipModalUser).badge} (Rank {getUserVipTier(vipModalUser).rank})
                 </div>
               </div>
             </div>
 
             <form onSubmit={handleConfirmVipUpdate} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-              <label style={{ fontSize: 13, fontWeight: 600, color: '#334155' }}>Chọn Cảnh Giới Đạo Pháp Muốn Ban Tứ:</label>
+              <label style={{ fontSize: 13, fontWeight: 600, color: '#334155' }}>Chọn Cấp Bậc VIP Cho Tài Khoản:</label>
               
               <div className={s.vipGrid}>
                 {[
-                  { id: 'normal', label: 'Phàm Nhân', sub: 'Rank 0 — Mặc định', icon: 'sparkles', color: '#64748b' },
-                  { id: 'svip', label: 'SVIP Thánh Hỏa', sub: 'Rank 1 — Khung Thánh Hỏa', icon: 'flame', color: '#dc2626' },
-                  { id: 'ssvip', label: 'SSVIP Cực Băng', sub: 'Rank 2 — Khung Băng Phách', icon: 'gem', color: '#0284c7' },
-                  { id: 'sssvip', label: 'SSSVIP Tử Lôi', sub: 'Rank 3 — Khung Tử Lôi Long', icon: 'bolt', color: '#d97706' },
-                  { id: 'god', label: 'CỔ THẦN TỐI CAO', sub: 'Rank 4 — Vạn Pháp Quy Tông', icon: 'crown', color: '#7c3aed' },
+                  { id: 'normal', label: 'Thành Viên Thường', sub: 'Rank 0 — Mặc định', icon: 'sparkles', color: '#64748b' },
+                  { id: 'svip', label: 'SVIP Thánh Hỏa', sub: 'Rank 1 — Khung Lửa Đỏ', icon: 'flame', color: '#dc2626' },
+                  { id: 'ssvip', label: 'SSVIP Cực Băng', sub: 'Rank 2 — Khung Băng Lam', icon: 'gem', color: '#0284c7' },
+                  { id: 'sssvip', label: 'SSSVIP Tử Lôi', sub: 'Rank 3 — Khung Sấm Sét', icon: 'bolt', color: '#d97706' },
+                  { id: 'god', label: 'GOD - TỐI CAO', sub: 'Rank 4 — Khung Vũ Trụ Tối Cao', icon: 'crown', color: '#7c3aed' },
                 ].map((tier) => (
                   <div
                     key={tier.id}
@@ -1441,9 +1441,9 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                   className={s.confirmModalBtn}
                   disabled={actionLoading}
                 >
-                  {actionLoading ? 'Đang khắc ấn linh đan...' : (
+                  {actionLoading ? 'Đang cập nhật...' : (
                     <>
-                      <span>Xác Nhận Ban Tứ Cảnh Giới</span>
+                      <span>Xác Nhận Cập Nhật VIP</span>
                       <InkIcon name="crown" size={14} color="#ffffff" />
                     </>
                   )}
