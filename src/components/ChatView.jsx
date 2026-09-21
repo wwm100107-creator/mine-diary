@@ -18,7 +18,14 @@ import {
   confirmCancelRelationship,
   abortCancelRelationship,
   subscribeToRelationship,
+  syncUserCycleData,
 } from '../lib/social'
+import {
+  loadMarkedDates,
+  loadAllDayIcons,
+  getCustomTrayIcons,
+  loadAllUserSymptoms,
+} from '../utils/cycle'
 import s from './ChatView.module.css'
 
 function normalizeText(text) {
@@ -477,6 +484,24 @@ export default function ChatView({ user }) {
         isSystemMessage: true,
         type: 'relationship_request',
       })
+      if (isFemale && senderShareCycle) {
+        try {
+          const markedDates = loadMarkedDates(user.id)
+          const customIcons = getCustomTrayIcons(user.id)
+          const symptoms = loadAllUserSymptoms(user.id)
+          const dayIconMap = loadAllDayIcons(user.id)
+          syncUserCycleData(user.id, {
+            markedDates,
+            customIcons,
+            symptoms,
+            dayIconMap,
+          })
+          window.dispatchEvent(new CustomEvent('minediary:cycle_updated', { detail: { userId: user.id } }))
+        } catch (e) {
+          console.warn('Sync cycle upon rel send error:', e)
+        }
+      }
+
       setIsSetRelModalOpen(false)
       setCustomRelName('')
       setCustomRelIcon('')
@@ -500,6 +525,7 @@ export default function ChatView({ user }) {
 
   const handleFinalAcceptRel = async (shareCycle = false) => {
     if (!relationship) return
+    const isFemale = user?.gender === 'female' || !user?.gender
     try {
       const finalShare = Boolean(relationship.isCycleShared || relationship.shareCycleData || shareCycle)
       await acceptRelationshipRequest(relationship.id, finalShare)
@@ -508,6 +534,25 @@ export default function ChatView({ user }) {
         isSystemMessage: true,
         type: 'relationship_accepted',
       })
+
+      if (isFemale && finalShare) {
+        try {
+          const markedDates = loadMarkedDates(user.id)
+          const customIcons = getCustomTrayIcons(user.id)
+          const symptoms = loadAllUserSymptoms(user.id)
+          const dayIconMap = loadAllDayIcons(user.id)
+          syncUserCycleData(user.id, {
+            markedDates,
+            customIcons,
+            symptoms,
+            dayIconMap,
+          })
+          window.dispatchEvent(new CustomEvent('minediary:cycle_updated', { detail: { userId: user.id } }))
+        } catch (e) {
+          console.warn('Sync cycle upon rel accept error:', e)
+        }
+      }
+
       setIsShareConfirmModalOpen(false)
     } catch (err) {
       console.error('Accept rel error:', err)

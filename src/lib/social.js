@@ -586,39 +586,120 @@ export function subscribeToUserRelationships(userId, callback) {
 
 /**
  * Sync user's cycle marks and custom icons to Firestore so partner can view
+ * Saves dual-location: root collection 'cycleData/{userId}' AND subcollection 'users/{userId}/health/cycleData'
  */
 export async function syncUserCycleData(userId, { markedDates = [], customIcons = [], symptoms = {}, dayIconMap = {} }) {
   if (!userId) return
   try {
-    const cycleRef = doc(db, 'users', userId, 'health', 'cycleData')
-    await setDoc(cycleRef, {
+    // Ensure all marked cycle dates have strawberry icon in dayIconMap
+    const finalDayIconMap = { ...dayIconMap }
+    for (const d of markedDates) {
+      if (!finalDayIconMap[d]) {
+        finalDayIconMap[d] = ['🍓']
+      } else if (!finalDayIconMap[d].includes('🍓')) {
+        finalDayIconMap[d] = ['🍓', ...finalDayIconMap[d]]
+      }
+    }
+
+    const payload = {
+      userId,
       markedDates,
       customIcons,
       symptoms,
-      dayIconMap,
+      dayIconMap: finalDayIconMap,
       updatedAt: serverTimestamp(),
-    }, { merge: true })
+    }
+
+    // Write to BOTH root collection (already permitted in rules) AND subcollection
+    const rootPromise = setDoc(doc(db, 'cycleData', userId), payload, { merge: true }).catch((err) => {
+      console.warn('[CycleSync] Root collection write warning:', err?.message)
+    })
+
+    const subPromise = setDoc(doc(db, 'users', userId, 'health', 'cycleData'), payload, { merge: true }).catch((err) => {
+      console.warn('[CycleSync] Subcollection write warning:', err?.message)
+    })
+
+    await Promise.allSettled([rootPromise, subPromise])
   } catch (err) {
     console.error('Error syncing cycle data to Firestore:', err)
   }
 }
 
+/**
+ * Directly fetch partner's cycle data on-demand from root or subcollection
+ */
+export async function getPartnerCycleData(partnerId) {
+  if (!partnerId) return null
+  try {
+    const rootSnap = await getDoc(doc(db, 'cycleData', partnerId))
+    if (rootSnap.exists()) {
+      return rootSnap.data()
+    }
+  } catch (e) {}
+
+  try {
+    const subSnap = await getDoc(doc(db, 'users', partnerId, 'health', 'cycleData'))
+    if (subSnap.exists()) {
+      return subSnap.data()
+    }
+  } catch (e) {}
+
+  return null
+}
 
 /**
  * Subscribe to partner's synced cycle data
+ * Resilient multi-source listener: listens to root 'cycleData/{partnerId}' AND subcollection 'users/{partnerId}/health/cycleData'
  */
 export function subscribeToPartnerCycleData(partnerId, callback) {
   if (!partnerId) return () => {}
-  const cycleRef = doc(db, 'users', partnerId, 'health', 'cycleData')
-  return onSnapshot(cycleRef, (snap) => {
-    if (snap.exists()) {
-      callback(snap.data())
-    } else {
-      callback(null)
+
+  let rootData = null
+  let subData = null
+
+  const emitBestData = () => {
+    const chosen = rootData || subData || null
+    callback(chosen)
+  }
+
+  // 1. Root collection listener
+  const unsubRoot = onSnapshot(
+    doc(db, 'cycleData', partnerId),
+    (snap) => {
+      if (snap.exists()) {
+        rootData = snap.data()
+      } else {
+        rootData = null
+      }
+      emitBestData()
+    },
+    (err) => {
+      console.warn('Root cycleData subscription:', err?.message)
     }
-  }, (err) => {
-    console.warn('Partner cycle data subscription:', err)
-  })
+  )
+
+  // 2. Subcollection listener fallback
+  const unsubSub = onSnapshot(
+    doc(db, 'users', partnerId, 'health', 'cycleData'),
+    (snap) => {
+      if (snap.exists()) {
+        subData = snap.data()
+      } else {
+        subData = null
+      }
+      emitBestData()
+    },
+    (err) => {
+      console.warn('Subcollection cycleData subscription:', err?.message)
+    }
+  )
+
+  return () => {
+    try {
+      unsubRoot()
+      unsubSub()
+    } catch (e) {}
+  }
 }
 
 // ── Realtime Chats System (No stale localStorage caching) ──────────────────────

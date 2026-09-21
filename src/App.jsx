@@ -187,8 +187,12 @@ export default function App() {
     }
     sync()
     window.addEventListener('minediary:cycle_updated', sync)
-    return () => window.removeEventListener('minediary:cycle_updated', sync)
-  }, [user?.id, user?.gender])
+    window.addEventListener('storage', sync)
+    return () => {
+      window.removeEventListener('minediary:cycle_updated', sync)
+      window.removeEventListener('storage', sync)
+    }
+  }, [user?.id, user?.gender, hasSharedCycleAccess])
 
   // ── Auto 1-Day Before Period Prediction Check & Notifications (Female & Male Partner) ──
   const isFemale = user?.gender === 'female' || !user?.gender

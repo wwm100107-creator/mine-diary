@@ -133,8 +133,9 @@ export function moveDayIcon(userId, fromDateStr, toDateStr, iconIndex) {
  * Load all dates marked with 🍓 (for cycle calculation)
  */
 export function loadMarkedDates(userId) {
-  const prefixIcon = `minediary:icons:${userId ?? 'guest'}:`
-  const prefixLegacy = `minediary:period:${userId ?? 'guest'}:`
+  const effectiveId = userId ?? 'guest'
+  const prefixIcon = `minediary:icons:${effectiveId}:`
+  const prefixLegacy = `minediary:period:${effectiveId}:`
   const set = new Set()
 
   for (let i = 0; i < localStorage.length; i++) {
@@ -142,11 +143,26 @@ export function loadMarkedDates(userId) {
     if (!key) continue
     if (key.startsWith(prefixIcon)) {
       const dateStr = key.slice(prefixIcon.length)
-      const icons = getDayIcons(userId, dateStr)
+      const icons = getDayIcons(effectiveId, dateStr)
       if (icons.includes('🍓')) set.add(dateStr)
     } else if (key.startsWith(prefixLegacy)) {
       set.add(key.slice(prefixLegacy.length))
     }
+  }
+
+  // Auto-migrate guest marks if user just logged in and has 0 user marks
+  if (userId && userId !== 'guest' && set.size === 0) {
+    try {
+      const guestMarks = loadMarkedDates('guest')
+      if (guestMarks.length > 0) {
+        guestMarks.forEach((d) => {
+          set.add(d)
+          localStorage.setItem(`minediary:period:${userId}:${d}`, '1')
+          const existingIcons = getDayIcons('guest', d)
+          localStorage.setItem(`minediary:icons:${userId}:${d}`, JSON.stringify(existingIcons.length ? existingIcons : ['🍓']))
+        })
+      }
+    } catch (e) {}
   }
 
   return Array.from(set).sort()
@@ -159,6 +175,7 @@ export function toggleDate(userId, dateStr) {
     const updated = icons.filter(ic => ic !== '🍓')
     localStorage.setItem(iconStorageKey(userId, dateStr), JSON.stringify(updated))
     localStorage.removeItem(periodStorageKey(userId, dateStr))
+    notifyCycleUpdate(userId)
     return false
   } else {
     addDayIcon(userId, dateStr, '🍓')
@@ -175,9 +192,13 @@ export function isMarked(userId, dateStr) {
  * Returns { [dateStr]: string[] } — used to sync to Firestore for partner view.
  */
 export function loadAllDayIcons(userId) {
-  const prefix = `minediary:icons:${userId ?? 'guest'}:`
+  const effectiveId = userId ?? 'guest'
+  const prefix = `minediary:icons:${effectiveId}:`
+  const prefixLegacy = `minediary:period:${effectiveId}:`
   const map = {}
+
   try {
+    // 1. Load from icon tray storage
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i)
       if (key && key.startsWith(prefix)) {
@@ -186,7 +207,29 @@ export function loadAllDayIcons(userId) {
         if (raw) map[dateStr] = JSON.parse(raw)
       }
     }
-  } catch (e) {}
+
+    // 2. Load from legacy period storage to ensure marked dates are preserved
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i)
+      if (key && key.startsWith(prefixLegacy)) {
+        const dateStr = key.slice(prefixLegacy.length)
+        if (!map[dateStr]) {
+          map[dateStr] = ['🍓']
+        } else if (!map[dateStr].includes('🍓')) {
+          map[dateStr] = ['🍓', ...map[dateStr]]
+        }
+      }
+    }
+
+    // 3. Fallback check from guest icons if user is logged in but empty
+    if (userId && userId !== 'guest' && Object.keys(map).length === 0) {
+      const guestMap = loadAllDayIcons('guest')
+      Object.assign(map, guestMap)
+    }
+  } catch (e) {
+    console.warn('Error loading all day icons:', e)
+  }
+
   return map
 }
 

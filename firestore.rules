@@ -2,14 +2,22 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // ── 1. Users Collection ──────────────────────────────────────────
+    // ── 1. Users Collection & Subcollections (profile, health, cycleData) ──
     match /users/{userId} {
       allow read, write: if true;
+
+      match /{allChildren=**} {
+        allow read, write: if true;
+      }
     }
 
     // ── 2. Relationships Collection (Friendships / Couples) ─────────
     match /relationships/{relId} {
       allow read, write: if true;
+
+      match /{allChildren=**} {
+        allow read, write: if true;
+      }
     }
 
     // ── 3. Chats & Messages Collection ───────────────────────────────
@@ -19,11 +27,19 @@ service cloud.firestore {
       match /messages/{messageId} {
         allow read, write: if true;
       }
+
+      match /{allChildren=**} {
+        allow read, write: if true;
+      }
     }
 
-    // ── 4. Cycle Data & Health Logs ──────────────────────────────────
+    // ── 4. Cycle Data & Health Logs (Root Collection) ────────────────
     match /cycleData/{userId} {
       allow read, write: if true;
+
+      match /{allChildren=**} {
+        allow read, write: if true;
+      }
     }
 
     // ── 5. System Notifications & Push Tokens ────────────────────────
@@ -32,4 +48,3 @@ service cloud.firestore {
     }
   }
 }
-

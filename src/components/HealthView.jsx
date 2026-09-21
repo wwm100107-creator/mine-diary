@@ -86,7 +86,7 @@ export default function HealthView({ user }) {
   })
 
   useEffect(() => {
-    if (!user?.id) return
+    if (!user?.id || user?.gender === 'male') return
     const customIcons = getCustomTrayIcons(user.id)
     const symptoms = loadAllUserSymptoms(user.id)
     const dayIconMap = loadAllDayIcons(user.id)
@@ -96,7 +96,7 @@ export default function HealthView({ user }) {
       symptoms,
       dayIconMap,
     })
-  }, [user?.id, allMarks, cycleVersion])
+  }, [user?.id, user?.gender, allMarks, cycleVersion])
 
 
 

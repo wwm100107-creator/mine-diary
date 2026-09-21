@@ -55,6 +55,8 @@ export default function PartnerCycleView({ user }) {
     symptoms: partnerSymptoms,
     dayIconMap: partnerDayIconMap,
     loading,
+    refresh,
+    lastSyncedAt,
   } = usePartnerCycleData(user?.id, partnerId)
 
   const effectivePartnerUser = realtimePartnerUser || activePartnerUser
@@ -142,19 +144,90 @@ export default function PartnerCycleView({ user }) {
           </div>
         </div>
 
-        {hasPermission ? (
-          <div className={s.sharingStatusBadge}>
-            <span>🌸</span> Đang chia sẻ chu kỳ thời gian thực
-          </div>
-        ) : (
-          <div style={{ background: '#FFF3E0', border: '1.5px solid #FFB74D', borderRadius: 8, padding: '6px 12px', fontSize: 11, color: '#E65100', fontWeight: 'bold' }}>
-            🔒 Đối phương chưa bật quyền chia sẻ chu kỳ
-          </div>
-        )}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+          {hasPermission ? (
+            <div className={s.sharingStatusBadge}>
+              <span>🌸</span> Đang chia sẻ chu kỳ thời gian thực
+            </div>
+          ) : (
+            <div style={{ background: '#FFF3E0', border: '1.5px solid #FFB74D', borderRadius: 8, padding: '6px 12px', fontSize: 11, color: '#E65100', fontWeight: 'bold' }}>
+              🔒 Đối phương chưa bật quyền chia sẻ chu kỳ
+            </div>
+          )}
+
+          <button
+            type="button"
+            onClick={refresh}
+            title="Đồng bộ lại dữ liệu chu kỳ mới nhất"
+            disabled={loading}
+            style={{
+              background: '#FFF',
+              border: '1.5px solid #F48FB1',
+              borderRadius: 8,
+              padding: '6px 12px',
+              fontSize: 12,
+              cursor: loading ? 'not-allowed' : 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 6,
+              color: '#C2185B',
+              fontWeight: 600,
+              boxShadow: '1px 1px 0 #F48FB1',
+            }}
+          >
+            <span style={{ display: 'inline-block' }}>🔄</span>
+            {loading ? 'Đang đồng bộ...' : 'Đồng bộ'}
+          </button>
+        </div>
       </div>
 
       {hasPermission ? (
         <>
+          {/* Reassuring banner when cycle sharing is active but partner hasn't marked yet */}
+          {partnerMarkedDates.length === 0 && !loading && (
+            <div style={{
+              background: 'linear-gradient(135deg, #FFF9FA 0%, #FFF0F5 100%)',
+              border: '1.5px dashed #F48FB1',
+              borderRadius: 12,
+              padding: '12px 16px',
+              marginBottom: 16,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 12,
+              flexWrap: 'wrap',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <span style={{ fontSize: 24 }}>🌸</span>
+                <div>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: '#C2185B' }}>
+                    Đã kết nối thành công với {effectivePartnerUser.displayName || effectivePartnerUser.name || 'người thương'}!
+                  </div>
+                  <div style={{ fontSize: 12, color: 'var(--color-ink-soft)', marginTop: 2 }}>
+                    Người thương đã cấp quyền chia sẻ chu kỳ. Khi đối phương ghi nhận ngày dâu (🍓) trên lịch, dữ liệu và dự đoán chu kỳ sẽ lập tức hiển thị tại đây.
+                  </div>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={refresh}
+                style={{
+                  background: '#C2185B',
+                  color: '#FFF',
+                  border: 'none',
+                  borderRadius: 8,
+                  padding: '6px 14px',
+                  fontSize: 12,
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                Kiểm tra ngay 🔄
+              </button>
+            </div>
+          )}
+
           {/* ── 2. Quick Key Stats ── */}
           <div className={s.statsRow}>
             <div className={s.statCard}>
@@ -162,7 +235,7 @@ export default function PartnerCycleView({ user }) {
               <span className={s.statValue}>
                 {prediction?.predictedStart
                   ? prediction.predictedStart.toLocaleDateString('vi-VN', { day: 'numeric', month: 'long' })
-                  : 'Đang tính toán...'}
+                  : (loading ? 'Đang đồng bộ... ⏳' : 'Chưa có dữ liệu')}
               </span>
             </div>
             <div className={s.statCard}>
@@ -170,7 +243,7 @@ export default function PartnerCycleView({ user }) {
               <span className={s.statValue} style={{ color: '#8E24AA' }}>
                 {prediction?.ovulationDate
                   ? prediction.ovulationDate.toLocaleDateString('vi-VN', { day: 'numeric', month: 'long' })
-                  : 'Đang tính toán...'}
+                  : (loading ? 'Đang đồng bộ... ⏳' : 'Chưa có dữ liệu')}
               </span>
             </div>
             <div className={s.statCard}>

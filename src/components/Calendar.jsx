@@ -67,7 +67,19 @@ export default function Calendar({ userId, mode = 'standard', gender = 'female',
   // showCyclePrediction=false: strip used in Diary tab — no period/fertile UI regardless of gender
   const showCycle = showCyclePrediction && !isMale
   // iconMap: { [dateStr]: string[] } override from Firestore (partner view)
-  const getIcons = (dateStr) => (iconMap && iconMap[dateStr] !== undefined) ? iconMap[dateStr] : getDayIcons(userId, dateStr)
+  const getIcons = (dateStr) => {
+    let icons = []
+    if (iconMap && iconMap[dateStr] !== undefined) {
+      icons = Array.isArray(iconMap[dateStr]) ? [...iconMap[dateStr]] : []
+    } else {
+      icons = getDayIcons(userId, dateStr)
+    }
+    // If markedDates includes this date (e.g. partner cycle sharing), guarantee strawberry icon is shown
+    if (Array.isArray(markedDates) && markedDates.includes(dateStr) && !icons.includes('🍓')) {
+      icons = ['🍓', ...icons]
+    }
+    return icons
+  }
 
   const now = new Date()
   const [view, setView] = useState({ year: now.getFullYear(), month: now.getMonth() })
@@ -651,18 +663,19 @@ export default function Calendar({ userId, mode = 'standard', gender = 'female',
                         key={idx}
                         className={s.stackedIcon}
                         style={{ zIndex: idx + 1 }}
-                        draggable={true}
-                        onDragStart={(e) => handleIconDragStart(e, str, idx, icon)}
-                        onDragEnd={handleDragEnd}
+                        draggable={!readOnly}
+                        onDragStart={(e) => !readOnly && handleIconDragStart(e, str, idx, icon)}
+                        onDragEnd={!readOnly ? handleDragEnd : undefined}
                         onTouchStart={(e) => {
+                          if (readOnly) return
                           e.stopPropagation()
                           handleTouchStart(e, { type: 'MOVE', fromDate: str, iconIndex: idx, icon })
                         }}
                         onClick={(e) => e.stopPropagation()}
                         onMouseEnter={(e) => e.stopPropagation()}
                         onMouseLeave={(e) => e.stopPropagation()}
-                        onDragOver={(e) => e.stopPropagation()}
-                        title="Kéo sang ngày khác hoặc kéo vào Thùng rác để xóa"
+                        onDragOver={(e) => !readOnly && e.stopPropagation()}
+                        title={readOnly ? 'Biểu tượng ngày này' : 'Kéo sang ngày khác hoặc kéo vào Thùng rác để xóa'}
                       >
                         {icon}
                       </span>
@@ -680,8 +693,8 @@ export default function Calendar({ userId, mode = 'standard', gender = 'female',
                   </div>
                 )}
 
-                {/* 4. Mini Quick Write Diary Button on Zoom Pop-up */}
-                {isHovered && (
+                {/* 4. Mini Quick Write Diary Button on Zoom Pop-up (Disabled in readOnly) */}
+                {!readOnly && isHovered && (
                   <button
                     type="button"
                     className={s.openDiaryMiniBtn}
