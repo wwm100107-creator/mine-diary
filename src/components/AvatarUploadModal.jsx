@@ -32,6 +32,8 @@ export default function AvatarUploadModal({
   const [selectedFrameCollection, setSelectedFrameCollection] = useState('all')
   const [vipWarning, setVipWarning] = useState('')
   const [isProcessing, setIsProcessing] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
+  const [saveError, setSaveError] = useState('')
   const [isDraggingOver, setIsDraggingOver] = useState(false)
 
 
@@ -146,28 +148,39 @@ export default function AvatarUploadModal({
 
   // Close with revert if not saved
   const handleCancel = () => {
+    if (isSaving) return
     applyTheme(initialThemeRef.current)
     onClose()
   }
 
-  // Save handler
-  const handleSave = () => {
-    let finalAvatar = selectedPreset
-    if (tab === 'upload') {
-      if (avatarChoice === 'pixel' && pixelatedPreview) {
-        finalAvatar = pixelatedPreview
-      } else if (avatarChoice === 'original' && originalPreview) {
-        finalAvatar = originalPreview
+  // Save handler with full async persistence guard
+  const handleSave = async () => {
+    if (isSaving) return
+    setIsSaving(true)
+    setSaveError('')
+    try {
+      let finalAvatar = selectedPreset
+      if (tab === 'upload') {
+        if (avatarChoice === 'pixel' && pixelatedPreview) {
+          finalAvatar = pixelatedPreview
+        } else if (avatarChoice === 'original' && originalPreview) {
+          finalAvatar = originalPreview
+        }
       }
+
+      const finalTheme = selectedThemeId === 'custom'
+        ? { id: 'custom', name: '🎨 Tự Phối Màu', colors: customColors }
+        : THEME_PRESETS.find(p => p.id === selectedThemeId) || THEME_PRESETS[0]
+
+      applyTheme(finalTheme)
+      await Promise.resolve(onSave(finalAvatar, selectedFrame, finalTheme))
+      onClose()
+    } catch (err) {
+      console.error('Lỗi khi lưu avatar & khung viền:', err)
+      setSaveError(err.message || 'Lỗi khi lưu dữ liệu. Vui lòng thử lại!')
+    } finally {
+      setIsSaving(false)
     }
-
-    const finalTheme = selectedThemeId === 'custom'
-      ? { id: 'custom', name: '🎨 Tự Phối Màu', colors: customColors }
-      : THEME_PRESETS.find(p => p.id === selectedThemeId) || THEME_PRESETS[0]
-
-    applyTheme(finalTheme)
-    onSave(finalAvatar, selectedFrame, finalTheme)
-    onClose()
   }
 
   if (typeof document === 'undefined') return null
@@ -181,7 +194,7 @@ export default function AvatarUploadModal({
             <span className={s.titleIcon}>🎨</span>
             <h3 className={s.title}>Cập Nhật Avatar & Giao Diện</h3>
           </div>
-          <button type="button" className={s.closeBtn} onClick={handleCancel} aria-label="Đóng">
+          <button type="button" className={s.closeBtn} onClick={handleCancel} disabled={isSaving} aria-label="Đóng">
             ✕
           </button>
         </div>
@@ -615,18 +628,26 @@ export default function AvatarUploadModal({
           </div>
         </div>
 
+        {/* Error notification if save failed */}
+        {saveError && (
+          <div style={{ margin: '0 16px 12px', padding: '10px 14px', borderRadius: 8, background: '#FEF2F2', border: '1px solid #FCA5A5', color: '#B91C1C', fontSize: 13, fontWeight: 500, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span>⚠️</span>
+            <span>{saveError}</span>
+          </div>
+        )}
+
         {/* Footer Actions */}
         <div className={s.footer}>
-          <button type="button" className={s.cancelBtn} onClick={handleCancel}>
+          <button type="button" className={s.cancelBtn} onClick={handleCancel} disabled={isSaving}>
             Hủy
           </button>
           <button
             type="button"
             className={s.saveBtn}
             onClick={handleSave}
-            disabled={(tab === 'upload' && !rawImage && !selectedPreset) || isProcessing}
+            disabled={isSaving || isProcessing || (tab === 'upload' && !rawImage && !selectedPreset)}
           >
-            {isProcessing ? 'Đang pixel hóa... ⏳' : 'Lưu Thay Đổi ✨'}
+            {isSaving ? 'Đang lưu vào hệ thống... ⏳' : isProcessing ? 'Đang pixel hóa... ⏳' : 'Lưu Thay Đổi ✨'}
           </button>
         </div>
       </div>

@@ -647,7 +647,7 @@ export default function App() {
       setUser(updatedUser)
       saveSession(updatedUser)
 
-      // 2. Cloud Storage upload & Database sync (writes avatar, avatarFrame, frame, and theme together)
+      // 2. Direct Database sync (writes avatar, avatarFrame, frame, and theme together)
       const finalAvatarUrl = await uploadUserAvatar(user.id, newAvatarData, targetFrame, newTheme)
 
       // 3. Keep local user state and session storage synced with final persisted URL
@@ -665,6 +665,7 @@ export default function App() {
       })
     } catch (err) {
       console.error('Failed to update avatar, frame, and theme:', err)
+      throw err
     }
   }
 
@@ -687,9 +688,9 @@ export default function App() {
       setUser((prev) => {
         if (!prev) return prev
         const newVipTier = data.vipTier || prev.vipTier || 'normal'
-        const newFrame = data.avatarFrame || data.frame || prev.avatarFrame || 'none'
+        const newFrame = data.avatarFrame !== undefined ? data.avatarFrame : (data.frame !== undefined ? data.frame : (prev.avatarFrame || 'none'))
         const newAttendance = data.attendance || prev.attendance || { streak: 0, lastCheckInDate: null, claimedDays: [] }
-        const newAvatar = data.avatar || prev.avatar || 'bunny'
+        const newAvatar = data.avatar !== undefined ? data.avatar : (prev.avatar || 'bunny')
         const newDisplayName = data.displayName || data.name || prev.displayName
         const newPredictionMode = data.predictionMode || prev.predictionMode || 'standard'
         const newRole = (data.role === 'admin' || snap.id.toLowerCase() === 'adminminediary') ? 'admin' : (data.role || prev.role || 'user')
@@ -895,7 +896,10 @@ export default function App() {
             )}
 
             {(() => {
-              const activeFrameId = user.avatarFrame || user.frame || (user.vipTier === 'god' ? 'god_cosmic' : user.vipTier === 'sssvip' ? 'vip10_thunder' : user.vipTier === 'ssvip' ? 'vip9_frost' : user.vipTier === 'svip' ? 'vip8_fire' : 'none')
+              const explicitFrame = user.avatarFrame !== undefined ? user.avatarFrame : user.frame
+              const activeFrameId = explicitFrame && explicitFrame !== 'none'
+                ? explicitFrame
+                : (explicitFrame === 'none' ? 'none' : (user.vipTier === 'god' ? 'god_cosmic' : user.vipTier === 'sssvip' ? 'vip10_thunder' : user.vipTier === 'ssvip' ? 'vip9_frost' : user.vipTier === 'svip' ? 'vip8_fire' : 'none'))
 
               return (
                 <div className={`${s.userProfileBadge} ${s[`badge_frame_${activeFrameId}`] || ''}`}>

@@ -14,7 +14,9 @@
 export function cropToSquare(imageSource, outputSize = 256) {
   return new Promise((resolve, reject) => {
     const img = new Image()
-    img.crossOrigin = 'anonymous'
+    if (typeof imageSource === 'string' && (imageSource.startsWith('http://') || imageSource.startsWith('https://'))) {
+      img.crossOrigin = 'anonymous'
+    }
 
     img.onload = () => {
       try {
@@ -61,7 +63,9 @@ export function cropToSquare(imageSource, outputSize = 256) {
 export function generatePixelArt(imageSource, pixelGridSize = 48, outputSize = 256) {
   return new Promise((resolve, reject) => {
     const img = new Image()
-    img.crossOrigin = 'anonymous'
+    if (typeof imageSource === 'string' && (imageSource.startsWith('http://') || imageSource.startsWith('https://'))) {
+      img.crossOrigin = 'anonymous'
+    }
 
     img.onload = () => {
       try {

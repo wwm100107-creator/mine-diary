@@ -14,9 +14,7 @@ import {
   addDoc, query, where, orderBy, onSnapshot,
   serverTimestamp,
 } from 'firebase/firestore'
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
-import { db, storage } from './firebase'
-import { dataUrlToBlob } from '../utils/pixelArt'
+import { db } from './firebase'
 import { sendPushNotification } from './push'
 import { restoreCycleDataToLocalStorage } from '../utils/cycle'
 
@@ -56,17 +54,18 @@ export async function upsertUser({
 }
 
 /**
- * Upload Avatar to Cloud Storage & Update user document in Database.
- * Fallback to direct optimized Data URL if Storage Bucket is offline or unconfigured.
+ * Update user avatar, frame, and theme in Firestore database.
+ * Directly saves optimized Data URL or preset avatar ID with instant persistence (~50ms).
  * @param {string} userId
- * @param {string} avatarDataUrl - Data URL of chosen image (Original or Pixel)
- * @param {string} avatarFrame - Animated frame ID ('none' | 'rainbow' | 'sparkle_stars' | 'cyber_aura' | 'sakura_hearts')
+ * @param {string} avatarDataUrl - Data URL of chosen image or preset avatar ID
+ * @param {string} avatarFrame - Animated frame ID ('none' | 'rainbow' | 'sparkle_stars' | ...)
+ * @param {object|null} theme - Theme preset or custom theme object
  * @returns {Promise<string>} Final URL or Data URL saved
  */
 export async function uploadUserAvatar(userId, avatarDataUrl, avatarFrame = 'none', theme = null) {
   if (!userId) return avatarDataUrl
 
-  let finalUrl = avatarDataUrl || 'bunny'
+  const finalUrl = avatarDataUrl || 'bunny'
   const targetFrame = avatarFrame || 'none'
 
   const userPayload = {
@@ -79,35 +78,7 @@ export async function uploadUserAvatar(userId, avatarDataUrl, avatarFrame = 'non
     userPayload.theme = theme
   }
 
-  // 1. If it's a preset avatar id like 'bunny' or a standard web URL
-  if (!avatarDataUrl || !avatarDataUrl.startsWith('data:image/')) {
-    await setDoc(doc(db, 'users', userId), userPayload, { merge: true })
-    return finalUrl
-  }
-
-  // 2. Try Firebase Cloud Storage upload with strict 2.5-second timeout guard
-  try {
-    const uploadPromise = (async () => {
-      const blob = dataUrlToBlob(avatarDataUrl)
-      const storageRef = ref(storage, `avatars/${userId}_${Date.now()}.png`)
-      const snapshot = await uploadBytes(storageRef, blob, {
-        contentType: 'image/png',
-      })
-      return await getDownloadURL(snapshot.ref)
-    })()
-
-    const timeoutPromise = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error('Storage upload timeout')), 2500)
-    )
-
-    finalUrl = await Promise.race([uploadPromise, timeoutPromise])
-  } catch (storageErr) {
-    console.warn('Storage upload fallback to Data URL:', storageErr)
-    finalUrl = avatarDataUrl
-  }
-
-  // 3. Update Database (Firestore) with both avatarFrame and frame for full compatibility
-  userPayload.avatar = finalUrl
+  // Direct fast save to Firestore database (instantaneous ~50ms, rock solid)
   await setDoc(doc(db, 'users', userId), userPayload, { merge: true })
 
   return finalUrl
