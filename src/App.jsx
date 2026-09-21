@@ -16,6 +16,7 @@ import AvatarWithFrame from './components/AvatarWithFrame'
 import AvatarUploadModal from './components/AvatarUploadModal'
 import AttendanceModal from './components/AttendanceModal'
 import NotificationPermissionModal from './components/NotificationPermissionModal'
+import GoogleOnboardingModal from './components/GoogleOnboardingModal'
 import PixelIcon from './components/PixelIcon'
 import { upsertUser, getUser, uploadUserAvatar, subscribeToUserChats, syncUserCycleData, subscribeToPartnerCycleData } from './lib/social'
 import { isUserAdmin } from './lib/admin'
@@ -472,34 +473,124 @@ export default function App() {
     return () => clearInterval(interval)
   }, [user?.id])
 
-  // ── Google 1-Click Login ───────────────────────────────────────────────────
+  // ── Google 1-Click Login & Onboarding ─────────────────────────────────────
+  const [googleOnboardingProfile, setGoogleOnboardingProfile] = useState(null)
+
   const login = useGoogleLogin({
     onSuccess: async ({ access_token }) => {
-      const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-        headers: { Authorization: `Bearer ${access_token}` },
-      })
-      const profile = await res.json()
-      
-      // Check if this Google user is banned in database
-      const existingUser = await getUser(profile.sub)
-      if (existingUser?.isBanned) {
-        alert(`Tài khoản Google này đã bị cấm.\nLý do: "${existingUser.banReason || 'Vi phạm điều khoản cộng đồng'}"`)
-        return
-      }
+      try {
+        const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+          headers: { Authorization: `Bearer ${access_token}` },
+        })
+        const profile = await res.json()
+        
+        // Check if this Google user is banned in database
+        const existingUser = await getUser(profile.sub)
+        if (existingUser?.isBanned) {
+          alert(`Tài khoản Google này đã bị cấm.\nLý do: "${existingUser.banReason || 'Vi phạm điều khoản cộng đồng'}"`)
+          return
+        }
 
-      const u = {
-        id: profile.sub,
-        email: profile.email,
-        name: profile.name,
-        avatar: existingUser?.avatar || 'sakura',
-        isAdmin: existingUser?.isAdmin || false,
+        // Check if this user already exists AND has completed onboarding (has gender)
+        if (existingUser && existingUser.gender) {
+          const u = {
+            ...existingUser,
+            id: profile.sub,
+            email: profile.email || existingUser.email || '',
+            name: existingUser.displayName || existingUser.name || profile.name,
+            displayName: existingUser.displayName || existingUser.name || profile.name,
+            avatar: existingUser.avatar || 'sakura',
+            avatarFrame: existingUser.avatarFrame || 'none',
+            gender: existingUser.gender,
+            isAdmin: existingUser.isAdmin || false,
+          }
+          saveSession(u)
+          setUser(u)
+          upsertUser(u).catch(console.error)
+          return
+        }
+
+        // New Google user or existing account lacking gender: Trigger onboarding
+        setGoogleOnboardingProfile({
+          sub: profile.sub,
+          email: profile.email,
+          name: profile.name,
+          picture: profile.picture,
+          existingUser,
+        })
+      } catch (err) {
+        console.error('Google login processing error:', err)
       }
-      saveSession(u)
-      setUser(u)
-      upsertUser(u).catch(console.error)
     },
     onError: err => console.error('Login failed:', err),
   })
+
+  const handleCompleteGoogleOnboarding = async ({
+    gender,
+    displayName,
+    avatar,
+    avatarFrame,
+    theme,
+  }) => {
+    if (!googleOnboardingProfile) return
+
+    const { sub, email, name, existingUser } = googleOnboardingProfile
+    const finalDisplayName = (displayName && displayName.trim()) || name || 'Bạn'
+
+    const u = {
+      ...(existingUser || {}),
+      id: sub,
+      email: email || '',
+      name: finalDisplayName,
+      displayName: finalDisplayName,
+      gender,
+      avatar: avatar || 'bunny',
+      avatarFrame: avatarFrame || 'none',
+      theme: theme || existingUser?.theme || null,
+      vipTier: existingUser?.vipTier || 'normal',
+      role: existingUser?.role || 'user',
+      isAdmin: existingUser?.isAdmin || false,
+      attendance: existingUser?.attendance || {
+        streak: 0,
+        lastCheckInDate: null,
+        claimedDays: [],
+      },
+    }
+
+    if (theme) {
+      applyTheme(theme)
+    }
+
+    saveSession(u)
+    setUser(u)
+    setGoogleOnboardingProfile(null)
+
+    try {
+      await upsertUser(u)
+    } catch (err) {
+      console.error('Failed to save Google user onboarding info:', err)
+    }
+  }
+
+  const handleCancelGoogleOnboarding = () => {
+    setGoogleOnboardingProfile(null)
+    if (user && !user.gender) {
+      handleSafeLogout()
+    }
+  }
+
+  // Prompt existing Google/local users who lack gender to complete their profile
+  useEffect(() => {
+    if (user && !user.gender && !isAdmin && !googleOnboardingProfile) {
+      setGoogleOnboardingProfile({
+        sub: user.id,
+        email: user.email || '',
+        name: user.name || user.displayName || '',
+        picture: (user.avatar && (user.avatar.startsWith('http') || user.avatar.startsWith('data:'))) ? user.avatar : null,
+        existingUser: user,
+      })
+    }
+  }, [user, isAdmin, googleOnboardingProfile])
 
   // ── Avatar Upload & Theme Modal State ─────────────────────────────────────
   const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false)
@@ -692,13 +783,22 @@ export default function App() {
   // ── 🌸 End-User Realm: Unauthenticated / Landing Page ───────────────────────
   if (!user) {
     return (
-      <AuthLanding
-        onAuthSuccess={(loggedInUser) => {
-          setBanStatus(null)
-          setUser(loggedInUser)
-        }}
-        onGoogleLogin={() => login()}
-      />
+      <>
+        <AuthLanding
+          onAuthSuccess={(loggedInUser) => {
+            setBanStatus(null)
+            setUser(loggedInUser)
+          }}
+          onGoogleLogin={() => login()}
+        />
+        {googleOnboardingProfile && (
+          <GoogleOnboardingModal
+            profile={googleOnboardingProfile}
+            onComplete={handleCompleteGoogleOnboarding}
+            onCancel={handleCancelGoogleOnboarding}
+          />
+        )}
+      </>
     )
   }
 
@@ -898,6 +998,15 @@ export default function App() {
           onPermissionGranted={(token) => {
             console.log('[App] Push token registered:', token)
           }}
+        />
+      )}
+
+      {/* Google Onboarding Modal (Gender & Avatar Selection) */}
+      {googleOnboardingProfile && (
+        <GoogleOnboardingModal
+          profile={googleOnboardingProfile}
+          onComplete={handleCompleteGoogleOnboarding}
+          onCancel={handleCancelGoogleOnboarding}
         />
       )}
 

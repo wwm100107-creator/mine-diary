@@ -21,15 +21,36 @@ import { sendPushNotification } from './push'
 
 // ── User profile ──────────────────────────────────────────────────────────────
 
-/** Upsert user profile on login */
-export async function upsertUser({ id, name, email, avatar, avatarFrame }) {
+/** Upsert user profile on login / registration */
+export async function upsertUser({
+  id,
+  name,
+  displayName,
+  email,
+  avatar,
+  avatarFrame,
+  gender,
+  theme,
+  vipTier,
+  role,
+  isAdmin,
+  attendance,
+}) {
   const data = {
-    displayName: name,
+    displayName: displayName || name || '',
+    name: displayName || name || '',
     email: email || '',
     updatedAt: serverTimestamp(),
   }
   if (avatar) data.avatar = avatar
   if (avatarFrame !== undefined) data.avatarFrame = avatarFrame
+  if (gender !== undefined) data.gender = gender
+  if (theme !== undefined) data.theme = theme
+  if (vipTier !== undefined) data.vipTier = vipTier
+  if (role !== undefined) data.role = role
+  if (isAdmin !== undefined) data.isAdmin = isAdmin
+  if (attendance !== undefined) data.attendance = attendance
+
   await setDoc(doc(db, 'users', id), data, { merge: true })
 }
 
