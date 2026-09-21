@@ -49,15 +49,29 @@ const EMPTY_STATE = {
 }
 
 export default function SymptomCards({ userId, dateStr, mode = 'standard' }) {
-  const storageKey = `minediary:symptoms:${userId}:${dateStr}`
+  const effectiveId = userId ?? 'guest'
+  const storageKey = `minediary:symptoms:${effectiveId}:${dateStr}`
   const isAdvanced = mode === 'advanced'
   
   const [data, setData] = useState(EMPTY_STATE)
 
   useEffect(() => {
-    const saved = localStorage.getItem(storageKey)
+    const keys = [
+      storageKey,
+      `minediary:symptoms:${String(effectiveId).toLowerCase()}:${dateStr}`,
+      `minediary:symptoms:${String(effectiveId).toUpperCase()}:${dateStr}`,
+      `minediary:symptoms:guest:${dateStr}`,
+    ]
+    let saved = null
+    for (const k of keys) {
+      const val = localStorage.getItem(k)
+      if (val) {
+        saved = val
+        break
+      }
+    }
     setData(saved ? JSON.parse(saved) : { ...EMPTY_STATE })
-  }, [storageKey])
+  }, [storageKey, effectiveId, dateStr])
 
   const updateField = (field, value) => {
     const next = { ...data, [field]: value }

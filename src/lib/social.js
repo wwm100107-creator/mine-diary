@@ -610,39 +610,67 @@ export async function syncUserCycleData(userId, { markedDates = [], customIcons 
       updatedAt: serverTimestamp(),
     }
 
-    // Write to BOTH root collection (already permitted in rules) AND subcollection
-    const rootPromise = setDoc(doc(db, 'cycleData', userId), payload, { merge: true }).catch((err) => {
-      console.warn('[CycleSync] Root collection write warning:', err?.message)
-    })
+    // Write to both original userId and lowercase to ensure no casing mismatches
+    const uids = Array.from(new Set([userId, String(userId).toLowerCase()]))
+    const promises = []
 
-    const subPromise = setDoc(doc(db, 'users', userId, 'health', 'cycleData'), payload, { merge: true }).catch((err) => {
-      console.warn('[CycleSync] Subcollection write warning:', err?.message)
-    })
+    for (const uid of uids) {
+      promises.push(
+        setDoc(doc(db, 'cycleData', uid), payload, { merge: true }).catch((err) => {
+          console.warn('[CycleSync] Root write error:', err?.message)
+        })
+      )
+      promises.push(
+        setDoc(doc(db, 'users', uid, 'health', 'cycleData'), payload, { merge: true }).catch((err) => {
+          console.warn('[CycleSync] Subcollection write error:', err?.message)
+        })
+      )
+    }
 
-    await Promise.allSettled([rootPromise, subPromise])
+    await Promise.allSettled(promises)
   } catch (err) {
     console.error('Error syncing cycle data to Firestore:', err)
   }
 }
 
 /**
- * Directly fetch partner's cycle data on-demand from root or subcollection
+ * Directly fetch partner's cycle data on-demand from root or subcollection (case-insensitive)
  */
 export async function getPartnerCycleData(partnerId) {
   if (!partnerId) return null
-  try {
-    const rootSnap = await getDoc(doc(db, 'cycleData', partnerId))
-    if (rootSnap.exists()) {
-      return rootSnap.data()
-    }
-  } catch (e) {}
+  const candidates = Array.from(new Set([
+    partnerId,
+    String(partnerId).toLowerCase(),
+    String(partnerId).toUpperCase(),
+  ]))
 
-  try {
-    const subSnap = await getDoc(doc(db, 'users', partnerId, 'health', 'cycleData'))
-    if (subSnap.exists()) {
-      return subSnap.data()
-    }
-  } catch (e) {}
+  for (const pid of candidates) {
+    try {
+      const rootSnap = await getDoc(doc(db, 'cycleData', pid))
+      if (rootSnap.exists() && rootSnap.data()?.markedDates?.length > 0) {
+        return rootSnap.data()
+      }
+    } catch (e) {}
+
+    try {
+      const subSnap = await getDoc(doc(db, 'users', pid, 'health', 'cycleData'))
+      if (subSnap.exists() && subSnap.data()?.markedDates?.length > 0) {
+        return subSnap.data()
+      }
+    } catch (e) {}
+  }
+
+  // If no markedDates were found in non-empty docs, return whatever doc exists
+  for (const pid of candidates) {
+    try {
+      const rootSnap = await getDoc(doc(db, 'cycleData', pid))
+      if (rootSnap.exists()) return rootSnap.data()
+    } catch (e) {}
+    try {
+      const subSnap = await getDoc(doc(db, 'users', pid, 'health', 'cycleData'))
+      if (subSnap.exists()) return subSnap.data()
+    } catch (e) {}
+  }
 
   return null
 }
@@ -654,51 +682,61 @@ export async function getPartnerCycleData(partnerId) {
 export function subscribeToPartnerCycleData(partnerId, callback) {
   if (!partnerId) return () => {}
 
-  let rootData = null
-  let subData = null
+  const pids = Array.from(new Set([
+    partnerId,
+    String(partnerId).toLowerCase(),
+  ]))
 
-  const emitBestData = () => {
-    const chosen = rootData || subData || null
-    callback(chosen)
+  let bestData = null
+  const unsubs = []
+
+  const updateBest = (data) => {
+    if (!data) return
+    // Always prefer data with more markedDates or newer timestamp
+    if (
+      !bestData ||
+      (data.markedDates && data.markedDates.length > (bestData.markedDates?.length || 0)) ||
+      (data.markedDates?.length === bestData.markedDates?.length && data.updatedAt)
+    ) {
+      bestData = data
+      callback(bestData)
+    }
   }
 
-  // 1. Root collection listener
-  const unsubRoot = onSnapshot(
-    doc(db, 'cycleData', partnerId),
-    (snap) => {
-      if (snap.exists()) {
-        rootData = snap.data()
-      } else {
-        rootData = null
+  for (const pid of pids) {
+    // 1. Root collection listener
+    const unsubRoot = onSnapshot(
+      doc(db, 'cycleData', pid),
+      (snap) => {
+        if (snap.exists()) {
+          updateBest(snap.data())
+        }
+      },
+      (err) => {
+        console.warn('Root cycleData subscription:', err?.message)
       }
-      emitBestData()
-    },
-    (err) => {
-      console.warn('Root cycleData subscription:', err?.message)
-    }
-  )
+    )
+    unsubs.push(unsubRoot)
 
-  // 2. Subcollection listener fallback
-  const unsubSub = onSnapshot(
-    doc(db, 'users', partnerId, 'health', 'cycleData'),
-    (snap) => {
-      if (snap.exists()) {
-        subData = snap.data()
-      } else {
-        subData = null
+    // 2. Subcollection listener fallback
+    const unsubSub = onSnapshot(
+      doc(db, 'users', pid, 'health', 'cycleData'),
+      (snap) => {
+        if (snap.exists()) {
+          updateBest(snap.data())
+        }
+      },
+      (err) => {
+        console.warn('Subcollection cycleData subscription:', err?.message)
       }
-      emitBestData()
-    },
-    (err) => {
-      console.warn('Subcollection cycleData subscription:', err?.message)
-    }
-  )
+    )
+    unsubs.push(unsubSub)
+  }
 
   return () => {
-    try {
-      unsubRoot()
-      unsubSub()
-    } catch (e) {}
+    unsubs.forEach((u) => {
+      try { u() } catch (e) {}
+    })
   }
 }
 

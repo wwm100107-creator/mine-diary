@@ -20,13 +20,20 @@ const customTrayStorageKey = (userId) =>
  * @returns {string[]} e.g. ['💖', '💊', '☕']
  */
 export function getCustomTrayIcons(userId) {
-  try {
-    const raw = localStorage.getItem(customTrayStorageKey(userId))
-    if (raw) return JSON.parse(raw)
-    return []
-  } catch (e) {
-    return []
+  const effectiveId = userId ?? 'guest'
+  const keys = [
+    customTrayStorageKey(effectiveId),
+    customTrayStorageKey(effectiveId.toLowerCase()),
+    customTrayStorageKey(effectiveId.toUpperCase()),
+    customTrayStorageKey('guest'),
+  ]
+  for (const k of keys) {
+    try {
+      const raw = localStorage.getItem(k)
+      if (raw) return JSON.parse(raw)
+    } catch (e) {}
   }
+  return []
 }
 
 /**
@@ -71,21 +78,56 @@ export function removeCustomTrayIcon(userId, icon) {
 }
 
 /**
+ * Helper to match keys case-insensitively and support guest or legacy keys
+ * Returns dateStr or null
+ */
+function parseDateFromStorageKey(key, type, userId) {
+  if (!key || typeof key !== 'string') return null
+  const parts = key.split(':')
+  if (parts.length !== 4 || parts[0] !== 'minediary' || parts[1] !== type) return null
+  const keyUid = parts[2].toLowerCase()
+  const targetUid = (userId ?? 'guest').toLowerCase()
+
+  if (keyUid === targetUid || keyUid === 'guest') {
+    return parts[3]
+  }
+  return null
+}
+
+/**
  * Get all icons for a specific date
  * @returns {string[]} e.g. ['🍓', '🎂']
  */
 export function getDayIcons(userId, dateStr) {
-  try {
-    const raw = localStorage.getItem(iconStorageKey(userId, dateStr))
-    if (raw) return JSON.parse(raw)
-    // Fallback: check legacy period mark
-    if (localStorage.getItem(periodStorageKey(userId, dateStr))) {
+  const effectiveId = userId ?? 'guest'
+  const candidateKeys = [
+    iconStorageKey(effectiveId, dateStr),
+    iconStorageKey(effectiveId.toLowerCase(), dateStr),
+    iconStorageKey(effectiveId.toUpperCase(), dateStr),
+    iconStorageKey('guest', dateStr),
+  ]
+
+  for (const k of candidateKeys) {
+    try {
+      const raw = localStorage.getItem(k)
+      if (raw) return JSON.parse(raw)
+    } catch (e) {}
+  }
+
+  // Fallback: check legacy period mark
+  const periodKeys = [
+    periodStorageKey(effectiveId, dateStr),
+    periodStorageKey(effectiveId.toLowerCase(), dateStr),
+    periodStorageKey(effectiveId.toUpperCase(), dateStr),
+    periodStorageKey('guest', dateStr),
+  ]
+  for (const pk of periodKeys) {
+    if (localStorage.getItem(pk)) {
       return ['🍓']
     }
-    return []
-  } catch (e) {
-    return []
   }
+
+  return []
 }
 
 /**
@@ -128,41 +170,58 @@ export function moveDayIcon(userId, fromDateStr, toDateStr, iconIndex) {
   addDayIcon(userId, toDateStr, icon)
 }
 
-
 /**
  * Load all dates marked with 🍓 (for cycle calculation)
+ * Scans case-insensitively, maps guest and legacy marks seamlessly
  */
 export function loadMarkedDates(userId) {
-  const effectiveId = userId ?? 'guest'
-  const prefixIcon = `minediary:icons:${effectiveId}:`
-  const prefixLegacy = `minediary:period:${effectiveId}:`
   const set = new Set()
 
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i)
     if (!key) continue
-    if (key.startsWith(prefixIcon)) {
-      const dateStr = key.slice(prefixIcon.length)
-      const icons = getDayIcons(effectiveId, dateStr)
-      if (icons.includes('🍓')) set.add(dateStr)
-    } else if (key.startsWith(prefixLegacy)) {
-      set.add(key.slice(prefixLegacy.length))
+
+    // 1. Check icon keys: minediary:icons:uid:dateStr
+    const iconDate = parseDateFromStorageKey(key, 'icons', userId)
+    if (iconDate) {
+      try {
+        const raw = localStorage.getItem(key)
+        if (raw) {
+          const icons = JSON.parse(raw)
+          if (Array.isArray(icons) && icons.includes('🍓')) {
+            set.add(iconDate)
+          }
+        }
+      } catch (e) {}
+    }
+
+    // 2. Check period keys: minediary:period:uid:dateStr
+    const periodDate = parseDateFromStorageKey(key, 'period', userId)
+    if (periodDate) {
+      set.add(periodDate)
     }
   }
 
-  // Auto-migrate guest marks if user just logged in and has 0 user marks
-  if (userId && userId !== 'guest' && set.size === 0) {
-    try {
-      const guestMarks = loadMarkedDates('guest')
-      if (guestMarks.length > 0) {
-        guestMarks.forEach((d) => {
-          set.add(d)
-          localStorage.setItem(`minediary:period:${userId}:${d}`, '1')
-          const existingIcons = getDayIcons('guest', d)
-          localStorage.setItem(`minediary:icons:${userId}:${d}`, JSON.stringify(existingIcons.length ? existingIcons : ['🍓']))
-        })
+  // Fallback: If still 0 dates found, scan ANY minediary:icons or period key on device
+  if (set.size === 0) {
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i)
+      if (!key) continue
+      const parts = key.split(':')
+      if (parts.length === 4 && parts[0] === 'minediary') {
+        const dateStr = parts[3]
+        if (parts[1] === 'period') {
+          set.add(dateStr)
+        } else if (parts[1] === 'icons') {
+          try {
+            const icons = JSON.parse(localStorage.getItem(key))
+            if (Array.isArray(icons) && icons.includes('🍓')) {
+              set.add(dateStr)
+            }
+          } catch (e) {}
+        }
       }
-    } catch (e) {}
+    }
   }
 
   return Array.from(set).sort()
@@ -192,39 +251,50 @@ export function isMarked(userId, dateStr) {
  * Returns { [dateStr]: string[] } — used to sync to Firestore for partner view.
  */
 export function loadAllDayIcons(userId) {
-  const effectiveId = userId ?? 'guest'
-  const prefix = `minediary:icons:${effectiveId}:`
-  const prefixLegacy = `minediary:period:${effectiveId}:`
   const map = {}
 
   try {
-    // 1. Load from icon tray storage
+    // 1. Load from icon tray storage matching user or guest
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i)
-      if (key && key.startsWith(prefix)) {
-        const dateStr = key.slice(prefix.length)
-        const raw = localStorage.getItem(key)
-        if (raw) map[dateStr] = JSON.parse(raw)
+      if (!key) continue
+      const iconDate = parseDateFromStorageKey(key, 'icons', userId)
+      if (iconDate) {
+        try {
+          const raw = localStorage.getItem(key)
+          if (raw) map[iconDate] = JSON.parse(raw)
+        } catch (e) {}
       }
-    }
 
-    // 2. Load from legacy period storage to ensure marked dates are preserved
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i)
-      if (key && key.startsWith(prefixLegacy)) {
-        const dateStr = key.slice(prefixLegacy.length)
-        if (!map[dateStr]) {
-          map[dateStr] = ['🍓']
-        } else if (!map[dateStr].includes('🍓')) {
-          map[dateStr] = ['🍓', ...map[dateStr]]
+      // Legacy period storage
+      const periodDate = parseDateFromStorageKey(key, 'period', userId)
+      if (periodDate) {
+        if (!map[periodDate]) {
+          map[periodDate] = ['🍓']
+        } else if (!map[periodDate].includes('🍓')) {
+          map[periodDate] = ['🍓', ...map[periodDate]]
         }
       }
     }
 
-    // 3. Fallback check from guest icons if user is logged in but empty
-    if (userId && userId !== 'guest' && Object.keys(map).length === 0) {
-      const guestMap = loadAllDayIcons('guest')
-      Object.assign(map, guestMap)
+    // 2. Fallback scan if map is still empty
+    if (Object.keys(map).length === 0) {
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i)
+        if (!key) continue
+        const parts = key.split(':')
+        if (parts.length === 4 && parts[0] === 'minediary') {
+          const dateStr = parts[3]
+          if (parts[1] === 'icons') {
+            try {
+              map[dateStr] = JSON.parse(localStorage.getItem(key))
+            } catch (e) {}
+          } else if (parts[1] === 'period') {
+            if (!map[dateStr]) map[dateStr] = ['🍓']
+            else if (!map[dateStr].includes('🍓')) map[dateStr].push('🍓')
+          }
+        }
+      }
     }
   } catch (e) {
     console.warn('Error loading all day icons:', e)
@@ -274,15 +344,34 @@ function extractCycles(userId, sortedDates, dayIconMap = null) {
  * Load all user symptoms from local storage into a map: { [dateStr]: data }
  */
 export function loadAllUserSymptoms(userId) {
-  const prefix = `minediary:symptoms:${userId ?? 'guest'}:`
   const logs = {}
   try {
+    // 1. Load symptoms matching userId (case-insensitive) or guest
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i)
-      if (key && key.startsWith(prefix)) {
-        const dateStr = key.slice(prefix.length)
-        const raw = localStorage.getItem(key)
-        if (raw) logs[dateStr] = JSON.parse(raw)
+      if (!key) continue
+      const dateStr = parseDateFromStorageKey(key, 'symptoms', userId)
+      if (dateStr) {
+        try {
+          const raw = localStorage.getItem(key)
+          if (raw) logs[dateStr] = JSON.parse(raw)
+        } catch (e) {}
+      }
+    }
+
+    // 2. Fallback scan if empty: load any minediary:symptoms:* keys
+    if (Object.keys(logs).length === 0) {
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i)
+        if (!key) continue
+        const parts = key.split(':')
+        if (parts.length === 4 && parts[0] === 'minediary' && parts[1] === 'symptoms') {
+          const dateStr = parts[3]
+          try {
+            const raw = localStorage.getItem(key)
+            if (raw) logs[dateStr] = JSON.parse(raw)
+          } catch (e) {}
+        }
       }
     }
   } catch (e) {

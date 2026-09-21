@@ -94,6 +94,36 @@ export default function App() {
     }
   }, [user?.id, isAdmin])
 
+  // ── Sync user document from Firestore in real-time (gender, ban status, vipTier, avatar, etc.) ──
+  useEffect(() => {
+    if (!user?.id || isAdmin) return
+    const unsub = onSnapshot(doc(db, 'users', user.id), (snap) => {
+      if (snap.exists()) {
+        const freshData = snap.data()
+        setUser((prev) => {
+          if (!prev) return prev
+          if (
+            prev.gender === freshData.gender &&
+            prev.vipTier === freshData.vipTier &&
+            prev.role === freshData.role &&
+            prev.isBanned === freshData.isBanned &&
+            prev.displayName === freshData.displayName &&
+            prev.avatar === freshData.avatar &&
+            prev.allowFertilityTracking === freshData.allowFertilityTracking
+          ) {
+            return prev
+          }
+          const updated = { ...prev, ...freshData, id: user.id }
+          saveSession(updated)
+          return updated
+        })
+      }
+    }, (err) => {
+      console.warn('[App] User realtime sync error:', err)
+    })
+    return () => unsub()
+  }, [user?.id, isAdmin])
+
   // ── PWA & Web Push Detection ──
   const { isIOS, isStandalone, permission } = usePwaInstallState()
 
