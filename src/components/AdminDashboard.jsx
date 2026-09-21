@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import PixelAvatar from './PixelAvatar'
+import PixelIcon from './PixelIcon'
 import {
   isUserAdmin,
   isProtectedUser,
@@ -453,7 +454,9 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
   if (!isAdmin) {
     return (
       <div className={s.deniedCard}>
-        <div className={s.deniedIcon}>⛔</div>
+        <div className={s.deniedIcon}>
+          <PixelIcon name="ban" size={48} />
+        </div>
         <h2 className={s.deniedTitle}>Truy Cập Bị Từ Chối</h2>
         <p className={s.deniedDesc}>
           Bạn không có quyền Quản Trị Viên (Admin) để xem trang này.
@@ -472,7 +475,8 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
       <div className={s.topBar}>
         <div className={s.topBarLeft}>
           <h2 className={s.dashboardTitle}>
-            <span>🛡️</span> Bảng Điều Khiển Quản Trị Viên
+            <PixelIcon name="shield" size={26} />
+            <span>Bảng Điều Khiển Quản Trị Viên</span>
           </h2>
         </div>
 
@@ -489,7 +493,8 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
             onClick={onLogout}
             title="Đăng xuất tài khoản quản trị viên"
           >
-            <span>🚪</span> Đăng xuất
+            <PixelIcon name="door" size={16} />
+            <span>Đăng xuất</span>
           </button>
         </div>
       </div>
@@ -501,7 +506,9 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
             <span className={s.metricLabel}>Tổng Người Dùng</span>
             <span className={s.metricValue}>{metrics.total}</span>
           </div>
-          <span className={s.metricIcon}>👥</span>
+          <span className={s.metricIcon}>
+            <PixelIcon name="users" size={36} />
+          </span>
         </div>
 
         <div className={s.metricCard}>
@@ -511,7 +518,9 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
               {metrics.online}
             </span>
           </div>
-          <span className={s.metricIcon}>⚡</span>
+          <span className={s.metricIcon}>
+            <PixelIcon name="bolt" size={36} />
+          </span>
         </div>
 
         <div className={s.metricCard}>
@@ -521,7 +530,9 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
               {metrics.active}
             </span>
           </div>
-          <span className={s.metricIcon}>🟢</span>
+          <span className={s.metricIcon}>
+            <PixelIcon name="activeDot" size={36} />
+          </span>
         </div>
 
         <div className={s.metricCard}>
@@ -531,7 +542,9 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
               {metrics.banned}
             </span>
           </div>
-          <span className={s.metricIcon}>⛔</span>
+          <span className={s.metricIcon}>
+            <PixelIcon name="ban" size={36} />
+          </span>
         </div>
 
         <div className={s.metricCard}>
@@ -541,14 +554,18 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
               {metrics.appeals}
             </span>
           </div>
-          <span className={s.metricIcon}>📬</span>
+          <span className={s.metricIcon}>
+            <PixelIcon name="mail" size={36} />
+          </span>
         </div>
       </div>
 
       {/* Controls & Search Bar */}
       <div className={s.controlBar}>
         <div className={s.searchWrap}>
-          <span className={s.searchIcon}>🔍</span>
+          <span className={s.searchIcon}>
+            <PixelIcon name="search" size={18} />
+          </span>
           <input
             type="text"
             className={s.searchInput}
@@ -565,10 +582,10 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
             onChange={(e) => setStatusFilter(e.target.value)}
           >
             <option value="all">Tất cả trạng thái</option>
-            <option value="online">⚡ Đang Online ({metrics.online})</option>
-            <option value="active">🟢 Đang hoạt động (không bị cấm)</option>
-            <option value="banned">⛔ Đang bị cấm ({metrics.banned})</option>
-            <option value="appeals">📬 Có khiếu nại chờ duyệt ({metrics.appeals})</option>
+            <option value="online">Đang Online ({metrics.online})</option>
+            <option value="active">Đang hoạt động (không bị cấm)</option>
+            <option value="banned">Đang bị cấm ({metrics.banned})</option>
+            <option value="appeals">Có khiếu nại chờ duyệt ({metrics.appeals})</option>
           </select>
 
           <button
@@ -577,7 +594,8 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
             onClick={loadData}
             disabled={loading}
           >
-            🔄 Làm mới
+            <PixelIcon name="refresh" size={14} />
+            <span>Làm mới</span>
           </button>
         </div>
       </div>
@@ -586,7 +604,9 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
       {firestoreError && (
         <div className={s.firestoreWarningBanner}>
           <div className={s.firestoreWarningHeader}>
-            <span className={s.warningBannerIcon}>⚠️</span>
+            <span className={s.warningBannerIcon}>
+              <PixelIcon name="warning" size={28} />
+            </span>
             <div>
               <h4 className={s.warningBannerTitle}>Firestore Đang Bị Khóa Quyền Truy Cập (PERMISSION_DENIED)</h4>
               <p className={s.warningBannerDesc}>
@@ -613,7 +633,8 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                 setTimeout(() => setCopiedRules(false), 3000)
               }}
             >
-              {copiedRules ? '✅ Đã sao chép Rules chuẩn!' : '📋 Sao chép Rules chuẩn (Không lỗi Parse)'}
+              <PixelIcon name={copiedRules ? 'check' : 'clipboard'} size={14} />
+              <span>{copiedRules ? 'Đã sao chép Rules chuẩn!' : 'Sao chép Rules chuẩn (Không lỗi Parse)'}</span>
             </button>
             <button
               type="button"
@@ -621,7 +642,8 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
               onClick={loadData}
               disabled={loading}
             >
-              🔄 Thử tải lại
+              <PixelIcon name="refresh" size={14} />
+              <span>Thử tải lại</span>
             </button>
           </div>
         </div>
@@ -645,14 +667,19 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
             {loading ? (
               <tr>
                 <td colSpan={7} className={s.emptyRow}>
-                  ⏳ Đang tải danh sách tài khoản...
+                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, justifyContent: 'center' }}>
+                    <PixelIcon name="hourglass" size={18} />
+                    <span>Đang tải danh sách tài khoản...</span>
+                  </div>
                 </td>
               </tr>
             ) : firestoreError ? (
               <tr>
                 <td colSpan={7} className={s.emptyRowError}>
                   <div className={s.errorTableState}>
-                    <span className={s.errorIcon}>🔒</span>
+                    <span className={s.errorIcon}>
+                      <PixelIcon name="lock" size={40} />
+                    </span>
                     <strong className={s.errorTitle}>Quyền truy cập Firestore đang bị từ chối (PERMISSION_DENIED)</strong>
                     <p className={s.errorText}>
                       Quy tắc bảo mật trên Firebase Console đang chặn đọc dữ liệu. Dữ liệu trên Google Cloud vẫn an toàn 100%. Vui lòng Publish Rules trên Firebase Console để mở khóa.
@@ -663,7 +690,8 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                       onClick={loadData}
                       disabled={loading}
                     >
-                      🔄 Thử tải lại ngay
+                      <PixelIcon name="refresh" size={14} />
+                      <span>Thử tải lại ngay</span>
                     </button>
                   </div>
                 </td>
@@ -714,6 +742,9 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                                 background: uVip.bg,
                                 border: `1px solid ${uVip.color}`,
                                 cursor: 'pointer',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: 4,
                               }}
                               onClick={(e) => {
                                 e.stopPropagation()
@@ -723,7 +754,9 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                               }}
                               title="Nhấn để đổi cấp VIP cho người dùng này"
                             >
-                              {uVip.badge} ⚙️
+                              <PixelIcon name={uVip.iconName || 'plant'} size={12} />
+                              <span>{uVip.badge}</span>
+                              <PixelIcon name="gear" size={11} />
                             </span>
                           )
                         })()}
@@ -742,11 +775,15 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                     <div className={s.statusCellWrap}>
                       {isProtectedUser(u) ? (
                         <span className={s.badgeImmune} title="Tài khoản Quản trị tối cao bất tử">
-                          👑 Bất Tử (Tối Cao)
+                          <PixelIcon name="crown" size={13} />
+                          <span>Bất Tử (Tối Cao)</span>
                         </span>
                       ) : u.isBanned ? (
                         <div className={s.badgeBanned}>
-                          <span className={s.bannedMainText}>⛔ Bị cấm ({formatBanUntil(u.banUntilDate)})</span>
+                          <span className={s.bannedMainText}>
+                            <PixelIcon name="ban" size={13} />
+                            <span>Bị cấm ({formatBanUntil(u.banUntilDate)})</span>
+                          </span>
                           {u.banReason && (
                             <span className={s.banReasonNote}>
                               Lý do: {u.banReason}
@@ -754,13 +791,15 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                           )}
                           {u.appeal?.status === 'pending' && (
                             <div className={s.badgeAppealPending}>
-                              📬 Có đơn khiếu nại mới!
+                              <PixelIcon name="mail" size={12} />
+                              <span>Có đơn khiếu nại mới!</span>
                             </div>
                           )}
                         </div>
                       ) : (
                         <span className={s.badgeActive}>
-                          ● Hoạt động
+                          <PixelIcon name="check" size={12} />
+                          <span>Hoạt động</span>
                         </span>
                       )}
 
@@ -781,10 +820,12 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                   <td className={s.colIp}>
                     <div className={s.ipBlock}>
                       <span className={s.ipText} title="Địa chỉ IP đăng nhập">
-                        🌐 {u.lastLoginIp || '—'}
+                        <PixelIcon name="globe" size={13} />
+                        <span>{u.lastLoginIp || '—'}</span>
                       </span>
                       <span className={s.deviceText} title="Thiết bị đăng nhập">
-                        💻 {u.lastDevice || '—'}
+                        <PixelIcon name="device" size={13} />
+                        <span>{u.lastDevice || '—'}</span>
                       </span>
                     </div>
                   </td>
@@ -806,11 +847,12 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                       }}
                       title="Xem toàn bộ thông tin tài khoản và bảo mật"
                     >
-                      👁️ See All
+                      <PixelIcon name="eye" size={14} />
+                      <span>See All</span>
                     </button>
                   </td>
 
-                  {/* Column 6: Action (Centered) */}
+                  {/* Column 7: Action (Centered) */}
                   <td className={s.colAction}>
                     {isProtectedUser(u) ? (
                       <div className={s.actionBtnGroup}>
@@ -824,10 +866,12 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                           }}
                           title="Tài khoản Admin Tối Cao sở hữu cấp GOD"
                         >
-                          👑 GOD VIP
+                          <PixelIcon name="crown" size={13} />
+                          <span>GOD VIP</span>
                         </button>
                         <span className={s.protectedShieldBadge} title="Tài khoản bất tử không thể bị xóa hoặc hạn chế">
-                          🛡️ Bất Khả Xâm Phạm
+                          <PixelIcon name="shield" size={13} />
+                          <span>Bất Khả Xâm Phạm</span>
                         </span>
                       </div>
                     ) : u.isBanned ? (
@@ -842,7 +886,8 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                           }}
                           title="Cấp VIP hoặc hạ VIP cho người dùng này"
                         >
-                          👑 VIP
+                          <PixelIcon name="crown" size={13} />
+                          <span>VIP</span>
                         </button>
                         {u.appeal?.status === 'pending' && (
                           <button
@@ -854,7 +899,8 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                             }}
                             title="Xem đơn khiếu nại mở khóa của người dùng"
                           >
-                            📬 Xét Khiếu Nại
+                            <PixelIcon name="mail" size={13} />
+                            <span>Xét Khiếu Nại</span>
                           </button>
                         )}
                         <button
@@ -863,7 +909,8 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                           onClick={() => handleUnban(u)}
                           disabled={actionLoading}
                         >
-                          ✓ Mở Khóa
+                          <PixelIcon name="check" size={13} />
+                          <span>Mở Khóa</span>
                         </button>
                         <button
                           type="button"
@@ -872,7 +919,8 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                           disabled={actionLoading}
                           title="Xóa vĩnh viễn tài khoản này"
                         >
-                          🗑️ Xóa
+                          <PixelIcon name="trash" size={13} />
+                          <span>Xóa</span>
                         </button>
                       </div>
                     ) : (
@@ -887,7 +935,8 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                           }}
                           title="Cấp VIP hoặc hạ VIP cho người dùng này"
                         >
-                          👑 VIP
+                          <PixelIcon name="crown" size={13} />
+                          <span>VIP</span>
                         </button>
                         <button
                           type="button"
@@ -901,7 +950,8 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                           }}
                           disabled={actionLoading || u.id === user?.id}
                         >
-                          ⛔ Cấm
+                          <PixelIcon name="ban" size={13} />
+                          <span>Cấm</span>
                         </button>
                         <button
                           type="button"
@@ -910,7 +960,8 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                           disabled={actionLoading}
                           title="Xóa vĩnh viễn tài khoản này"
                         >
-                          🗑️ Xóa
+                          <PixelIcon name="trash" size={13} />
+                          <span>Xóa</span>
                         </button>
                       </div>
                     )}
@@ -928,7 +979,8 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
           <div className={s.modalCard} onClick={(e) => e.stopPropagation()}>
             <div className={s.modalHeader}>
               <h3 className={s.modalTitle}>
-                <span>📋</span> Chi Tiết Tài Khoản & Bảo Mật
+                <PixelIcon name="clipboard" size={20} />
+                <span>Chi Tiết Tài Khoản & Bảo Mật</span>
               </h3>
               <button
                 type="button"
@@ -969,8 +1021,20 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
               </div>
               <div className={s.detailRow}>
                 <span className={s.detailKey}>Giới Tính:</span>
-                <span className={s.detailVal}>
-                  {detailModalUser.gender === 'male' ? '👦 Nam' : detailModalUser.gender === 'female' ? '👧 Nữ' : 'Chưa thiết lập'}
+                <span className={s.detailVal} style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+                  {detailModalUser.gender === 'male' ? (
+                    <>
+                      <PixelIcon name="boy" size={14} />
+                      <span>Nam</span>
+                    </>
+                  ) : detailModalUser.gender === 'female' ? (
+                    <>
+                      <PixelIcon name="girl" size={14} />
+                      <span>Nữ</span>
+                    </>
+                  ) : (
+                    'Chưa thiết lập'
+                  )}
                 </span>
               </div>
               <div className={s.detailRow}>
@@ -981,14 +1045,25 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
               </div>
               <div className={s.detailRow}>
                 <span className={s.detailKey}>Chuỗi Điểm Danh:</span>
-                <span className={s.detailVal}>
-                  🔥 {detailModalUser.attendanceStreak || detailModalUser.streak || 0} ngày
+                <span className={s.detailVal} style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+                  <PixelIcon name="flame" size={14} />
+                  <span>{detailModalUser.attendanceStreak || detailModalUser.streak || 0} ngày</span>
                 </span>
               </div>
               <div className={s.detailRow}>
                 <span className={s.detailKey}>Chia Sẻ Chu Kỳ:</span>
-                <span className={s.detailVal}>
-                  {detailModalUser.isCycleShared ? '🟢 Đang kết nối cặp đôi' : '🔒 Riêng tư'}
+                <span className={s.detailVal} style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+                  {detailModalUser.isCycleShared ? (
+                    <>
+                      <PixelIcon name="activeDot" size={12} />
+                      <span>Đang kết nối cặp đôi</span>
+                    </>
+                  ) : (
+                    <>
+                      <PixelIcon name="lock" size={12} />
+                      <span>Riêng tư</span>
+                    </>
+                  )}
                 </span>
               </div>
               <div className={s.detailRow}>
@@ -997,12 +1072,34 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
               </div>
               <div className={s.detailRow}>
                 <span className={s.detailKey}>Vai Trò (Role):</span>
-                <span className={s.detailVal}>{detailModalUser.isAdmin || detailModalUser.role === 'admin' ? '🛡️ Quản trị viên (Admin)' : '👤 Người dùng thông thường'}</span>
+                <span className={s.detailVal} style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+                  {detailModalUser.isAdmin || detailModalUser.role === 'admin' ? (
+                    <>
+                      <PixelIcon name="shield" size={13} />
+                      <span>Quản trị viên (Admin)</span>
+                    </>
+                  ) : (
+                    <>
+                      <PixelIcon name="users" size={13} />
+                      <span>Người dùng thông thường</span>
+                    </>
+                  )}
+                </span>
               </div>
               <div className={s.detailRow}>
                 <span className={s.detailKey}>Trạng Thái Tài Khoản:</span>
-                <span className={s.detailVal}>
-                  {detailModalUser.isBanned ? `⛔ Đang bị cấm (hết hạn: ${formatBanUntil(detailModalUser.banUntilDate)})` : '🟢 Hoạt động bình thường'}
+                <span className={s.detailVal} style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+                  {detailModalUser.isBanned ? (
+                    <>
+                      <PixelIcon name="ban" size={13} />
+                      <span>Đang bị cấm (hết hạn: {formatBanUntil(detailModalUser.banUntilDate)})</span>
+                    </>
+                  ) : (
+                    <>
+                      <PixelIcon name="check" size={13} />
+                      <span>Hoạt động bình thường</span>
+                    </>
+                  )}
                 </span>
               </div>
               <div className={s.detailRow}>
@@ -1019,14 +1116,16 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
               </div>
               <div className={s.detailRow}>
                 <span className={s.detailKey}>Địa Chỉ IP Đăng Nhập:</span>
-                <span className={s.detailVal} style={{ fontFamily: 'monospace', fontWeight: 600 }}>
-                  🌐 {detailModalUser.lastLoginIp || 'Chưa ghi nhận'}
+                <span className={s.detailVal} style={{ fontFamily: 'monospace', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+                  <PixelIcon name="globe" size={13} />
+                  <span>{detailModalUser.lastLoginIp || 'Chưa ghi nhận'}</span>
                 </span>
               </div>
               <div className={s.detailRow}>
                 <span className={s.detailKey}>Thiết Bị Đăng Nhập:</span>
-                <span className={s.detailVal}>
-                  💻 {detailModalUser.lastDevice || 'Chưa ghi nhận'}
+                <span className={s.detailVal} style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+                  <PixelIcon name="device" size={13} />
+                  <span>{detailModalUser.lastDevice || 'Chưa ghi nhận'}</span>
                 </span>
               </div>
               
@@ -1052,7 +1151,10 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
             {/* Super Admin Authorization Section */}
             <div className={s.superAdminSection}>
               <div className={s.superAdminHeader}>
-                <span className={s.superAdminBadge}>👑 SUPER ADMIN VERIFICATION</span>
+                <span className={s.superAdminBadge} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                  <PixelIcon name="crown" size={14} />
+                  <span>SUPER ADMIN VERIFICATION</span>
+                </span>
                 <span style={{ fontSize: 11, color: 'var(--color-ink-soft)' }}>
                   Nhập lệnh bảo mật để giải mã và hiển thị mật khẩu gốc
                 </span>
@@ -1068,13 +1170,15 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                     onChange={(e) => setSuperAdminCmd(e.target.value)}
                   />
                   <button type="submit" className={s.cmdSubmitBtn}>
-                    Xác Thực 🔓
+                    <span>Xác Thực</span>
+                    <PixelIcon name="unlock" size={14} />
                   </button>
                 </form>
               ) : (
                 <div className={s.unlockedResultBox}>
-                  <div className={s.unlockedBadge}>
-                    ✓ XÁC THỰC QUYỀN ADMIN CẤP CAO THÀNH CÔNG
+                  <div className={s.unlockedBadge} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                    <PixelIcon name="check" size={14} />
+                    <span>XÁC THỰC QUYỀN ADMIN CẤP CAO THÀNH CÔNG</span>
                   </div>
                   <div className={s.plainPasswordRow}>
                     <span style={{ fontSize: 12, color: 'var(--color-ink-soft)' }}>Mật Khẩu Gốc:</span>
@@ -1094,7 +1198,10 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
 
             {/* Administrative Password Reset Tool */}
             <div className={s.resetPassSection}>
-              <span className={s.resetPassTitle}>⚡ Đặt Lại Mật Khẩu (Admin Override)</span>
+              <span className={s.resetPassTitle} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                <PixelIcon name="bolt" size={16} />
+                <span>Đặt Lại Mật Khẩu (Admin Override)</span>
+              </span>
               <form className={s.resetPassInputRow} onSubmit={handleAdminResetPassword}>
                 <input
                   type="text"
@@ -1109,7 +1216,12 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                   className={s.resetBtn}
                   disabled={actionLoading || !newPassInput.trim()}
                 >
-                  {actionLoading ? '...' : 'Cập Nhật 🔑'}
+                  {actionLoading ? '...' : (
+                    <>
+                      <span>Cập Nhật</span>
+                      <PixelIcon name="key" size={14} />
+                    </>
+                  )}
                 </button>
               </form>
               {resetSuccess && (
@@ -1122,16 +1234,23 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
             {/* VIP Tier Management Section */}
             <div className={s.vipTierSection}>
               <div className={s.vipTierHeader}>
-                <span className={s.vipTierTitle}>👑 Quyền Hạn VIP & Khung Hiệu Ứng</span>
+                <span className={s.vipTierTitle} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                  <PixelIcon name="crown" size={16} />
+                  <span>Quyền Hạn VIP & Khung Hiệu Ứng</span>
+                </span>
                 <span
                   className={s.currentVipTag}
                   style={{
                     color: getUserVipTier(detailModalUser).color,
                     background: getUserVipTier(detailModalUser).bg,
                     border: `1px solid ${getUserVipTier(detailModalUser).color}`,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 5,
                   }}
                 >
-                  Hiện tại: {getUserVipTier(detailModalUser).badge}
+                  <PixelIcon name={getUserVipTier(detailModalUser).iconName || 'plant'} size={12} />
+                  <span>Hiện tại: {getUserVipTier(detailModalUser).badge}</span>
                 </span>
               </div>
               <p className={s.vipTierDesc}>
@@ -1144,18 +1263,23 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                   onChange={(e) => setTargetVipTier(e.target.value)}
                   disabled={actionLoading || isProtectedUser(detailModalUser)}
                 >
-                  <option value="normal">🌱 Bình thường (Khung cơ bản)</option>
-                  <option value="svip">🔥 SVIP Thánh Hỏa (Mở khóa SVIP)</option>
-                  <option value="ssvip">❄️ SSVIP Cánh Băng (Mở khóa SSVIP & dưới)</option>
-                  <option value="sssvip">⚡ SSSVIP Song Long (Mở khóa SSSVIP & dưới)</option>
-                  <option value="god">🌌 GOD Nữ Thần Tối Thượng (Mở khóa toàn bộ)</option>
+                  <option value="normal">Bình thường (Khung cơ bản)</option>
+                  <option value="svip">SVIP Thánh Hỏa (Mở khóa SVIP)</option>
+                  <option value="ssvip">SSVIP Cánh Băng (Mở khóa SSVIP & dưới)</option>
+                  <option value="sssvip">SSSVIP Song Long (Mở khóa SSSVIP & dưới)</option>
+                  <option value="god">GOD Nữ Thần Tối Thượng (Mở khóa toàn bộ)</option>
                 </select>
                 <button
                   type="submit"
                   className={s.vipUpdateBtn}
                   disabled={actionLoading || isProtectedUser(detailModalUser)}
                 >
-                  {actionLoading ? '...' : 'Cập Nhật Quyền VIP ✨'}
+                  {actionLoading ? '...' : (
+                    <>
+                      <span>Cập Nhật Quyền VIP</span>
+                      <PixelIcon name="sparkles" size={14} />
+                    </>
+                  )}
                 </button>
               </form>
               {vipUpdateSuccess && (
@@ -1166,8 +1290,9 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
             {/* Fertility Feature Permission Section */}
             <div className={s.vipTierSection} style={{ marginTop: 14, background: '#FFF5F8', border: '1.5px solid var(--color-pink-300)' }}>
               <div className={s.vipTierHeader}>
-                <span className={s.vipTierTitle} style={{ color: 'var(--color-pink-600)' }}>
-                  🌸 Cấp Phép Tính Năng Khả Năng Thụ Thai
+                <span className={s.vipTierTitle} style={{ color: 'var(--color-pink-600)', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                  <PixelIcon name="flower" size={18} />
+                  <span>Cấp Phép Tính Năng Khả Năng Thụ Thai</span>
                 </span>
                 <span
                   className={s.currentVipTag}
@@ -1175,9 +1300,13 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                     color: detailModalUser.allowFertilityTracking ? '#2E7D32' : '#C62828',
                     background: detailModalUser.allowFertilityTracking ? '#E8F5E9' : '#FFEBEE',
                     border: `1px solid ${detailModalUser.allowFertilityTracking ? '#4CAF50' : '#EF5350'}`,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 4,
                   }}
                 >
-                  {detailModalUser.allowFertilityTracking ? '🟢 ĐÃ CẤP PHÉP' : '🔒 BỊ KHÓA'}
+                  <PixelIcon name={detailModalUser.allowFertilityTracking ? 'check' : 'lock'} size={12} />
+                  <span>{detailModalUser.allowFertilityTracking ? 'ĐÃ CẤP PHÉP' : 'BỊ KHÓA'}</span>
                 </span>
               </div>
               <p className={s.vipTierDesc}>
@@ -1194,7 +1323,17 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                   onClick={() => handleToggleFertilityPermission(detailModalUser)}
                   disabled={actionLoading}
                 >
-                  {detailModalUser.allowFertilityTracking ? 'Thu Hồi Quyền ✕' : 'Cấp Phép Ngay ✓'}
+                  {detailModalUser.allowFertilityTracking ? (
+                    <>
+                      <span>Thu Hồi Quyền</span>
+                      <PixelIcon name="cross" size={12} />
+                    </>
+                  ) : (
+                    <>
+                      <span>Cấp Phép Ngay</span>
+                      <PixelIcon name="check" size={12} />
+                    </>
+                  )}
                 </button>
               </div>
             </div>
@@ -1202,13 +1341,15 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
             {/* Account Protection / Delete User Section */}
             {isProtectedUser(detailModalUser) ? (
               <div style={{ background: '#FFF9C4', border: '1.5px solid #FFB300', borderRadius: 8, padding: '10px 14px', marginTop: 14, color: '#B78103', fontSize: 12, fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 6 }}>
-                <span>👑</span> Tài khoản Quản trị tối cao là Bất tử. Được bảo vệ vĩnh viễn và không thể bị xóa hoặc hạn chế quyền!
+                <PixelIcon name="crown" size={16} />
+                <span>Tài khoản Quản trị tối cao là Bất tử. Được bảo vệ vĩnh viễn và không thể bị xóa hoặc hạn chế quyền!</span>
               </div>
             ) : (
               <div style={{ background: '#FFF5F5', border: '1.5px dashed #FEB2B2', borderRadius: 8, padding: '12px 14px', marginTop: 14, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div>
-                  <div style={{ fontSize: 12, fontWeight: 'bold', color: '#E53E3E' }}>
-                    🗑️ Xóa Vĩnh Viễn Tài Khoản
+                  <div style={{ fontSize: 12, fontWeight: 'bold', color: '#E53E3E', display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <PixelIcon name="trash" size={16} />
+                    <span>Xóa Vĩnh Viễn Tài Khoản</span>
                   </div>
                   <div style={{ fontSize: 10, color: 'var(--color-ink-light)', marginTop: 2 }}>
                     Xóa hoàn toàn tài khoản này khỏi cơ sở dữ liệu hệ thống.
@@ -1220,7 +1361,8 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                   onClick={() => handleDeleteUser(detailModalUser)}
                   disabled={actionLoading}
                 >
-                  Xác Nhận Xóa 🗑️
+                  <span>Xác Nhận Xóa</span>
+                  <PixelIcon name="trash" size={14} />
                 </button>
               </div>
             )}
@@ -1234,7 +1376,8 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
           <div className={s.modalCard} onClick={(e) => e.stopPropagation()}>
             <div className={s.modalHeader}>
               <h3 className={s.modalTitle}>
-                <span>⛔</span> Cấm Tài Khoản
+                <PixelIcon name="ban" size={20} />
+                <span>Cấm Tài Khoản</span>
               </h3>
               <button
                 type="button"
@@ -1271,9 +1414,9 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                   <option value="3">3 Ngày</option>
                   <option value="7">7 Ngày (1 Tuần)</option>
                   <option value="30">30 Ngày (1 Tháng)</option>
-                  <option value="custom_days">⚙️ Tự Nhập Số Ngày Tùy Chỉnh</option>
-                  <option value="datetime">📅 Tự Chọn Ngày & Giờ Hết Hạn Cụ Thể</option>
-                  <option value="-1">⛔ Vĩnh Viễn (Permanent Ban)</option>
+                  <option value="custom_days">Tự Nhập Số Ngày Tùy Chỉnh</option>
+                  <option value="datetime">Tự Chọn Ngày & Giờ Hết Hạn Cụ Thể</option>
+                  <option value="-1">Vĩnh Viễn (Permanent Ban)</option>
                 </select>
 
                 {/* Custom Days Input */}
@@ -1334,7 +1477,12 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                   className={s.confirmBanBtn}
                   disabled={actionLoading}
                 >
-                  {actionLoading ? 'Đang xử lý...' : 'Xác Nhận Cấm ⛔'}
+                  {actionLoading ? 'Đang xử lý...' : (
+                    <>
+                      <span>Xác Nhận Cấm</span>
+                      <PixelIcon name="ban" size={14} />
+                    </>
+                  )}
                 </button>
               </div>
             </form>
@@ -1348,7 +1496,8 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
           <div className={s.modalCard} onClick={(e) => e.stopPropagation()}>
             <div className={s.modalHeader}>
               <h3 className={s.modalTitle}>
-                <span>📬</span> Xét Duyệt Khiếu Nại Mở Khóa
+                <PixelIcon name="mail" size={20} />
+                <span>Xét Duyệt Khiếu Nại Mở Khóa</span>
               </h3>
               <button
                 type="button"
@@ -1374,8 +1523,9 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
 
             {/* Appeal Details Card */}
             <div className={s.appealDetailBox}>
-              <div className={s.appealDetailTitle}>
-                <span>⛔</span> THÔNG TIN KHÓA TÀI KHOẢN
+              <div className={s.appealDetailTitle} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                <PixelIcon name="ban" size={14} />
+                <span>THÔNG TIN KHÓA TÀI KHOẢN</span>
               </div>
               <div style={{ fontSize: 12, color: 'var(--color-ink)' }}>
                 <strong>Lý do cấm:</strong> {appealModalUser.banReason || 'Vi phạm điều khoản'}
@@ -1384,8 +1534,9 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                 <strong>Thời hạn:</strong> {formatBanUntil(appealModalUser.banUntilDate)}
               </div>
 
-              <div className={s.appealDetailTitle} style={{ marginTop: 8 }}>
-                <span>📬</span> LỜI GIẢI TRÌNH CỦA NGƯỜI DÙNG:
+              <div className={s.appealDetailTitle} style={{ marginTop: 8, display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                <PixelIcon name="mail" size={14} />
+                <span>LỜI GIẢI TRÌNH CỦA NGƯỜI DÙNG:</span>
               </div>
               <div className={s.appealDetailMessage}>
                 "{appealModalUser.appeal?.message || 'Không có lời giải trình'}"
@@ -1418,7 +1569,8 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                 onClick={() => handleRejectAppeal(appealModalUser)}
                 disabled={actionLoading}
               >
-                ✕ Bác Bỏ Khiếu Nại
+                <PixelIcon name="cross" size={14} />
+                <span>Bác Bỏ Khiếu Nại</span>
               </button>
               <button
                 type="button"
@@ -1426,7 +1578,8 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                 onClick={() => handleApproveAppeal(appealModalUser)}
                 disabled={actionLoading}
               >
-                ✓ Chấp Thuận & Mở Khóa Ngay
+                <PixelIcon name="check" size={14} />
+                <span>Chấp Thuận & Mở Khóa Ngay</span>
               </button>
             </div>
           </div>
@@ -1445,7 +1598,8 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
               }}
             >
               <h3 className={s.modalTitle} style={{ color: '#92400E' }}>
-                <span>👑</span> Cấp VIP & Điều Chỉnh Quyền Hạn
+                <PixelIcon name="crown" size={20} />
+                <span>Cấp VIP & Điều Chỉnh Quyền Hạn</span>
               </h3>
               <button
                 type="button"
@@ -1478,9 +1632,13 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                           border: `1.5px solid ${currentVip.color}`,
                           fontSize: 10,
                           padding: '2px 8px',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: 4,
                         }}
                       >
-                        Cấp hiện tại: {currentVip.badge} (Rank {currentVip.rank})
+                        <PixelIcon name={currentVip.iconName || 'plant'} size={11} />
+                        <span>Cấp hiện tại: {currentVip.badge} (Rank {currentVip.rank})</span>
                       </span>
                     </div>
                   )
@@ -1508,22 +1666,22 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                     padding: '0 12px',
                   }}
                 >
-                  <option value="normal">🌱 Bình Thường (Rank 0 — Khóa toàn bộ khung VIP)</option>
-                  <option value="svip">🔥 SVIP Thánh Hỏa (Rank 1 — Mở khóa khung SVIP)</option>
-                  <option value="ssvip">❄️ SSVIP Cánh Băng (Rank 2 — Mở khóa SSVIP & SVIP)</option>
-                  <option value="sssvip">⚡ SSSVIP Song Long (Rank 3 — Mở khóa SSSVIP, SSVIP, SVIP)</option>
-                  <option value="god">🌌 GOD Nữ Thần Tối Thượng (Rank 4 — Mở khóa 100% tất cả khung VIP)</option>
+                  <option value="normal">Bình Thường (Rank 0 — Khóa toàn bộ khung VIP)</option>
+                  <option value="svip">SVIP Thánh Hỏa (Rank 1 — Mở khóa khung SVIP)</option>
+                  <option value="ssvip">SSVIP Cánh Băng (Rank 2 — Mở khóa SSVIP & SVIP)</option>
+                  <option value="sssvip">SSSVIP Song Long (Rank 3 — Mở khóa SSSVIP, SSVIP, SVIP)</option>
+                  <option value="god">GOD Nữ Thần Tối Thượng (Rank 4 — Mở khóa 100% tất cả khung VIP)</option>
                 </select>
               </div>
 
               {/* Quick 1-Click Tier Selection Buttons */}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 6 }}>
                 {[
-                  { id: 'normal', label: '🌱 Bình Thường', color: '#6B7280', bg: '#F3F4F6' },
-                  { id: 'svip', label: '🔥 SVIP', color: '#EF4444', bg: '#FEF2F2' },
-                  { id: 'ssvip', label: '❄️ SSVIP', color: '#0284C7', bg: '#F0F9FF' },
-                  { id: 'sssvip', label: '⚡ SSSVIP', color: '#D97706', bg: '#FFFBEB' },
-                  { id: 'god', label: '🌌 GOD', color: '#9333EA', bg: '#FAF5FF' },
+                  { id: 'normal', label: 'Bình Thường', iconName: 'plant', color: '#6B7280', bg: '#F3F4F6' },
+                  { id: 'svip', label: 'SVIP', iconName: 'flame', color: '#EF4444', bg: '#FEF2F2' },
+                  { id: 'ssvip', label: 'SSVIP', iconName: 'snowflake', color: '#0284C7', bg: '#F0F9FF' },
+                  { id: 'sssvip', label: 'SSSVIP', iconName: 'bolt', color: '#D97706', bg: '#FFFBEB' },
+                  { id: 'god', label: 'GOD', iconName: 'galaxy', color: '#9333EA', bg: '#FAF5FF' },
                 ].map((tier) => (
                   <button
                     key={tier.id}
@@ -1536,13 +1694,18 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                       background: selectedVipTier === tier.id ? tier.bg : '#FFFFFF',
                       color: tier.color,
                       fontWeight: selectedVipTier === tier.id ? 'bold' : 'normal',
-                      fontSize: 11,
+                      fontSize: 12,
                       cursor: 'pointer',
                       boxShadow: selectedVipTier === tier.id ? `0 0 0 2px ${tier.color}33` : 'none',
                       transition: 'all 0.15s ease',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: 6,
                     }}
                   >
-                    {tier.label}
+                    <PixelIcon name={tier.iconName} size={14} />
+                    <span>{tier.label}</span>
                   </button>
                 ))}
               </div>
@@ -1590,9 +1753,18 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                     borderRadius: 10,
                     cursor: 'pointer',
                     boxShadow: '0 3px 8px rgba(217, 119, 6, 0.4)',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 6,
                   }}
                 >
-                  {actionLoading ? 'Đang cập nhật...' : 'Lưu Thay Đổi Cấp VIP ✨'}
+                  {actionLoading ? 'Đang cập nhật...' : (
+                    <>
+                      <span>Lưu Thay Đổi Cấp VIP</span>
+                      <PixelIcon name="sparkles" size={14} />
+                    </>
+                  )}
                 </button>
               </div>
             </form>

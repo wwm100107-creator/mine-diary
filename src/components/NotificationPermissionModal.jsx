@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { requestPushPermission, displayOsNotification } from '../lib/push'
 import { usePwaInstallState } from '../hooks/usePwaInstallState'
+import PixelIcon from './PixelIcon'
 import s from './NotificationPermissionModal.module.css'
 
 export default function NotificationPermissionModal({ user, onClose, onPermissionGranted }) {
@@ -16,10 +17,10 @@ export default function NotificationPermissionModal({ user, onClose, onPermissio
         setSuccess(true)
         if (onPermissionGranted) onPermissionGranted(token)
 
-        // 🔔 Fire immediate confirmation OS notification to verify lock screen delivery
+        // Fire immediate confirmation OS notification to verify lock screen delivery
         displayOsNotification({
-          title: 'Mine Diary 🌸',
-          body: 'Đã kích hoạt thông báo thành công! Bạn sẽ nhận được tin nhắn và lời nhắc chu kỳ ngay tại đây ✨',
+          title: 'Mine Diary',
+          body: 'Đã kích hoạt thông báo thành công! Bạn sẽ nhận được tin nhắn và lời nhắc chu kỳ ngay tại đây.',
           icon: '/icon-192.png',
           data: { url: '/#chat' },
         }).catch(console.warn)
@@ -54,18 +55,18 @@ export default function NotificationPermissionModal({ user, onClose, onPermissio
         {/* Cute Floating Pixel Avatar / Icon */}
         <div className={s.iconWrapper}>
           <div className={s.iconBubble}>
-            <span className={s.mainIcon}>🔔</span>
-            <span className={s.subIcon}>💖</span>
+            <span className={s.mainIcon}><PixelIcon name="bell" size={28} /></span>
+            <span className={s.subIcon}><PixelIcon name="heart" size={16} /></span>
           </div>
         </div>
 
         {/* Title */}
         <h3 className={s.title}>
           {success
-            ? 'Đã Bật Thông Báo Thành Công! 🎉'
+            ? 'Đã Bật Thông Báo Thành Công!'
             : needsIosInstallFirst
-            ? 'Cài Đặt PWA Màn Hình Khóa 📱'
-            : 'Bật Thông Báo Màn Hình Khóa 🌸'}
+            ? 'Cài Đặt PWA Màn Hình Khóa'
+            : 'Bật Thông Báo Màn Hình Khóa'}
         </h3>
 
         {/* Prompt Copy */}
@@ -74,20 +75,20 @@ export default function NotificationPermissionModal({ user, onClose, onPermissio
             ? 'Từ bây giờ bạn sẽ nhận được thông báo tin nhắn và lời nhắc yêu thương ngay tức thì kể cả khi tắt app!'
             : needsIosInstallFirst
             ? 'Trên iPhone/iPad (iOS 16.4+), Apple yêu cầu thêm App ra Màn hình chính để kích hoạt tính năng nhận thông báo ngoài màn hình khóa.'
-            : 'Cho phép Mine Diary gửi thông báo để không bỏ lỡ tin nhắn và nhắc nhở chu kỳ từ người ấy kể cả khi đã tắt app nhé! 💖'}
+            : 'Cho phép Mine Diary gửi thông báo để không bỏ lỡ tin nhắn và nhắc nhở chu kỳ từ người ấy kể cả khi đã tắt app nhé!'}
         </p>
 
         {/* iOS 16.4+ Step-by-Step Helper Guide */}
         {needsIosInstallFirst && !success && (
           <div className={s.featureGrid} style={{ background: '#FFF0F5', borderColor: '#FF8FAB' }}>
             <div className={s.featureTag}>
-              <span>1️⃣</span> Bấm nút <strong>Chia sẻ ⎋</strong> ở thanh dưới Safari
+              <strong>1.</strong> Bấm nút <strong>Chia sẻ ⎋</strong> ở thanh dưới Safari
             </div>
             <div className={s.featureTag}>
-              <span>2️⃣</span> Chọn <strong>Thêm vào Màn hình chính ➕</strong>
+              <strong>2.</strong> Chọn <strong>Thêm vào Màn hình chính</strong>
             </div>
             <div className={s.featureTag}>
-              <span>3️⃣</span> Mở App từ màn hình chính để nhận thông báo!
+              <strong>3.</strong> Mở App từ màn hình chính để nhận thông báo!
             </div>
           </div>
         )}
@@ -96,13 +97,16 @@ export default function NotificationPermissionModal({ user, onClose, onPermissio
         {!needsIosInstallFirst && !success && (
           <div className={s.featureGrid}>
             <div className={s.featureTag}>
-              <span>💌</span> Tin nhắn từ người ấy (khi tắt màn hình)
+              <PixelIcon name="mail" size={16} />
+              <span>Tin nhắn từ người ấy (khi tắt màn hình)</span>
             </div>
             <div className={s.featureTag}>
-              <span>🌸</span> Lời nhắc chu kỳ yêu thương
+              <PixelIcon name="flower" size={16} />
+              <span>Lời nhắc chu kỳ yêu thương</span>
             </div>
             <div className={s.featureTag}>
-              <span>⚡</span> Hoạt động trên cả Android & iOS 16.4+
+              <PixelIcon name="bolt" size={16} />
+              <span>Hoạt động trên cả Android & iOS 16.4+</span>
             </div>
           </div>
         )}
@@ -126,7 +130,10 @@ export default function NotificationPermissionModal({ user, onClose, onPermissio
               className={s.grantBtn}
               onClick={handleDismiss}
             >
-              Đã hiểu, để mình thêm! 📲
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                <span>Đã hiểu, để mình thêm!</span>
+                <PixelIcon name="device" size={16} />
+              </span>
             </button>
           ) : (
             <button
@@ -135,7 +142,17 @@ export default function NotificationPermissionModal({ user, onClose, onPermissio
               onClick={success ? onClose : handleGrant}
               disabled={loading}
             >
-              {loading ? 'Đang kích hoạt...' : success ? 'Tuyệt vời! ✨' : 'Cho Phép Ngay ✨'}
+              {loading ? 'Đang kích hoạt...' : success ? (
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                  <span>Tuyệt vời!</span>
+                  <PixelIcon name="sparkles" size={16} />
+                </span>
+              ) : (
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                  <span>Cho Phép Ngay</span>
+                  <PixelIcon name="sparkles" size={16} />
+                </span>
+              )}
             </button>
           )}
         </div>

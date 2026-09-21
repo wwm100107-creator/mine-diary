@@ -16,6 +16,7 @@ import AvatarWithFrame from './components/AvatarWithFrame'
 import AvatarUploadModal from './components/AvatarUploadModal'
 import AttendanceModal from './components/AttendanceModal'
 import NotificationPermissionModal from './components/NotificationPermissionModal'
+import PixelIcon from './components/PixelIcon'
 import { upsertUser, getUser, uploadUserAvatar, subscribeToUserChats, syncUserCycleData, subscribeToPartnerCycleData } from './lib/social'
 import { isUserAdmin } from './lib/admin'
 import { getCurrentUser, saveSession, logoutUser, touchUserActivity } from './lib/auth'
@@ -224,21 +225,21 @@ export default function App() {
 
   const navTabs = useMemo(() => {
     const tabs = [
-      { id: 'diary', label: 'Nhật ký chung', icon: '📖' },
+      { id: 'diary', label: 'Nhật ký chung', icon: 'book' },
     ]
 
     // Own Health tab (For Female user)
     if (isFemale) {
-      tabs.push({ id: 'health', label: 'Sức khỏe', icon: '🌸' })
+      tabs.push({ id: 'health', label: 'Sức khỏe', icon: 'flower' })
     }
 
     // Partner Cycle tab (Unlocked in Real-Time for ANY user when partner shared cycle data)
     if (hasSharedCycleAccess) {
-      tabs.push({ id: 'partner_cycle', label: 'Theo dõi chu kỳ', icon: '💖' })
+      tabs.push({ id: 'partner_cycle', label: 'Theo dõi chu kỳ', icon: 'heart' })
     }
 
     // Chat tab (Always present for normal users)
-    tabs.push({ id: 'chat', label: 'Tin nhắn', icon: '💬' })
+    tabs.push({ id: 'chat', label: 'Tin nhắn', icon: 'chat' })
 
     return tabs
   }, [isFemale, hasSharedCycleAccess])
@@ -744,7 +745,7 @@ export default function App() {
                 onClick={() => setIsAttendanceModalOpen(true)}
                 title="Mở Lộ Trình 30 Ngày Điểm Danh Nhận VIP"
               >
-                <span className={s.giftIcon}>🎁</span>
+                <span className={s.giftIcon}><PixelIcon name="gift" size={16} /></span>
                 <span className={s.attendanceBtnText}>Điểm Danh VIP</span>
                 {canCheckInToday(user) && <span className={s.redDotBadge} />}
               </button>
@@ -796,7 +797,10 @@ export default function App() {
                 }}
                 title="Chuyển đến Bảng Quản Trị Hệ Thống"
               >
-                🛡️ Cổng Admin
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                  <PixelIcon name="shield" size={16} />
+                  <span>Cổng Admin</span>
+                </span>
               </button>
             )}
             <button
@@ -833,7 +837,10 @@ export default function App() {
                 onClick={() => switchTab(t.id)}
                 aria-current={currentTab === t.id ? 'page' : undefined}
               >
-                <span className={s.navIcon}>{t.icon}</span> {t.label}
+                <span className={s.navIcon}>
+                  <PixelIcon name={t.icon} size={16} />
+                </span>
+                <span>{t.label}</span>
               </button>
             ))}
           </div>

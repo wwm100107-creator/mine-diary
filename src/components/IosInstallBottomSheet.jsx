@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
+import PixelIcon from './PixelIcon'
 import s from './IosInstallBottomSheet.module.css'
 
 export default function IosInstallBottomSheet({ isIOS, isStandalone }) {
@@ -57,13 +58,13 @@ export default function IosInstallBottomSheet({ isIOS, isStandalone }) {
           {/* Cute Floating Mascot Header */}
           <div className={s.headerRow}>
             <div className={s.mascotBadge}>
-              <span className={s.mascotEmoji}>🐰</span>
-              <span className={s.sparkleBadge}>✨</span>
+              <span className={s.mascotEmoji}><PixelIcon name="bunny" size={28} /></span>
+              <span className={s.sparkleBadge}><PixelIcon name="sparkles" size={14} /></span>
             </div>
             <div className={s.headerText}>
-              <h4 className={s.title}>Cài Đặt Mine Diary 🌸</h4>
+              <h4 className={s.title}>Cài Đặt Mine Diary</h4>
               <p className={s.subtitle}>
-                Thêm ra Màn hình chính để nhận thông báo tin nhắn và lời nhắc chu kỳ ngoài màn hình khóa nhé! 💖
+                Thêm ra Màn hình chính để nhận thông báo tin nhắn và lời nhắc chu kỳ ngoài màn hình khóa nhé!
               </p>
             </div>
           </div>
@@ -88,7 +89,7 @@ export default function IosInstallBottomSheet({ isIOS, isStandalone }) {
             <div className={s.stepCard}>
               <div className={s.stepNumberBadge}>2</div>
               <div className={s.stepIconBox}>
-                <span className={s.addPlusEmoji}>➕</span>
+                <span className={s.addPlusEmoji}><PixelIcon name="plus" size={20} /></span>
               </div>
               <div className={s.stepInfo}>
                 <span className={s.stepAction}>Chọn <strong>Thêm vào MH chính</strong></span>
@@ -100,7 +101,7 @@ export default function IosInstallBottomSheet({ isIOS, isStandalone }) {
           {/* Action Row */}
           <div className={s.bottomRow}>
             <div className={s.pointingArrowWrap}>
-              <span className={s.bounceArrow}>👇</span>
+              <span className={s.bounceArrow}><PixelIcon name="arrowDown" size={18} /></span>
               <span className={s.arrowText}>Nút chia sẻ ở ngay dưới thanh này</span>
             </div>
             <button
@@ -108,7 +109,10 @@ export default function IosInstallBottomSheet({ isIOS, isStandalone }) {
               className={s.gotItBtn}
               onClick={handleDismiss}
             >
-              Đã hiểu rồi! 📲
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                <span>Đã hiểu rồi!</span>
+                <PixelIcon name="check" size={16} />
+              </span>
             </button>
           </div>
         </div>

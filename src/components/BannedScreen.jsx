@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { submitBanAppeal } from '../lib/admin'
+import PixelIcon from './PixelIcon'
 import s from './BannedScreen.module.css'
 
 function parseBanDate(val) {
@@ -112,8 +113,13 @@ export default function BannedScreen({ banDetails, onLogout, onAppealSubmitted }
         {/* Top Header with Crying Pixel Mascot & Warning */}
         <div className={s.cardHeader}>
           <div className={s.mascotWrapper}>
-            <div className={s.cryingMascot} aria-hidden="true">😿🐰</div>
-            <div className={s.warningPill}>⚠️ LỆNH CẤM TRUY CẬP</div>
+            <div className={s.cryingMascot} aria-hidden="true">
+              <PixelIcon name="cryingBunny" size={48} />
+            </div>
+            <div className={s.warningPill}>
+              <PixelIcon name="warning" size={14} />
+              <span>LỆNH CẤM TRUY CẬP</span>
+            </div>
           </div>
           <h1 className={s.mainTitle}>
             {isPermanent ? 'Tài Khoản Đã Bị Khóa Vĩnh Viễn!' : 'Tài Khoản Đã Bị Tạm Khóa!'}
@@ -126,7 +132,7 @@ export default function BannedScreen({ banDetails, onLogout, onAppealSubmitted }
         {/* Reason Box */}
         <div className={s.reasonBox}>
           <div className={s.reasonHeader}>
-            <span className={s.reasonIcon}>📜</span>
+            <span className={s.reasonIcon}><PixelIcon name="scroll" size={16} /></span>
             <span className={s.reasonLabel}>Lý do từ Quản trị viên:</span>
           </div>
           <div className={s.reasonContent}>
@@ -137,17 +143,20 @@ export default function BannedScreen({ banDetails, onLogout, onAppealSubmitted }
         {/* Countdown Timer Area */}
         <div className={s.timerSection}>
           <div className={s.timerHeader}>
-            <span>⏳ THỜI GIAN KHÓA CÒN LẠI</span>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+              <PixelIcon name="hourglass" size={14} />
+              <span>THỜI GIAN KHÓA CÒN LẠI</span>
+            </span>
           </div>
 
           {isPermanent ? (
             <div className={s.permanentBadge}>
-              <span className={s.permanentIcon}>⛔</span>
+              <span className={s.permanentIcon}><PixelIcon name="ban" size={16} /></span>
               <span>KHÓA VĨNH VIỄN — KHÔNG THỂ TỰ MỞ</span>
             </div>
           ) : isExpired ? (
             <div className={s.expiredBadge}>
-              <span className={s.expiredIcon}>🎉</span>
+              <span className={s.expiredIcon}><PixelIcon name="party" size={16} /></span>
               <span>Thời hạn cấm đã kết thúc! Bạn có thể đăng xuất và đăng nhập lại ngay.</span>
             </div>
           ) : (
@@ -179,9 +188,27 @@ export default function BannedScreen({ banDetails, onLogout, onAppealSubmitted }
         {appeal && (
           <div className={s.existingAppealBox}>
             <div className={s.appealStatusLine}>
-              <span>💌 Trạng thái khiếu nại:</span>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                <PixelIcon name="mail" size={14} />
+                <span>Trạng thái khiếu nại:</span>
+              </span>
               <span className={`${s.appealStatusTag} ${s[appeal.status]}`}>
-                {appeal.status === 'pending' ? '⏳ Đang chờ Admin duyệt' : appeal.status === 'approved' ? '✓ Đã chấp thuận' : '✕ Bị từ chối'}
+                {appeal.status === 'pending' ? (
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                    <PixelIcon name="hourglass" size={12} />
+                    <span>Đang chờ Admin duyệt</span>
+                  </span>
+                ) : appeal.status === 'approved' ? (
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                    <PixelIcon name="check" size={12} />
+                    <span>Đã chấp thuận</span>
+                  </span>
+                ) : (
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                    <PixelIcon name="cross" size={12} />
+                    <span>Bị từ chối</span>
+                  </span>
+                )}
               </span>
             </div>
             <p className={s.appealTextPreview}>"{appeal.message}"</p>
@@ -199,7 +226,7 @@ export default function BannedScreen({ banDetails, onLogout, onAppealSubmitted }
               setIsAppealOpen(true)
             }}
           >
-            <span className={s.btnIcon}>💌</span>
+            <span className={s.btnIcon}><PixelIcon name="mail" size={16} /></span>
             <span>Gửi Khiếu Nại</span>
           </button>
 
@@ -208,7 +235,7 @@ export default function BannedScreen({ banDetails, onLogout, onAppealSubmitted }
             className={s.logoutBtn}
             onClick={onLogout}
           >
-            <span className={s.btnIcon}>🚪</span>
+            <span className={s.btnIcon}><PixelIcon name="door" size={16} /></span>
             <span>Đăng Xuất</span>
           </button>
         </div>
@@ -221,7 +248,7 @@ export default function BannedScreen({ banDetails, onLogout, onAppealSubmitted }
           <div className={s.appealModalCard} onClick={(e) => e.stopPropagation()}>
             <div className={s.appealModalHeader}>
               <div className={s.appealModalTitleGroup}>
-                <span className={s.appealModalIcon}>💌</span>
+                <span className={s.appealModalIcon}><PixelIcon name="mail" size={20} /></span>
                 <h3 className={s.appealModalTitle}>Gửi Đơn Khiếu Nại Ban</h3>
               </div>
               <button
@@ -250,8 +277,18 @@ export default function BannedScreen({ banDetails, onLogout, onAppealSubmitted }
                 autoFocus
               />
 
-              {appealError && <div className={s.appealErrorMsg}>⚠️ {appealError}</div>}
-              {appealSuccess && <div className={s.appealSuccessMsg}>✨ {appealSuccess}</div>}
+              {appealError && (
+                <div className={s.appealErrorMsg}>
+                  <PixelIcon name="warning" size={14} />
+                  <span>{appealError}</span>
+                </div>
+              )}
+              {appealSuccess && (
+                <div className={s.appealSuccessMsg}>
+                  <PixelIcon name="sparkles" size={14} />
+                  <span>{appealSuccess}</span>
+                </div>
+              )}
 
               <div className={s.appealModalActions}>
                 <button
@@ -267,7 +304,12 @@ export default function BannedScreen({ banDetails, onLogout, onAppealSubmitted }
                   className={s.appealSubmitBtn}
                   disabled={appealSubmitting || !appealMessage.trim()}
                 >
-                  {appealSubmitting ? 'Đang gửi...' : 'Gửi Kháng Nghị 🚀'}
+                  {appealSubmitting ? 'Đang gửi...' : (
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                      <span>Gửi Kháng Nghị</span>
+                      <PixelIcon name="rocket" size={16} />
+                    </span>
+                  )}
                 </button>
               </div>
             </form>

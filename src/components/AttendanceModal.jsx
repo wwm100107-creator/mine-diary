@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { createPortal } from 'react-dom'
 import PixelAvatar from './PixelAvatar'
+import PixelIcon from './PixelIcon'
 import { ATTENDANCE_ROADMAP, getUserVipTier } from '../utils/vipTiers'
 import { claimDailyAttendance, canCheckInToday } from '../lib/attendance'
 import s from './AttendanceModal.module.css'
@@ -33,9 +34,9 @@ export default function AttendanceModal({ user, onUpdateUser, onClose }) {
       onUpdateUser?.(result.updatedUser)
 
       if (result.unlockedNewTier) {
-        setSuccessMessage(`🎉 CHÚC MỪNG! Bạn đã thăng hạng lên ${result.vipTier.toUpperCase()} và mở khóa thêm khung viền mới!`)
+        setSuccessMessage(`CHÚC MỪNG! Bạn đã thăng hạng lên ${result.vipTier.toUpperCase()} và mở khóa thêm khung viền mới!`)
       } else {
-        setSuccessMessage(`✨ Điểm danh Ngày ${result.dayClaimed} thành công! Hãy tiếp tục duy trì để mở khóa GOD 🌌!`)
+        setSuccessMessage(`Điểm danh Ngày ${result.dayClaimed} thành công! Hãy tiếp tục duy trì để mở khóa GOD!`)
       }
     } catch (err) {
       setErrorMessage(err.message || 'Lỗi khi điểm danh. Vui lòng thử lại!')
@@ -50,7 +51,7 @@ export default function AttendanceModal({ user, onUpdateUser, onClose }) {
         {/* Header */}
         <div className={s.modalHeader}>
           <div className={s.headerTitleWrap}>
-            <span className={s.headerIcon}>🎁</span>
+            <span className={s.headerIcon}><PixelIcon name="gift" size={24} /></span>
             <div>
               <h2 className={s.modalTitle}>Lộ Trình 30 Ngày Điểm Danh Nhận VIP</h2>
               <p className={s.modalSubtitle}>
@@ -83,12 +84,12 @@ export default function AttendanceModal({ user, onUpdateUser, onClose }) {
         {/* Alerts */}
         {successMessage && (
           <div className={s.successBanner}>
-            <span>🎉</span> {successMessage}
+            <PixelIcon name="party" size={16} /> <span>{successMessage}</span>
           </div>
         )}
         {errorMessage && (
           <div className={s.errorBanner}>
-            <span>⚠️</span> {errorMessage}
+            <PixelIcon name="warning" size={16} /> <span>{errorMessage}</span>
           </div>
         )}
 
@@ -106,7 +107,7 @@ export default function AttendanceModal({ user, onUpdateUser, onClose }) {
               >
                 <div className={s.dayHeader}>
                   <span className={s.dayBadge}>Ngày {item.day}</span>
-                  {isClaimed && <span className={s.checkMark}>✓</span>}
+                  {isClaimed && <span className={s.checkMark}><PixelIcon name="check" size={12} /></span>}
                   {isToday && <span className={s.todayTag}>Hôm nay</span>}
                 </div>
 
@@ -121,7 +122,7 @@ export default function AttendanceModal({ user, onUpdateUser, onClose }) {
                     </div>
                   ) : (
                     <div className={s.regularRewardBox}>
-                      <span className={s.regularIcon}>{item.icon}</span>
+                      <span className={s.regularIcon}><PixelIcon name={item.iconName || 'gift'} size={20} /></span>
                       <span className={s.regularText}>{item.desc}</span>
                     </div>
                   )}
@@ -134,7 +135,10 @@ export default function AttendanceModal({ user, onUpdateUser, onClose }) {
                   ) : isToday ? (
                     <span className={s.statusReady}>Sẵn sàng!</span>
                   ) : (
-                    <span className={s.statusLocked}>🔒 Khóa</span>
+                    <span className={s.statusLocked} style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                      <PixelIcon name="lock" size={12} />
+                      <span>Khóa</span>
+                    </span>
                   )}
                 </div>
               </div>
@@ -151,11 +155,25 @@ export default function AttendanceModal({ user, onUpdateUser, onClose }) {
               onClick={handleClaim}
               disabled={loading}
             >
-              {loading ? '⏳ Đang nhận thưởng...' : `🎁 Điểm Danh Nhận Quà Ngày ${nextClaimDay} Ngay!`}
+              {loading ? (
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                  <PixelIcon name="hourglass" size={16} />
+                  <span>Đang nhận thưởng...</span>
+                </span>
+              ) : (
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                  <PixelIcon name="gift" size={16} />
+                  <span>Điểm Danh Nhận Quà Ngày {nextClaimDay} Ngay!</span>
+                </span>
+              )}
             </button>
           ) : (
             <div className={s.alreadyCheckedInNotice}>
-              ✓ Hôm nay bạn đã điểm danh rồi. Hãy quay lại vào ngày mai nhé! ✨
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                <PixelIcon name="check" size={16} />
+                <span>Hôm nay bạn đã điểm danh rồi. Hãy quay lại vào ngày mai nhé!</span>
+                <PixelIcon name="sparkles" size={16} />
+              </span>
             </div>
           )}
         </div>

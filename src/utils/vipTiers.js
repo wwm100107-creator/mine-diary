@@ -10,7 +10,8 @@ export const VIP_TIERS = {
     name: 'Bình Thường',
     shortName: 'Thành viên',
     rank: 0,
-    badge: '🌱 Thành viên',
+    badge: 'Thành viên',
+    iconName: 'plant',
     color: '#6B7280',
     bg: '#F3F4F6',
   },
@@ -19,7 +20,8 @@ export const VIP_TIERS = {
     name: 'SVIP Thánh Hỏa',
     shortName: 'SVIP',
     rank: 1,
-    badge: '🔥 SVIP',
+    badge: 'SVIP',
+    iconName: 'flame',
     frameId: 'vip8_fire',
     reqDays: 1,
     color: '#EF4444',
@@ -30,7 +32,8 @@ export const VIP_TIERS = {
     name: 'SSVIP Cánh Băng',
     shortName: 'SSVIP',
     rank: 2,
-    badge: '❄️ SSVIP',
+    badge: 'SSVIP',
+    iconName: 'snowflake',
     frameId: 'vip9_frost',
     reqDays: 7,
     color: '#0284C7',
@@ -41,7 +44,8 @@ export const VIP_TIERS = {
     name: 'SSSVIP Song Long',
     shortName: 'SSSVIP',
     rank: 3,
-    badge: '⚡ SSSVIP',
+    badge: 'SSSVIP',
+    iconName: 'bolt',
     frameId: 'vip10_thunder',
     reqDays: 14,
     color: '#D97706',
@@ -52,7 +56,8 @@ export const VIP_TIERS = {
     name: 'GOD Nữ Thần Tối Thượng',
     shortName: 'GOD',
     rank: 4,
-    badge: '🌌 GOD',
+    badge: 'GOD',
+    iconName: 'galaxy',
     frameId: 'god_cosmic',
     reqDays: 30,
     color: '#9333EA',
@@ -143,60 +148,64 @@ export const ATTENDANCE_ROADMAP = Array.from({ length: 30 }, (_, i) => {
   if (day === 1) {
     return {
       day: 1,
-      title: 'Mở Khóa SVIP 🔥',
+      title: 'Mở Khóa SVIP',
       rewardType: 'vip',
       vipTier: 'svip',
       frameId: 'vip8_fire',
       desc: 'Khung SVIP Thánh Hỏa',
       isMilestone: true,
-      badge: '🔥 SVIP',
+      badge: 'SVIP',
+      iconName: 'flame',
     }
   }
   if (day === 7) {
     return {
       day: 7,
-      title: 'Mở Khóa SSVIP ❄️',
+      title: 'Mở Khóa SSVIP',
       rewardType: 'vip',
       vipTier: 'ssvip',
       frameId: 'vip9_frost',
       desc: 'Khung SSVIP Cánh Băng',
       isMilestone: true,
-      badge: '❄️ SSVIP',
+      badge: 'SSVIP',
+      iconName: 'snowflake',
     }
   }
   if (day === 14) {
     return {
       day: 14,
-      title: 'Mở Khóa SSSVIP ⚡',
+      title: 'Mở Khóa SSSVIP',
       rewardType: 'vip',
       vipTier: 'sssvip',
       frameId: 'vip10_thunder',
       desc: 'Khung SSSVIP Song Long',
       isMilestone: true,
-      badge: '⚡ SSSVIP',
+      badge: 'SSSVIP',
+      iconName: 'bolt',
     }
   }
   if (day === 30) {
     return {
       day: 30,
-      title: 'Mở Khóa GOD 🌌',
+      title: 'Mở Khóa GOD',
       rewardType: 'vip',
       vipTier: 'god',
       frameId: 'god_cosmic',
       desc: 'Khung GOD Nữ Thần Tối Thượng',
       isMilestone: true,
-      badge: '🌌 GOD',
+      badge: 'GOD',
+      iconName: 'galaxy',
     }
   }
 
-  const dailyGiftIcons = ['⭐', '💖', '🌸', '💎', '🍬', '✨', '🎁', '🍀']
-  const icon = dailyGiftIcons[(day - 1) % dailyGiftIcons.length]
+  const dailyGiftIcons = ['star', 'heart', 'flower', 'gem', 'sparkles', 'gift', 'plant']
+  const iconName = dailyGiftIcons[(day - 1) % dailyGiftIcons.length]
   return {
     day,
-    title: `Quà Ngày ${day} ${icon}`,
+    title: `Quà Ngày ${day}`,
     rewardType: 'item',
     desc: `Điểm tích lũy Ngày ${day}`,
     isMilestone: false,
-    icon,
+    iconName,
   }
 })

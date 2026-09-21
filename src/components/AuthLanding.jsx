@@ -3,6 +3,7 @@ import PixelAvatar from './PixelAvatar'
 import AvatarWithFrame from './AvatarWithFrame'
 import AvatarUploadModal from './AvatarUploadModal'
 import BannedScreen from './BannedScreen'
+import PixelIcon from './PixelIcon'
 import { AVATARS, getAvatar } from '../utils/avatars'
 import { loginUser, registerUser, verifyAndCompleteAdmin2FA } from '../lib/auth'
 import { submitBanAppeal } from '../lib/admin'
@@ -327,13 +328,15 @@ export default function AuthLanding({
             <span>✦</span> Cute Pixel Diary <span>✦</span>
           </div>
           <h1 className={s.brandTitle}>Mine<span>Diary</span></h1>
-          <p className={s.brandSubtitle}>Ghi lại mỗi ngày, nhỏ thôi cũng được ✨</p>
+          <p className={s.brandSubtitle}>
+            <span>Ghi lại mỗi ngày, nhỏ thôi cũng được</span> <PixelIcon name="sparkles" size={14} />
+          </p>
         </div>
 
         {twoFactorState ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: 38, marginBottom: 6 }}>🛡️</div>
+              <div style={{ marginBottom: 6 }}><PixelIcon name="shield" size={40} /></div>
               <h2 style={{ fontFamily: 'var(--font-pixel)', fontSize: 16, color: '#D81B60', margin: 0 }}>
                 {twoFactorState.isFirstTimeSetup ? 'KÍCH HOẠT BẢO MẬT 2FA ADMIN' : 'XÁC THỰC BẢO MẬT 2FA (ADMIN)'}
               </h2>
@@ -357,7 +360,10 @@ export default function AuthLanding({
                 </code>
 
                 <div style={{ marginTop: 12, textAlign: 'left', background: '#FFF', padding: '10px 12px', borderRadius: 8, border: '1px solid var(--color-border-mid)' }}>
-                  <strong style={{ fontSize: 11, color: '#D81B60', display: 'block', marginBottom: 4 }}>🔑 5 Mã Dự Phòng Khẩn Cấp (Hãy lưu lại an toàn):</strong>
+                  <strong style={{ fontSize: 11, color: '#D81B60', display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+                    <PixelIcon name="key" size={14} />
+                    <span>5 Mã Dự Phòng Khẩn Cấp (Hãy lưu lại an toàn):</span>
+                  </strong>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4, fontFamily: 'monospace', fontSize: 11, color: '#334155' }}>
                     {twoFactorState.backupCodes?.map((bc, idx) => (
                       <span key={idx} style={{ background: '#F1F5F9', padding: '2px 6px', borderRadius: 4 }}>{bc}</span>
@@ -397,8 +403,9 @@ export default function AuthLanding({
               </div>
 
               {twoFactorError && (
-                <div style={{ background: '#FFEBEE', border: '1.5px solid #EF5350', borderRadius: 8, padding: '8px 12px', fontSize: 11, color: '#C62828', fontWeight: 600 }}>
-                  ⚠️ {twoFactorError}
+                <div style={{ background: '#FFEBEE', border: '1.5px solid #EF5350', borderRadius: 8, padding: '8px 12px', fontSize: 11, color: '#C62828', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <PixelIcon name="warning" size={14} />
+                  <span>{twoFactorError}</span>
                 </div>
               )}
 
@@ -408,7 +415,12 @@ export default function AuthLanding({
                 className={s.submitBtn}
                 style={{ height: 44, marginTop: 4 }}
               >
-                {loading ? 'Đang xác thực...' : 'Xác Thực & Đăng Nhập 🔓'}
+                {loading ? 'Đang xác thực...' : (
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, justifyContent: 'center' }}>
+                    <span>Xác Thực & Đăng Nhập</span>
+                    <PixelIcon name="unlock" size={16} />
+                  </span>
+                )}
               </button>
 
               <button
@@ -460,7 +472,7 @@ export default function AuthLanding({
         {error && (
           <div className={s.errorBanner} role="alert">
             <div className={s.errorHeader}>
-              <span className={s.errorIcon}>⚠️</span>
+              <span className={s.errorIcon}><PixelIcon name="warning" size={16} /></span>
               <span className={s.errorMsg}>{error}</span>
             </div>
             {bannedInfo && (
@@ -469,7 +481,10 @@ export default function AuthLanding({
                 className={s.appealBtn}
                 onClick={() => setIsAppealModalOpen(true)}
               >
-                Gửi Đơn Khiếu Nại Mở Khóa 💌
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                  <span>Gửi Đơn Khiếu Nại Mở Khóa</span>
+                  <PixelIcon name="mail" size={16} />
+                </span>
               </button>
             )}
           </div>
@@ -481,7 +496,7 @@ export default function AuthLanding({
             <div className={s.inputGroup}>
               <label className={s.inputLabel}>Tên Tài Khoản Hoặc UID</label>
               <div className={s.inputFieldWrap}>
-                <span className={s.inputIcon} aria-hidden="true">👤</span>
+                <span className={s.inputIcon} aria-hidden="true"><PixelIcon name="user" size={14} /></span>
                 <input
                   type="text"
                   className={s.pixelInput}
@@ -497,7 +512,7 @@ export default function AuthLanding({
             <div className={s.inputGroup}>
               <label className={s.inputLabel}>Mật Khẩu</label>
               <div className={s.inputFieldWrap}>
-                <span className={s.inputIcon} aria-hidden="true">🔒</span>
+                <span className={s.inputIcon} aria-hidden="true"><PixelIcon name="lock" size={14} /></span>
                 <input
                   type={showPassword ? 'text' : 'password'}
                   className={s.pixelInput}
@@ -513,7 +528,7 @@ export default function AuthLanding({
                   aria-label={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
                   title={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
                 >
-                  {showPassword ? '🙈' : '👁️'}
+                  <PixelIcon name={showPassword ? 'eyeClosed' : 'eye'} size={18} />
                 </button>
               </div>
             </div>
@@ -523,7 +538,12 @@ export default function AuthLanding({
               className={s.submitBtn}
               disabled={loading}
             >
-              {loading ? 'Đang xác thực...' : 'Đăng Nhập Ngay 🚀'}
+              {loading ? 'Đang xác thực...' : (
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, justifyContent: 'center' }}>
+                  <span>Đăng Nhập Ngay</span>
+                  <PixelIcon name="rocket" size={16} />
+                </span>
+              )}
             </button>
           </form>
         )}
@@ -538,7 +558,7 @@ export default function AuthLanding({
                 <span className={s.tagPreview}>Dùng để đăng nhập</span>
               </label>
               <div className={s.inputFieldWrap}>
-                <span className={s.inputIcon} aria-hidden="true">👤</span>
+                <span className={s.inputIcon} aria-hidden="true"><PixelIcon name="user" size={14} /></span>
                 <input
                   type="text"
                   className={s.pixelInput}
@@ -558,7 +578,7 @@ export default function AuthLanding({
                 <span className={s.tagPreview}>Hiển thị ra ngoài</span>
               </label>
               <div className={s.inputFieldWrap}>
-                <span className={s.inputIcon} aria-hidden="true">✨</span>
+                <span className={s.inputIcon} aria-hidden="true"><PixelIcon name="sparkles" size={14} /></span>
                 <input
                   type="text"
                   className={s.pixelInput}
@@ -569,7 +589,7 @@ export default function AuthLanding({
               </div>
             </div>
 
-            {/* 3. UID Cá Nhân + Nút Random 🎲 */}
+            {/* 3. UID Cá Nhân + Nút Random */}
             <div className={s.inputGroup}>
               <label className={s.inputLabel}>
                 <span>UID Cá Nhân</span>
@@ -592,16 +612,16 @@ export default function AuthLanding({
                   onClick={handleGenerateUid}
                   title="Tạo UID ngẫu nhiên đúng mẫu [Chữ_6 số]"
                 >
-                  <span className={s.diceIcon}>🎲</span> Random
+                  <span className={s.diceIcon}><PixelIcon name="dice" size={14} /></span> Random
                 </button>
               </div>
             </div>
 
-            {/* 4. Giới Tính (Gender: Nữ ♀ / Nam ♂) — iOS Liquid Droplet Switcher */}
+            {/* 4. Giới Tính (Gender: Nữ / Nam) — iOS Liquid Droplet Switcher */}
             <div className={s.inputGroup}>
               <label className={s.inputLabel}>
                 <span>Giới Tính</span>
-                <span className={s.tagPreview}>Nữ ♀ hoặc Nam ♂</span>
+                <span className={s.tagPreview}>Nữ hoặc Nam</span>
               </label>
               <div className={s.genderDropletContainer}>
                 {/* iOS Liquid Droplet Glass Indicator */}
@@ -622,7 +642,7 @@ export default function AuthLanding({
                   onClick={() => setRegisterInput({ ...registerInput, gender: 'female' })}
                   title="Chọn giới tính Nữ"
                 >
-                  <span className={s.genderLabel}>Nữ ♀</span>
+                  <span className={s.genderLabel}>Nữ</span>
                 </button>
 
                 <button
@@ -631,14 +651,15 @@ export default function AuthLanding({
                   onClick={() => setRegisterInput({ ...registerInput, gender: 'male' })}
                   title="Chọn giới tính Nam"
                 >
-                  <span className={s.genderLabel}>Nam ♂</span>
+                  <span className={s.genderLabel}>Nam</span>
                 </button>
               </div>
 
-              {/* Dynamic Note when Nữ ♀ is selected */}
+              {/* Dynamic Note when Nữ is selected */}
               {registerInput.gender === 'female' && (
-                <div className={s.femaleCycleNote}>
-                  🌸 Có tính năng tính chu kỳ
+                <div className={s.femaleCycleNote} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <PixelIcon name="flower" size={14} />
+                  <span>Có tính năng tính chu kỳ</span>
                 </div>
               )}
             </div>
@@ -668,7 +689,10 @@ export default function AuthLanding({
                       {currentSelectedAvatar?.name || 'Tùy chỉnh'}
                     </span>
                     {registerInput.avatarFrame && registerInput.avatarFrame !== 'none' ? (
-                      <span className={s.avatarFrameBadge}>✨ Khung hiệu ứng</span>
+                      <span className={s.avatarFrameBadge} style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                        <PixelIcon name="sparkles" size={12} />
+                        <span>Khung hiệu ứng</span>
+                      </span>
                     ) : (
                       <span className={s.avatarSubtext}>Bấm để đổi avatar / khung</span>
                     )}
@@ -681,7 +705,10 @@ export default function AuthLanding({
                   onClick={() => setIsAvatarModalOpen(true)}
                   title="Mở bảng chọn Avatar, Khung viền & Theme"
                 >
-                  Đổi Avatar 🎨
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                    <span>Đổi Avatar</span>
+                    <PixelIcon name="palette" size={16} />
+                  </span>
                 </button>
               </div>
             </div>
@@ -690,7 +717,7 @@ export default function AuthLanding({
             <div className={s.inputGroup}>
               <label className={s.inputLabel}>Mật Khẩu</label>
               <div className={s.inputFieldWrap}>
-                <span className={s.inputIcon} aria-hidden="true">🔒</span>
+                <span className={s.inputIcon} aria-hidden="true"><PixelIcon name="lock" size={14} /></span>
                 <input
                   type={showPassword ? 'text' : 'password'}
                   className={s.pixelInput}
@@ -706,7 +733,7 @@ export default function AuthLanding({
                   aria-label={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
                   title={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
                 >
-                  {showPassword ? '🙈' : '👁️'}
+                  <PixelIcon name={showPassword ? 'eyeClosed' : 'eye'} size={18} />
                 </button>
               </div>
             </div>
@@ -715,7 +742,7 @@ export default function AuthLanding({
             <div className={s.inputGroup}>
               <label className={s.inputLabel}>Xác Nhận Mật Khẩu</label>
               <div className={s.inputFieldWrap}>
-                <span className={s.inputIcon} aria-hidden="true">✓</span>
+                <span className={s.inputIcon} aria-hidden="true"><PixelIcon name="check" size={14} /></span>
                 <input
                   type={showPassword ? 'text' : 'password'}
                   className={s.pixelInput}
@@ -731,7 +758,7 @@ export default function AuthLanding({
                   aria-label={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
                   title={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
                 >
-                  {showPassword ? '🙈' : '👁️'}
+                  <PixelIcon name={showPassword ? 'eyeClosed' : 'eye'} size={18} />
                 </button>
               </div>
             </div>
@@ -741,7 +768,12 @@ export default function AuthLanding({
               className={s.submitBtn}
               disabled={loading}
             >
-              {loading ? 'Đang tạo tài khoản...' : 'Đăng Ký Tài Khoản ✨'}
+              {loading ? 'Đang tạo tài khoản...' : (
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, justifyContent: 'center' }}>
+                  <span>Đăng Ký Tài Khoản</span>
+                  <PixelIcon name="sparkles" size={16} />
+                </span>
+              )}
             </button>
           </form>
         )}

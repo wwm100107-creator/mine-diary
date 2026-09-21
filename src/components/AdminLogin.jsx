@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { loginUser, verifyAndCompleteAdmin2FA } from '../lib/auth'
 import { isUserAdmin } from '../lib/admin'
+import PixelIcon from './PixelIcon'
 import s from './AdminLogin.module.css'
 
 export default function AdminLogin({ onLoginSuccess, onBackToApp }) {
@@ -87,7 +88,7 @@ export default function AdminLogin({ onLoginSuccess, onBackToApp }) {
       <div className={s.card}>
         {/* Header */}
         <header className={s.header}>
-          <div className={s.shieldBadge}>🛡️</div>
+          <div className={s.shieldBadge}><PixelIcon name="shield" size={32} /></div>
           <div className={s.badgeRealm}>SECURE REALM // ADMIN PORTAL</div>
           <h1 className={s.title}>Đăng Nhập Quản Trị</h1>
           <p className={s.subtitle}>
@@ -98,7 +99,7 @@ export default function AdminLogin({ onLoginSuccess, onBackToApp }) {
         {/* Error Banner */}
         {(error || twoFactorError) && (
           <div className={s.errorBanner} role="alert">
-            <span>⚠️</span>
+            <PixelIcon name="warning" size={16} />
             <span>{error || twoFactorError}</span>
           </div>
         )}
@@ -141,7 +142,7 @@ export default function AdminLogin({ onLoginSuccess, onBackToApp }) {
                   aria-label={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
                   tabIndex={-1}
                 >
-                  {showPassword ? '👁️' : '🔒'}
+                  <PixelIcon name={showPassword ? 'eye' : 'lock'} size={18} />
                 </button>
               </div>
             </div>
@@ -151,7 +152,12 @@ export default function AdminLogin({ onLoginSuccess, onBackToApp }) {
               className={s.submitBtn}
               disabled={loading}
             >
-              {loading ? 'Đang xác thực...' : 'Xác Thực Danh Tính 🛡️'}
+              {loading ? 'Đang xác thực...' : (
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, justifyContent: 'center' }}>
+                  <span>Xác Thực Danh Tính</span>
+                  <PixelIcon name="shield" size={16} />
+                </span>
+              )}
             </button>
           </form>
         ) : (
@@ -191,7 +197,12 @@ export default function AdminLogin({ onLoginSuccess, onBackToApp }) {
               className={s.submitBtn}
               disabled={loading || !totpCode.trim()}
             >
-              {loading ? 'Đang kiểm tra 2FA...' : 'Hoàn Tất Đăng Nhập 🚀'}
+              {loading ? 'Đang kiểm tra 2FA...' : (
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, justifyContent: 'center' }}>
+                  <span>Hoàn Tất Đăng Nhập</span>
+                  <PixelIcon name="rocket" size={16} />
+                </span>
+              )}
             </button>
 
             <button
