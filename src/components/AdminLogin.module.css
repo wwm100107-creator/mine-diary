@@ -1,7 +1,7 @@
 /* ============================================
    MINE DIARY — Admin Login (Tiên Nghịch Thủy Mặc)
    AdminLogin.module.css — Nền Giấy Tuyên Chỉ & Mực Tàu Sumi-e
-   Tương phản cao WCAG AAA, font NT-Akashii sắc nét
+   Typography: Be Vietnam Pro & Inter — Dễ đọc, sắc nét, tương phản cao
    ============================================ */
 
 .container {
@@ -16,11 +16,10 @@
   background: #fdfbf7;
   font-family: var(--font-admin);
   font-weight: 400;
-  font-synthesis: none;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
-  letter-spacing: 0.04em;
+  letter-spacing: normal;
   box-sizing: border-box;
 }
 
@@ -31,10 +30,7 @@
 .container h1,
 .container span {
   font-family: var(--font-admin);
-  font-weight: 400 !important;
-  font-synthesis: none;
   -webkit-font-smoothing: antialiased;
-  letter-spacing: 0.04em;
 }
 
 /* Thủy Mặc Sơn Hà Tinh Đồ Khung Ngoài (Thẻ Lụa Tuyên Chỉ) */
@@ -116,25 +112,26 @@
   background: #f0f9ff;
   border: 1px solid #bae6fd;
   color: #0369a1;
-  font-size: 13px;
-  letter-spacing: 0.08em;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
 }
 
 .title {
-  font-size: 26px;
-  letter-spacing: 0.05em;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
   color: #0f172a;
   margin: 0;
-  font-weight: 400 !important;
 }
 
 .subtitle {
-  font-size: 14.5px;
+  font-size: 14px;
   color: #475569;
   line-height: 1.6;
   margin: 0;
   max-width: 380px;
-  letter-spacing: 0.03em;
+  letter-spacing: normal;
 }
 
 /* Cảnh Báo Lỗi */
@@ -144,7 +141,8 @@
   border-radius: 12px;
   padding: 11px 16px;
   color: #b91c1c;
-  font-size: 14px;
+  font-size: 13.5px;
+  font-weight: 500;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -157,7 +155,7 @@
   75% { transform: translateX(4px); }
 }
 
-/* Biểu Mẫu Nhập Liệu Thủy Mặc */
+/* Biểu Mẫu Nhập Liệu */
 .form {
   display: flex;
   flex-direction: column;
@@ -171,9 +169,10 @@
 }
 
 .label {
-  font-size: 14.5px;
+  font-size: 14px;
+  font-weight: 600;
   color: #1e293b;
-  letter-spacing: 0.04em;
+  letter-spacing: normal;
 }
 
 .inputWrapper {
@@ -190,8 +189,8 @@
   border: 1.5px solid rgba(15, 23, 42, 0.14);
   border-radius: 12px;
   color: #0f172a;
-  font-size: 15.5px;
-  letter-spacing: 0.03em;
+  font-size: 15px;
+  letter-spacing: normal;
   font-family: var(--font-admin);
   outline: none;
   transition: all 0.25s ease;
@@ -229,7 +228,7 @@
   transform: scale(1.1);
 }
 
-/* Nút Bấm Xác Thực Thần Thức */
+/* Nút Bấm Xác Thực */
 .submitBtn {
   width: 100%;
   padding: 14px 20px;
@@ -237,8 +236,9 @@
   border: 1px solid #0369a1;
   border-radius: 12px;
   color: #ffffff;
-  font-size: 15.5px;
-  letter-spacing: 0.05em;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: normal;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow: 0 4px 16px rgba(2, 132, 199, 0.28);
@@ -285,11 +285,12 @@
   letter-spacing: 0.35em;
   text-align: center;
   color: #0284c7;
+  font-weight: 700;
   background: #ffffff;
   border: 1.5px solid #0284c7;
   border-radius: 12px;
   outline: none;
-  font-family: var(--font-admin);
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
   transition: all 0.25s ease;
   box-sizing: border-box;
 }
@@ -312,7 +313,8 @@
   border: none;
   color: #64748b;
   font-size: 14px;
-  letter-spacing: 0.04em;
+  font-weight: 500;
+  letter-spacing: normal;
   cursor: pointer;
   display: inline-flex;
   align-items: center;

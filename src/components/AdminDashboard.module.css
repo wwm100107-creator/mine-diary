@@ -17,11 +17,10 @@
   gap: 24px;
   font-family: var(--font-admin);
   font-weight: 400;
-  font-synthesis: none;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
-  letter-spacing: 0.04em;
+  letter-spacing: normal;
   box-sizing: border-box;
   position: relative;
   z-index: 5;
@@ -39,8 +38,6 @@
 .adminContainer strong,
 .adminContainer label {
   font-family: var(--font-admin);
-  font-weight: 400 !important;
-  font-synthesis: none;
   -webkit-font-smoothing: antialiased;
   box-sizing: border-box;
 }
@@ -103,14 +100,14 @@
 }
 
 .dashboardTitle {
-  font-size: 26px;
-  letter-spacing: 0.05em;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
   color: #0f172a;
   margin: 0;
   display: flex;
   align-items: center;
   gap: 12px;
-  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
 }
 
 .titleGleam {
@@ -146,18 +143,20 @@
 }
 
 .adminName {
-  font-size: 15.5px;
+  font-size: 14.5px;
+  font-weight: 600;
   color: #92400e;
-  letter-spacing: 0.04em;
+  letter-spacing: normal;
 }
 
 .adminPill {
-  font-size: 11.5px;
+  font-size: 11px;
+  font-weight: 600;
   background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
   color: #ffffff;
   padding: 3px 10px;
   border-radius: 999px;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.03em;
   border: 1px solid rgba(254, 240, 138, 0.4);
 }
 
@@ -238,17 +237,18 @@
 }
 
 .metricLabel {
-  font-size: 15px;
-  letter-spacing: 0.05em;
-  color: #475569;
-  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.8);
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: normal;
+  color: #64748b;
 }
 
 .metricValue {
-  font-size: 34px;
+  font-size: 32px;
+  font-weight: 700;
   color: #0f172a;
   line-height: 1.1;
-  letter-spacing: 0.03em;
+  letter-spacing: -0.02em;
 }
 
 .metricIconWrap {
@@ -397,14 +397,14 @@
 }
 
 .table thead th {
-  padding: 18px 20px;
+  padding: 16px 20px;
   background: #f8fafc;
-  color: #1e293b;
-  font-size: 15px;
-  letter-spacing: 0.05em;
-  border-bottom: 2px solid rgba(15, 23, 42, 0.1);
+  color: #334155;
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border-bottom: 2px solid rgba(15, 23, 42, 0.08);
   white-space: nowrap;
-  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.8);
 }
 
 .table tbody tr {
@@ -470,24 +470,27 @@
 }
 
 .userDisplayName {
-  font-size: 17px;
-  letter-spacing: 0.03em;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: normal;
   color: #0f172a;
 }
 
 .roleAdminTag {
   font-size: 11px;
+  font-weight: 600;
   background: #fef3c7;
   color: #b45309;
   border: 1px solid #fcd34d;
   padding: 2px 8px;
   border-radius: 6px;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.02em;
 }
 
 .userVipBadge {
   font-size: 12px;
-  letter-spacing: 0.04em;
+  font-weight: 600;
+  letter-spacing: normal;
   padding: 3px 10px;
   border-radius: 999px;
   transition: all 0.2s ease;
@@ -890,8 +893,9 @@
 }
 
 .modalTitle {
-  font-size: 20px;
-  letter-spacing: 0.05em;
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
   color: #0f172a;
   margin: 0;
   display: flex;
