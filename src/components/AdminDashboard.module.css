@@ -1,7 +1,7 @@
 /* ==========================================================================
-   MINE DIARY — Tiên Nghịch Thủy Mặc Admin Dashboard
+   MINE DIARY — Tiên Nghịch Thủy Mặc Admin Dashboard (Optimized Legibility)
    AdminDashboard.module.css
-   Chủ đề: Tiên Nghịch, Nét vẽ Thủy Mặc, Khử răng cưa tuyệt đối, Hiệu ứng Linh Khí
+   Chủ đề: Tiên Nghịch Thủy Mặc, Khử răng cưa, Font NT-Akashii rõ nét tối đa
    ========================================================================== */
 
 /* ── Đại Đạo Khung Chứa (Main Container) ── */
@@ -9,13 +9,19 @@
   --font-pixel: var(--font-admin);
   --font-ui: var(--font-admin);
   width: 100%;
-  max-width: 1240px;
+  max-width: 1280px;
   margin: 0 auto;
   padding: 28px 24px 64px;
   display: flex;
   flex-direction: column;
   gap: 24px;
   font-family: var(--font-admin);
+  font-weight: 400;
+  font-synthesis: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  letter-spacing: 0.04em;
   box-sizing: border-box;
   position: relative;
   z-index: 5;
@@ -28,8 +34,14 @@
 .adminContainer button,
 .adminContainer table,
 .adminContainer td,
-.adminContainer th {
+.adminContainer th,
+.adminContainer span,
+.adminContainer strong,
+.adminContainer label {
   font-family: var(--font-admin);
+  font-weight: 400 !important; /* Triệt tiêu hoàn toàn lỗi faux-bold gây nhòe nét cọ */
+  font-synthesis: none;
+  -webkit-font-smoothing: antialiased;
   box-sizing: border-box;
 }
 
@@ -50,7 +62,7 @@
   position: absolute;
   bottom: -1px;
   left: 0;
-  width: 140px;
+  width: 160px;
   height: 1px;
   background: linear-gradient(90deg, #38bdf8 0%, transparent 100%);
   box-shadow: 0 0 10px #38bdf8;
@@ -59,30 +71,30 @@
 .topBarLeft {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 18px;
   flex-wrap: wrap;
 }
 
 /* Nút Thoát Xuất Tiên Giới / Quay về */
 .backBtn {
-  font-size: 13.5px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  padding: 8px 16px;
-  background: rgba(15, 23, 42, 0.65);
+  font-size: 14.5px;
+  letter-spacing: 0.05em;
+  padding: 9px 18px;
+  background: rgba(15, 23, 42, 0.7);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(56, 189, 248, 0.25);
+  border: 1px solid rgba(56, 189, 248, 0.3);
   border-radius: 12px;
-  color: #94a3b8;
+  color: #cbd5e1;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  white-space: nowrap;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .backBtn:hover {
-  background: rgba(56, 189, 248, 0.12);
+  background: rgba(56, 189, 248, 0.15);
   border-color: #38bdf8;
   color: #38bdf8;
   transform: translateX(-3px);
@@ -90,19 +102,18 @@
 }
 
 .dashboardTitle {
-  font-size: 22px;
-  font-weight: 700;
+  font-size: 26px;
   letter-spacing: 0.05em;
   color: #f8fafc;
   margin: 0;
   display: flex;
   align-items: center;
-  gap: 10px;
-  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.7);
+  gap: 12px;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.8);
 }
 
 .titleGleam {
-  background: linear-gradient(135deg, #ffffff 0%, #7dd3fc 60%, #38bdf8 100%);
+  background: linear-gradient(135deg, #ffffff 0%, #bae6fd 60%, #38bdf8 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -112,17 +123,17 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 6px 16px 6px 8px;
-  background: rgba(13, 18, 28, 0.75);
+  padding: 6px 18px 6px 8px;
+  background: rgba(13, 18, 28, 0.8);
   backdrop-filter: blur(14px);
-  border: 1px solid rgba(245, 158, 11, 0.3);
+  border: 1px solid rgba(245, 158, 11, 0.35);
   border-radius: 999px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), 0 0 15px rgba(245, 158, 11, 0.12);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), 0 0 15px rgba(245, 158, 11, 0.15);
 }
 
 .adminAvatarRing {
-  width: 36px;
-  height: 36px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   overflow: hidden;
   border: 1.5px solid #f59e0b;
@@ -134,21 +145,18 @@
 }
 
 .adminName {
-  font-size: 13.5px;
-  font-weight: 700;
+  font-size: 15.5px;
   color: #fef08a;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
 }
 
 .adminPill {
-  font-size: 10px;
-  font-weight: 700;
+  font-size: 11.5px;
   background: linear-gradient(135deg, #b45309 0%, #d97706 100%);
   color: #fffbeb;
-  padding: 2px 8px;
+  padding: 3px 10px;
   border-radius: 999px;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
+  letter-spacing: 0.06em;
   border: 1px solid rgba(254, 240, 138, 0.4);
 }
 
@@ -159,12 +167,11 @@
 }
 
 .logoutBtn {
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 14px;
   letter-spacing: 0.04em;
-  padding: 8px 16px;
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  padding: 9px 18px;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.35);
   border-radius: 12px;
   color: #fca5a5;
   cursor: pointer;
@@ -172,10 +179,11 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  white-space: nowrap;
 }
 
 .logoutBtn:hover {
-  background: rgba(239, 68, 68, 0.22);
+  background: rgba(239, 68, 68, 0.25);
   border-color: #ef4444;
   color: #ffffff;
   transform: translateY(-2px);
@@ -185,14 +193,14 @@
 /* ── 4 Khối Linh Trận Thống Kê (Metrics Grid) ── */
 .metricsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
   gap: 16px;
 }
 
 .metricCard {
-  background: rgba(13, 18, 28, 0.72);
+  background: rgba(13, 18, 28, 0.75);
   backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 18px;
   padding: 18px 22px;
   display: flex;
@@ -217,8 +225,8 @@
 
 .metricCard:hover {
   transform: translateY(-3px);
-  border-color: rgba(56, 189, 248, 0.3);
-  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.5), 0 0 25px rgba(56, 189, 248, 0.1);
+  border-color: rgba(56, 189, 248, 0.35);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.5), 0 0 25px rgba(56, 189, 248, 0.12);
 }
 
 .metricInfo {
@@ -228,31 +236,31 @@
 }
 
 .metricLabel {
-  font-size: 12px;
+  font-size: 15px;
   letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: #94a3b8;
-  font-weight: 600;
+  color: #cbd5e1;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
 }
 
 .metricValue {
-  font-size: 30px;
-  font-weight: 700;
-  color: #f8fafc;
-  line-height: 1;
+  font-size: 34px;
+  color: #ffffff;
+  line-height: 1.1;
+  letter-spacing: 0.03em;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
 .metricIconWrap {
-  width: 48px;
-  height: 48px;
+  width: 50px;
+  height: 50px;
   border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(56, 189, 248, 0.08);
-  border: 1px solid rgba(56, 189, 248, 0.2);
+  background: rgba(56, 189, 248, 0.1);
+  border: 1px solid rgba(56, 189, 248, 0.25);
   color: #38bdf8;
-  box-shadow: 0 0 18px rgba(56, 189, 248, 0.12);
+  box-shadow: 0 0 18px rgba(56, 189, 248, 0.15);
 }
 
 /* ── Thanh Pháp Lệnh & Thần Thức (Control Bar) ── */
@@ -262,10 +270,10 @@
   justify-content: space-between;
   gap: 16px;
   flex-wrap: wrap;
-  padding: 14px 18px;
-  background: rgba(13, 18, 28, 0.65);
+  padding: 14px 20px;
+  background: rgba(13, 18, 28, 0.7);
   backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.09);
   border-radius: 18px;
 }
 
@@ -279,31 +287,34 @@
 
 .searchInput {
   width: 100%;
-  height: 44px;
-  padding: 0 16px 0 44px;
-  background: rgba(15, 23, 42, 0.65);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  height: 46px;
+  padding: 0 16px 0 46px;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 14px;
-  font-size: 14.5px;
-  color: #f1f5f9;
+  font-size: 15.5px;
+  letter-spacing: 0.03em;
+  color: #f8fafc;
   outline: none;
   transition: all 0.25s ease;
 }
 
 .searchInput::placeholder {
-  color: #64748b;
+  color: #94a3b8;
+  font-size: 14.5px;
+  letter-spacing: 0.02em;
 }
 
 .searchInput:focus {
   border-color: #38bdf8;
-  background: rgba(15, 23, 42, 0.9);
+  background: rgba(15, 23, 42, 0.95);
   box-shadow: 0 0 20px rgba(56, 189, 248, 0.25);
 }
 
 .searchIcon {
   position: absolute;
   left: 16px;
-  color: #64748b;
+  color: #94a3b8;
   pointer-events: none;
 }
 
@@ -315,14 +326,14 @@
 }
 
 .statusSelect {
-  height: 44px;
+  height: 46px;
   padding: 0 16px;
-  background: rgba(15, 23, 42, 0.65);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 14px;
-  font-size: 14px;
-  font-weight: 600;
-  color: #e2e8f0;
+  font-size: 14.5px;
+  letter-spacing: 0.03em;
+  color: #f1f5f9;
   outline: none;
   cursor: pointer;
   transition: all 0.25s ease;
@@ -331,6 +342,7 @@
 .statusSelect option {
   background: #0f172a;
   color: #f8fafc;
+  padding: 8px;
 }
 
 .statusSelect:focus {
@@ -339,24 +351,24 @@
 }
 
 .refreshBtn {
-  height: 44px;
-  padding: 0 18px;
-  background: rgba(56, 189, 248, 0.1);
-  border: 1px solid rgba(56, 189, 248, 0.3);
+  height: 46px;
+  padding: 0 20px;
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.35);
   border-radius: 14px;
-  font-size: 13.5px;
-  font-weight: 600;
+  font-size: 14.5px;
   letter-spacing: 0.04em;
   color: #38bdf8;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  white-space: nowrap;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .refreshBtn:hover {
-  background: rgba(56, 189, 248, 0.2);
+  background: rgba(56, 189, 248, 0.22);
   border-color: #38bdf8;
   transform: translateY(-2px);
   box-shadow: 0 4px 18px rgba(56, 189, 248, 0.3);
@@ -368,9 +380,9 @@
 
 /* ── Bảng Đăng Hồn Lục (Cultivator Table) ── */
 .tableContainer {
-  background: rgba(13, 18, 28, 0.78);
+  background: rgba(13, 18, 28, 0.82);
   backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 20px;
   overflow-x: auto;
   box-shadow: 0 16px 45px rgba(0, 0, 0, 0.5);
@@ -386,14 +398,13 @@
 
 .table thead th {
   padding: 16px 18px;
-  background: rgba(10, 15, 24, 0.85);
-  color: #94a3b8;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(10, 15, 24, 0.9);
+  color: #e2e8f0;
+  font-size: 14.5px;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   white-space: nowrap;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
 }
 
 .table tbody tr {
@@ -402,11 +413,11 @@
 }
 
 .table tbody tr:hover {
-  background: rgba(56, 189, 248, 0.05);
+  background: rgba(56, 189, 248, 0.06);
 }
 
 .table tbody tr:not(:last-child) td {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .table td {
@@ -448,7 +459,7 @@
 .userIdBlock {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 5px;
 }
 
 .nameRow {
@@ -459,28 +470,29 @@
 }
 
 .userDisplayName {
-  font-size: 15px;
-  font-weight: 700;
-  color: #f1f5f9;
+  font-size: 16.5px;
+  letter-spacing: 0.03em;
+  color: #ffffff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
 }
 
 .roleAdminTag {
-  font-size: 10px;
-  font-weight: 700;
+  font-size: 11px;
   background: rgba(245, 158, 11, 0.2);
   color: #fbbf24;
   border: 1px solid rgba(245, 158, 11, 0.4);
-  padding: 1px 7px;
+  padding: 2px 8px;
   border-radius: 6px;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
 }
 
 .userVipBadge {
-  font-size: 11px;
-  font-weight: 600;
-  padding: 2px 9px;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  padding: 3px 10px;
   border-radius: 999px;
   transition: all 0.2s ease;
+  white-space: nowrap;
 }
 
 .userVipBadge:hover {
@@ -489,9 +501,10 @@
 }
 
 .userFullId {
-  font-size: 12px;
-  color: #64748b;
+  font-size: 13px;
+  color: #94a3b8;
   font-family: monospace;
+  letter-spacing: 0.02em;
 }
 
 /* Cột 3: Ngày Nhập Đạo (Created At) */
@@ -500,8 +513,9 @@
 }
 
 .dateBadge {
-  font-size: 13px;
-  color: #94a3b8;
+  font-size: 14px;
+  color: #cbd5e1;
+  letter-spacing: 0.03em;
 }
 
 /* Cột 4: Trạng Thái Thần Thức & Hoạt Động */
@@ -519,28 +533,30 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 3px 10px;
+  padding: 4px 12px;
   border-radius: 8px;
   background: rgba(245, 158, 11, 0.15);
   border: 1px solid rgba(245, 158, 11, 0.35);
   color: #fef08a;
-  font-size: 12px;
-  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.03em;
   width: fit-content;
+  white-space: nowrap;
 }
 
 .badgeActive {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 3px 10px;
+  padding: 4px 12px;
   border-radius: 8px;
-  background: rgba(16, 185, 129, 0.12);
-  border: 1px solid rgba(16, 185, 129, 0.3);
-  color: #6ee7b7;
-  font-size: 12px;
-  font-weight: 600;
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  color: #a7f3d0;
+  font-size: 13px;
+  letter-spacing: 0.03em;
   width: fit-content;
+  white-space: nowrap;
 }
 
 .badgeBanned {
@@ -553,52 +569,56 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 3px 10px;
+  padding: 4px 12px;
   border-radius: 8px;
   background: rgba(239, 68, 68, 0.15);
   border: 1px solid rgba(239, 68, 68, 0.35);
   color: #fca5a5;
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.03em;
   width: fit-content;
+  white-space: nowrap;
 }
 
 .banReasonNote {
-  font-size: 11px;
-  color: #f87171;
-  opacity: 0.9;
+  font-size: 12px;
+  color: #fca5a5;
+  opacity: 0.95;
+  letter-spacing: 0.02em;
 }
 
 .badgeAppealPending {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  padding: 2px 8px;
+  gap: 6px;
+  padding: 3px 9px;
   border-radius: 6px;
-  background: rgba(234, 179, 8, 0.15);
-  border: 1px solid rgba(234, 179, 8, 0.35);
-  color: #fde047;
-  font-size: 11px;
-  font-weight: 600;
+  background: rgba(234, 179, 8, 0.18);
+  border: 1px solid rgba(234, 179, 8, 0.4);
+  color: #fef08a;
+  font-size: 12px;
+  letter-spacing: 0.03em;
   width: fit-content;
+  white-space: nowrap;
 }
 
 /* Thần Thức Đang Hiện (Realtime Live Activity Badge) */
 .activityBadge {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  font-size: 12px;
+  gap: 7px;
+  font-size: 13px;
+  letter-spacing: 0.03em;
   width: fit-content;
+  white-space: nowrap;
 }
 
 .activityOnline {
   color: #34d399;
-  font-weight: 600;
 }
 
 .activityOffline {
-  color: #64748b;
+  color: #94a3b8;
 }
 
 .activityDot {
@@ -606,6 +626,7 @@
   height: 8px;
   border-radius: 50%;
   display: inline-block;
+  flex-shrink: 0;
 }
 
 .activityOnline .activityDot {
@@ -615,7 +636,7 @@
 }
 
 .activityOffline .activityDot {
-  background: #475569;
+  background: #64748b;
 }
 
 @keyframes qiDotPulse {
@@ -639,50 +660,54 @@
   align-items: center;
   gap: 6px;
   font-family: monospace;
-  font-size: 12px;
+  font-size: 13.5px;
   color: #7dd3fc;
+  letter-spacing: 0.03em;
 }
 
 .deviceText {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 11.5px;
+  font-size: 12.5px;
   color: #94a3b8;
+  letter-spacing: 0.02em;
 }
 
 /* Cột 6: Thiên Cơ Giản / Chi Tiết (See All) */
 .colSeeAll {
   text-align: center;
-  width: 110px;
+  min-width: 145px;
 }
 
 .seeAllBtn {
-  padding: 6px 14px;
-  background: rgba(15, 23, 42, 0.65);
-  border: 1px solid rgba(56, 189, 248, 0.25);
-  border-radius: 10px;
+  padding: 8px 16px;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  border-radius: 12px;
   color: #7dd3fc;
-  font-size: 12.5px;
-  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.04em;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  justify-content: center;
+  gap: 7px;
+  white-space: nowrap;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .seeAllBtn:hover {
-  background: rgba(56, 189, 248, 0.15);
+  background: rgba(56, 189, 248, 0.2);
   border-color: #38bdf8;
   color: #ffffff;
   transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(56, 189, 248, 0.25);
+  box-shadow: 0 4px 16px rgba(56, 189, 248, 0.25);
 }
 
 /* Cột 7: Chấp Pháp Thiên Lệnh (Action) */
 .colAction {
-  min-width: 150px;
+  min-width: 250px;
   text-align: center;
 }
 
@@ -691,21 +716,22 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 }
 
 .banActionBtn {
-  padding: 6px 12px;
+  padding: 7px 14px;
   background: rgba(239, 68, 68, 0.12);
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  border: 1px solid rgba(239, 68, 68, 0.35);
   border-radius: 10px;
   color: #fca5a5;
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.03em;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
+  white-space: nowrap;
   transition: all 0.25s ease;
 }
 
@@ -718,17 +744,18 @@
 }
 
 .unbanActionBtn {
-  padding: 6px 12px;
+  padding: 7px 14px;
   background: rgba(16, 185, 129, 0.12);
-  border: 1px solid rgba(16, 185, 129, 0.3);
+  border: 1px solid rgba(16, 185, 129, 0.35);
   border-radius: 10px;
   color: #6ee7b7;
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.03em;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
+  white-space: nowrap;
   transition: all 0.25s ease;
 }
 
@@ -741,17 +768,18 @@
 }
 
 .reviewAppealBtn {
-  padding: 6px 12px;
+  padding: 7px 14px;
   background: rgba(234, 179, 8, 0.15);
   border: 1px solid rgba(234, 179, 8, 0.35);
   border-radius: 10px;
   color: #fde047;
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.03em;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
+  white-space: nowrap;
   transition: all 0.25s ease;
 }
 
@@ -763,17 +791,18 @@
 }
 
 .vipActionBtn {
-  padding: 6px 12px;
+  padding: 7px 14px;
   background: rgba(245, 158, 11, 0.15);
   border: 1px solid rgba(245, 158, 11, 0.35);
   border-radius: 10px;
   color: #fef08a;
-  font-size: 12px;
-  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.03em;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
+  white-space: nowrap;
   transition: all 0.25s ease;
 }
 
@@ -787,25 +816,28 @@
 .protectedShieldBadge {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  font-size: 11px;
+  gap: 6px;
+  font-size: 12.5px;
+  letter-spacing: 0.03em;
   color: #fef08a;
-  padding: 4px 8px;
+  padding: 5px 10px;
   border-radius: 8px;
-  background: rgba(245, 158, 11, 0.08);
-  border: 1px solid rgba(245, 158, 11, 0.2);
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  white-space: nowrap;
 }
 
 /* ── Trạng Thái Trống & Đang Tải ── */
 .loadingBox, .emptyBox {
   padding: 50px 20px;
   text-align: center;
-  color: #94a3b8;
+  color: #cbd5e1;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 12px;
-  font-size: 15px;
+  font-size: 16px;
+  letter-spacing: 0.04em;
 }
 
 /* ── CÁC MODAL TRẬN ĐỒ (MODALS STYLING) ── */
@@ -830,14 +862,14 @@
 
 .modalCard {
   width: 100%;
-  max-width: 580px;
+  max-width: 600px;
   max-height: 90vh;
   overflow-y: auto;
-  background: rgba(13, 18, 28, 0.92);
-  border: 1px solid rgba(56, 189, 248, 0.25);
+  background: rgba(13, 18, 28, 0.94);
+  border: 1px solid rgba(56, 189, 248, 0.3);
   border-radius: 22px;
-  padding: 28px;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 35px rgba(56, 189, 248, 0.1);
+  padding: 30px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 35px rgba(56, 189, 248, 0.12);
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -854,13 +886,13 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   padding-bottom: 16px;
 }
 
 .modalTitle {
-  font-size: 19px;
-  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: 0.05em;
   color: #f8fafc;
   margin: 0;
   display: flex;
@@ -871,7 +903,7 @@
 .modalCloseBtn {
   background: transparent;
   border: none;
-  color: #94a3b8;
+  color: #cbd5e1;
   cursor: pointer;
   padding: 6px;
   display: flex;
@@ -883,7 +915,7 @@
 
 .modalCloseBtn:hover {
   color: #ffffff;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.12);
 }
 
 /* Chi Tiết Hàng (Detail Rows) */
@@ -897,31 +929,32 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 12px;
-  background: rgba(15, 23, 42, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 9px 14px;
+  background: rgba(15, 23, 42, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 10px;
   gap: 12px;
 }
 
 .detailKey {
-  font-size: 13px;
-  color: #94a3b8;
-  font-weight: 600;
+  font-size: 14px;
+  color: #cbd5e1;
+  letter-spacing: 0.03em;
   flex-shrink: 0;
 }
 
 .detailVal {
-  font-size: 13.5px;
-  color: #f1f5f9;
+  font-size: 14.5px;
+  color: #ffffff;
   text-align: right;
   word-break: break-all;
+  letter-spacing: 0.02em;
 }
 
 /* Super Admin Section */
 .superAdminSection {
   background: rgba(15, 23, 42, 0.7);
-  border: 1px solid rgba(245, 158, 11, 0.25);
+  border: 1px solid rgba(245, 158, 11, 0.3);
   border-radius: 14px;
   padding: 16px;
   display: flex;
@@ -936,8 +969,7 @@
 }
 
 .superAdminBadge {
-  font-size: 12.5px;
-  font-weight: 700;
+  font-size: 14px;
   color: #fbbf24;
   letter-spacing: 0.05em;
 }
@@ -949,28 +981,30 @@
 
 .cmdInput {
   flex: 1;
-  height: 40px;
+  height: 42px;
   padding: 0 14px;
-  background: rgba(10, 15, 26, 0.8);
-  border: 1px solid rgba(245, 158, 11, 0.3);
+  background: rgba(10, 15, 26, 0.85);
+  border: 1px solid rgba(245, 158, 11, 0.35);
   border-radius: 10px;
   color: #fef08a;
-  font-size: 13.5px;
+  font-size: 14.5px;
+  letter-spacing: 0.03em;
   outline: none;
 }
 
 .cmdInput:focus {
   border-color: #f59e0b;
-  box-shadow: 0 0 14px rgba(245, 158, 11, 0.3);
+  box-shadow: 0 0 14px rgba(245, 158, 11, 0.35);
 }
 
 .cmdSubmitBtn {
-  padding: 0 16px;
+  padding: 0 18px;
   background: linear-gradient(135deg, #b45309 0%, #d97706 100%);
-  border: 1px solid rgba(254, 240, 138, 0.35);
+  border: 1px solid rgba(254, 240, 138, 0.4);
   border-radius: 10px;
   color: #fffbeb;
-  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.04em;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -984,19 +1018,19 @@
 }
 
 .unlockedResultBox {
-  background: rgba(16, 185, 129, 0.1);
-  border: 1px solid rgba(16, 185, 129, 0.3);
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.35);
   border-radius: 10px;
-  padding: 12px;
+  padding: 12px 14px;
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
 .unlockedBadge {
-  font-size: 11.5px;
-  font-weight: 700;
+  font-size: 13px;
   color: #6ee7b7;
+  letter-spacing: 0.04em;
 }
 
 .plainPasswordRow {
@@ -1008,13 +1042,12 @@
 
 .plainPasswordText {
   font-family: monospace;
-  font-size: 15px;
-  font-weight: 700;
+  font-size: 16px;
   color: #fef08a;
-  background: rgba(0, 0, 0, 0.4);
-  padding: 4px 10px;
+  background: rgba(0, 0, 0, 0.45);
+  padding: 5px 12px;
   border-radius: 6px;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
 }
 
 /* Reset Pass Section */
@@ -1022,16 +1055,16 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  background: rgba(15, 23, 42, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(15, 23, 42, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 14px;
   padding: 16px;
 }
 
 .resetPassTitle {
-  font-size: 13.5px;
-  font-weight: 700;
+  font-size: 14.5px;
   color: #e2e8f0;
+  letter-spacing: 0.04em;
 }
 
 .resetPassInputRow {
@@ -1041,14 +1074,15 @@
 
 .resetInput {
   flex: 1;
-  height: 40px;
+  height: 42px;
   padding: 0 14px;
-  background: rgba(10, 15, 26, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(10, 15, 26, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 10px;
   color: #f8fafc;
   outline: none;
-  font-size: 13.5px;
+  font-size: 14.5px;
+  letter-spacing: 0.03em;
 }
 
 .resetInput:focus {
@@ -1057,12 +1091,13 @@
 }
 
 .resetBtn {
-  padding: 0 16px;
-  background: rgba(56, 189, 248, 0.15);
-  border: 1px solid rgba(56, 189, 248, 0.35);
+  padding: 0 18px;
+  background: rgba(56, 189, 248, 0.18);
+  border: 1px solid rgba(56, 189, 248, 0.4);
   border-radius: 10px;
   color: #7dd3fc;
-  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.04em;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -1084,10 +1119,10 @@
 }
 
 .vipOptionCard {
-  padding: 12px;
+  padding: 14px 12px;
   border-radius: 12px;
-  background: rgba(15, 23, 42, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1099,14 +1134,14 @@
 
 .vipOptionCard:hover {
   transform: translateY(-2px);
-  border-color: rgba(56, 189, 248, 0.4);
+  border-color: rgba(56, 189, 248, 0.45);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
 }
 
 .vipOptionSelected {
   border-color: #f59e0b !important;
-  background: rgba(245, 158, 11, 0.12) !important;
-  box-shadow: 0 0 20px rgba(245, 158, 11, 0.25) !important;
+  background: rgba(245, 158, 11, 0.15) !important;
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.3) !important;
 }
 
 /* Buttons in Modals */
@@ -1115,32 +1150,34 @@
   align-items: center;
   justify-content: flex-end;
   gap: 12px;
-  margin-top: 8px;
+  margin-top: 10px;
 }
 
 .cancelModalBtn {
-  padding: 10px 18px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 10px 20px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 12px;
-  color: #94a3b8;
-  font-weight: 600;
+  color: #cbd5e1;
+  font-size: 14px;
+  letter-spacing: 0.04em;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .cancelModalBtn:hover {
   color: #ffffff;
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.15);
 }
 
 .confirmModalBtn {
-  padding: 10px 20px;
+  padding: 10px 22px;
   background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
-  border: 1px solid rgba(56, 189, 248, 0.4);
+  border: 1px solid rgba(56, 189, 248, 0.45);
   border-radius: 12px;
   color: #ffffff;
-  font-weight: 700;
+  font-size: 14.5px;
+  letter-spacing: 0.04em;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -1156,12 +1193,13 @@
 }
 
 .confirmModalDangerBtn {
-  padding: 10px 20px;
+  padding: 10px 22px;
   background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-  border: 1px solid rgba(239, 68, 68, 0.4);
+  border: 1px solid rgba(239, 68, 68, 0.45);
   border-radius: 12px;
   color: #ffffff;
-  font-weight: 700;
+  font-size: 14.5px;
+  letter-spacing: 0.04em;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -1178,14 +1216,14 @@
 
 /* Sớ Kêu Oan Appeal Box */
 .appealLetterBox {
-  background: rgba(10, 15, 26, 0.75);
-  border: 1px solid rgba(234, 179, 8, 0.3);
+  background: rgba(10, 15, 26, 0.8);
+  border: 1px solid rgba(234, 179, 8, 0.35);
   border-radius: 14px;
   padding: 16px;
   color: #fef08a;
-  font-style: italic;
   line-height: 1.6;
-  font-size: 13.5px;
+  font-size: 14px;
+  letter-spacing: 0.03em;
 }
 
 /* Firestore Permission Denied Alert Card */

@@ -487,7 +487,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
 
           <h2 className={s.dashboardTitle}>
             <InkIcon name="shield" size={24} color="#38bdf8" />
-            <span className={s.titleGleam}>TIÊN NGHỊCH ĐẠO GIẢN // THIÊN ĐẠO TRẬN ĐỒ</span>
+            <span className={s.titleGleam}>Tiên Nghịch Đạo Giản // Thiên Đạo Trận Đồ</span>
           </h2>
         </div>
 
@@ -497,7 +497,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
               <PixelAvatar avatarId={user?.avatar || '/admin-avatar.mp4'} size={32} border={false} />
             </div>
             <span className={s.adminName}>{user?.displayName || user?.name || 'Đạo Tổ'}</span>
-            <span className={s.adminPill}>ĐẠI THỪA ĐẠO TỔ</span>
+            <span className={s.adminPill}>Đại Thừa Đạo Tổ</span>
           </div>
 
           <button
@@ -720,7 +720,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                             {u.displayName || u.username || u.id}
                           </span>
                           {u.isAdmin && (
-                            <span className={s.roleAdminTag}>ĐẠO TỔ</span>
+                            <span className={s.roleAdminTag}>Đạo Tổ</span>
                           )}
                           <span
                             className={s.userVipBadge}
