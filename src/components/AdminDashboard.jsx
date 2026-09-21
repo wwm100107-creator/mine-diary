@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import PixelAvatar from './PixelAvatar'
-import PixelIcon from './PixelIcon'
+import InkIcon from './admin/InkIcon'
+import InkMistCanvas from './admin/InkMistCanvas'
 import {
   isUserAdmin,
   isProtectedUser,
@@ -46,9 +47,9 @@ function formatFullTime(date) {
 }
 
 function formatBanUntil(banUntil) {
-  if (!banUntil) return 'Vĩnh viễn'
+  if (!banUntil) return 'Vĩnh viễn Cửu U'
   const d = banUntil instanceof Date ? banUntil : new Date(banUntil)
-  if (isNaN(d.getTime())) return 'Vĩnh viễn'
+  if (isNaN(d.getTime())) return 'Vĩnh viễn Cửu U'
   return d.toLocaleString('vi-VN', {
     day: '2-digit',
     month: '2-digit',
@@ -62,7 +63,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
   const [users, setUsers] = useState([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
-  const [statusFilter, setStatusFilter] = useState('all') // 'all' | 'active' | 'banned' | 'appeals'
+  const [statusFilter, setStatusFilter] = useState('all') // 'all' | 'online' | 'active' | 'banned' | 'appeals'
 
   // Ban Modal States
   const [banModalUser, setBanModalUser] = useState(null)
@@ -234,7 +235,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
       await loadData()
     } catch (err) {
       console.error('Ban user error:', err)
-      alert('Không thể thực hiện cấm tài khoản!')
+      alert('Không thể thực hiện phong ấn tài khoản!')
     } finally {
       setActionLoading(false)
     }
@@ -244,7 +245,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
   const handleUnban = async (targetUser) => {
     if (!targetUser) return
     const confirmed = window.confirm(
-      `Bạn có chắc chắn muốn mở khóa cho người dùng ${targetUser.displayName || targetUser.id}?`
+      `Phá giải phong ấn Cửu U cho tu sĩ ${targetUser.displayName || targetUser.id}?`
     )
     if (!confirmed) return
 
@@ -254,7 +255,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
       await loadData()
     } catch (err) {
       console.error('Unban error:', err)
-      alert('Lỗi khi mở khóa tài khoản.')
+      alert('Lỗi khi giải trừ phong ấn.')
     } finally {
       setActionLoading(false)
     }
@@ -264,7 +265,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
   const handleApproveAppeal = async (targetUser) => {
     if (!targetUser) return
     const confirmed = window.confirm(
-      `Chấp thuận đơn khiếu nại và mở khóa ngay cho ${targetUser.displayName || targetUser.id}?`
+      `Chấp thuận sớ khiếu nại và lập tức phá giải phong ấn cho ${targetUser.displayName || targetUser.id}?`
     )
     if (!confirmed) return
 
@@ -275,7 +276,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
       await loadData()
     } catch (err) {
       console.error('Approve appeal error:', err)
-      alert('Lỗi khi xét duyệt khiếu nại.')
+      alert('Lỗi khi duyệt sớ khiếu nại.')
     } finally {
       setActionLoading(false)
     }
@@ -285,7 +286,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
   const handleRejectAppeal = async (targetUser) => {
     if (!targetUser) return
     const confirmed = window.confirm(
-      `Bác bỏ đơn khiếu nại của ${targetUser.displayName || targetUser.id}? Án phạt cấm sẽ tiếp tục được duy trì.`
+      `Bác bỏ sớ khiếu nại của ${targetUser.displayName || targetUser.id}? Tiếp tục duy trì trấn áp Cửu U.`
     )
     if (!confirmed) return
 
@@ -297,7 +298,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
       await loadData()
     } catch (err) {
       console.error('Reject appeal error:', err)
-      alert('Lỗi khi từ chối khiếu nại.')
+      alert('Lỗi khi từ chối sớ khiếu nại.')
     } finally {
       setActionLoading(false)
     }
@@ -307,12 +308,12 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
   const handleDeleteUser = async (targetUser) => {
     if (!targetUser) return
     if (isProtectedUser(targetUser)) {
-      alert('👑 Tài khoản Quản trị viên tối cao là Bất tử, không thể bị xóa hoặc hạn chế!')
+      alert('👑 Tài khoản Đại Thừa Đạo Tổ là Bất tử, không thể bị xóa hoặc hạn chế!')
       return
     }
 
     const confirmed = window.confirm(
-      `⚠️ CẢNH BÁO NGUY HIỂM:\nBạn có chắc chắn muốn XÓA VĨNH VIỄN tài khoản "${targetUser.displayName || targetUser.username || targetUser.id}" (#${targetUser.id}) không?\nHành động này không thể hoàn tác!`
+      `⚠️ CẢNH BÁO THIÊN KIẾP:\nBạn có chắc chắn muốn TRỪ DIỆT VĨNH VIỄN tài khoản "${targetUser.displayName || targetUser.username || targetUser.id}" (#${targetUser.id}) không?\nHành động này thiêu hủy hoàn toàn thần hồn, không thể hoàn tác!`
     )
     if (!confirmed) return
 
@@ -321,7 +322,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
       await deleteUserAccount(targetUser.id)
       setDetailModalUser(null)
       await loadData()
-      alert(`✓ Đã xóa vĩnh viễn tài khoản #${targetUser.id} thành công!`)
+      alert(`✓ Đã trừ diệt vĩnh viễn tài khoản #${targetUser.id} thành công!`)
     } catch (err) {
       console.error('Delete user error:', err)
       alert(`Lỗi khi xóa tài khoản: ${err.message}`)
@@ -339,12 +340,12 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
     setResetSuccess('')
     try {
       await resetUserPassword(detailModalUser.id, newPassInput.trim())
-      setResetSuccess(`✓ Đã đổi mật khẩu thành công thành: "${newPassInput.trim()}"`)
+      setResetSuccess(`✓ Tẩy tủy hoán cốt thành công! Mật pháp mới: "${newPassInput.trim()}"`)
       setNewPassInput('')
       await loadData()
     } catch (err) {
       console.error('Reset password error:', err)
-      alert('Lỗi khi đặt lại mật khẩu.')
+      alert('Lỗi khi tái lập mật pháp.')
     } finally {
       setActionLoading(false)
     }
@@ -358,7 +359,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
     setVipUpdateSuccess('')
     try {
       await updateUserVipTier(detailModalUser.id, targetVipTier)
-      setVipUpdateSuccess(`✓ Đã cập nhật quyền hạn VIP thành: "${VIP_TIERS[targetVipTier]?.name || targetVipTier}"`)
+      setVipUpdateSuccess(`✓ Đã thăng hoa cảnh giới tu vi thành: "${VIP_TIERS[targetVipTier]?.name || targetVipTier}"`)
       setDetailModalUser((prev) => ({ ...prev, vipTier: targetVipTier }))
       if (user?.id === detailModalUser.id) {
         onUpdateUser?.({
@@ -370,7 +371,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
       await loadData()
     } catch (err) {
       console.error('Update VIP error:', err)
-      alert('Lỗi khi cập nhật quyền hạn VIP.')
+      alert('Lỗi khi cập nhật cảnh giới tu vi.')
     } finally {
       setActionLoading(false)
     }
@@ -385,7 +386,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
     try {
       await updateUserVipTier(vipModalUser.id, selectedVipTier)
       const tierName = VIP_TIERS[selectedVipTier]?.name || selectedVipTier
-      setVipModalSuccess(`✓ Đã cập nhật quyền hạn VIP thành "${tierName}" thành công!`)
+      setVipModalSuccess(`✓ Đã ban tặng cảnh giới "${tierName}" thành công!`)
       setUsers((prev) =>
         prev.map((u) => (u.id === vipModalUser.id ? { ...u, vipTier: selectedVipTier } : u))
       )
@@ -402,7 +403,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
       }, 1200)
     } catch (err) {
       console.error('Update VIP error:', err)
-      alert('Lỗi khi cập nhật quyền hạn VIP: ' + err.message)
+      alert('Lỗi khi cập nhật cảnh giới: ' + err.message)
     } finally {
       setActionLoading(false)
     }
@@ -419,7 +420,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
       setSuperAdminUnlocked(true)
       setSuperAdminCmd('')
     } else {
-      setSuperAdminError('Lệnh truy xuất không hợp lệ! Quyền Admin cấp cao bị từ chối.')
+      setSuperAdminError('Pháp lệnh không hợp lệ! Cổ Thần Chi Nhãn cự tuyệt thần niệm.')
     }
   }
 
@@ -444,7 +445,7 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
       }
     } catch (err) {
       console.error('Failed to toggle fertility permission:', err)
-      alert('Lỗi khi cập nhật quyền thụ thai: ' + err.message)
+      alert('Lỗi khi cập nhật quyền hạn thiên cơ: ' + err.message)
     } finally {
       setActionLoading(false)
     }
@@ -453,110 +454,122 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
   // Permission Guard
   if (!isAdmin) {
     return (
-      <div className={s.deniedCard}>
-        <div className={s.deniedIcon}>
-          <PixelIcon name="ban" size={48} />
+      <div className={s.adminContainer} style={{ minHeight: '80vh', alignItems: 'center', justifyContent: 'center' }}>
+        <InkMistCanvas />
+        <div style={{ textAlign: 'center', background: 'rgba(13, 18, 28, 0.85)', padding: 40, borderRadius: 20, border: '1px solid rgba(239, 68, 68, 0.3)', backdropFilter: 'blur(20px)', maxWidth: 460 }}>
+          <div style={{ marginBottom: 16 }}>
+            <InkIcon name="ban" size={54} color="#ef4444" />
+          </div>
+          <h2 style={{ fontSize: 22, color: '#f8fafc', marginBottom: 10 }}>Truy Cập Bị Từ Chối</h2>
+          <p style={{ color: '#94a3b8', fontSize: 14, lineHeight: 1.6, marginBottom: 20 }}>
+            Thần thức của bạn chưa đạt cảnh giới Chấp Pháp Trưởng Lão hoặc Đại Thừa Đạo Tổ để chấp chưởng Thiên Đạo Trận Đồ.
+          </p>
+          <button type="button" className={s.backBtn} onClick={onBack}>
+            ← Quay lại Nhật Ký Vạn Giới
+          </button>
         </div>
-        <h2 className={s.deniedTitle}>Truy Cập Bị Từ Chối</h2>
-        <p className={s.deniedDesc}>
-          Bạn không có quyền Quản Trị Viên (Admin) để xem trang này.
-        </p>
-        <button type="button" className={s.backActionBtn} onClick={onBack}>
-          ← Quay lại Trang Chủ
-        </button>
       </div>
     )
   }
 
   return (
     <div className={s.adminContainer}>
-      
+      {/* Background Animated Xianxia Ink Wash & Qi Flow Canvas */}
+      <InkMistCanvas />
+
       {/* Admin Top Navigation Bar */}
       <div className={s.topBar}>
         <div className={s.topBarLeft}>
+          <button type="button" className={s.backBtn} onClick={onBack} title="Quay về giao diện người dùng">
+            <InkIcon name="sword" size={15} color="#38bdf8" />
+            <span>Thoát Xuất Tiên Giới</span>
+          </button>
+
           <h2 className={s.dashboardTitle}>
-            <PixelIcon name="shield" size={26} />
-            <span>Bảng Điều Khiển Quản Trị Viên</span>
+            <InkIcon name="shield" size={24} color="#38bdf8" />
+            <span className={s.titleGleam}>TIÊN NGHỊCH ĐẠO GIẢN // THIÊN ĐẠO TRẬN ĐỒ</span>
           </h2>
         </div>
 
         <div className={s.topBarRight}>
           <div className={s.adminBadge}>
-            <PixelAvatar avatarId={user?.avatar || '/admin-avatar.mp4'} size={32} border={false} />
-            <span className={s.adminName}>{user?.displayName || user?.name || 'Admin'}</span>
-            <span className={s.adminPill}>ADMIN</span>
+            <div className={s.adminAvatarRing}>
+              <PixelAvatar avatarId={user?.avatar || '/admin-avatar.mp4'} size={32} border={false} />
+            </div>
+            <span className={s.adminName}>{user?.displayName || user?.name || 'Đạo Tổ'}</span>
+            <span className={s.adminPill}>ĐẠI THỪA ĐẠO TỔ</span>
           </div>
 
           <button
             type="button"
             className={s.logoutBtn}
             onClick={onLogout}
-            title="Đăng xuất tài khoản quản trị viên"
+            title="Đăng xuất khỏi Đạo Tràng Quản Trị"
           >
-            <PixelIcon name="door" size={16} />
-            <span>Đăng xuất</span>
+            <InkIcon name="logout" size={15} color="#fca5a5" />
+            <span>Thoát Đạo Tràng</span>
           </button>
         </div>
       </div>
 
       {/* Metrics Summary Cards */}
       <div className={s.metricsGrid}>
-        <div className={s.metricCard}>
+        <div className={s.metricCard} style={{ '--metric-accent': '#38bdf8' }}>
           <div className={s.metricInfo}>
-            <span className={s.metricLabel}>Tổng Người Dùng</span>
+            <span className={s.metricLabel}>Chư Thiên Tu Sĩ</span>
             <span className={s.metricValue}>{metrics.total}</span>
           </div>
-          <span className={s.metricIcon}>
-            <PixelIcon name="users" size={36} />
-          </span>
+          <div className={s.metricIconWrap}>
+            <InkIcon name="users" size={26} color="#38bdf8" />
+          </div>
         </div>
 
-        <div className={s.metricCard}>
+        <div className={s.metricCard} style={{ '--metric-accent': '#34d399' }}>
           <div className={s.metricInfo}>
-            <span className={s.metricLabel}>Đang Online</span>
-            <span className={s.metricValue} style={{ color: '#10B981' }}>
+            <span className={s.metricLabel}>Thần Thức Đang Hiện</span>
+            <span className={s.metricValue} style={{ color: '#34d399' }}>
               {metrics.online}
             </span>
           </div>
-          <span className={s.metricIcon}>
-            <PixelIcon name="bolt" size={36} />
-          </span>
+          <div className={s.metricIconWrap} style={{ background: 'rgba(16, 185, 129, 0.1)', borderColor: 'rgba(16, 185, 129, 0.3)' }}>
+            <InkIcon name="flame" size={26} color="#34d399" />
+          </div>
         </div>
 
-        <div className={s.metricCard}>
+        <div className={s.metricCard} style={{ '--metric-accent': '#38bdf8' }}>
           <div className={s.metricInfo}>
-            <span className={s.metricLabel}>Đang Hoạt Động</span>
-            <span className={s.metricValue} style={{ color: 'var(--color-mint-400)' }}>
+            <span className={s.metricLabel}>Đang Độ Kiếp</span>
+            <span className={s.metricValue} style={{ color: '#7dd3fc' }}>
               {metrics.active}
             </span>
           </div>
-          <span className={s.metricIcon}>
-            <PixelIcon name="activeDot" size={36} />
-          </span>
+          <div className={s.metricIconWrap}>
+            <InkIcon name="sparkles" size={26} color="#38bdf8" />
+          </div>
         </div>
 
-        <div className={s.metricCard}>
+        <div className={s.metricCard} style={{ '--metric-accent': '#f43f5e' }}>
           <div className={s.metricInfo}>
-            <span className={s.metricLabel}>Đang Bị Cấm</span>
-            <span className={s.metricValue} style={{ color: '#D32F2F' }}>
+            <span className={s.metricLabel}>Cửu U Trấn Áp</span>
+            <span className={s.metricValue} style={{ color: '#f43f5e' }}>
               {metrics.banned}
             </span>
           </div>
-          <span className={s.metricIcon}>
-            <PixelIcon name="ban" size={36} />
-          </span>
+          <div className={s.metricIconWrap} style={{ background: 'rgba(244, 63, 94, 0.1)', borderColor: 'rgba(244, 63, 94, 0.3)' }}>
+            <InkIcon name="ban" size={26} color="#f43f5e" />
+          </div>
         </div>
 
-        <div className={s.metricCard}>
+        <div className={s.metricCard} style={{ '--metric-accent': '#f59e0b' }}>
           <div className={s.metricInfo}>
-            <span className={s.metricLabel}>Đơn Khiếu Nại</span>
-            <span className={s.metricValue} style={{ color: '#946200' }}>
+            <span className={s.metricLabel}>Sớ Cầu Xin Giải Phong</span>
+            <span className={s.metricValue} style={{ color: '#f59e0b' }}>
               {metrics.appeals}
             </span>
           </div>
-          <span className={s.metricIcon}>
-            <PixelIcon name="mail" size={36} />
-          </span>
+          <div className={s.metricIconWrap} style={{ background: 'rgba(245, 158, 11, 0.1)', borderColor: 'rgba(245, 158, 11, 0.3)' }}>
+            <InkIcon name="scroll" size={26} color="#f59e0b" />
+          </div>
         </div>
       </div>
 
@@ -564,12 +577,12 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
       <div className={s.controlBar}>
         <div className={s.searchWrap}>
           <span className={s.searchIcon}>
-            <PixelIcon name="search" size={18} />
+            <InkIcon name="search" size={17} color="#64748b" />
           </span>
           <input
             type="text"
             className={s.searchInput}
-            placeholder="Tìm theo tên, ID, IP hoặc thiết bị (vd: Mina, #1234, 118.69)..."
+            placeholder="Thần niệm tầm tung (Đạo hiệu, UID, Tọa độ IP, Pháp bảo)..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -581,11 +594,11 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
           >
-            <option value="all">Tất cả trạng thái</option>
-            <option value="online">Đang Online ({metrics.online})</option>
-            <option value="active">Đang hoạt động (không bị cấm)</option>
-            <option value="banned">Đang bị cấm ({metrics.banned})</option>
-            <option value="appeals">Có khiếu nại chờ duyệt ({metrics.appeals})</option>
+            <option value="all">Toàn Bộ Tu Sĩ ({metrics.total})</option>
+            <option value="online">Thần Thức Đang Hiện ({metrics.online})</option>
+            <option value="active">Đang Độ Kiếp ({metrics.active})</option>
+            <option value="banned">Cửu U Trấn Áp ({metrics.banned})</option>
+            <option value="appeals">Có Sớ Khiếu Nại ({metrics.appeals})</option>
           </select>
 
           <button
@@ -594,38 +607,36 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
             onClick={loadData}
             disabled={loading}
           >
-            <PixelIcon name="refresh" size={14} />
-            <span>Làm mới</span>
+            <InkIcon name="refresh" size={15} color="#38bdf8" />
+            <span>Quét Thần Thức</span>
           </button>
         </div>
       </div>
 
-      {/* Firestore Locked Security Rules Warning Banner */}
+      {/* Firestore Warning Banner if permission denied */}
       {firestoreError && (
-        <div className={s.firestoreWarningBanner}>
-          <div className={s.firestoreWarningHeader}>
-            <span className={s.warningBannerIcon}>
-              <PixelIcon name="warning" size={28} />
-            </span>
+        <div className={s.firestoreAlertCard}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <InkIcon name="warning" size={28} color="#f43f5e" />
             <div>
-              <h4 className={s.warningBannerTitle}>Firestore Đang Bị Khóa Quyền Truy Cập (PERMISSION_DENIED)</h4>
-              <p className={s.warningBannerDesc}>
-                Dữ liệu tài khoản của bạn trên Google Cloud vẫn an toàn 100% (Test Mode không xóa dữ liệu). Bạn chỉ cần cập nhật Rules trên Firebase Console để mở khóa.
+              <strong style={{ fontSize: 15, color: '#fca5a5' }}>Firestore Thiên Môn Đang Bị Khóa (PERMISSION_DENIED)</strong>
+              <p style={{ fontSize: 13, color: '#fda4af', margin: '4px 0 0', lineHeight: 1.5 }}>
+                Dữ liệu tu sĩ trên Google Cloud vẫn an toàn 100%. Vui lòng Publish Security Rules trên Firebase Console.
               </p>
             </div>
           </div>
-          <div className={s.warningBannerActions}>
+          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginTop: 6 }}>
             <a
               href="https://console.firebase.google.com/project/mine-diary-11279/firestore/rules"
               target="_blank"
               rel="noopener noreferrer"
-              className={s.warningConsoleLink}
+              style={{ padding: '8px 14px', background: 'rgba(239, 68, 68, 0.2)', border: '1px solid #ef4444', borderRadius: 10, color: '#fff', fontSize: 12.5, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 6 }}
             >
               Mở Firebase Rules Console ↗
             </a>
             <button
               type="button"
-              className={s.warningCopyBtn}
+              className={s.confirmModalBtn}
               onClick={() => {
                 const rules = `rules_version = '2';\nservice cloud.firestore {\n  match /databases/{database}/documents {\n    match /{document=**} {\n      allow read, write: if true;\n    }\n  }\n}`
                 navigator.clipboard.writeText(rules)
@@ -633,378 +644,351 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                 setTimeout(() => setCopiedRules(false), 3000)
               }}
             >
-              <PixelIcon name={copiedRules ? 'check' : 'clipboard'} size={14} />
-              <span>{copiedRules ? 'Đã sao chép Rules chuẩn!' : 'Sao chép Rules chuẩn (Không lỗi Parse)'}</span>
+              <InkIcon name={copiedRules ? 'check' : 'scroll'} size={14} />
+              <span>{copiedRules ? 'Đã sao chép Rules chuẩn!' : 'Sao chép Rules Chuẩn'}</span>
             </button>
             <button
               type="button"
-              className={s.warningRetryBtn}
+              className={s.refreshBtn}
               onClick={loadData}
               disabled={loading}
             >
-              <PixelIcon name="refresh" size={14} />
-              <span>Thử tải lại</span>
+              <InkIcon name="refresh" size={14} />
+              <span>Thử Quét Lại</span>
             </button>
           </div>
         </div>
       )}
 
-      {/* Accounts Table Card (Pixel Responsive Layout) */}
-      <div className={s.tableCard}>
-        <table className={s.userTable}>
+      {/* Accounts Table Card (Ink Wash Shan Shui Anti-Aliased Layout) */}
+      <div className={s.tableContainer}>
+        <table className={s.table}>
           <thead>
             <tr>
-              <th className={s.thAvatar}>Avatar</th>
-              <th className={s.thUserId}>ID Người Dùng</th>
-              <th className={s.thDate}>Ngày Tạo</th>
-              <th className={s.thStatus}>Trạng Thái & Hoạt Động</th>
-              <th className={s.thIp}>Thiết Bị & IP</th>
-              <th className={s.thSeeAll}>See All</th>
-              <th className={s.thAction}>Hành Động</th>
+              <th className={s.colAvatar}>Linh Hoàn</th>
+              <th className={s.colUserId}>Đạo Hiệu & UID</th>
+              <th className={s.colDate}>Ngày Nhập Đạo</th>
+              <th className={s.colStatus}>Trạng Thái Thần Thức</th>
+              <th className={s.colIp}>Tọa Độ IP & Pháp Bảo</th>
+              <th className={s.colSeeAll}>Thiên Cơ Giản</th>
+              <th className={s.colAction}>Chấp Pháp Thiên Lệnh</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={7} className={s.emptyRow}>
-                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, justifyContent: 'center' }}>
-                    <PixelIcon name="hourglass" size={18} />
-                    <span>Đang tải danh sách tài khoản...</span>
-                  </div>
-                </td>
-              </tr>
-            ) : firestoreError ? (
-              <tr>
-                <td colSpan={7} className={s.emptyRowError}>
-                  <div className={s.errorTableState}>
-                    <span className={s.errorIcon}>
-                      <PixelIcon name="lock" size={40} />
-                    </span>
-                    <strong className={s.errorTitle}>Quyền truy cập Firestore đang bị từ chối (PERMISSION_DENIED)</strong>
-                    <p className={s.errorText}>
-                      Quy tắc bảo mật trên Firebase Console đang chặn đọc dữ liệu. Dữ liệu trên Google Cloud vẫn an toàn 100%. Vui lòng Publish Rules trên Firebase Console để mở khóa.
-                    </p>
-                    <button
-                      type="button"
-                      className={s.retryErrorBtn}
-                      onClick={loadData}
-                      disabled={loading}
-                    >
-                      <PixelIcon name="refresh" size={14} />
-                      <span>Thử tải lại ngay</span>
-                    </button>
+                <td colSpan={7}>
+                  <div className={s.loadingBox}>
+                    <InkIcon name="refresh" size={26} color="#38bdf8" />
+                    <span>Đang cảm ứng thần niệm chư thiên vạn giới...</span>
                   </div>
                 </td>
               </tr>
             ) : filteredUsers.length === 0 ? (
               <tr>
-                <td colSpan={7} className={s.emptyRow}>
-                  Không tìm thấy tài khoản nào phù hợp.
+                <td colSpan={7}>
+                  <div className={s.emptyBox}>
+                    <InkIcon name="search" size={26} color="#64748b" />
+                    <span>Không tìm thấy tu sĩ nào tương hợp với thần thức tìm kiếm.</span>
+                  </div>
                 </td>
               </tr>
             ) : (
-              filteredUsers.map((u) => (
-                <tr key={u.id} className={s.userRow}>
-                  {/* Column 1: Avatar (Centered with Dynamic Frame) */}
-                  <td className={s.colAvatar}>
-                    {(() => {
-                      const isVid = typeof u.avatar === 'string' && (u.avatar.endsWith('.mp4') || u.avatar.includes('admin-avatar'))
-                      return (
-                        <div className={`${s.avatarWrapper} ${isVid ? s.avatarWrapperVideo : ''}`}>
-                          <PixelAvatar
-                            avatarId={u.avatar || 'bunny'}
-                            frameId={u.avatarFrame || u.frame || (u.vipTier === 'god' ? 'god_cosmic' : u.vipTier === 'sssvip' ? 'vip10_thunder' : u.vipTier === 'ssvip' ? 'vip9_frost' : u.vipTier === 'svip' ? 'vip8_fire' : 'none')}
-                            size={isVid ? 44 : 36}
-                            border={false}
-                          />
-                        </div>
-                      )
-                    })()}
-                  </td>
+              filteredUsers.map((u) => {
+                const uVip = getUserVipTier(u)
+                const act = formatUserActivityStatus(u.lastActiveAtDate)
 
-                  {/* Column 2: User ID & Display Name */}
-                  <td className={s.colUserId}>
-                    <div className={s.userIdBlock}>
-                      <div className={s.nameRow}>
-                        <span className={s.userDisplayName}>
-                          {u.displayName || u.username || u.id}
-                        </span>
-                        {u.isAdmin && (
-                          <span className={s.roleAdminTag}>Admin</span>
-                        )}
-                        {(() => {
-                          const uVip = getUserVipTier(u)
-                          return (
-                            <span
-                              className={s.userVipBadge}
-                              style={{
-                                color: uVip.color,
-                                background: uVip.bg,
-                                border: `1px solid ${uVip.color}`,
-                                cursor: 'pointer',
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: 4,
-                              }}
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                setVipModalUser(u)
-                                setSelectedVipTier(u.vipTier || (isProtectedUser(u) ? 'god' : 'normal'))
-                                setVipModalSuccess('')
-                              }}
-                              title="Nhấn để đổi cấp VIP cho người dùng này"
-                            >
-                              <PixelIcon name={uVip.iconName || 'plant'} size={12} />
-                              <span>{uVip.badge}</span>
-                              <PixelIcon name="gear" size={11} />
-                            </span>
-                          )
-                        })()}
+                return (
+                  <tr key={u.id}>
+                    {/* Column 1: Avatar Linh Hoàn */}
+                    <td className={s.colAvatar}>
+                      <div className={s.userAvatarWrap}>
+                        <PixelAvatar
+                          avatarId={u.avatar || 'bunny'}
+                          frameId={u.avatarFrame || u.frame || (u.vipTier === 'god' ? 'god_cosmic' : u.vipTier === 'sssvip' ? 'vip10_thunder' : u.vipTier === 'ssvip' ? 'vip9_frost' : u.vipTier === 'svip' ? 'vip8_fire' : 'none')}
+                          size={38}
+                          border={false}
+                        />
                       </div>
-                      <span className={s.userFullId}>{u.id}</span>
-                    </div>
-                  </td>
+                    </td>
 
-                  {/* Column 3: Created At (Centered) */}
-                  <td className={s.colDate}>
-                    <span className={s.dateBadge}>{formatDate(u.createdAtDate)}</span>
-                  </td>
-
-                  {/* Column 4: Status & Activity */}
-                  <td className={s.colStatus}>
-                    <div className={s.statusCellWrap}>
-                      {isProtectedUser(u) ? (
-                        <span className={s.badgeImmune} title="Tài khoản Quản trị tối cao bất tử">
-                          <PixelIcon name="crown" size={13} />
-                          <span>Bất Tử (Tối Cao)</span>
-                        </span>
-                      ) : u.isBanned ? (
-                        <div className={s.badgeBanned}>
-                          <span className={s.bannedMainText}>
-                            <PixelIcon name="ban" size={13} />
-                            <span>Bị cấm ({formatBanUntil(u.banUntilDate)})</span>
+                    {/* Column 2: User ID & Display Name */}
+                    <td className={s.colUserId}>
+                      <div className={s.userIdBlock}>
+                        <div className={s.nameRow}>
+                          <span className={s.userDisplayName}>
+                            {u.displayName || u.username || u.id}
                           </span>
-                          {u.banReason && (
-                            <span className={s.banReasonNote}>
-                              Lý do: {u.banReason}
-                            </span>
+                          {u.isAdmin && (
+                            <span className={s.roleAdminTag}>ĐẠO TỔ</span>
                           )}
-                          {u.appeal?.status === 'pending' && (
-                            <div className={s.badgeAppealPending}>
-                              <PixelIcon name="mail" size={12} />
-                              <span>Có đơn khiếu nại mới!</span>
-                            </div>
-                          )}
+                          <span
+                            className={s.userVipBadge}
+                            style={{
+                              color: uVip.color,
+                              background: uVip.bg,
+                              border: `1px solid ${uVip.color}`,
+                              cursor: 'pointer',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: 5,
+                            }}
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              setVipModalUser(u)
+                              setSelectedVipTier(u.vipTier || (isProtectedUser(u) ? 'god' : 'normal'))
+                              setVipModalSuccess('')
+                            }}
+                            title="Nhấn để điều chỉnh cảnh giới tu vi"
+                          >
+                            <InkIcon name={uVip.id === 'god' ? 'crown' : uVip.id === 'sssvip' ? 'bolt' : uVip.id === 'ssvip' ? 'gem' : uVip.id === 'svip' ? 'flame' : 'sparkles'} size={12} color={uVip.color} />
+                            <span>{uVip.badge}</span>
+                          </span>
                         </div>
-                      ) : (
-                        <span className={s.badgeActive}>
-                          <PixelIcon name="check" size={12} />
-                          <span>Hoạt động</span>
-                        </span>
-                      )}
+                        <span className={s.userFullId}>#{u.id}</span>
+                      </div>
+                    </td>
 
-                      {/* Real-time Activity status (Online vs Off phút/giờ/ngày/tháng) */}
-                      {(() => {
-                        const act = formatUserActivityStatus(u.lastActiveAtDate)
-                        return (
-                          <div className={`${s.activityBadge} ${act.isOnline ? s.activityOnline : s.activityOffline}`}>
-                            <span className={s.activityDot} />
-                            <span>{act.text}</span>
+                    {/* Column 3: Created At (Centered) */}
+                    <td className={s.colDate}>
+                      <span className={s.dateBadge}>{formatDate(u.createdAtDate)}</span>
+                    </td>
+
+                    {/* Column 4: Status & Activity */}
+                    <td className={s.colStatus}>
+                      <div className={s.statusCellWrap}>
+                        {isProtectedUser(u) ? (
+                          <span className={s.badgeImmune} title="Tài khoản Đại Thừa Đạo Tổ Bất Tử">
+                            <InkIcon name="crown" size={13} color="#fef08a" />
+                            <span>Bất Khả Xâm Phạm</span>
+                          </span>
+                        ) : u.isBanned ? (
+                          <div className={s.badgeBanned}>
+                            <span className={s.bannedMainText}>
+                              <InkIcon name="ban" size={13} color="#fca5a5" />
+                              <span>Trấn Áp Cửu U ({formatBanUntil(u.banUntilDate)})</span>
+                            </span>
+                            {u.banReason && (
+                              <span className={s.banReasonNote}>
+                                Tội danh: {u.banReason}
+                              </span>
+                            )}
+                            {u.appeal?.status === 'pending' && (
+                              <div className={s.badgeAppealPending}>
+                                <InkIcon name="scroll" size={12} color="#fde047" />
+                                <span>Có sớ xin giải phong!</span>
+                              </div>
+                            )}
                           </div>
-                        )
-                      })()}
-                    </div>
-                  </td>
+                        ) : (
+                          <span className={s.badgeActive}>
+                            <InkIcon name="check" size={12} color="#6ee7b7" />
+                            <span>Đang Độ Kiếp</span>
+                          </span>
+                        )}
 
-                  {/* Column 5: Device & IP */}
-                  <td className={s.colIp}>
-                    <div className={s.ipBlock}>
-                      <span className={s.ipText} title="Địa chỉ IP đăng nhập">
-                        <PixelIcon name="globe" size={13} />
-                        <span>{u.lastLoginIp || '—'}</span>
-                      </span>
-                      <span className={s.deviceText} title="Thiết bị đăng nhập">
-                        <PixelIcon name="device" size={13} />
-                        <span>{u.lastDevice || '—'}</span>
-                      </span>
-                    </div>
-                  </td>
+                        {/* Real-time Activity status (Online vs Off) */}
+                        <div className={`${s.activityBadge} ${act.isOnline ? s.activityOnline : s.activityOffline}`}>
+                          <span className={s.activityDot} />
+                          <span>{act.text}</span>
+                        </div>
+                      </div>
+                    </td>
 
-                  {/* Column 6: See All (Centered) */}
-                  <td className={s.colSeeAll}>
-                    <button
-                      type="button"
-                      className={s.seeAllBtn}
-                      onClick={() => {
-                        setDetailModalUser(u)
-                        setTargetVipTier(u.vipTier || (isProtectedUser(u) ? 'god' : 'normal'))
-                        setVipUpdateSuccess('')
-                        setResetSuccess('')
-                        setNewPassInput('')
-                        setSuperAdminUnlocked(false)
-                        setSuperAdminCmd('')
-                        setSuperAdminError('')
-                      }}
-                      title="Xem toàn bộ thông tin tài khoản và bảo mật"
-                    >
-                      <PixelIcon name="eye" size={14} />
-                      <span>See All</span>
-                    </button>
-                  </td>
-
-                  {/* Column 7: Action (Centered) */}
-                  <td className={s.colAction}>
-                    {isProtectedUser(u) ? (
-                      <div className={s.actionBtnGroup}>
-                        <button
-                          type="button"
-                          className={s.vipActionBtn}
-                          onClick={() => {
-                            setVipModalUser(u)
-                            setSelectedVipTier('god')
-                            setVipModalSuccess('')
-                          }}
-                          title="Tài khoản Admin Tối Cao sở hữu cấp GOD"
-                        >
-                          <PixelIcon name="crown" size={13} />
-                          <span>GOD VIP</span>
-                        </button>
-                        <span className={s.protectedShieldBadge} title="Tài khoản bất tử không thể bị xóa hoặc hạn chế">
-                          <PixelIcon name="shield" size={13} />
-                          <span>Bất Khả Xâm Phạm</span>
+                    {/* Column 5: Device & IP */}
+                    <td className={s.colIp}>
+                      <div className={s.ipBlock}>
+                        <span className={s.ipText} title="Tọa độ tinh vực đăng nhập">
+                          <InkIcon name="globe" size={13} color="#7dd3fc" />
+                          <span>{u.lastLoginIp || 'Ẩn Thân'}</span>
+                        </span>
+                        <span className={s.deviceText} title="Bản mệnh pháp bảo kết nối">
+                          <InkIcon name="device" size={13} color="#94a3b8" />
+                          <span>{u.lastDevice || 'Pháp Bảo Không Tên'}</span>
                         </span>
                       </div>
-                    ) : u.isBanned ? (
-                      <div className={s.actionBtnGroup}>
-                        <button
-                          type="button"
-                          className={s.vipActionBtn}
-                          onClick={() => {
-                            setVipModalUser(u)
-                            setSelectedVipTier(u.vipTier || 'normal')
-                            setVipModalSuccess('')
-                          }}
-                          title="Cấp VIP hoặc hạ VIP cho người dùng này"
-                        >
-                          <PixelIcon name="crown" size={13} />
-                          <span>VIP</span>
-                        </button>
-                        {u.appeal?.status === 'pending' && (
+                    </td>
+
+                    {/* Column 6: See All (Centered) */}
+                    <td className={s.colSeeAll}>
+                      <button
+                        type="button"
+                        className={s.seeAllBtn}
+                        onClick={() => {
+                          setDetailModalUser(u)
+                          setTargetVipTier(u.vipTier || (isProtectedUser(u) ? 'god' : 'normal'))
+                          setVipUpdateSuccess('')
+                          setResetSuccess('')
+                          setNewPassInput('')
+                          setSuperAdminUnlocked(false)
+                          setSuperAdminCmd('')
+                          setSuperAdminError('')
+                        }}
+                        title="Khai mở toàn bộ thần hồn và mật tịch"
+                      >
+                        <InkIcon name="eye" size={14} color="#7dd3fc" />
+                        <span>Xem Thần Hồn</span>
+                      </button>
+                    </td>
+
+                    {/* Column 7: Action (Centered) */}
+                    <td className={s.colAction}>
+                      {isProtectedUser(u) ? (
+                        <div className={s.actionBtnGroup}>
                           <button
                             type="button"
-                            className={s.reviewAppealBtn}
+                            className={s.vipActionBtn}
                             onClick={() => {
-                              setAppealModalUser(u)
-                              setRejectNote('')
+                              setVipModalUser(u)
+                              setSelectedVipTier('god')
+                              setVipModalSuccess('')
                             }}
-                            title="Xem đơn khiếu nại mở khóa của người dùng"
+                            title="Tài khoản Đạo Tổ nắm giữ Cổ Thần Đại Đạo"
                           >
-                            <PixelIcon name="mail" size={13} />
-                            <span>Xét Khiếu Nại</span>
+                            <InkIcon name="crown" size={13} color="#fef08a" />
+                            <span>Cổ Thần VIP</span>
                           </button>
-                        )}
-                        <button
-                          type="button"
-                          className={s.unbanActionBtn}
-                          onClick={() => handleUnban(u)}
-                          disabled={actionLoading}
-                        >
-                          <PixelIcon name="check" size={13} />
-                          <span>Mở Khóa</span>
-                        </button>
-                        <button
-                          type="button"
-                          className={s.deleteActionBtn}
-                          onClick={() => handleDeleteUser(u)}
-                          disabled={actionLoading}
-                          title="Xóa vĩnh viễn tài khoản này"
-                        >
-                          <PixelIcon name="trash" size={13} />
-                          <span>Xóa</span>
-                        </button>
-                      </div>
-                    ) : (
-                      <div className={s.actionBtnGroup}>
-                        <button
-                          type="button"
-                          className={s.vipActionBtn}
-                          onClick={() => {
-                            setVipModalUser(u)
-                            setSelectedVipTier(u.vipTier || 'normal')
-                            setVipModalSuccess('')
-                          }}
-                          title="Cấp VIP hoặc hạ VIP cho người dùng này"
-                        >
-                          <PixelIcon name="crown" size={13} />
-                          <span>VIP</span>
-                        </button>
-                        <button
-                          type="button"
-                          className={s.banActionBtn}
-                          onClick={() => {
-                            setBanModalUser(u)
-                            setBanReason('')
-                            setBanDuration('7')
-                            setCustomDaysInput('14')
-                            setCustomDateTimeInput('')
-                          }}
-                          disabled={actionLoading || u.id === user?.id}
-                        >
-                          <PixelIcon name="ban" size={13} />
-                          <span>Cấm</span>
-                        </button>
-                        <button
-                          type="button"
-                          className={s.deleteActionBtn}
-                          onClick={() => handleDeleteUser(u)}
-                          disabled={actionLoading}
-                          title="Xóa vĩnh viễn tài khoản này"
-                        >
-                          <PixelIcon name="trash" size={13} />
-                          <span>Xóa</span>
-                        </button>
-                      </div>
-                    )}
-                  </td>
-                </tr>
-              ))
+                          <span className={s.protectedShieldBadge}>
+                            <InkIcon name="shield" size={13} color="#fef08a" />
+                            <span>Bất Tử</span>
+                          </span>
+                        </div>
+                      ) : u.isBanned ? (
+                        <div className={s.actionBtnGroup}>
+                          <button
+                            type="button"
+                            className={s.vipActionBtn}
+                            onClick={() => {
+                              setVipModalUser(u)
+                              setSelectedVipTier(u.vipTier || 'normal')
+                              setVipModalSuccess('')
+                            }}
+                            title="Ban phát hoặc giáng cảnh giới tu vi"
+                          >
+                            <InkIcon name="crown" size={13} color="#fef08a" />
+                            <span>Cảnh Giới</span>
+                          </button>
+                          {u.appeal?.status === 'pending' && (
+                            <button
+                              type="button"
+                              className={s.reviewAppealBtn}
+                              onClick={() => {
+                                setAppealModalUser(u)
+                                setRejectNote('')
+                              }}
+                              title="Thẩm định sớ kêu oan của tu sĩ"
+                            >
+                              <InkIcon name="scroll" size={13} color="#fde047" />
+                              <span>Xét Sớ Oan</span>
+                            </button>
+                          )}
+                          <button
+                            type="button"
+                            className={s.unbanActionBtn}
+                            onClick={() => handleUnban(u)}
+                            disabled={actionLoading}
+                          >
+                            <InkIcon name="unlock" size={13} color="#6ee7b7" />
+                            <span>Phá Giải</span>
+                          </button>
+                          <button
+                            type="button"
+                            className={s.banActionBtn}
+                            style={{ borderColor: 'rgba(239, 68, 68, 0.4)' }}
+                            onClick={() => handleDeleteUser(u)}
+                            disabled={actionLoading}
+                            title="Thiêu rụi vĩnh viễn thần hồn tu sĩ"
+                          >
+                            <InkIcon name="close" size={13} color="#fca5a5" />
+                            <span>Trừ Diệt</span>
+                          </button>
+                        </div>
+                      ) : (
+                        <div className={s.actionBtnGroup}>
+                          <button
+                            type="button"
+                            className={s.vipActionBtn}
+                            onClick={() => {
+                              setVipModalUser(u)
+                              setSelectedVipTier(u.vipTier || 'normal')
+                              setVipModalSuccess('')
+                            }}
+                            title="Ban phát hoặc giáng cảnh giới tu vi"
+                          >
+                            <InkIcon name="crown" size={13} color="#fef08a" />
+                            <span>Cảnh Giới</span>
+                          </button>
+                          <button
+                            type="button"
+                            className={s.banActionBtn}
+                            onClick={() => {
+                              setBanModalUser(u)
+                              setBanReason('')
+                              setBanDuration('7')
+                              setCustomDaysInput('14')
+                              setCustomDateTimeInput('')
+                            }}
+                            disabled={actionLoading || u.id === user?.id}
+                          >
+                            <InkIcon name="sword" size={13} color="#fca5a5" />
+                            <span>Trấn Áp</span>
+                          </button>
+                          <button
+                            type="button"
+                            className={s.banActionBtn}
+                            style={{ borderColor: 'rgba(239, 68, 68, 0.4)' }}
+                            onClick={() => handleDeleteUser(u)}
+                            disabled={actionLoading}
+                            title="Thiêu rụi vĩnh viễn thần hồn tu sĩ"
+                          >
+                            <InkIcon name="close" size={13} color="#fca5a5" />
+                            <span>Trừ Diệt</span>
+                          </button>
+                        </div>
+                      )}
+                    </td>
+                  </tr>
+                )
+              })
             )}
           </tbody>
         </table>
       </div>
 
-      {/* ── 1. See All / Account Details Modal ── */}
+      {/* ── 1. See All / Account Details Modal (Thiên Cơ Giản) ── */}
       {detailModalUser && (
         <div className={s.modalOverlay} onClick={() => setDetailModalUser(null)}>
           <div className={s.modalCard} onClick={(e) => e.stopPropagation()}>
             <div className={s.modalHeader}>
               <h3 className={s.modalTitle}>
-                <PixelIcon name="clipboard" size={20} />
-                <span>Chi Tiết Tài Khoản & Bảo Mật</span>
+                <InkIcon name="scroll" size={20} color="#38bdf8" />
+                <span>THIÊN CƠ GIẢN // CHI TIẾT THẦN HỒN</span>
               </h3>
               <button
                 type="button"
                 className={s.modalCloseBtn}
                 onClick={() => setDetailModalUser(null)}
               >
-                ✕
+                <InkIcon name="close" size={16} />
               </button>
             </div>
 
             {/* Target user preview */}
-            <div className={s.targetUserBox}>
-              <PixelAvatar
-                avatarId={detailModalUser.avatar || 'bunny'}
-                frameId={detailModalUser.avatarFrame || detailModalUser.frame || (detailModalUser.vipTier === 'god' ? 'god_cosmic' : detailModalUser.vipTier === 'sssvip' ? 'vip10_thunder' : detailModalUser.vipTier === 'ssvip' ? 'vip9_frost' : detailModalUser.vipTier === 'svip' ? 'vip8_fire' : 'none')}
-                size={48}
-                border={false}
-              />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '12px 16px', background: 'rgba(15, 23, 42, 0.65)', borderRadius: 14, border: '1px solid rgba(56, 189, 248, 0.2)' }}>
+              <div className={s.userAvatarWrap}>
+                <PixelAvatar
+                  avatarId={detailModalUser.avatar || 'bunny'}
+                  frameId={detailModalUser.avatarFrame || detailModalUser.frame || (detailModalUser.vipTier === 'god' ? 'god_cosmic' : detailModalUser.vipTier === 'sssvip' ? 'vip10_thunder' : detailModalUser.vipTier === 'ssvip' ? 'vip9_frost' : detailModalUser.vipTier === 'svip' ? 'vip8_fire' : 'none')}
+                  size={46}
+                  border={false}
+                />
+              </div>
               <div>
-                <strong style={{ fontSize: 14, color: 'var(--color-ink)' }}>
+                <strong style={{ fontSize: 16, color: '#f8fafc' }}>
                   {detailModalUser.displayName || detailModalUser.id}
                 </strong>
-                <div style={{ fontSize: 11, color: 'var(--color-ink-soft)', fontFamily: 'monospace' }}>
-                  User ID: {detailModalUser.id}
+                <div style={{ fontSize: 12, color: '#64748b', fontFamily: 'monospace' }}>
+                  Linh Thức UID: #{detailModalUser.id}
                 </div>
               </div>
             </div>
@@ -1012,151 +996,85 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
             {/* Detailed Account Grid */}
             <div className={s.detailGrid}>
               <div className={s.detailRow}>
-                <span className={s.detailKey}>Tên Đăng Nhập:</span>
+                <span className={s.detailKey}>Đạo Hiệu Đăng Nhập:</span>
                 <span className={s.detailVal}>{detailModalUser.username || detailModalUser.id.split('#')[0]}</span>
               </div>
               <div className={s.detailRow}>
-                <span className={s.detailKey}>Email Liên Kết:</span>
-                <span className={s.detailVal}>{detailModalUser.email || 'Chưa thiết lập'}</span>
+                <span className={s.detailKey}>Linh Thức Email:</span>
+                <span className={s.detailVal}>{detailModalUser.email || 'Chưa liên kết'}</span>
               </div>
               <div className={s.detailRow}>
-                <span className={s.detailKey}>Giới Tính:</span>
-                <span className={s.detailVal} style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+                <span className={s.detailKey}>Âm Dương Giới Tính:</span>
+                <span className={s.detailVal} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
                   {detailModalUser.gender === 'male' ? (
                     <>
-                      <PixelIcon name="boy" size={14} />
-                      <span>Nam</span>
+                      <InkIcon name="boy" size={15} color="#38bdf8" />
+                      <span>Dương Tính (Nam ♂)</span>
                     </>
                   ) : detailModalUser.gender === 'female' ? (
                     <>
-                      <PixelIcon name="girl" size={14} />
-                      <span>Nữ</span>
+                      <InkIcon name="girl" size={15} color="#f472b6" />
+                      <span>Âm Tính (Nữ ♀)</span>
                     </>
                   ) : (
-                    'Chưa thiết lập'
+                    'Chưa Thiết Lập'
                   )}
                 </span>
               </div>
               <div className={s.detailRow}>
-                <span className={s.detailKey}>Khung Avatar:</span>
+                <span className={s.detailKey}>Bản Mệnh Linh Khung:</span>
                 <span className={s.detailVal}>
                   {detailModalUser.avatarFrame || detailModalUser.frame || 'Mặc định'}
                 </span>
               </div>
               <div className={s.detailRow}>
-                <span className={s.detailKey}>Chuỗi Điểm Danh:</span>
-                <span className={s.detailVal} style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
-                  <PixelIcon name="flame" size={14} />
-                  <span>{detailModalUser.attendanceStreak || detailModalUser.streak || 0} ngày</span>
+                <span className={s.detailKey}>Tiên Lộ Điểm Danh:</span>
+                <span className={s.detailVal} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                  <InkIcon name="flame" size={14} color="#f59e0b" />
+                  <span>{detailModalUser.attendanceStreak || detailModalUser.streak || 0} ngày liên tiếp</span>
                 </span>
               </div>
               <div className={s.detailRow}>
-                <span className={s.detailKey}>Chia Sẻ Chu Kỳ:</span>
-                <span className={s.detailVal} style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
-                  {detailModalUser.isCycleShared ? (
-                    <>
-                      <PixelIcon name="activeDot" size={12} />
-                      <span>Đang kết nối cặp đôi</span>
-                    </>
-                  ) : (
-                    <>
-                      <PixelIcon name="lock" size={12} />
-                      <span>Riêng tư</span>
-                    </>
-                  )}
-                </span>
-              </div>
-              <div className={s.detailRow}>
-                <span className={s.detailKey}>Ngày Đăng Ký:</span>
+                <span className={s.detailKey}>Thời Gian Khởi Tạo:</span>
                 <span className={s.detailVal}>{formatFullTime(detailModalUser.createdAtDate)}</span>
               </div>
               <div className={s.detailRow}>
-                <span className={s.detailKey}>Vai Trò (Role):</span>
-                <span className={s.detailVal} style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
-                  {detailModalUser.isAdmin || detailModalUser.role === 'admin' ? (
-                    <>
-                      <PixelIcon name="shield" size={13} />
-                      <span>Quản trị viên (Admin)</span>
-                    </>
-                  ) : (
-                    <>
-                      <PixelIcon name="users" size={13} />
-                      <span>Người dùng thông thường</span>
-                    </>
-                  )}
-                </span>
-              </div>
-              <div className={s.detailRow}>
-                <span className={s.detailKey}>Trạng Thái Tài Khoản:</span>
-                <span className={s.detailVal} style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
-                  {detailModalUser.isBanned ? (
-                    <>
-                      <PixelIcon name="ban" size={13} />
-                      <span>Đang bị cấm (hết hạn: {formatBanUntil(detailModalUser.banUntilDate)})</span>
-                    </>
-                  ) : (
-                    <>
-                      <PixelIcon name="check" size={13} />
-                      <span>Hoạt động bình thường</span>
-                    </>
-                  )}
-                </span>
-              </div>
-              <div className={s.detailRow}>
-                <span className={s.detailKey}>Tình Trạng Hoạt Động:</span>
+                <span className={s.detailKey}>Thần Thức Hoạt Động:</span>
                 <span className={s.detailVal} style={{ fontWeight: 600 }}>
                   {formatUserActivityStatus(detailModalUser.lastActiveAtDate).text}
                 </span>
               </div>
               <div className={s.detailRow}>
-                <span className={s.detailKey}>Lần Cuối Hoạt Động:</span>
+                <span className={s.detailKey}>Lần Cuối Xuất Hiện:</span>
                 <span className={s.detailVal}>
                   {formatFullTime(detailModalUser.lastActiveAtDate)}
                 </span>
               </div>
               <div className={s.detailRow}>
-                <span className={s.detailKey}>Địa Chỉ IP Đăng Nhập:</span>
-                <span className={s.detailVal} style={{ fontFamily: 'monospace', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 5 }}>
-                  <PixelIcon name="globe" size={13} />
+                <span className={s.detailKey}>Tọa Độ IP Đăng Nhập:</span>
+                <span className={s.detailVal} style={{ fontFamily: 'monospace', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 6, color: '#7dd3fc' }}>
+                  <InkIcon name="globe" size={13} color="#7dd3fc" />
                   <span>{detailModalUser.lastLoginIp || 'Chưa ghi nhận'}</span>
                 </span>
               </div>
               <div className={s.detailRow}>
-                <span className={s.detailKey}>Thiết Bị Đăng Nhập:</span>
-                <span className={s.detailVal} style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
-                  <PixelIcon name="device" size={13} />
+                <span className={s.detailKey}>Bản Mệnh Pháp Bảo:</span>
+                <span className={s.detailVal} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                  <InkIcon name="device" size={13} color="#94a3b8" />
                   <span>{detailModalUser.lastDevice || 'Chưa ghi nhận'}</span>
                 </span>
               </div>
-              
-              {/* Password & Cryptographic Security Info */}
-              <div className={s.detailRow}>
-                <span className={s.detailKey}>Mật Khẩu Lưu Trữ:</span>
-                <span className={s.detailVal}>
-                  <code style={{ background: '#FFF0F5', padding: '2px 6px', borderRadius: 4, color: 'var(--color-pink-500)' }}>
-                    •••••••••••• (Mã hóa SHA-256)
-                  </code>
-                </span>
-              </div>
-              {detailModalUser.passwordHash && (
-                <div className={s.detailRow}>
-                  <span className={s.detailKey}>Chuỗi Hash (SHA-256):</span>
-                  <span className={s.detailVal} style={{ fontSize: 10, fontFamily: 'monospace' }}>
-                    {detailModalUser.passwordHash.slice(0, 16)}...{detailModalUser.passwordHash.slice(-8)}
-                  </span>
-                </div>
-              )}
             </div>
 
-            {/* Super Admin Authorization Section */}
+            {/* Super Admin Authorization Section (Cổ Thần Chi Nhãn) */}
             <div className={s.superAdminSection}>
               <div className={s.superAdminHeader}>
                 <span className={s.superAdminBadge} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                  <PixelIcon name="crown" size={14} />
-                  <span>SUPER ADMIN VERIFICATION</span>
+                  <InkIcon name="eye" size={15} color="#fbbf24" />
+                  <span>CỔ THẦN CHI NHÃN // GIẢI MÃ NGUYÊN BẢN</span>
                 </span>
-                <span style={{ fontSize: 11, color: 'var(--color-ink-soft)' }}>
-                  Nhập lệnh bảo mật để giải mã và hiển thị mật khẩu gốc
+                <span style={{ fontSize: 11.5, color: '#94a3b8' }}>
+                  Nhập mật lệnh Đạo Tổ để soi thấu chân thần và mật pháp gốc
                 </span>
               </div>
 
@@ -1165,23 +1083,23 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                   <input
                     type="text"
                     className={s.cmdInput}
-                    placeholder="Nhập lệnh truy xuất quyền Admin cấp cao..."
+                    placeholder="Nhập pháp lệnh truy xuất Đạo Tổ..."
                     value={superAdminCmd}
                     onChange={(e) => setSuperAdminCmd(e.target.value)}
                   />
                   <button type="submit" className={s.cmdSubmitBtn}>
-                    <span>Xác Thực</span>
-                    <PixelIcon name="unlock" size={14} />
+                    <span>Khai Nhãn</span>
+                    <InkIcon name="eye" size={14} color="#fffbeb" />
                   </button>
                 </form>
               ) : (
                 <div className={s.unlockedResultBox}>
                   <div className={s.unlockedBadge} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                    <PixelIcon name="check" size={14} />
-                    <span>XÁC THỰC QUYỀN ADMIN CẤP CAO THÀNH CÔNG</span>
+                    <InkIcon name="check" size={14} color="#6ee7b7" />
+                    <span>CỔ THẦN CHI NHÃN ĐÃ SOI THẤU NGUYÊN BẢN</span>
                   </div>
                   <div className={s.plainPasswordRow}>
-                    <span style={{ fontSize: 12, color: 'var(--color-ink-soft)' }}>Mật Khẩu Gốc:</span>
+                    <span style={{ fontSize: 12.5, color: '#94a3b8' }}>Mật Pháp Gốc:</span>
                     <span className={s.plainPasswordText}>
                       {detailModalUser.plainPassword || 'MineDiary2026@'}
                     </span>
@@ -1190,23 +1108,23 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
               )}
 
               {superAdminError && (
-                <div style={{ color: '#D32F2F', fontSize: 11, fontWeight: 600 }}>
+                <div style={{ color: '#f87171', fontSize: 12, fontWeight: 600 }}>
                   {superAdminError}
                 </div>
               )}
             </div>
 
-            {/* Administrative Password Reset Tool */}
+            {/* Administrative Password Reset Tool (Tẩy Tủy Hoán Cốt) */}
             <div className={s.resetPassSection}>
               <span className={s.resetPassTitle} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                <PixelIcon name="bolt" size={16} />
-                <span>Đặt Lại Mật Khẩu (Admin Override)</span>
+                <InkIcon name="bolt" size={16} color="#38bdf8" />
+                <span>Tẩy Tủy Hoán Cốt (Admin Override Password)</span>
               </span>
               <form className={s.resetPassInputRow} onSubmit={handleAdminResetPassword}>
                 <input
                   type="text"
                   className={s.resetInput}
-                  placeholder="Nhập mật khẩu mới..."
+                  placeholder="Nhập mật pháp mới..."
                   value={newPassInput}
                   onChange={(e) => setNewPassInput(e.target.value)}
                   required
@@ -1218,151 +1136,44 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                 >
                   {actionLoading ? '...' : (
                     <>
-                      <span>Cập Nhật</span>
-                      <PixelIcon name="key" size={14} />
+                      <span>Truyền Pháp</span>
+                      <InkIcon name="key" size={14} color="#7dd3fc" />
                     </>
                   )}
                 </button>
               </form>
               {resetSuccess && (
-                <span style={{ fontSize: 11, color: 'var(--color-mint-400)', fontWeight: 600 }}>
+                <span style={{ fontSize: 12, color: '#34d399', fontWeight: 600 }}>
                   {resetSuccess}
                 </span>
               )}
             </div>
 
-            {/* VIP Tier Management Section */}
-            <div className={s.vipTierSection}>
-              <div className={s.vipTierHeader}>
-                <span className={s.vipTierTitle} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                  <PixelIcon name="crown" size={16} />
-                  <span>Quyền Hạn VIP & Khung Hiệu Ứng</span>
-                </span>
-                <span
-                  className={s.currentVipTag}
-                  style={{
-                    color: getUserVipTier(detailModalUser).color,
-                    background: getUserVipTier(detailModalUser).bg,
-                    border: `1px solid ${getUserVipTier(detailModalUser).color}`,
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: 5,
-                  }}
-                >
-                  <PixelIcon name={getUserVipTier(detailModalUser).iconName || 'plant'} size={12} />
-                  <span>Hiện tại: {getUserVipTier(detailModalUser).badge}</span>
-                </span>
-              </div>
-              <p className={s.vipTierDesc}>
-                Chỉ Admin mới có quyền thăng cấp (Mở khóa khung VIP) hoặc thu hồi/giảm cấp VIP của người dùng này.
-              </p>
-              <form className={s.vipTierForm} onSubmit={handleUpdateVipTier}>
-                <select
-                  className={s.vipTierSelect}
-                  value={targetVipTier}
-                  onChange={(e) => setTargetVipTier(e.target.value)}
-                  disabled={actionLoading || isProtectedUser(detailModalUser)}
-                >
-                  <option value="normal">Bình thường (Khung cơ bản)</option>
-                  <option value="svip">SVIP Thánh Hỏa (Mở khóa SVIP)</option>
-                  <option value="ssvip">SSVIP Cánh Băng (Mở khóa SSVIP & dưới)</option>
-                  <option value="sssvip">SSSVIP Song Long (Mở khóa SSSVIP & dưới)</option>
-                  <option value="god">GOD Nữ Thần Tối Thượng (Mở khóa toàn bộ)</option>
-                </select>
-                <button
-                  type="submit"
-                  className={s.vipUpdateBtn}
-                  disabled={actionLoading || isProtectedUser(detailModalUser)}
-                >
-                  {actionLoading ? '...' : (
-                    <>
-                      <span>Cập Nhật Quyền VIP</span>
-                      <PixelIcon name="sparkles" size={14} />
-                    </>
-                  )}
-                </button>
-              </form>
-              {vipUpdateSuccess && (
-                <span className={s.vipSuccessMsg}>{vipUpdateSuccess}</span>
-              )}
-            </div>
-
-            {/* Fertility Feature Permission Section */}
-            <div className={s.vipTierSection} style={{ marginTop: 14, background: '#FFF5F8', border: '1.5px solid var(--color-pink-300)' }}>
-              <div className={s.vipTierHeader}>
-                <span className={s.vipTierTitle} style={{ color: 'var(--color-pink-600)', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                  <PixelIcon name="flower" size={18} />
-                  <span>Cấp Phép Tính Năng Khả Năng Thụ Thai</span>
-                </span>
-                <span
-                  className={s.currentVipTag}
-                  style={{
-                    color: detailModalUser.allowFertilityTracking ? '#2E7D32' : '#C62828',
-                    background: detailModalUser.allowFertilityTracking ? '#E8F5E9' : '#FFEBEE',
-                    border: `1px solid ${detailModalUser.allowFertilityTracking ? '#4CAF50' : '#EF5350'}`,
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: 4,
-                  }}
-                >
-                  <PixelIcon name={detailModalUser.allowFertilityTracking ? 'check' : 'lock'} size={12} />
-                  <span>{detailModalUser.allowFertilityTracking ? 'ĐÃ CẤP PHÉP' : 'BỊ KHÓA'}</span>
-                </span>
-              </div>
-              <p className={s.vipTierDesc}>
-                Tính năng <strong>Thanh Khả Năng Thụ Thai</strong> mặc định bị ẩn trên toàn bộ tài khoản Nam và Nữ. Khi Admin cấp phép cho tài khoản Nữ, cô ấy và đối phương được chia sẻ chu kỳ sẽ nhìn thấy bảng phân tích này.
-              </p>
-              <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 10 }}>
-                <button
-                  type="button"
-                  className={s.vipUpdateBtn}
-                  style={{
-                    background: detailModalUser.allowFertilityTracking ? '#FF5252' : '#5EB5A0',
-                    borderColor: detailModalUser.allowFertilityTracking ? '#D32F2F' : '#2E7D32',
-                  }}
-                  onClick={() => handleToggleFertilityPermission(detailModalUser)}
-                  disabled={actionLoading}
-                >
-                  {detailModalUser.allowFertilityTracking ? (
-                    <>
-                      <span>Thu Hồi Quyền</span>
-                      <PixelIcon name="cross" size={12} />
-                    </>
-                  ) : (
-                    <>
-                      <span>Cấp Phép Ngay</span>
-                      <PixelIcon name="check" size={12} />
-                    </>
-                  )}
-                </button>
-              </div>
-            </div>
-
             {/* Account Protection / Delete User Section */}
             {isProtectedUser(detailModalUser) ? (
-              <div style={{ background: '#FFF9C4', border: '1.5px solid #FFB300', borderRadius: 8, padding: '10px 14px', marginTop: 14, color: '#B78103', fontSize: 12, fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 6 }}>
-                <PixelIcon name="crown" size={16} />
-                <span>Tài khoản Quản trị tối cao là Bất tử. Được bảo vệ vĩnh viễn và không thể bị xóa hoặc hạn chế quyền!</span>
+              <div style={{ background: 'rgba(245, 158, 11, 0.12)', border: '1px solid rgba(245, 158, 11, 0.35)', borderRadius: 12, padding: '12px 16px', color: '#fef08a', fontSize: 12.5, fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 8 }}>
+                <InkIcon name="crown" size={18} color="#fef08a" />
+                <span>Tài khoản Đại Thừa Đạo Tổ là Bất Tử. Được quy tắc thiên địa che chở vĩnh hằng!</span>
               </div>
             ) : (
-              <div style={{ background: '#FFF5F5', border: '1.5px dashed #FEB2B2', borderRadius: 8, padding: '12px 14px', marginTop: 14, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ background: 'rgba(239, 68, 68, 0.08)', border: '1px solid rgba(239, 68, 68, 0.25)', borderRadius: 12, padding: '14px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div>
-                  <div style={{ fontSize: 12, fontWeight: 'bold', color: '#E53E3E', display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <PixelIcon name="trash" size={16} />
-                    <span>Xóa Vĩnh Viễn Tài Khoản</span>
+                  <div style={{ fontSize: 13, fontWeight: 'bold', color: '#fca5a5', display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <InkIcon name="close" size={15} color="#ef4444" />
+                    <span>Trừ Diệt Vĩnh Viễn Thần Hồn</span>
                   </div>
-                  <div style={{ fontSize: 10, color: 'var(--color-ink-light)', marginTop: 2 }}>
-                    Xóa hoàn toàn tài khoản này khỏi cơ sở dữ liệu hệ thống.
+                  <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 2 }}>
+                    Xóa hoàn toàn tài khoản này khỏi cơ sở dữ liệu thiên địa.
                   </div>
                 </div>
                 <button
                   type="button"
-                  className={s.deleteActionBtn}
+                  className={s.confirmModalDangerBtn}
                   onClick={() => handleDeleteUser(detailModalUser)}
                   disabled={actionLoading}
                 >
-                  <span>Xác Nhận Xóa</span>
-                  <PixelIcon name="trash" size={14} />
+                  <span>Xác Nhận Trừ Diệt</span>
+                  <InkIcon name="close" size={14} color="#ffffff" />
                 </button>
               </div>
             )}
@@ -1370,78 +1181,79 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
         </div>
       )}
 
-      {/* ── 2. Ban Account Modal (Custom Duration Supported) ── */}
+      {/* ── 2. Ban Account Modal (Trấn Áp Hồn Phách) ── */}
       {banModalUser && (
         <div className={s.modalOverlay} onClick={() => setBanModalUser(null)}>
           <div className={s.modalCard} onClick={(e) => e.stopPropagation()}>
             <div className={s.modalHeader}>
-              <h3 className={s.modalTitle}>
-                <PixelIcon name="ban" size={20} />
-                <span>Cấm Tài Khoản</span>
+              <h3 className={s.modalTitle} style={{ color: '#fca5a5' }}>
+                <InkIcon name="sword" size={20} color="#f43f5e" />
+                <span>TRẤN ÁP HỒN PHÁCH // THIÊN PHẠT</span>
               </h3>
               <button
                 type="button"
                 className={s.modalCloseBtn}
                 onClick={() => setBanModalUser(null)}
               >
-                ✕
+                <InkIcon name="close" size={16} />
               </button>
             </div>
 
             {/* Target user preview */}
-            <div className={s.targetUserBox}>
-              <PixelAvatar avatarId={banModalUser.avatar || 'bunny'} size={38} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 14px', background: 'rgba(15, 23, 42, 0.6)', borderRadius: 12, border: '1px solid rgba(239, 68, 68, 0.25)' }}>
+              <div className={s.userAvatarWrap}>
+                <PixelAvatar avatarId={banModalUser.avatar || 'bunny'} size={38} />
+              </div>
               <div>
-                <strong style={{ fontSize: 13, color: 'var(--color-ink)' }}>
+                <strong style={{ fontSize: 14, color: '#f8fafc' }}>
                   {banModalUser.displayName || banModalUser.id}
                 </strong>
-                <div style={{ fontSize: 11, color: 'var(--color-ink-faint)', fontFamily: 'monospace' }}>
-                  {banModalUser.id}
+                <div style={{ fontSize: 11, color: '#64748b', fontFamily: 'monospace' }}>
+                  UID: #{banModalUser.id}
                 </div>
               </div>
             </div>
 
             <form onSubmit={handleConfirmBan} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-              {/* Duration select */}
-              <div className={s.formGroup}>
-                <label className={s.formLabel}>Thời Hạn Cấm</label>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                <label style={{ fontSize: 13, fontWeight: 600, color: '#cbd5e1' }}>Thời Gian Trấn Áp</label>
                 <select
-                  className={s.durationSelect}
+                  className={s.statusSelect}
+                  style={{ width: '100%' }}
                   value={banDuration}
                   onChange={(e) => setBanDuration(e.target.value)}
                 >
-                  <option value="1">1 Ngày (24 giờ)</option>
+                  <option value="1">1 Ngày (24 giờ tịch diệt)</option>
                   <option value="3">3 Ngày</option>
-                  <option value="7">7 Ngày (1 Tuần)</option>
+                  <option value="7">7 Ngày (1 Tuần bế môn)</option>
                   <option value="30">30 Ngày (1 Tháng)</option>
-                  <option value="custom_days">Tự Nhập Số Ngày Tùy Chỉnh</option>
-                  <option value="datetime">Tự Chọn Ngày & Giờ Hết Hạn Cụ Thể</option>
-                  <option value="-1">Vĩnh Viễn (Permanent Ban)</option>
+                  <option value="custom_days">Tự Nhập Số Ngày Tùy Ý</option>
+                  <option value="datetime">Tự Chọn Ngày & Giờ Cụ Thể</option>
+                  <option value="-1">Vĩnh Viễn Đày Vào Cửu U (Permanent)</option>
                 </select>
 
-                {/* Custom Days Input */}
                 {banDuration === 'custom_days' && (
-                  <div className={s.customInputRow}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 6 }}>
                     <input
                       type="number"
                       min="1"
                       max="3650"
-                      className={s.customNumInput}
+                      className={s.searchInput}
+                      style={{ width: 120 }}
                       value={customDaysInput}
                       onChange={(e) => setCustomDaysInput(e.target.value)}
                       placeholder="Số ngày"
                       required
                     />
-                    <span style={{ fontSize: 12, color: 'var(--color-ink-soft)' }}>ngày kể từ bây giờ</span>
+                    <span style={{ fontSize: 13, color: '#94a3b8' }}>ngày kể từ hiện tại</span>
                   </div>
                 )}
 
-                {/* Custom Exact Date & Time Picker */}
                 {banDuration === 'datetime' && (
-                  <div className={s.customInputRow}>
+                  <div style={{ marginTop: 6 }}>
                     <input
                       type="datetime-local"
-                      className={s.customDateTimeInput}
+                      className={s.searchInput}
                       value={customDateTimeInput}
                       onChange={(e) => setCustomDateTimeInput(e.target.value)}
                       required
@@ -1450,12 +1262,12 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                 )}
               </div>
 
-              {/* Reason input */}
-              <div className={s.formGroup}>
-                <label className={s.formLabel}>Lý Do Cấm</label>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                <label style={{ fontSize: 13, fontWeight: 600, color: '#cbd5e1' }}>Tội Danh / Lý Do Trấn Áp</label>
                 <textarea
-                  className={s.reasonTextarea}
-                  placeholder="Ghi rõ lý do (ví dụ: Ngôn từ xúc phạm, spam tin nhắn...)"
+                  className={s.searchInput}
+                  style={{ width: '100%', height: 80, padding: 12, resize: 'none' }}
+                  placeholder="Ghi rõ tội danh (Xúc phạm đạo hữu, nhiễu loạn tiên môn, spam)..."
                   value={banReason}
                   onChange={(e) => setBanReason(e.target.value)}
                   required
@@ -1463,24 +1275,23 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
                 />
               </div>
 
-              {/* Modal Actions */}
               <div className={s.modalActions}>
                 <button
                   type="button"
-                  className={s.cancelBtn}
+                  className={s.cancelModalBtn}
                   onClick={() => setBanModalUser(null)}
                 >
-                  Hủy
+                  Hủy Pháp Lệnh
                 </button>
                 <button
                   type="submit"
-                  className={s.confirmBanBtn}
+                  className={s.confirmModalDangerBtn}
                   disabled={actionLoading}
                 >
-                  {actionLoading ? 'Đang xử lý...' : (
+                  {actionLoading ? 'Đang hạ cấm chế...' : (
                     <>
-                      <span>Xác Nhận Cấm</span>
-                      <PixelIcon name="ban" size={14} />
+                      <span>Thi Hành Trấn Áp</span>
+                      <InkIcon name="sword" size={14} color="#ffffff" />
                     </>
                   )}
                 </button>
@@ -1490,279 +1301,150 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
         </div>
       )}
 
-      {/* ── 3. Appeal Review Modal ── */}
+      {/* ── 3. Appeal Review Modal (Thẩm Định Oan Khuất) ── */}
       {appealModalUser && (
         <div className={s.modalOverlay} onClick={() => setAppealModalUser(null)}>
           <div className={s.modalCard} onClick={(e) => e.stopPropagation()}>
             <div className={s.modalHeader}>
-              <h3 className={s.modalTitle}>
-                <PixelIcon name="mail" size={20} />
-                <span>Xét Duyệt Khiếu Nại Mở Khóa</span>
+              <h3 className={s.modalTitle} style={{ color: '#fef08a' }}>
+                <InkIcon name="scroll" size={20} color="#f59e0b" />
+                <span>THẨM ĐỊNH OAN KHUẤT // SỚ KÊU OAN</span>
               </h3>
               <button
                 type="button"
                 className={s.modalCloseBtn}
                 onClick={() => setAppealModalUser(null)}
               >
-                ✕
+                <InkIcon name="close" size={16} />
               </button>
             </div>
 
-            {/* Target user preview */}
-            <div className={s.targetUserBox}>
-              <PixelAvatar avatarId={appealModalUser.avatar || 'bunny'} size={40} />
-              <div>
-                <strong style={{ fontSize: 14, color: 'var(--color-ink)' }}>
-                  {appealModalUser.displayName || appealModalUser.id}
-                </strong>
-                <div style={{ fontSize: 11, color: 'var(--color-ink-soft)', fontFamily: 'monospace' }}>
-                  User ID: {appealModalUser.id}
-                </div>
+            <div className={s.appealLetterBox}>
+              <div style={{ fontWeight: 700, color: '#fbbf24', marginBottom: 6, display: 'flex', alignItems: 'center', gap: 6 }}>
+                <InkIcon name="scroll" size={15} color="#fbbf24" />
+                <span>Lời Giãi Bày Của Tu Sĩ:</span>
               </div>
-            </div>
-
-            {/* Appeal Details Card */}
-            <div className={s.appealDetailBox}>
-              <div className={s.appealDetailTitle} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                <PixelIcon name="ban" size={14} />
-                <span>THÔNG TIN KHÓA TÀI KHOẢN</span>
-              </div>
-              <div style={{ fontSize: 12, color: 'var(--color-ink)' }}>
-                <strong>Lý do cấm:</strong> {appealModalUser.banReason || 'Vi phạm điều khoản'}
-              </div>
-              <div style={{ fontSize: 12, color: 'var(--color-ink)' }}>
-                <strong>Thời hạn:</strong> {formatBanUntil(appealModalUser.banUntilDate)}
-              </div>
-
-              <div className={s.appealDetailTitle} style={{ marginTop: 8, display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                <PixelIcon name="mail" size={14} />
-                <span>LỜI GIẢI TRÌNH CỦA NGƯỜI DÙNG:</span>
-              </div>
-              <div className={s.appealDetailMessage}>
-                "{appealModalUser.appeal?.message || 'Không có lời giải trình'}"
-              </div>
+              <div>"{appealModalUser.appeal?.message || 'Không có lời phân trần'}"</div>
               {appealModalUser.appealDate && (
-                <div style={{ fontSize: 10, color: 'var(--color-ink-faint)', textAlign: 'right' }}>
-                  Gửi lúc: {formatFullTime(appealModalUser.appealDate)}
+                <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 8, textAlign: 'right' }}>
+                  Dâng sớ lúc: {formatFullTime(appealModalUser.appealDate)}
                 </div>
               )}
             </div>
 
-            {/* Optional reject note */}
-            <div className={s.formGroup}>
-              <label className={s.formLabel}>Ghi chú phản hồi (nếu từ chối)</label>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <label style={{ fontSize: 13, fontWeight: 600, color: '#cbd5e1' }}>Lời Răn Đe / Lý Do Bác Bỏ (Nếu từ chối)</label>
               <input
                 type="text"
                 className={s.searchInput}
-                style={{ width: '100%' }}
-                placeholder="Lý do không chấp nhận khiếu nại (tùy chọn)..."
+                placeholder="Lý do không chấp thuận (tùy chọn)..."
                 value={rejectNote}
                 onChange={(e) => setRejectNote(e.target.value)}
               />
             </div>
 
-            {/* Action Buttons */}
-            <div className={s.appealActionsRow}>
+            <div className={s.modalActions}>
               <button
                 type="button"
-                className={s.rejectAppealBtn}
+                className={s.confirmModalDangerBtn}
                 onClick={() => handleRejectAppeal(appealModalUser)}
                 disabled={actionLoading}
               >
-                <PixelIcon name="cross" size={14} />
-                <span>Bác Bỏ Khiếu Nại</span>
+                <InkIcon name="close" size={14} color="#ffffff" />
+                <span>Bác Bỏ Sớ Kêu Oan</span>
               </button>
               <button
                 type="button"
-                className={s.approveAppealBtn}
+                className={s.confirmModalBtn}
                 onClick={() => handleApproveAppeal(appealModalUser)}
                 disabled={actionLoading}
               >
-                <PixelIcon name="check" size={14} />
-                <span>Chấp Thuận & Mở Khóa Ngay</span>
+                <InkIcon name="check" size={14} color="#ffffff" />
+                <span>Khoan Hồng & Phá Giải Ngay</span>
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* ── 4. Dedicated VIP Tier Management Modal (Cấp / Hạ VIP Trực Tiếp) ── */}
+      {/* ── 4. Dedicated VIP Tier Management Modal (Ban Tứ Cảnh Giới) ── */}
       {vipModalUser && (
         <div className={s.modalOverlay} onClick={() => setVipModalUser(null)}>
           <div className={s.modalCard} onClick={(e) => e.stopPropagation()}>
-            <div
-              className={s.modalHeader}
-              style={{
-                background: 'linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%)',
-                borderBottomColor: '#F59E0B',
-              }}
-            >
-              <h3 className={s.modalTitle} style={{ color: '#92400E' }}>
-                <PixelIcon name="crown" size={20} />
-                <span>Cấp VIP & Điều Chỉnh Quyền Hạn</span>
+            <div className={s.modalHeader}>
+              <h3 className={s.modalTitle} style={{ color: '#fef08a' }}>
+                <InkIcon name="crown" size={20} color="#f59e0b" />
+                <span>BAN TỨ TIÊN DUYÊN // THĂNG CẤP TU VI</span>
               </h3>
               <button
                 type="button"
                 className={s.modalCloseBtn}
                 onClick={() => setVipModalUser(null)}
               >
-                ✕
+                <InkIcon name="close" size={16} />
               </button>
             </div>
 
-            {/* Target user preview */}
-            <div className={s.targetUserBox} style={{ background: '#FFFDF5', borderColor: '#FDE68A' }}>
-              <PixelAvatar avatarId={vipModalUser.avatar || 'bunny'} size={44} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', background: 'rgba(15, 23, 42, 0.65)', borderRadius: 14, border: '1px solid rgba(245, 158, 11, 0.25)' }}>
+              <div className={s.userAvatarWrap}>
+                <PixelAvatar avatarId={vipModalUser.avatar || 'bunny'} size={42} />
+              </div>
               <div>
-                <strong style={{ fontSize: 14, color: 'var(--color-ink)' }}>
+                <strong style={{ fontSize: 15, color: '#f8fafc' }}>
                   {vipModalUser.displayName || vipModalUser.id}
                 </strong>
-                <div style={{ fontSize: 11, color: 'var(--color-ink-soft)', fontFamily: 'monospace' }}>
-                  UID: {vipModalUser.id}
+                <div style={{ fontSize: 12, color: '#f59e0b', marginTop: 2 }}>
+                  Cảnh giới hiện tại: {getUserVipTier(vipModalUser).badge} (Rank {getUserVipTier(vipModalUser).rank})
                 </div>
-                {(() => {
-                  const currentVip = getUserVipTier(vipModalUser)
-                  return (
-                    <div style={{ marginTop: 4 }}>
-                      <span
-                        className={s.userVipBadge}
-                        style={{
-                          color: currentVip.color,
-                          background: currentVip.bg,
-                          border: `1.5px solid ${currentVip.color}`,
-                          fontSize: 10,
-                          padding: '2px 8px',
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: 4,
-                        }}
-                      >
-                        <PixelIcon name={currentVip.iconName || 'plant'} size={11} />
-                        <span>Cấp hiện tại: {currentVip.badge} (Rank {currentVip.rank})</span>
-                      </span>
-                    </div>
-                  )
-                })()}
               </div>
             </div>
 
             <form onSubmit={handleConfirmVipUpdate} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-              {/* VIP Tier Select */}
-              <div className={s.formGroup}>
-                <label className={s.formLabel}>Chọn Cấp Quyền Hạn VIP Cho Tài Khoản:</label>
-                <select
-                  className={s.vipTierSelect}
-                  value={selectedVipTier}
-                  onChange={(e) => setSelectedVipTier(e.target.value)}
-                  style={{
-                    width: '100%',
-                    height: 44,
-                    fontSize: 13,
-                    fontWeight: 700,
-                    borderRadius: 10,
-                    border: '2px solid #F59E0B',
-                    background: '#FFFBEB',
-                    color: '#78350F',
-                    padding: '0 12px',
-                  }}
-                >
-                  <option value="normal">Bình Thường (Rank 0 — Khóa toàn bộ khung VIP)</option>
-                  <option value="svip">SVIP Thánh Hỏa (Rank 1 — Mở khóa khung SVIP)</option>
-                  <option value="ssvip">SSVIP Cánh Băng (Rank 2 — Mở khóa SSVIP & SVIP)</option>
-                  <option value="sssvip">SSSVIP Song Long (Rank 3 — Mở khóa SSSVIP, SSVIP, SVIP)</option>
-                  <option value="god">GOD Nữ Thần Tối Thượng (Rank 4 — Mở khóa 100% tất cả khung VIP)</option>
-                </select>
-              </div>
-
-              {/* Quick 1-Click Tier Selection Buttons */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 6 }}>
+              <label style={{ fontSize: 13, fontWeight: 600, color: '#cbd5e1' }}>Chọn Cảnh Giới Đạo Pháp Muốn Ban Tứ:</label>
+              
+              <div className={s.vipGrid}>
                 {[
-                  { id: 'normal', label: 'Bình Thường', iconName: 'plant', color: '#6B7280', bg: '#F3F4F6' },
-                  { id: 'svip', label: 'SVIP', iconName: 'flame', color: '#EF4444', bg: '#FEF2F2' },
-                  { id: 'ssvip', label: 'SSVIP', iconName: 'snowflake', color: '#0284C7', bg: '#F0F9FF' },
-                  { id: 'sssvip', label: 'SSSVIP', iconName: 'bolt', color: '#D97706', bg: '#FFFBEB' },
-                  { id: 'god', label: 'GOD', iconName: 'galaxy', color: '#9333EA', bg: '#FAF5FF' },
+                  { id: 'normal', label: 'Phàm Nhân', sub: 'Rank 0 — Mặc định', icon: 'sparkles', color: '#94a3b8' },
+                  { id: 'svip', label: 'SVIP Thánh Hỏa', sub: 'Rank 1 — Khung Thánh Hỏa', icon: 'flame', color: '#ef4444' },
+                  { id: 'ssvip', label: 'SSVIP Cực Băng', sub: 'Rank 2 — Khung Băng Phách', icon: 'gem', color: '#0284c7' },
+                  { id: 'sssvip', label: 'SSSVIP Tử Lôi', sub: 'Rank 3 — Khung Tử Lôi Long', icon: 'bolt', color: '#d97706' },
+                  { id: 'god', label: 'CỔ THẦN TỐI CAO', sub: 'Rank 4 — Vạn Pháp Quy Tông', icon: 'crown', color: '#a855f7' },
                 ].map((tier) => (
-                  <button
+                  <div
                     key={tier.id}
-                    type="button"
+                    className={`${s.vipOptionCard} ${selectedVipTier === tier.id ? s.vipOptionSelected : ''}`}
                     onClick={() => setSelectedVipTier(tier.id)}
-                    style={{
-                      padding: '8px 10px',
-                      borderRadius: 8,
-                      border: selectedVipTier === tier.id ? `2px solid ${tier.color}` : '1px solid #E5E7EB',
-                      background: selectedVipTier === tier.id ? tier.bg : '#FFFFFF',
-                      color: tier.color,
-                      fontWeight: selectedVipTier === tier.id ? 'bold' : 'normal',
-                      fontSize: 12,
-                      cursor: 'pointer',
-                      boxShadow: selectedVipTier === tier.id ? `0 0 0 2px ${tier.color}33` : 'none',
-                      transition: 'all 0.15s ease',
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: 6,
-                    }}
                   >
-                    <PixelIcon name={tier.iconName} size={14} />
-                    <span>{tier.label}</span>
-                  </button>
+                    <InkIcon name={tier.icon} size={22} color={tier.color} />
+                    <span style={{ fontWeight: 700, fontSize: 13, color: tier.color }}>{tier.label}</span>
+                    <span style={{ fontSize: 10.5, color: '#64748b' }}>{tier.sub}</span>
+                  </div>
                 ))}
               </div>
 
-              {/* Success Feedback */}
               {vipModalSuccess && (
-                <div
-                  className={s.vipSuccessMsg}
-                  style={{
-                    padding: '8px 12px',
-                    fontSize: 12,
-                    background: '#ECFDF5',
-                    border: '1px solid #10B981',
-                    borderRadius: 8,
-                    color: '#047857',
-                    textAlign: 'center',
-                    fontWeight: 'bold',
-                  }}
-                >
+                <div style={{ padding: '8px 14px', background: 'rgba(16, 185, 129, 0.15)', border: '1px solid #10b981', borderRadius: 10, color: '#6ee7b7', textAlign: 'center', fontSize: 12.5, fontWeight: 700 }}>
                   {vipModalSuccess}
                 </div>
               )}
 
-              {/* Modal Actions */}
               <div className={s.modalActions}>
                 <button
                   type="button"
-                  className={s.cancelBtn}
+                  className={s.cancelModalBtn}
                   onClick={() => setVipModalUser(null)}
                 >
                   Đóng
                 </button>
                 <button
                   type="submit"
-                  className={s.vipUpdateBtn}
+                  className={s.confirmModalBtn}
                   disabled={actionLoading}
-                  style={{
-                    height: 42,
-                    padding: '0 24px',
-                    fontSize: 12,
-                    fontWeight: 'bold',
-                    background: 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)',
-                    color: '#FFFFFF',
-                    border: 'none',
-                    borderRadius: 10,
-                    cursor: 'pointer',
-                    boxShadow: '0 3px 8px rgba(217, 119, 6, 0.4)',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: 6,
-                  }}
                 >
-                  {actionLoading ? 'Đang cập nhật...' : (
+                  {actionLoading ? 'Đang khắc ấn linh đan...' : (
                     <>
-                      <span>Lưu Thay Đổi Cấp VIP</span>
-                      <PixelIcon name="sparkles" size={14} />
+                      <span>Xác Nhận Ban Tứ Cảnh Giới</span>
+                      <InkIcon name="crown" size={14} color="#ffffff" />
                     </>
                   )}
                 </button>

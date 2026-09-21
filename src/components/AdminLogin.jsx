@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import { loginUser, verifyAndCompleteAdmin2FA } from '../lib/auth'
 import { isUserAdmin } from '../lib/admin'
-import PixelIcon from './PixelIcon'
+import InkIcon from './admin/InkIcon'
+import InkMistCanvas from './admin/InkMistCanvas'
 import s from './AdminLogin.module.css'
 
 export default function AdminLogin({ onLoginSuccess, onBackToApp }) {
@@ -21,7 +22,7 @@ export default function AdminLogin({ onLoginSuccess, onBackToApp }) {
     e.preventDefault()
     setError('')
     if (!username.trim() || !password) {
-      setError('Vui lòng nhập đầy đủ Tên đăng nhập và Mật khẩu Quản trị.')
+      setError('Vui lòng nhập đầy đủ Đạo hiệu / Tên đăng nhập và Mật pháp Quản trị.')
       return
     }
 
@@ -42,13 +43,13 @@ export default function AdminLogin({ onLoginSuccess, onBackToApp }) {
 
       // 2. Security Guard: Verify that this account actually has Admin rights
       if (!isUserAdmin(res)) {
-        setError('Truy cập bị từ chối: Tài khoản này không có quyền Quản trị viên!')
+        setError('Truy cập bị từ chối: Thần thức không thuộc Chấp Pháp Trưởng Lão / Admin!')
         return
       }
 
       onLoginSuccess?.(res)
     } catch (err) {
-      setError(err.message || 'Xác thực tài khoản Quản trị thất bại!')
+      setError(err.message || 'Xác thực thần thức thất bại: Mật pháp không tương hợp!')
     } finally {
       setLoading(false)
     }
@@ -70,12 +71,12 @@ export default function AdminLogin({ onLoginSuccess, onBackToApp }) {
       })
 
       if (!isUserAdmin(sessionAdmin)) {
-        throw new Error('Tài khoản không đủ quyền hạn quản trị hệ thống!')
+        throw new Error('Tài khoản không đủ quyền hạn quản trị thiên môn!')
       }
 
       onLoginSuccess?.(sessionAdmin)
     } catch (err) {
-      setTwoFactorError(err.message || 'Mã xác thực 2FA không chính xác hoặc đã hết hạn!')
+      setTwoFactorError(err.message || 'Mật lệnh 2FA không chính xác hoặc linh lực đã tán!')
     } finally {
       setLoading(false)
     }
@@ -83,23 +84,29 @@ export default function AdminLogin({ onLoginSuccess, onBackToApp }) {
 
   return (
     <div className={s.container}>
-      <div className={s.cyberGrid} aria-hidden="true" />
+      {/* Dynamic Xianxia Ink Wash & Qi Particles Canvas */}
+      <InkMistCanvas />
 
       <div className={s.card}>
         {/* Header */}
         <header className={s.header}>
-          <div className={s.shieldBadge}><PixelIcon name="shield" size={32} /></div>
-          <div className={s.badgeRealm}>SECURE REALM // ADMIN PORTAL</div>
+          <div className={s.shieldBadge}>
+            <InkIcon name="sword" size={30} color="#38bdf8" />
+          </div>
+          <div className={s.badgeRealm}>
+            <InkIcon name="sparkles" size={12} color="#38bdf8" />
+            <span>TIÊN NGHỊCH ĐẠO TRÀNG // THIÊN MÔN</span>
+          </div>
           <h1 className={s.title}>Đăng Nhập Quản Trị</h1>
           <p className={s.subtitle}>
-            Cổng xác thực tối mật dành cho Quản trị viên hệ thống Mine Diary.
+            Cổng xác thực thần thức tối mật dành cho Chấp Pháp Trưởng Lão & Đạo Tổ Mine Diary.
           </p>
         </header>
 
         {/* Error Banner */}
         {(error || twoFactorError) && (
           <div className={s.errorBanner} role="alert">
-            <PixelIcon name="warning" size={16} />
+            <InkIcon name="warning" size={18} color="#f87171" />
             <span>{error || twoFactorError}</span>
           </div>
         )}
@@ -108,7 +115,9 @@ export default function AdminLogin({ onLoginSuccess, onBackToApp }) {
         {!twoFactorState ? (
           <form className={s.form} onSubmit={handlePrimarySubmit}>
             <div className={s.field}>
-              <label className={s.label} htmlFor="admin-username">Tài Khoản Quản Trị</label>
+              <label className={s.label} htmlFor="admin-username">
+                Đạo Hiệu Quản Trị (Username / UID)
+              </label>
               <input
                 id="admin-username"
                 className={s.input}
@@ -123,7 +132,7 @@ export default function AdminLogin({ onLoginSuccess, onBackToApp }) {
             </div>
 
             <div className={s.field}>
-              <label className={s.label} htmlFor="admin-password">Mật Khẩu</label>
+              <label className={s.label} htmlFor="admin-password">Mật Pháp Bản Mệnh (Password)</label>
               <div className={s.inputWrapper}>
                 <input
                   id="admin-password"
@@ -142,7 +151,7 @@ export default function AdminLogin({ onLoginSuccess, onBackToApp }) {
                   aria-label={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
                   tabIndex={-1}
                 >
-                  <PixelIcon name={showPassword ? 'eye' : 'lock'} size={18} />
+                  <InkIcon name={showPassword ? 'eye' : 'lock'} size={18} />
                 </button>
               </div>
             </div>
@@ -152,10 +161,12 @@ export default function AdminLogin({ onLoginSuccess, onBackToApp }) {
               className={s.submitBtn}
               disabled={loading}
             >
-              {loading ? 'Đang xác thực...' : (
-                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, justifyContent: 'center' }}>
+              {loading ? (
+                <span>Đang điều động thần thức...</span>
+              ) : (
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, justifyContent: 'center' }}>
                   <span>Xác Thực Danh Tính</span>
-                  <PixelIcon name="shield" size={16} />
+                  <InkIcon name="sword" size={16} color="#ffffff" />
                 </span>
               )}
             </button>
@@ -163,19 +174,20 @@ export default function AdminLogin({ onLoginSuccess, onBackToApp }) {
         ) : (
           <form className={s.form} onSubmit={handle2FASubmit}>
             <div className={s.twoFactorBox}>
-              <p style={{ margin: 0, fontSize: '13px', color: '#cbd5e1' }}>
+              <p style={{ margin: 0, fontSize: '13px', color: '#cbd5e1', lineHeight: 1.5 }}>
                 {twoFactorState.isFirstTimeSetup
-                  ? 'Quét mã QR trong ứng dụng Google Authenticator và nhập mã 6 số:'
-                  : 'Nhập mã bảo mật 6 số từ Google Authenticator hoặc mã dự phòng:'}
+                  ? 'Quét phù ấn trận đồ trong ứng dụng Google Authenticator và nhập mật mã 6 số:'
+                  : 'Nhập mật pháp 6 số bảo mật từ Google Authenticator hoặc ngọc giản dự phòng:'}
               </p>
 
               {twoFactorState.isFirstTimeSetup && twoFactorState.otpAuthUrl && (
-                <div style={{ padding: '8px', background: '#fff', borderRadius: '8px', display: 'inline-block', margin: '0 auto' }}>
+                <div style={{ padding: '8px', background: '#fff', borderRadius: '12px', display: 'inline-block', margin: '0 auto', boxShadow: '0 0 20px rgba(56, 189, 248, 0.3)' }}>
                   <img
                     src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(twoFactorState.otpAuthUrl)}`}
                     alt="2FA QR Code"
                     width="150"
                     height="150"
+                    style={{ display: 'block', borderRadius: '4px' }}
                   />
                 </div>
               )}
@@ -197,10 +209,10 @@ export default function AdminLogin({ onLoginSuccess, onBackToApp }) {
               className={s.submitBtn}
               disabled={loading || !totpCode.trim()}
             >
-              {loading ? 'Đang kiểm tra 2FA...' : (
-                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, justifyContent: 'center' }}>
-                  <span>Hoàn Tất Đăng Nhập</span>
-                  <PixelIcon name="rocket" size={16} />
+              {loading ? 'Đang giải trận 2FA...' : (
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, justifyContent: 'center' }}>
+                  <span>Khai Mở Thiên Môn</span>
+                  <InkIcon name="sparkles" size={16} color="#ffffff" />
                 </span>
               )}
             </button>
@@ -214,7 +226,7 @@ export default function AdminLogin({ onLoginSuccess, onBackToApp }) {
               }}
               style={{ justifyContent: 'center' }}
             >
-              ← Quay lại nhập mật khẩu
+              ← Quay lại nhập mật pháp
             </button>
           </form>
         )}
@@ -226,7 +238,7 @@ export default function AdminLogin({ onLoginSuccess, onBackToApp }) {
             className={s.backLink}
             onClick={onBackToApp}
           >
-            ← Quay về trang Nhật Ký Người Dùng
+            ← Quay về Nhật Ký Vạn Giới
           </button>
         </footer>
       </div>
