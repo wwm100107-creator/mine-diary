@@ -407,3 +407,20 @@ export async function updateUserFertilityPermission(userId, isAllowed) {
   })
   return true
 }
+
+/**
+ * 11. Update User Avatar Frame Directly (Admin Exclusive)
+ * Allows Admin to assign any of the 13+ animated avatar frames to any user.
+ * @param {string} userId
+ * @param {string} frameId
+ */
+export async function updateUserAvatarFrame(userId, frameId = 'none') {
+  const userRef = doc(db, 'users', userId)
+  await updateDoc(userRef, {
+    avatarFrame: frameId,
+    frame: frameId,
+    avatarFrameUpdatedAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  })
+  return true
+}
