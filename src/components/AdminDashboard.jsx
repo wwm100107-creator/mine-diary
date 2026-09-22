@@ -7,6 +7,7 @@ import AdminHUDHeader from './admin/AdminHUDHeader'
 import AdminBentoStats from './admin/AdminBentoStats'
 import AdminCommandBar from './admin/AdminCommandBar'
 import AdminCitizenTable from './admin/AdminCitizenTable'
+import AvatarUploadModal from './AvatarUploadModal'
 import {
   isUserAdmin,
   isProtectedUser,
@@ -25,7 +26,9 @@ import {
 } from '../lib/admin'
 import { VIP_TIERS, getUserVipTier } from '../utils/vipTiers'
 import { AVATAR_FRAMES } from './AvatarFrameOverlay'
-import { formatUserActivityStatus } from '../lib/auth'
+import { formatUserActivityStatus, saveSession } from '../lib/auth'
+import { uploadUserAvatar } from '../lib/social'
+import { applyTheme, getSavedTheme } from '../utils/theme'
 
 function formatFullTime(date) {
   if (!date) return '—'
@@ -79,8 +82,40 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
   const [vipUpdateSuccess, setVipUpdateSuccess] = useState('')
   const [firestoreError, setFirestoreError] = useState(null)
   const [copiedRules, setCopiedRules] = useState(false)
+  const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false)
 
   const isAdmin = isUserAdmin(user)
+
+  const handleUpdateAdminAvatar = async (newAvatarData, newFrameId = 'none', newTheme = null) => {
+    if (!user?.id) return
+    try {
+      if (newTheme) {
+        applyTheme(newTheme)
+      }
+      const targetFrame = newFrameId || 'none'
+      const updatedUser = {
+        ...user,
+        avatar: newAvatarData,
+        avatarFrame: targetFrame,
+        frame: targetFrame,
+        theme: newTheme || user.theme || getSavedTheme(),
+      }
+      saveSession(updatedUser)
+      onUpdateUser?.(updatedUser)
+
+      // Direct Firestore sync for Admin user
+      const finalAvatarUrl = await uploadUserAvatar(user.id, newAvatarData, targetFrame, newTheme)
+      const persisted = {
+        ...updatedUser,
+        avatar: finalAvatarUrl || newAvatarData,
+      }
+      saveSession(persisted)
+      onUpdateUser?.(persisted)
+    } catch (err) {
+      console.error('Failed to update admin avatar, frame, and theme:', err)
+      throw err
+    }
+  }
 
   const loadData = async () => {
     setLoading(true)
@@ -558,7 +593,12 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
         }}
       >
         {/* Tactical HUD Header */}
-        <AdminHUDHeader user={user} onBack={onBack} onLogout={onLogout} />
+        <AdminHUDHeader
+          user={user}
+          onBack={onBack}
+          onLogout={onLogout}
+          onOpenAvatarModal={() => setIsAvatarModalOpen(true)}
+        />
 
         {/* Firestore Permission Alert Banner */}
         {firestoreError && (
@@ -1637,6 +1677,18 @@ export default function AdminDashboard({ user, onUpdateUser, onBack, onLogout })
             </form>
           </div>
         </div>
+      )}
+
+      {/* Admin Custom Avatar & Frame Modal */}
+      {isAvatarModalOpen && (
+        <AvatarUploadModal
+          user={user}
+          currentAvatar={user?.avatar || 'bunny'}
+          currentFrame={user?.avatarFrame || user?.frame || 'none'}
+          currentTheme={user?.theme || getSavedTheme()}
+          onSave={handleUpdateAdminAvatar}
+          onClose={() => setIsAvatarModalOpen(false)}
+        />
       )}
     </div>
   )

@@ -6,7 +6,7 @@ import InkIcon from './InkIcon'
  * AdminHUDHeader — Origin UI inspired Tactical Header
  * Displays active operator identity, telemetry status, clock, and quick navigation.
  */
-export default function AdminHUDHeader({ user, onBack, onLogout }) {
+export default function AdminHUDHeader({ user, onBack, onLogout, onOpenAvatarModal }) {
   const [timeStr, setTimeStr] = useState('')
 
   useEffect(() => {
@@ -150,8 +150,17 @@ export default function AdminHUDHeader({ user, onBack, onLogout }) {
           </span>
         </div>
 
-        {/* Operator Badge */}
+        {/* Operator Badge (Clickable to change Avatar & Frame) */}
         <div
+          onClick={onOpenAvatarModal}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              onOpenAvatarModal?.()
+            }
+          }}
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -160,11 +169,26 @@ export default function AdminHUDHeader({ user, onBack, onLogout }) {
             borderRadius: '12px',
             background: 'rgba(56, 189, 248, 0.08)',
             border: '1px solid rgba(56, 189, 248, 0.25)',
+            cursor: onOpenAvatarModal ? 'pointer' : 'default',
+            transition: 'all 0.15s ease',
           }}
+          onMouseEnter={(e) => {
+            if (onOpenAvatarModal) {
+              e.currentTarget.style.background = 'rgba(56, 189, 248, 0.18)'
+              e.currentTarget.style.borderColor = '#38bdf8'
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (onOpenAvatarModal) {
+              e.currentTarget.style.background = 'rgba(56, 189, 248, 0.08)'
+              e.currentTarget.style.borderColor = 'rgba(56, 189, 248, 0.25)'
+            }
+          }}
+          title="Nhấn để đổi avatar, pixel art và khung viền của Quản trị viên ✨"
         >
           <PixelAvatar
             avatarId={user?.avatar || '/admin-avatar.webm'}
-            frameId={user?.avatarFrame || user?.frame || 'gold_crown'}
+            frameId={user?.avatarFrame || user?.frame || 'none'}
             size={34}
             border={false}
           />
@@ -173,7 +197,7 @@ export default function AdminHUDHeader({ user, onBack, onLogout }) {
               {user?.displayName || user?.name || 'Super Admin'}
             </span>
             <span style={{ fontSize: '10.5px', color: '#38bdf8', fontWeight: '600' }}>
-              ✦ QUẢN TRỊ VIÊN TỐI CAO
+              ✦ Quản Trị Viên (Nhấn để đổi avatar)
             </span>
           </div>
         </div>
